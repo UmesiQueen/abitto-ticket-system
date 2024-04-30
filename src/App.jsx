@@ -1,4 +1,3 @@
-// import MapIcon from "@mui/icons-material/Map";
 import { Twirl as Hamburger } from "hamburger-react";
 import React from "react";
 import Accordion from "@mui/material/Accordion";
@@ -23,7 +22,7 @@ function App() {
             <p className="font-semibold text-2xl md:text-[40px] text-white md:leading-10">
               The Easiest & Safest way to travel within Nigeria & Africa
             </p>
-            <button className="border-2 border-green-500 text-green-500 py-3 px-6 font-semibold text-sm ">
+            <button className="border-2 border-green-500 text-green-500 py-3 px-6 font-semibold text-sm  hover:border-green-300 hover:text-green-300 transition-all duration-100  ease-in-out ">
               Book a Ticket
             </button>
           </div>
@@ -50,15 +49,21 @@ function App() {
                 We offer comprehensive range of stand-alone and integrated
                 services on time and on budget.
               </p>
-              <p>
+              <p className="text-black/80">
                 Lorem ipsum dolor sit amet consectetur. Semper pharetra erat
                 enim purus viverra neque aliquam leo non. Ac platea lectus
                 sociis ornare condimentum euismod. Euismod pellentesque
                 vestibulum tristique at nunc placerat consectetur eu aenean.
                 Auctor sagittis urna imperdiet pharetra.
               </p>
-              <p className="text-blue-500">
-                <a className="underline">Learn more</a>
+              <p className="text-blue-500 flex gap-3 cursor-pointer">
+                <a className="underline font-medium">Learn more</a>
+                <img
+                  alt="caret"
+                  src="/src/assets/icons/caret.svg"
+                  width={10}
+                  height={10}
+                />
               </p>
             </div>
           </div>
@@ -126,11 +131,11 @@ function App() {
         <section className="w-full h-[300px] flex md:flex-row-reverse items-center bg-boat bg-cover bg-no-repeat bg-center relative text-white">
           <div className="w-full h-full bg-gradient-to-b from-white/0 from-50% to-blue-500/40 absolute z-[1]" />
           <div className="bg-black/80 w-full h-full absolute" />
-          <div className="w-1/2 z-[1] pl-5 md:pl-0">
+          <div className="md:w-1/2 z-[1] pl-5 md:pl-0">
             <p className="font-semibold text-2xl mb-8">
               Get started on your <br /> journey with us today!
             </p>
-            <button className="bg-green-500 py-3 px-6 font-semibold text-sm">
+            <button className="bg-green-500 py-3 px-6 font-semibold text-sm hover:bg-green-700 transition-all duration-100 ease-in-out">
               Get Started
             </button>
           </div>
@@ -149,12 +154,9 @@ const Navbar = () => {
 
   return (
     <nav className="absolute right-0 left-0 px-5 md:px-20 py-2 text-white flex items-center justify-between backdrop-blur-sm bg-[#1111111F] z-[1]">
-      <img
-        alt="logo"
-        src="https://i.ibb.co/17zsqj1/logo2.png"
-        width={176}
-        height={60}
-      />
+      <a href="#home">
+        <img alt="logo" src="/src/assets/logo2.svg" width={176} height={60} />
+      </a>
 
       <div className="md:hidden">
         <Hamburger size={20} toggled={isOpen} toggle={setOpen} />
@@ -166,18 +168,18 @@ const Navbar = () => {
           !isOpen ? "hidden md:flex" : "absolute"
         )}
       >
-        <li className="hover:bg-gray-500/40">
+        <li className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-gray-800 transition duration-75 ease-in-out">
           <a href="#home">home</a>
         </li>
-        <li className="hover:bg-gray-500/40">
+        <li className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-gray-800">
           <a href="#about-us">about us</a>
         </li>
-        <li className="hover:bg-gray-500/40">
+        <li className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-gray-800">
           <a href="#contact-us">contact us</a>
         </li>
       </ul>
 
-      <button className="hidden md:block bg-green-500 py-3 px-6 font-semibold text-sm">
+      <button className="hidden md:block bg-green-500 py-3 px-6 font-semibold text-sm  hover:bg-green-700 transition-all duration-100  ease-in-out">
         Get Started
       </button>
     </nav>
@@ -188,14 +190,9 @@ const Footer = () => {
   return (
     <footer className="bg-[#111111] px-5 py-10 md:px-20 text-white ">
       <div className=" md:flex justify-between ">
-        <div>
-          <img
-            src="https://i.ibb.co/17zsqj1/logo2.png"
-            alt="logo"
-            width={176}
-            height={60}
-          />
-        </div>
+        <a href="#home">
+          <img src="/src/assets/logo2.svg" alt="logo" width={176} height={60} />
+        </a>
 
         <ul className="hidden md:flex gap-x-28 [&_a]:block [&_a]:mb-2 [&_a]:text-sm [&_a]:font-normal [&_h3]:font-medium [&_h3]:text-2xl [&_h3]:mb-5">
           <li>
