@@ -5,6 +5,15 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import classNames from "classnames";
+import {
+  FacebookIcon,
+  CaretIcon,
+  InstagramIcon,
+  LinkedinIcon,
+  MapIcon,
+  TwitterIcon,
+  PhoneIcon,
+} from "./assets/icons/index";
 
 function App() {
   return (
@@ -28,7 +37,10 @@ function App() {
           </div>
         </section>
         {/* About us  */}
-        <section className="p-5 md:py-20 md:px-44 bg-blue-50" id="about-us">
+        <section
+          className="p-5 md:py-20 md:px-10 lg:px-44 bg-blue-50"
+          id="about-us"
+        >
           <div className="flex flex-col md:flex-row justify-between flex-1 ">
             <div className="md:w-1/2 mb-10 md:mb-0 self-center">
               <img
@@ -36,7 +48,7 @@ function App() {
                 alt="about-us"
                 width={100}
                 height={100}
-                className=" md:-rotate-6 w-full md:w-[350px] h-[400px] md:h-[400px]"
+                className=" md:-rotate-6 w-full md:w-[300px] lg:w-[350px] h-[400px] md:h-[400px]"
               />
             </div>
             <div className="md:w-1/2 space-y-5">
@@ -56,20 +68,18 @@ function App() {
                 vestibulum tristique at nunc placerat consectetur eu aenean.
                 Auctor sagittis urna imperdiet pharetra.
               </p>
-              <p className="text-blue-500 flex gap-3 cursor-pointer">
-                <a className="underline font-medium">Learn more</a>
-                <img
-                  alt="caret"
-                  src="/src/assets/icons/caret.svg"
-                  width={10}
-                  height={10}
-                />
-              </p>
+              <a className="text-blue-500 flex items-center gap-3 cursor-pointer">
+                <span className="underline font-medium">Learn more</span>
+                <CaretIcon />
+              </a>
             </div>
           </div>
         </section>
         {/* Contact us  */}
-        <section className="py-10 px-5 md:py-20 md:px-44" id="contact-us">
+        <section
+          className="py-10 px-5 md:py-20 md:px-10 lg:px-44"
+          id="contact-us"
+        >
           <div className="flex flex-col md:flex-row justify-between flex-1">
             <div className="md:w-1/2 flex flex-col md:items-center space-y-5 mb-16 ">
               <div className="flex items-center md:hidden">
@@ -85,24 +95,14 @@ function App() {
               />
               <ul className="md:w-[350px] px-5  text-lg [&_li]:flex [&_li]:gap-3 [&_li]:items-center space-y-5 ">
                 <li>
-                  <img
-                    src="/src/assets/icons/location.svg"
-                    alt="location"
-                    width={20}
-                    height={20}
-                  />
+                  <MapIcon />
                   <p className="">
                     Lorem ipsum dolor sit amet consectetur. Egestas sapien
                     lectus lobortis sit mattis vitae posuere
                   </p>
                 </li>
                 <li>
-                  <img
-                    src="/src/assets/icons/phone.svg"
-                    alt="phone"
-                    width={20}
-                    height={20}
-                  />
+                  <PhoneIcon />
                   <p>+234 XXXX XXX XXXX</p>
                 </li>
               </ul>
@@ -155,7 +155,12 @@ const Navbar = () => {
   return (
     <nav className="absolute right-0 left-0 px-5 md:px-20 py-2 text-white flex items-center justify-between backdrop-blur-sm bg-[#1111111F] z-[1]">
       <a href="#home">
-        <img alt="logo" src="/src/assets/logo2.svg" width={176} height={60} />
+        <img
+          alt="logo"
+          src="https://i.ibb.co/17zsqj1/logo2.png"
+          width={176}
+          height={60}
+        />
       </a>
 
       <div className="md:hidden">
@@ -164,7 +169,7 @@ const Navbar = () => {
 
       <ul
         className={classNames(
-          "top-[77px] md:top-0 right-0 left-0 md:relative flex flex-col md:flex-row  *:uppercase *:font-semibold gap-x-3 bg-inherit md:bg-transparent text-center *:py-2 ",
+          "top-[77px] md:top-0 right-0 left-0 md:relative flex flex-col md:flex-row  *:uppercase *:font-semibold gap-x-3 bg-inherit md:bg-transparent text-center [&_a]:w-full [&_a]:py-2 [&_a]:inline-block ",
           !isOpen ? "hidden md:flex" : "absolute"
         )}
       >
@@ -188,13 +193,18 @@ const Navbar = () => {
 
 const Footer = () => {
   return (
-    <footer className="bg-[#111111] px-5 py-10 md:px-20 text-white ">
+    <footer className="bg-[#111111] px-5 py-10 md:px-10 lg:px-20 text-white ">
       <div className=" md:flex justify-between ">
         <a href="#home">
-          <img src="/src/assets/logo2.svg" alt="logo" width={176} height={60} />
+          <img
+            src="https://i.ibb.co/17zsqj1/logo2.png"
+            alt="logo"
+            width={176}
+            height={60}
+          />
         </a>
 
-        <ul className="hidden md:flex gap-x-28 [&_a]:block [&_a]:mb-2 [&_a]:text-sm [&_a]:font-normal [&_h3]:font-medium [&_h3]:text-2xl [&_h3]:mb-5">
+        <ul className="hidden md:flex gap-x-10 lg:gap-x-28 [&_a]:block [&_a]:mb-2 [&_a]:text-sm [&_a]:font-normal [&_h3]:font-medium [&_h3]:text-2xl [&_h3]:mb-5">
           <li>
             <h3>Company</h3>
             <a>About Us</a>
@@ -213,17 +223,18 @@ const Footer = () => {
           </li>
         </ul>
 
-        <ul className="md:hidden mt-10 mb-20 [&_a]:block [&_a]:mb-2 [&_a]:text-sm [&_a]:font-normal [&_h3]:font-medium [&_h3]:text-2xl [&_h3]:mb-5">
+        <ul className="md:hidden mt-10 mb-20 [&_a]:block [&_a]:mb-2 [&_a]:text-sm [&_a]:font-normal">
           <li>
             <Accordion
               sx={{
                 background: "transparent",
                 color: "white",
+                boxShadow: "unset",
               }}
             >
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
-                sx={{ padding: "0" }}
+                sx={{ fontWeight: 500 }}
                 aria-controls="panel1-content"
                 id="panel1-header"
               >
@@ -236,10 +247,16 @@ const Footer = () => {
             </Accordion>
           </li>
           <li>
-            <Accordion sx={{ background: "transparent", color: "white" }}>
+            <Accordion
+              sx={{
+                background: "transparent",
+                color: "white",
+                boxShadow: "unset",
+              }}
+            >
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
-                sx={{ padding: "0" }}
+                sx={{ fontWeight: 500 }}
                 aria-controls="panel2-content"
                 id="panel2-header"
               >
@@ -253,10 +270,16 @@ const Footer = () => {
             </Accordion>
           </li>
           <li>
-            <Accordion sx={{ background: "transparent", color: "white" }}>
+            <Accordion
+              sx={{
+                background: "transparent",
+                color: "white",
+                boxShadow: "unset",
+              }}
+            >
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
-                sx={{ padding: "0" }}
+                sx={{ fontWeight: 500 }}
                 aria-controls="panel3-content"
                 id="panel3-header"
               >
@@ -271,38 +294,18 @@ const Footer = () => {
         </ul>
       </div>
 
-      <ul className="flex items-center gap-4">
+      <ul className="flex items-center gap-3 *:w-10 *:inline-flex *:justify-center">
         <li>
-          <img
-            src="/src/assets/icons/Instagram.svg"
-            alt="instagram"
-            width={20}
-            height={20}
-          />
+          <InstagramIcon />
         </li>
         <li>
-          <img
-            src="/src/assets/icons/Facebook.svg"
-            alt="facebook"
-            width={10}
-            height={10}
-          />
+          <FacebookIcon />
         </li>
         <li>
-          <img
-            src="/src/assets/icons/Twitter.svg"
-            alt="twitter"
-            width={20}
-            height={20}
-          />
+          <TwitterIcon />
         </li>
         <li>
-          <img
-            src="/src/assets/icons/Linkedin.svg"
-            alt="linkedin"
-            width={20}
-            height={20}
-          />
+          <LinkedinIcon />
         </li>
       </ul>
 
