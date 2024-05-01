@@ -1,5 +1,5 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, Link } from "react-router-dom";
 import { Twirl as Hamburger } from "hamburger-react";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -32,14 +32,14 @@ const Navbar = () => {
 
   return (
     <nav className="absolute right-0 left-0 px-5 md:px-20 py-2 text-white flex items-center justify-between backdrop-blur-sm bg-[#1111111F] z-[1]">
-      <a href="#home">
+      <Link to="/">
         <img
           alt="logo"
           src="https://i.ibb.co/17zsqj1/logo2.png"
           width={176}
           height={60}
         />
-      </a>
+      </Link>
 
       <div className="md:hidden">
         <Hamburger size={20} toggled={isOpen} toggle={setOpen} />
@@ -52,18 +52,18 @@ const Navbar = () => {
         )}
       >
         <li className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-gray-800 transition duration-75 ease-in-out">
-          <a href="#home">home</a>
+          <Link to="/">about us</Link>
         </li>
         <li className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-gray-800">
-          <a href="#about-us">about us</a>
+          <Link to="/">Career</Link>
         </li>
         <li className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-gray-800">
-          <a href="#contact-us">contact us</a>
+          <Link to="/">faq</Link>
         </li>
       </ul>
 
       <button className="hidden md:block bg-green-500 py-3 px-6 font-semibold text-sm  hover:bg-green-700 transition-all duration-100  ease-in-out">
-        Get Started
+        Contact Us
       </button>
     </nav>
   );
@@ -73,14 +73,14 @@ const Footer = () => {
   return (
     <footer className="bg-[#111111] px-5 py-10 md:px-10 lg:px-20 text-white ">
       <div className=" md:flex justify-between ">
-        <a href="#home">
+        <Link to="/">
           <img
             src="https://i.ibb.co/17zsqj1/logo2.png"
             alt="logo"
             width={176}
             height={60}
           />
-        </a>
+        </Link>
 
         <ul className="hidden md:flex gap-x-10 lg:gap-x-28 [&_a]:block [&_a]:mb-2 [&_a]:text-sm [&_a]:font-normal [&_h3]:font-medium [&_h3]:text-2xl [&_h3]:mb-5">
           <li>

@@ -1,5 +1,6 @@
 import { MapIcon, PhoneIcon, CaretIcon } from "../assets/icons/index";
 import { Link } from "react-router-dom";
+import WaveSVG from "../assets/wave";
 
 const Home = () => {
   return (
@@ -18,10 +19,15 @@ const Home = () => {
             <Link to={"/booking"}>Book a Ticket</Link>
           </button>
         </div>
+        <div className="hidden md:block">
+          <WaveSVG />
+        </div>
+        <div className="md:hidden bg-blue-50 h-5 w-full absolute bottom-0 left-0 right-0 rounded-t-xl " />
       </section>
       {/* About us  */}
+
       <section
-        className="p-5 md:py-20 md:px-10 lg:px-44 bg-blue-50"
+        className="p-5 md:py-20 md:px-10 lg:px-44 bg-blue-50 relative"
         id="about-us"
       >
         <div className="flex flex-col md:flex-row justify-between flex-1 ">
@@ -57,6 +63,9 @@ const Home = () => {
             </a>
           </div>
         </div>
+        <div className="hidden md:block">
+          <WaveSVG />
+        </div>
       </section>
       {/* Contact us  */}
       <section
@@ -64,7 +73,7 @@ const Home = () => {
         id="contact-us"
       >
         <div className="flex flex-col md:flex-row justify-between flex-1">
-          <div className="md:w-1/2 flex flex-col md:items-center space-y-5 mb-16 ">
+          <div className="md:w-1/2 flex flex-col md:items-center space-y-5 md:mt-6 mb-16 ">
             <div className="flex items-center md:hidden">
               <span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 " />
               <h2 className="uppercase font-medium">Our Location</h2>
@@ -111,7 +120,7 @@ const Home = () => {
         </div>
       </section>
       {/* Extra */}
-      <section className="w-full h-[300px] flex md:flex-row-reverse items-center bg-boat bg-cover bg-no-repeat bg-center relative text-white">
+      {/* <section className="w-full h-[300px] flex md:flex-row-reverse items-center bg-boat bg-cover bg-no-repeat bg-center relative text-white">
         <div className="w-full h-full bg-gradient-to-b from-white/0 from-50% to-blue-500/40 absolute z-[1]" />
         <div className="bg-black/80 w-full h-full absolute" />
         <div className="md:w-1/2 z-[1] pl-5 md:pl-0">
@@ -122,7 +131,7 @@ const Home = () => {
             Get Started
           </button>
         </div>
-      </section>
+      </section> */}
     </>
   );
 };

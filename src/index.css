@@ -12,3 +12,29 @@
 html {
   box-sizing: border-box;
 }
+
+.custom-shape-divider-bottom-1714584326 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  transform: rotate(180deg);
+}
+
+.custom-shape-divider-bottom-1714584326 svg {
+  position: relative;
+  display: block;
+  width: calc(100% + 1.3px);
+  height: 65px;
+  transform: rotateY(180deg);
+}
+
+#about-us .custom-shape-divider-bottom-1714584326 .shape-fill {
+  fill: #fff;
+}
+
+#home .custom-shape-divider-bottom-1714584326 .shape-fill {
+  fill: #ebf0fa;
+}
