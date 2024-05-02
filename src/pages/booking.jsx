@@ -10,6 +10,7 @@ import classNames from "classnames";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { useForm } from "react-hook-form";
+import { BookingCTX } from "../context/BookingContext";
 
 const Booking = () => {
   const [value, setValue] = React.useState("1");
@@ -72,8 +73,10 @@ const BookingForm = ({ tab }) => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = () => {
-    //do stuff
+  const { setFormData } = React.useContext(BookingCTX);
+
+  const onSubmit = (formData) => {
+    setFormData(formData);
   };
 
   return (

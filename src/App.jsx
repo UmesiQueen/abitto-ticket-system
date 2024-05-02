@@ -12,14 +12,17 @@ import {
   LinkedinIcon,
   TwitterIcon,
 } from "./assets/icons/index";
+import BookingContext from "./context/BookingContext";
 
 function App() {
   return (
     <div className="relative overflow-hidden font-poppins">
       <Navbar />
-      <main>
-        <Outlet />
-      </main>
+      <BookingContext>
+        <main>
+          <Outlet />
+        </main>
+      </BookingContext>
       <Footer />
     </div>
   );
@@ -47,7 +50,7 @@ const Navbar = () => {
 
       <ul
         className={classNames(
-          "top-[77px] md:top-0 right-0 left-0 md:relative flex flex-col md:flex-row  *:uppercase *:font-semibold gap-x-3 bg-inherit md:bg-transparent text-center [&_a]:w-full [&_a]:py-2 [&_a]:inline-block ",
+          "top-[77px] md:top-0 right-0 left-0 md:relative flex flex-col md:flex-row  *:uppercase *:font-normal gap-x-3 bg-inherit md:bg-transparent text-center [&_a]:w-full [&_a]:py-2 [&_a]:inline-block ",
           !isOpen ? "hidden md:flex" : "absolute"
         )}
       >
