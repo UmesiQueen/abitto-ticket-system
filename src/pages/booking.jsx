@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React from "react";
+import * as React from "react";
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
@@ -9,11 +9,7 @@ import TabPanel from "@mui/lab/TabPanel";
 import classNames from "classnames";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import dayjs from "dayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { useForm } from "react-hook-form";
 
 const Booking = () => {
   const [value, setValue] = React.useState("1");
@@ -23,44 +19,45 @@ const Booking = () => {
   };
 
   return (
-    <div className="bg-hero-pattern min-h-[1100px] w-screen bg-cover bg-no-repeat bg-center relative ">
-      {/* <div className="bg-black/40 w-full h-full absolute z-0 " /> */}
-      <div className="h-fit px-5 md:px-0 pt-28 md:w-[690px] mx-auto pb-10 md:pb-0 ">
-        <Box sx={{ width: "100%", typography: "body1" }}>
-          <TabContext value={value}>
-            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-              <TabList
-                onChange={handleChange}
-                aria-label="booking ticket forms"
-              >
-                <Tab
-                  label="One-Way Trip"
-                  value="1"
-                  sx={{
-                    background: "#FFFFFF99",
-                    textTransform: "capitalize",
-                    fontFamily: "Poppins, sans-serif",
-                  }}
-                />
-                <Tab
-                  label="Round Trip"
-                  value="2"
-                  sx={{
-                    background: "#FFFFFF99",
-                    textTransform: "capitalize",
-                    fontFamily: "Poppins, sans-serif",
-                  }}
-                />
-              </TabList>
-            </Box>
-            <TabPanel value="1" sx={{ background: "#fff" }}>
-              <BookingForm tab="1" />
-            </TabPanel>
-            <TabPanel value="2" sx={{ background: "#fff" }}>
-              <BookingForm tab="2" />
-            </TabPanel>
-          </TabContext>
-        </Box>
+    <div className="bg-hero-pattern min-h-[1230px] w-screen bg-cover bg-no-repeat bg-center relative ">
+      <div className="bg-black/40 w-full h-full absolute z-0 ">
+        <div className="px-5 md:px-0 pt-28 md:w-[690px] mx-auto pb-10 md:pb-0 ">
+          <Box sx={{ width: "100%", typography: "body1" }}>
+            <TabContext value={value}>
+              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                <TabList
+                  onChange={handleChange}
+                  aria-label="booking ticket forms"
+                >
+                  <Tab
+                    label="One-Way Trip"
+                    value="1"
+                    sx={{
+                      background: "#FFFFFF99",
+                      textTransform: "capitalize",
+                      fontFamily: "Poppins, sans-serif",
+                    }}
+                  />
+                  <Tab
+                    label="Round Trip"
+                    value="2"
+                    sx={{
+                      background: "#FFFFFF99",
+                      textTransform: "capitalize",
+                      fontFamily: "Poppins, sans-serif",
+                    }}
+                  />
+                </TabList>
+              </Box>
+              <TabPanel value="1" sx={{ background: "#fff" }}>
+                <BookingForm tab="one-way" />
+              </TabPanel>
+              <TabPanel value="2" sx={{ background: "#fff" }}>
+                <BookingForm tab="round" />
+              </TabPanel>
+            </TabContext>
+          </Box>
+        </div>
       </div>
     </div>
   );
@@ -69,56 +66,94 @@ const Booking = () => {
 export default Booking;
 
 const BookingForm = ({ tab }) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = () => {
+    //do stuff
+  };
+
   return (
-    <form className="font-poppins md:p-5 [&_label]:text-xs md:[&_label]:text-sm [&_label]:w-full [&_label]:flex [&_label]:gap-3 [&_label]:flex-col ">
+    <form onSubmit={handleSubmit(onSubmit)} className="font-poppins md:p-5 ">
       <div className="space-y-5">
         <h3 className="font-medium text-base ">Booking Details</h3>
 
         <SelectField
-          id="travel_from"
+          {...register("travel_from", { required: true })}
           label="Travelling From"
           placeholder="Select Departure Terminal"
-          options={["calabar", "uyo"]}
+          options={["Calabar", "Uyo"]}
+          errors={errors}
         />
 
         <SelectField
-          id="travel_to"
+          {...register("travel_to", { required: true })}
           label="Travelling To"
           placeholder="Select Arrival Terminal"
-          options={["calabar", "uyo"]}
+          options={["Calabar", "Uyo"]}
+          errors={errors}
         />
 
         {/* Departure Date */}
         <div
           className={classNames(
             "flex gap-5",
-            tab === "1" ? "flex-wrap md:flex-nowrap" : ""
+            tab === "one-way" ? "flex-wrap md:flex-nowrap" : ""
           )}
         >
-          <DateField id="departure_date" label="Date of Departure" />
-          <TimeField id="departure_time" label="Time of Departure" />
+          <InputField
+            {...register("departure_date", { required: true })}
+            label="Date of Departure"
+            placeholder="02/04/2024"
+            type="date"
+            errors={errors}
+          />
+          <InputField
+            {...register("departure_time", { required: true })}
+            label="Time of Departure"
+            placeholder="08:00PM"
+            type="time"
+            errors={errors}
+          />
         </div>
 
         {/* Round Trip */}
-        {tab === "2" && (
+        {tab === "round" && (
           <div className="flex gap-5">
-            <DateField id="return_date" label="Date of Return" />
-            <TimeField id="departure_date" label="Time of Return" />
+            <InputField
+              {...register("return_date", { required: true })}
+              label="Date of Return"
+              placeholder="02/04/2024"
+              type="date"
+              errors={errors}
+            />
+            <InputField
+              {...register("return_time", { required: true })}
+              label="Time of Return"
+              placeholder="08:00PM"
+              type="time"
+              errors={errors}
+            />
           </div>
         )}
 
         <div className="flex gap-5">
           <SelectField
-            id="adults_number"
+            {...register("adults_number", { required: true })}
             label="No. of Adults"
             placeholder="1"
-            options={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
+            options={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}
+            errors={errors}
           />
           <SelectField
-            id="children_number"
+            {...register("children_number")}
             label="No. of Children"
             placeholder="1"
-            options={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
+            options={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}
+            errors={errors}
           />
         </div>
       </div>
@@ -127,30 +162,34 @@ const BookingForm = ({ tab }) => {
         <h3 className="font-medium text-base ">Passenger Details</h3>
         <div className="flex gap-5">
           <InputField
-            id="first_name"
+            {...register("first_name", { required: true })}
             label="First Name"
             placeholder="john"
             type="text"
+            errors={errors}
           />
           <InputField
-            id="surname"
+            {...register("surname", { required: true })}
             label="Surname"
             placeholder="doe"
             type="text"
+            errors={errors}
           />
         </div>
         <div className="flex flex-wrap md:flex-nowrap gap-5">
           <InputField
-            id="email"
+            {...register("email", { required: true })}
             label="Email Address"
             placeholder="johndoe@gmail.com"
             type="email"
+            errors={errors}
           />
           <InputField
-            id="phone_number"
+            {...register("phone_number", { required: true })}
             label="Phone Number"
             placeholder="(+234) XXXX XXX XXX"
             type="tel"
+            errors={errors}
           />
         </div>
       </div>
@@ -165,113 +204,73 @@ const BookingForm = ({ tab }) => {
   );
 };
 
-const InputField = ({ id, label, type, placeholder }) => {
-  return (
-    <label className="text-sm w-full flex gap-3 flex-col ">
-      {label}
-      <input
-        id={id}
-        type={type}
-        className="bg-blue-50 p-3 border border-blue-500 font-normal text-xs w-full rounded-none "
-        placeholder={placeholder}
-      />
-    </label>
-  );
-};
+// eslint-disable-next-line react/display-name
+const InputField = React.forwardRef((props, ref) => {
+  const { name, errors, label } = props;
 
-const SelectField = ({ id, label, placeholder, options }) => {
-  const [departure, setDeparture] = React.useState("");
+  return (
+    <div className="flex flex-col w-full">
+      <label className="text-sm w-full flex gap-3 flex-col ">
+        {label}
+        <input
+          {...props}
+          ref={ref}
+          className="bg-blue-50 p-3 border border-blue-500 font-normal text-xs w-full rounded-none "
+        />
+      </label>
+      {errors?.[name] && (
+        <p className="text-xs pt-2 text-red-700">Field is required.</p>
+      )}
+    </div>
+  );
+});
+
+// eslint-disable-next-line react/display-name
+const SelectField = React.forwardRef((props, ref) => {
+  const { label, placeholder, options, name, errors } = props;
+  const [value, setValue] = React.useState("");
 
   const handleChange = (event) => {
-    setDeparture(event.target.value);
+    setValue(event.target.value);
   };
 
   return (
-    <label className="text-sm w-full flex gap-3 flex-col ">
-      {label}
-      <Select
-        id={id}
-        value={departure}
-        onChange={handleChange}
-        displayEmpty
-        renderValue={
-          departure !== ""
-            ? undefined
-            : () => (
-                <span className="noTranslate text-xs font-poppins text-[#9fa6b2]">
-                  {placeholder}
-                </span>
-              )
-        }
-        className="bg-blue-50 h-10 border border-blue-500 font-normal text-xs w-full !rounded-none"
-      >
-        {options.map((option, index) => {
-          return (
-            <MenuItem value={option} className="capitalize" key={index}>
-              {option}
-            </MenuItem>
-          );
-        })}
-      </Select>
-    </label>
-  );
-};
-
-const DateField = ({ id, label }) => {
-  const [value, setValue] = React.useState(dayjs("21/04/2024"));
-
-  return (
-    <label className="text-sm w-full flex gap-3 flex-col ">
-      {label}
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <DatePicker
-          id={id}
+    <div className="flex flex-col w-full">
+      <label className="text-sm w-full flex gap-3 flex-col ">
+        {label}
+        <Select
+          ref={ref}
+          {...props}
           value={value}
-          onChange={(newValue) => setValue(newValue)}
-          sx={{
-            "& .MuiInputBase-root": {
-              height: "44px",
-              borderRadius: "0",
-              borderColor: "#3366CC",
-              borderWidth: "1px",
-              padding: "0 12px",
-              backgroundColor: "#ebf0fa",
-            },
-          }}
-          slotProps={{
-            textField: { variant: "standard" },
-          }}
-        />
-      </LocalizationProvider>
-    </label>
+          onChange={handleChange}
+          displayEmpty
+          renderValue={
+            value !== ""
+              ? undefined
+              : () => (
+                  <span className="noTranslate text-xs font-poppins text-[#9fa6b2]">
+                    {placeholder}
+                  </span>
+                )
+          }
+          sx={{ "& .MuiOutlinedInput-notchedOutline": { display: "none" } }}
+          className="bg-blue-50 h-10 border border-blue-500 font-normal text-xs w-full !rounded-none"
+        >
+          {options.map((option, index) => {
+            return (
+              <MenuItem value={option} key={index}>
+                {option}
+              </MenuItem>
+            );
+          })}
+        </Select>
+      </label>
+      {errors?.[name] && (
+        <p className="text-xs pt-2 text-red-700">Field is required.</p>
+      )}
+    </div>
   );
-};
-
-const TimeField = ({ id, label }) => {
-  return (
-    <label className="text-sm w-full flex gap-3 flex-col">
-      {label}
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <TimePicker
-          id={id}
-          sx={{
-            "& .MuiInputBase-root": {
-              height: "44px",
-              borderRadius: "0",
-              borderColor: "#3366CC",
-              borderWidth: "1px",
-              padding: "0 12px",
-              backgroundColor: "#ebf0fa",
-            },
-          }}
-          slotProps={{
-            textField: { variant: "standard" },
-          }}
-        />
-      </LocalizationProvider>
-    </label>
-  );
-};
+});
 
 // const StyledTabList = styled((props) => (
 //   <TabList
