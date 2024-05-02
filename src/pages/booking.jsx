@@ -75,13 +75,17 @@ const BookingForm = ({ tab }) => {
         <h3 className="font-medium text-base ">Booking Details</h3>
 
         <SelectField
+          id="travel_from"
           label="Travelling From"
           placeholder="Select Departure Terminal"
+          options={["calabar", "uyo"]}
         />
 
         <SelectField
+          id="travel_to"
           label="Travelling To"
           placeholder="Select Arrival Terminal"
+          options={["calabar", "uyo"]}
         />
 
         {/* Departure Date */}
@@ -91,35 +95,59 @@ const BookingForm = ({ tab }) => {
             tab === "1" ? "flex-wrap md:flex-nowrap" : ""
           )}
         >
-          <DateField label="Date of Departure" />
-          <TimeField label="Time of Departure" />
+          <DateField id="departure_date" label="Date of Departure" />
+          <TimeField id="departure_time" label="Time of Departure" />
         </div>
+
         {/* Round Trip */}
         {tab === "2" && (
           <div className="flex gap-5">
-            <DateField label="Date of Return" />
-            <TimeField label="Time of Return" />
+            <DateField id="return_date" label="Date of Return" />
+            <TimeField id="departure_date" label="Time of Return" />
           </div>
         )}
+
         <div className="flex gap-5">
-          <InputField label="No. of Adults" placeholder="1" type="number" />
-          <InputField label="No. of Children" placeholder="1" type="number" />
+          <SelectField
+            id="adults_number"
+            label="No. of Adults"
+            placeholder="1"
+            options={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
+          />
+          <SelectField
+            id="children_number"
+            label="No. of Children"
+            placeholder="1"
+            options={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
+          />
         </div>
       </div>
 
       <div className=" mt-10 space-y-5">
         <h3 className="font-medium text-base ">Passenger Details</h3>
         <div className="flex gap-5">
-          <InputField label="First Name" placeholder="john" type="text" />
-          <InputField label="Surname:" placeholder="doe" type="text" />
+          <InputField
+            id="first_name"
+            label="First Name"
+            placeholder="john"
+            type="text"
+          />
+          <InputField
+            id="surname"
+            label="Surname"
+            placeholder="doe"
+            type="text"
+          />
         </div>
         <div className="flex flex-wrap md:flex-nowrap gap-5">
           <InputField
+            id="email"
             label="Email Address"
             placeholder="johndoe@gmail.com"
             type="email"
           />
           <InputField
+            id="phone_number"
             label="Phone Number"
             placeholder="(+234) XXXX XXX XXX"
             type="tel"
@@ -137,21 +165,21 @@ const BookingForm = ({ tab }) => {
   );
 };
 
-const InputField = ({ label, type, placeholder }) => {
+const InputField = ({ id, label, type, placeholder }) => {
   return (
     <label className="text-sm w-full flex gap-3 flex-col ">
       {label}
       <input
+        id={id}
         type={type}
-        min={0}
-        className="bg-blue-50 p-3 border border-blue-500 font-normal text-xs w-full "
+        className="bg-blue-50 p-3 border border-blue-500 font-normal text-xs w-full rounded-none "
         placeholder={placeholder}
       />
     </label>
   );
 };
 
-const SelectField = ({ label, placeholder }) => {
+const SelectField = ({ id, label, placeholder, options }) => {
   const [departure, setDeparture] = React.useState("");
 
   const handleChange = (event) => {
@@ -162,7 +190,7 @@ const SelectField = ({ label, placeholder }) => {
     <label className="text-sm w-full flex gap-3 flex-col ">
       {label}
       <Select
-        id="demo-simple-select"
+        id={id}
         value={departure}
         onChange={handleChange}
         displayEmpty
@@ -177,14 +205,19 @@ const SelectField = ({ label, placeholder }) => {
         }
         className="bg-blue-50 h-10 border border-blue-500 font-normal text-xs w-full !rounded-none"
       >
-        <MenuItem value="calabar">Calabar</MenuItem>
-        <MenuItem value="uyo">Uyo</MenuItem>
+        {options.map((option, index) => {
+          return (
+            <MenuItem value={option} className="capitalize" key={index}>
+              {option}
+            </MenuItem>
+          );
+        })}
       </Select>
     </label>
   );
 };
 
-const DateField = ({ label }) => {
+const DateField = ({ id, label }) => {
   const [value, setValue] = React.useState(dayjs("21/04/2024"));
 
   return (
@@ -192,6 +225,7 @@ const DateField = ({ label }) => {
       {label}
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DatePicker
+          id={id}
           value={value}
           onChange={(newValue) => setValue(newValue)}
           sx={{
@@ -213,12 +247,13 @@ const DateField = ({ label }) => {
   );
 };
 
-const TimeField = ({ label }) => {
+const TimeField = ({ id, label }) => {
   return (
     <label className="text-sm w-full flex gap-3 flex-col">
       {label}
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <TimePicker
+          id={id}
           sx={{
             "& .MuiInputBase-root": {
               height: "44px",
