@@ -10,6 +10,8 @@ import classNames from "classnames";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import ClipLoader from "react-spinners/ClipLoader";
 import { BookingCTX } from "../context/BookingContext";
 
 const Booking = () => {
@@ -73,10 +75,18 @@ const BookingForm = ({ tab }) => {
     formState: { errors },
   } = useForm();
 
+  const [loading, setLoading] = React.useState(false);
   const { setFormData } = React.useContext(BookingCTX);
+  const navigate = useNavigate();
 
   const onSubmit = (formData) => {
     setFormData(formData);
+    setLoading(true);
+
+    setTimeout(() => {
+      setLoading(false);
+      navigate("/ticket-summary");
+    }, 3000);
   };
 
   return (
@@ -148,7 +158,7 @@ const BookingForm = ({ tab }) => {
             {...register("adults_number", { required: true })}
             label="No. of Adults"
             placeholder="1"
-            options={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}
+            options={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
             errors={errors}
           />
           <SelectField
@@ -199,9 +209,18 @@ const BookingForm = ({ tab }) => {
 
       <button
         type="submit"
-        className="mt-10 bg-green-500 py-3 px-6 font-semibold text-sm  hover:bg-green-700 transition-all duration-100  ease-in-out text-white"
+        className="mt-10 bg-green-500 h-12 w-36 flex items-center justify-center font-semibold text-sm hover:bg-green-700 transition-all duration-100 ease-in-out text-white"
       >
-        Search Trip
+        {loading ? (
+          <ClipLoader
+            color="#fff"
+            loading={loading}
+            size={30}
+            aria-label="Loading Spinner"
+          />
+        ) : (
+          "Search Trip"
+        )}
       </button>
     </form>
   );
