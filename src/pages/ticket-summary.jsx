@@ -1,5 +1,12 @@
 import React from "react";
 import { BookingCTX } from "../context/BookingContext";
+import {
+  ChairIcon,
+  InformationCircleIcon,
+  CalendarIcon,
+  BoatIcon,
+  ClockIcon,
+} from "../assets/icons/index";
 
 const TicketSummary = () => {
   const { formData } = React.useContext(BookingCTX);
@@ -19,7 +26,9 @@ const TicketSummary = () => {
               <p className="text-[#8E98A8] text-sm">
                 {formData?.travel_from} =={">"} {formData?.travel_to}
               </p>
-              <p className="text-[#8E98A8] text-sm">Non-refundable </p>
+              <p className="text-[#8E98A8] text-sm inline-flex items-center gap-1">
+                Non-refundable <InformationCircleIcon />
+              </p>
             </div>
 
             <div className="mt-6">
@@ -29,14 +38,20 @@ const TicketSummary = () => {
               </p>
             </div>
 
-            <div className="mt-6 text-[#1E1E1E] text-xs md:text-sm font-normal">
+            <div className="mt-6 text-[#1E1E1E] text-xs md:text-sm font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
               <div className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
-                <p>{formData?.departure_date}</p>
-                <p>{formData?.departure_time}</p>
-                <p>Seats: L3 & B2 </p>
+                <p>
+                  <CalendarIcon /> {formData?.departure_date}
+                </p>
+                <p>
+                  <ClockIcon /> {formData?.departure_time}
+                </p>
+                <p>
+                  <ChairIcon /> Seats: L3 & B2
+                </p>
               </div>
               <p>
-                Departure trip:{" "}
+                <BoatIcon /> Departure trip:{" "}
                 {Number(formData?.adults_number) +
                   Number(formData?.children_number)}{" "}
                 passenger(s)
