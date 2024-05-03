@@ -5,13 +5,10 @@ export const BookingCTX = React.createContext();
 
 const BookingContext = ({ children }) => {
   const [formData, setFormData] = React.useState("");
-
-  React.useEffect(() => {
-    console.log(formData, ">>> form data");
-  }, [formData]);
+  const [alert, setAlert] = React.useState(false);
 
   return (
-    <BookingCTX.Provider value={{ formData, setFormData }}>
+    <BookingCTX.Provider value={{ formData, setFormData, alert, setAlert }}>
       {children}
     </BookingCTX.Provider>
   );

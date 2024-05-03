@@ -1,5 +1,5 @@
 import React from "react";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import { Twirl as Hamburger } from "hamburger-react";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -15,6 +15,12 @@ import {
 import BookingContext from "./context/BookingContext";
 
 function App() {
+  const pathname = useLocation();
+
+  React.useEffect(() => {
+    if (window.scrollY !== 0) window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [pathname]);
+
   return (
     <div className="relative overflow-hidden font-poppins">
       <Navbar />

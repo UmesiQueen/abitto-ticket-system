@@ -12,10 +12,12 @@ import Select from "@mui/material/Select";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
+import Alert from "@mui/material/Alert";
 import { BookingCTX } from "../context/BookingContext";
 
 const Booking = () => {
   const [value, setValue] = React.useState("1");
+  const { alert } = React.useContext(BookingCTX);
 
   const handleChange = (_, newValue) => {
     setValue(newValue);
@@ -62,6 +64,24 @@ const Booking = () => {
           </Box>
         </div>
       </div>
+      {alert && (
+        <div className="absolute top-24 w-fit left-0 right-0 mx-auto ">
+          <Alert
+            variant="outlined"
+            className=" backdrop-blur"
+            sx={{
+              color: "#fff",
+              borderColor: "#799D2E",
+              borderWidth: "2px",
+              backgroundColor: "#84ad3383",
+              "& .MuiAlert-icon": { color: "#fff" },
+            }}
+            severity="info"
+          >
+            Please a book a ticket to view summary.
+          </Alert>
+        </div>
+      )}
     </div>
   );
 };
@@ -78,9 +98,10 @@ const BookingForm = ({ tab }) => {
   const [loading, setLoading] = React.useState(false);
   const { setFormData } = React.useContext(BookingCTX);
   const navigate = useNavigate();
+  const ticketId = React.useId();
 
   const onSubmit = (formData) => {
-    setFormData(formData);
+    setFormData({ ticketId, ...formData });
     setLoading(true);
 
     setTimeout(() => {
