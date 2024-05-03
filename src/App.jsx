@@ -12,7 +12,6 @@ import {
   LinkedinIcon,
   TwitterIcon,
 } from "./assets/icons/index";
-import BookingContext from "./context/BookingContext";
 
 function App() {
   const pathname = useLocation();
@@ -24,11 +23,9 @@ function App() {
   return (
     <div className="relative overflow-hidden font-poppins">
       <Navbar />
-      <BookingContext>
-        <main>
-          <Outlet />
-        </main>
-      </BookingContext>
+      <main className="min-h-screen bg-blue-950">
+        <Outlet />
+      </main>
       <Footer />
     </div>
   );

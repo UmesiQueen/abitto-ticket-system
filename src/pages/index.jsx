@@ -11,7 +11,7 @@ const Home = () => {
         className="bg-hero-pattern h-screen w-screen bg-cover bg-no-repeat bg-center flex items-center relative "
       >
         <div className="bg-black/40 w-full h-full absolute " />
-        <div className="w-[300px] md:w-[440px] pl-5 md:pl-20 space-y-10 z-[1]">
+        <div className="w-[300px] md:w-[440px] pl-5 md:pl-20 space-y-10 z-[1] pt-[78px]">
           <p className="font-semibold text-2xl md:text-[40px] text-white md:leading-10">
             The Easiest & Safest way to travel within Nigeria & Africa
           </p>
@@ -69,7 +69,7 @@ const Home = () => {
       </section>
       {/* Contact us  */}
       <section
-        className="py-10 px-5 md:py-20 md:px-10 lg:px-44"
+        className="py-10 px-5 md:py-20 md:px-10 lg:px-44 bg-white"
         id="contact-us"
       >
         <div className="flex flex-col md:flex-row justify-between flex-1">
@@ -119,19 +119,6 @@ const Home = () => {
           </div>
         </div>
       </section>
-      {/* Extra */}
-      {/* <section className="w-full h-[300px] flex md:flex-row-reverse items-center bg-boat bg-cover bg-no-repeat bg-center relative text-white">
-        <div className="w-full h-full bg-gradient-to-b from-white/0 from-50% to-blue-500/40 absolute z-[1]" />
-        <div className="bg-black/80 w-full h-full absolute" />
-        <div className="md:w-1/2 z-[1] pl-5 md:pl-0">
-          <p className="font-semibold text-2xl mb-8">
-            Get started on your <br /> journey with us today!
-          </p>
-          <button className="bg-green-500 py-3 px-6 font-semibold text-sm hover:bg-green-700 transition-all duration-100 ease-in-out">
-            Get Started
-          </button>
-        </div>
-      </section> */}
     </>
   );
 };

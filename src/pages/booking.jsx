@@ -134,7 +134,7 @@ const BookingForm = ({ tab }) => {
         {/* Departure Date */}
         <div
           className={classNames(
-            "flex gap-5",
+            "flex gap-5 w-full",
             tab === "one-way" ? "flex-wrap md:flex-nowrap" : ""
           )}
         >
@@ -156,7 +156,7 @@ const BookingForm = ({ tab }) => {
 
         {/* Round Trip */}
         {tab === "round" && (
-          <div className="flex gap-5">
+          <div className="flex gap-5 w-full">
             <InputField
               {...register("return_date", { required: true })}
               label="Date of Return"
@@ -258,7 +258,7 @@ const InputField = React.forwardRef((props, ref) => {
         <input
           {...props}
           ref={ref}
-          className="bg-blue-50 p-3 border border-blue-500 font-normal text-xs w-full rounded-none "
+          className="h-10 bg-blue-50 p-3 border border-blue-500 font-normal text-xs w-full rounded-none "
         />
       </label>
       {errors?.[name] && (
