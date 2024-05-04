@@ -11,7 +11,7 @@ const ProtectedRoute = ({ children }) => {
 
     setTimeout(() => {
       setAlert(false);
-    }, 5000);
+    }, 3500);
   };
 
   if (!formData?.ticketId) {

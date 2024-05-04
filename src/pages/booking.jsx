@@ -116,7 +116,7 @@ const BookingForm = ({ tab }) => {
         <h3 className="font-medium text-base ">Booking Details</h3>
 
         <SelectField
-          {...register("travel_from", { required: true })}
+          {...register("travel_from", { required: "Field is required." })}
           label="Travelling From"
           placeholder="Select Departure Terminal"
           options={["Calabar", "Uyo"]}
@@ -124,7 +124,7 @@ const BookingForm = ({ tab }) => {
         />
 
         <SelectField
-          {...register("travel_to", { required: true })}
+          {...register("travel_to", { required: "Field is required." })}
           label="Travelling To"
           placeholder="Select Arrival Terminal"
           options={["Calabar", "Uyo"]}
@@ -139,17 +139,23 @@ const BookingForm = ({ tab }) => {
           )}
         >
           <InputField
-            {...register("departure_date", { required: true })}
+            {...register("departure_date", { required: "Field is required." })}
             label="Date of Departure"
             placeholder="02/04/2024"
             type="date"
             errors={errors}
           />
-          <InputField
-            {...register("departure_time", { required: true })}
+          <SelectField
+            {...register("departure_time", { required: "Field is required." })}
             label="Time of Departure"
-            placeholder="08:00PM"
-            type="time"
+            placeholder="08:00AM - 08:30AM"
+            options={[
+              "08:00AM - 8:30AM",
+              "10:00AM - 10:30AM",
+              "12:00PM - 12:30PM",
+              "02:00PM - 02:30PM",
+              "04:30PM - 05:00PM",
+            ]}
             errors={errors}
           />
         </div>
@@ -158,17 +164,23 @@ const BookingForm = ({ tab }) => {
         {tab === "round" && (
           <div className="flex gap-5 w-full">
             <InputField
-              {...register("return_date", { required: true })}
+              {...register("return_date", { required: "Field is required." })}
               label="Date of Return"
               placeholder="02/04/2024"
               type="date"
               errors={errors}
             />
-            <InputField
-              {...register("return_time", { required: true })}
+            <SelectField
+              {...register("return_time", { required: "Field is required." })}
               label="Time of Return"
-              placeholder="08:00PM"
-              type="time"
+              placeholder="08:00AM - 08:30AM"
+              options={[
+                "08:00AM - 8:30AM",
+                "10:00AM - 10:30AM",
+                "12:00PM - 12:30PM",
+                "02:00PM - 02:30PM",
+                "04:30PM - 05:00PM",
+              ]}
               errors={errors}
             />
           </div>
@@ -176,7 +188,7 @@ const BookingForm = ({ tab }) => {
 
         <div className="flex gap-5">
           <SelectField
-            {...register("adults_number", { required: true })}
+            {...register("adults_number", { required: "Field is required." })}
             label="No. of Adults"
             placeholder="1"
             options={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
@@ -196,14 +208,14 @@ const BookingForm = ({ tab }) => {
         <h3 className="font-medium text-base ">Passenger Details</h3>
         <div className="flex gap-5">
           <InputField
-            {...register("first_name", { required: true })}
+            {...register("first_name", { required: "Field is required." })}
             label="First Name"
             placeholder="john"
             type="text"
             errors={errors}
           />
           <InputField
-            {...register("surname", { required: true })}
+            {...register("surname", { required: "Field is required." })}
             label="Surname"
             placeholder="doe"
             type="text"
@@ -212,14 +224,14 @@ const BookingForm = ({ tab }) => {
         </div>
         <div className="flex flex-wrap md:flex-nowrap gap-5">
           <InputField
-            {...register("email", { required: true })}
+            {...register("email", { required: "Field is required." })}
             label="Email Address"
             placeholder="johndoe@gmail.com"
             type="email"
             errors={errors}
           />
           <InputField
-            {...register("phone_number", { required: true })}
+            {...register("phone_number", { required: "Field is required." })}
             label="Phone Number"
             placeholder="(+234) XXXX XXX XXX"
             type="tel"
@@ -253,16 +265,16 @@ const InputField = React.forwardRef((props, ref) => {
 
   return (
     <div className="flex flex-col w-full">
-      <label className="text-sm w-full flex gap-3 flex-col ">
+      <label className="text-sm !w-full flex gap-3 flex-col ">
         {label}
         <input
           {...props}
           ref={ref}
-          className="h-10 bg-blue-50 p-3 border border-blue-500 font-normal text-xs w-full rounded-none "
+          className="h-10 bg-blue-50 p-3 border border-blue-500 font-normal text-xs !min-w-full rounded-none "
         />
       </label>
       {errors?.[name] && (
-        <p className="text-xs pt-2 text-red-700">Field is required.</p>
+        <p className="text-xs pt-2 text-red-700">{errors?.[name].message}</p>
       )}
     </div>
   );
@@ -296,7 +308,9 @@ const SelectField = React.forwardRef((props, ref) => {
                   </span>
                 )
           }
-          sx={{ "& .MuiOutlinedInput-notchedOutline": { display: "none" } }}
+          sx={{
+            "& .MuiOutlinedInput-notchedOutline": { display: "none" },
+          }}
           className="bg-blue-50 h-10 border border-blue-500 font-normal text-xs w-full !rounded-none"
         >
           {options.map((option, index) => {

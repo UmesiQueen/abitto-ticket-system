@@ -7,6 +7,8 @@ import {
   BoatIcon,
   ClockIcon,
 } from "../assets/icons/index";
+import { format } from "date-fns";
+import { formatValue } from "react-currency-input-field";
 
 const TicketSummary = () => {
   const { formData } = React.useContext(BookingCTX);
@@ -34,14 +36,22 @@ const TicketSummary = () => {
             <div className="mt-6">
               <h4 className="font-semibold mb-1">Terminals</h4>
               <p className="text-xs">
-                {formData?.travel_from} Terminal - Marina Terminal
+                {formData?.travel_from.match("Calabar")
+                  ? "Marina"
+                  : "Nwaniba Timber Beach"}{" "}
+                Terminal -{" "}
+                {formData?.travel_to.match("Calabar")
+                  ? "Marina"
+                  : "Nwaniba Timber Beach"}{" "}
+                Terminal
               </p>
             </div>
 
             <div className="mt-6 text-[#1E1E1E] text-xs md:text-sm font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
               <div className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
                 <p>
-                  <CalendarIcon /> {formData?.departure_date}
+                  <CalendarIcon />
+                  {format(new Date(formData?.departure_date), "PP")}
                 </p>
                 <p>
                   <ClockIcon /> {formData?.departure_time}
@@ -63,15 +73,24 @@ const TicketSummary = () => {
                 <tbody>
                   <tr>
                     <td className="text-xs text-[#444444]">Ride Insurance</td>
-                    <td className="text-xs text-[#444444]">₦2,020</td>
+                    <td className="text-xs text-[#444444]">₦0.00</td>
                   </tr>
                   <tr>
                     <td className="text-xs text-[#444444]">Ticket Price</td>
-                    <td className="text-xs text-[#444444]">₦16,000</td>
+                    <td className="text-xs text-[#444444]">₦1,000</td>
                   </tr>
                   <tr>
                     <td className="font-medium text-base">Ticket:</td>
-                    <td className="font-medium text-base">₦18,020</td>
+                    <td className="font-medium text-base">
+                      ₦
+                      {formatValue({
+                        value: String(
+                          (Number(formData?.adults_number) +
+                            Number(formData?.children_number)) *
+                            1000
+                        ),
+                      })}
+                    </td>
                   </tr>
                 </tbody>
               </table>

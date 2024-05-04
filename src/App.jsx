@@ -23,7 +23,7 @@ function App() {
   return (
     <div className="relative overflow-hidden font-poppins">
       <Navbar />
-      <main className="min-h-screen bg-blue-950">
+      <main className="min-h-[70vh] bg-blue-950">
         <Outlet />
       </main>
       <Footer />
