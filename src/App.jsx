@@ -68,7 +68,7 @@ const Navbar = () => {
         </li>
       </ul>
 
-      <button className="hidden md:block bg-green-500 py-3 px-6 font-semibold text-sm  hover:bg-green-700 transition-all duration-100  ease-in-out">
+      <button className="hidden md:block text-white bg-blue-500 py-3 px-6 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out">
         Contact Us
       </button>
     </nav>

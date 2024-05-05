@@ -1,5 +1,8 @@
+import React from "react";
 import { MapIcon, PhoneIcon, CaretIcon } from "../assets/icons/index";
 import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import Alert from "@mui/material/Alert";
 import WaveSVG from "../assets/wave";
 
 const Home = () => {
@@ -15,7 +18,7 @@ const Home = () => {
           <p className="font-semibold text-2xl md:text-[40px] text-white md:leading-10">
             The Easiest & Safest way to travel within Nigeria & Africa
           </p>
-          <button className="border-2 border-green-500 text-green-500 py-3 px-6 font-semibold text-sm  hover:border-green-300 hover:text-green-300 transition-all duration-100  ease-in-out ">
+          <button className="text-white bg-blue-500 py-3 px-6 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out ">
             <Link to={"/booking"}>Book a Ticket</Link>
           </button>
         </div>
@@ -24,8 +27,8 @@ const Home = () => {
         </div>
         <div className="md:hidden bg-blue-50 h-5 w-full absolute bottom-0 left-0 right-0 rounded-t-xl " />
       </section>
-      {/* About us  */}
 
+      {/* About us  */}
       <section
         className="p-5 md:py-20 md:px-10 lg:px-44 bg-blue-50 relative"
         id="about-us"
@@ -47,15 +50,16 @@ const Home = () => {
             </div>
 
             <p className="font-medium text-2xl ">
-              We offer comprehensive range of stand-alone and integrated
-              services on time and on budget.
+              Welcome to Abitto, where innovation meets reliability in public
+              water travel.
             </p>
             <p className="text-black/80">
-              Lorem ipsum dolor sit amet consectetur. Semper pharetra erat enim
-              purus viverra neque aliquam leo non. Ac platea lectus sociis
-              ornare condimentum euismod. Euismod pellentesque vestibulum
-              tristique at nunc placerat consectetur eu aenean. Auctor sagittis
-              urna imperdiet pharetra.
+              At Abitto, we're not just ferrying passengers; we're transforming
+              the way you experience water transportation. With a focus on
+              cutting-edge technology and unwavering safety protocols, we ensure
+              your journey is not only convenient but also intelligent. Join us
+              aboard Abitto, where every trip is a testament to our commitment
+              to excellence and your peace of mind.
             </p>
             <a className="text-blue-500 flex items-center gap-3 cursor-pointer">
               <span className="underline font-medium">Learn more</span>
@@ -67,6 +71,7 @@ const Home = () => {
           <WaveSVG />
         </div>
       </section>
+
       {/* Contact us  */}
       <section
         className="py-10 px-5 md:py-20 md:px-10 lg:px-44 bg-white"
@@ -95,27 +100,16 @@ const Home = () => {
               </li>
               <li>
                 <PhoneIcon />
-                <p>+234 XXXX XXX XXXX</p>
+                <a href="tel:+234 813 047 8003">+234 813 047 8003</a>
               </li>
             </ul>
           </div>
-          <div className="md:w-1/2 space-y-5">
+          <div className="md:w-1/2 space-y-5 relative">
             <div className="flex items-center">
               <span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 " />
               <h2 className="uppercase font-medium">Contact us</h2>
             </div>
-            <form className="flex flex-col gap-y-5 *:bg-[#EEEEEE] *:p-2">
-              <input type="text" placeholder="Name" />
-              <input type="email" placeholder="Email address" />
-              <textarea
-                rows={8}
-                placeholder="Type message here..."
-                className=" resize-none"
-              />
-              <button className=" border-2 border-green-500 text-green-500 py-3 px-6 font-semibold text-sm !bg-transparent self-start">
-                Send Request
-              </button>
-            </form>
+            <ContactForm />
           </div>
         </div>
       </section>
@@ -124,3 +118,86 @@ const Home = () => {
 };
 
 export default Home;
+
+const ContactForm = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
+  const [alert, setAlert] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+
+  const onSubmit = handleSubmit(() => {
+    setLoading(true);
+
+    setTimeout(() => {
+      setLoading(false);
+      setAlert(true);
+      reset();
+    }, 1500);
+
+    setTimeout(() => {
+      setAlert(false);
+    }, 4500);
+    // console.log(formData, "contact us formData.");
+  });
+
+  return (
+    <>
+      <form
+        className="flex flex-col gap-y-5 *:bg-[#EEEEEE] *:p-2"
+        onSubmit={onSubmit}
+      >
+        <input
+          type="text"
+          placeholder="Name"
+          {...register("name", { required: true })}
+        />
+        <input
+          type="email"
+          placeholder="Email address"
+          {...register("email", { required: true })}
+        />
+        <textarea
+          rows={8}
+          placeholder="Type message here..."
+          className=" resize-none"
+          {...register("message", { required: true })}
+        />
+        {Object.keys(errors).length ? (
+          <p className="text-xs text-red-700 !bg-transparent">
+            All fields are required.
+          </p>
+        ) : (
+          ""
+        )}
+        <button
+          type="submit"
+          className=" border-2 border-blue-500 text-blue-500 hover:border-blue-700 hover:text-blue-700 py-3 px-6 font-semibold text-sm !bg-transparent self-start transition-all duration-150 ease-in-out"
+        >
+          {loading ? "Sending..." : "Send Request"}
+        </button>
+      </form>
+      {alert && (
+        <div className="fixed top-0 w-fit left-0 right-0 mx-auto ">
+          <Alert
+            variant="outlined"
+            className=" backdrop-blur"
+            sx={{
+              color: "#fff",
+              borderColor: "#244891",
+              borderWidth: "2px",
+              backgroundColor: "#3366CC83",
+              "& .MuiAlert-icon": { color: "#fff" },
+            }}
+            severity="info"
+          >
+            Request sent successfully.
+          </Alert>
+        </div>
+      )}
+    </>
+  );
+};

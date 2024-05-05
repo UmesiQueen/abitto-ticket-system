@@ -97,7 +97,7 @@ const TicketSummary = () => {
             </div>
 
             <div className="flex justify-center mt-6">
-              <button className=" bg-green-500 py-3 px-6 font-semibold text-sm  hover:bg-green-700 transition-all duration-100  ease-in-out text-white">
+              <button className=" bg-blue-500 py-3 px-6 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white">
                 Proceed to buy ticket
               </button>
             </div>

@@ -71,9 +71,9 @@ const Booking = () => {
             className=" backdrop-blur"
             sx={{
               color: "#fff",
-              borderColor: "#799D2E",
+              borderColor: "#244891",
               borderWidth: "2px",
-              backgroundColor: "#84ad3383",
+              backgroundColor: "#3366CC83",
               "& .MuiAlert-icon": { color: "#fff" },
             }}
             severity="info"
@@ -134,30 +134,38 @@ const BookingForm = ({ tab }) => {
         {/* Departure Date */}
         <div
           className={classNames(
-            "flex gap-5 w-full",
+            "flex gap-5 w-full ",
             tab === "one-way" ? "flex-wrap md:flex-nowrap" : ""
           )}
         >
-          <InputField
-            {...register("departure_date", { required: "Field is required." })}
-            label="Date of Departure"
-            placeholder="02/04/2024"
-            type="date"
-            errors={errors}
-          />
-          <SelectField
-            {...register("departure_time", { required: "Field is required." })}
-            label="Time of Departure"
-            placeholder="08:00AM - 08:30AM"
-            options={[
-              "08:00AM - 8:30AM",
-              "10:00AM - 10:30AM",
-              "12:00PM - 12:30PM",
-              "02:00PM - 02:30PM",
-              "04:30PM - 05:00PM",
-            ]}
-            errors={errors}
-          />
+          <div className="w-1/2 md:w-full grow ">
+            <InputField
+              {...register("departure_date", {
+                required: "Field is required.",
+              })}
+              label="Date of Departure"
+              placeholder="02/04/2024"
+              type="date"
+              errors={errors}
+            />
+          </div>
+          <div className="w-1/2  md:w-full grow">
+            <SelectField
+              {...register("departure_time", {
+                required: "Field is required.",
+              })}
+              label="Time of Departure"
+              placeholder="08:00 AM"
+              options={[
+                "08:00 AM",
+                "10:00 AM",
+                "12:00 PM",
+                "02:00 PM",
+                "04:30 PM",
+              ]}
+              errors={errors}
+            />
+          </div>
         </div>
 
         {/* Round Trip */}
@@ -173,13 +181,13 @@ const BookingForm = ({ tab }) => {
             <SelectField
               {...register("return_time", { required: "Field is required." })}
               label="Time of Return"
-              placeholder="08:00AM - 08:30AM"
+              placeholder="08:00 AM "
               options={[
-                "08:00AM - 8:30AM",
-                "10:00AM - 10:30AM",
-                "12:00PM - 12:30PM",
-                "02:00PM - 02:30PM",
-                "04:30PM - 05:00PM",
+                "08:00 AM",
+                "10:00 AM ",
+                "12:00 PM ",
+                "02:00 PM ",
+                "04:30 PM ",
               ]}
               errors={errors}
             />
@@ -242,7 +250,7 @@ const BookingForm = ({ tab }) => {
 
       <button
         type="submit"
-        className="mt-10 bg-green-500 h-12 w-36 flex items-center justify-center font-semibold text-sm hover:bg-green-700 transition-all duration-100 ease-in-out text-white"
+        className="mt-10 bg-blue-500 h-12 w-36 flex items-center justify-center font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white"
       >
         {loading ? (
           <ClipLoader
@@ -270,7 +278,7 @@ const InputField = React.forwardRef((props, ref) => {
         <input
           {...props}
           ref={ref}
-          className="h-10 bg-blue-50 p-3 border border-blue-500 font-normal text-xs !min-w-full rounded-none "
+          className="h-10 bg-blue-50 p-3 border border-blue-500 font-normal text-xs w-full rounded-none "
         />
       </label>
       {errors?.[name] && (
