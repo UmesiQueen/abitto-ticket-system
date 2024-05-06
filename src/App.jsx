@@ -57,7 +57,7 @@ const Navbar = () => {
 
       <ul
         className={classNames(
-          "top-[77px] md:top-0 right-0 left-0 md:relative flex flex-col md:flex-row  *:uppercase *:font-normal gap-x-3 bg-inherit md:bg-transparent text-center [&_a]:w-full [&_a]:py-2 [&_a]:inline-block ",
+          "top-[77px] md:top-0 right-0 left-0 md:relative flex flex-col md:flex-row  *:uppercase *:font-normal gap-x-3 bg-inherit md:bg-transparent text-center *:py-2 ",
           !isOpen ? "hidden md:flex" : "absolute"
         )}
       >
