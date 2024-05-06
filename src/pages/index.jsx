@@ -61,10 +61,14 @@ const Home = () => {
               aboard Abitto, where every trip is a testament to our commitment
               to excellence and your peace of mind.
             </p>
-            <a className="text-blue-500 flex items-center gap-3 cursor-pointer">
+            <Link
+              target="_blank"
+              to="https://abittoglobal.com/?fbclid=PAZXh0bgNhZW0CMTEAAaaf2uWLgUdLwd18fE__CVzgHmX_XRFos7kxw4Ffa5sWyB58fZLwenzHvl8_aem_Af6umzSDXJvWgv1zoBRtzSSytwgTKLgfroif0Z8SpzdPUu-G5NWP8AMOlqscYrrjWJHGjX5_iSPUUMd4IcFzKNIs"
+              className="text-blue-500 flex items-center gap-3 cursor-pointer"
+            >
               <span className="underline font-medium">Learn more</span>
               <CaretIcon />
-            </a>
+            </Link>
           </div>
         </div>
         <div className="hidden md:block">
@@ -90,17 +94,25 @@ const Home = () => {
               height={420}
               className="self-center"
             />
-            <ul className="md:w-[350px] px-5  text-lg [&_li]:flex [&_li]:gap-3 [&_li]:items-center space-y-5 ">
+            <ul className="md:w-[350px] px-5 text-lg [&_a]:flex [&_a]:gap-3 [&_a]:items-center space-y-5 ">
               <li>
-                <MapIcon />
-                <p className="">
-                  Lorem ipsum dolor sit amet consectetur. Egestas sapien lectus
-                  lobortis sit mattis vitae posuere
-                </p>
+                <Link
+                  className="hover:text-blue-500 duration-150 ease-in-out transition"
+                  target="_blank"
+                  to="https://maps.google.com/maps/place//data=!4m2!3m1!1s0x10678776d57d673d:0x3a5ca1c3f4f97ad4?entry=s&sa=X&ved=1t:8290&hl=en-US&ictx=111"
+                >
+                  <MapIcon />
+                  <p>Marina Resort, Calabar</p>
+                </Link>
               </li>
               <li>
-                <PhoneIcon />
-                <a href="tel:+234 813 047 8003">+234 813 047 8003</a>
+                <Link
+                  className="hover:text-blue-500 duration-150 ease-in-out transition"
+                  to="tel:+234 813 047 8003"
+                >
+                  <PhoneIcon />
+                  <p>+234 813 047 8003</p>
+                </Link>
               </li>
             </ul>
           </div>
@@ -175,7 +187,7 @@ const ContactForm = () => {
         )}
         <button
           type="submit"
-          className=" border-2 border-blue-500 text-blue-500 hover:border-blue-700 hover:text-blue-700 py-3 px-6 font-semibold text-sm !bg-transparent self-start transition-all duration-150 ease-in-out"
+          className=" border-2 border-blue-500 text-blue-500 bg-blue-50 hover:border-blue-700 hover:text-blue-700 py-3 px-6 font-semibold text-sm !bg-transparent self-start transition-all duration-150 ease-in-out"
         >
           {loading ? "Sending..." : "Send Request"}
         </button>
