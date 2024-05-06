@@ -1,5 +1,5 @@
 import React from "react";
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { Twirl as Hamburger } from "hamburger-react";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -12,6 +12,7 @@ import {
   LinkedinIcon,
   TwitterIcon,
 } from "./assets/icons/index";
+import { GlobalCTX } from "./context/GlobalContext";
 
 function App() {
   const pathname = useLocation();
@@ -35,6 +36,9 @@ export default App;
 
 const Navbar = () => {
   const [isOpen, setOpen] = React.useState(false);
+  const { about, contact, scrollToSection } = React.useContext(GlobalCTX);
+  const pathname = useLocation();
+  const navigate = useNavigate();
 
   return (
     <nav className="absolute right-0 left-0 px-5 md:px-20 py-2 text-white flex items-center justify-between backdrop-blur-sm bg-[#1111111F] z-[1]">
@@ -57,11 +61,33 @@ const Navbar = () => {
           !isOpen ? "hidden md:flex" : "absolute"
         )}
       >
-        <li className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-gray-800 transition duration-75 ease-in-out">
-          <Link to="/">about us</Link>
+        <li
+          onClick={() => {
+            if (!String("/").includes(pathname)) {
+              navigate("/");
+              return setTimeout(() => {
+                scrollToSection(about);
+              });
+            }
+            return scrollToSection(about);
+          }}
+          className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-gray-800 transition duration-75 ease-in-out"
+        >
+          about us
         </li>
-        <li className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-gray-800">
-          <Link to="/">Contact Us</Link>
+        <li
+          onClick={() => {
+            if (!String("/").includes(pathname)) {
+              navigate("/");
+              return setTimeout(() => {
+                scrollToSection(contact);
+              });
+            }
+            return scrollToSection(contact);
+          }}
+          className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-gray-800"
+        >
+          Contact Us
         </li>
       </ul>
 

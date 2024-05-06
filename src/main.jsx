@@ -4,12 +4,12 @@ import { RouterProvider } from "react-router-dom";
 
 import "./index.css";
 import { router } from "./routes";
-import BookingContext from "./context/BookingContext";
+import GlobalContext from "./context/GlobalContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <BookingContext>
+    <GlobalContext>
       <RouterProvider router={router} />
-    </BookingContext>
+    </GlobalContext>
   </React.StrictMode>
 );

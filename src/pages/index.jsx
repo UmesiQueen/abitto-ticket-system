@@ -4,8 +4,11 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import Alert from "@mui/material/Alert";
 import WaveSVG from "../assets/wave";
+import { GlobalCTX } from "../context/GlobalContext";
 
 const Home = () => {
+  const { about, contact } = React.useContext(GlobalCTX);
+
   return (
     <>
       {/* Hero section */}
@@ -32,6 +35,7 @@ const Home = () => {
       <section
         className="p-5 md:py-20 md:px-10 lg:px-44 bg-blue-50 relative"
         id="about-us"
+        ref={about}
       >
         <div className="flex flex-col md:flex-row justify-between flex-1 ">
           <div className="md:w-1/2 mb-10 md:mb-0 self-center">
@@ -48,12 +52,12 @@ const Home = () => {
               <span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 " />
               <h2 className="uppercase font-medium">About us</h2>
             </div>
-
             <p className="font-medium text-2xl ">
               Welcome to Abitto, where innovation meets reliability in public
               water travel.
             </p>
             <p className="text-black/80">
+              {/* eslint-disable-next-line react/no-unescaped-entities */}
               At Abitto, we're not just ferrying passengers; we're transforming
               the way you experience water transportation. With a focus on
               cutting-edge technology and unwavering safety protocols, we ensure
@@ -79,7 +83,7 @@ const Home = () => {
       {/* Contact us  */}
       <section
         className="py-10 px-5 md:py-20 md:px-10 lg:px-44 bg-white"
-        id="contact-us"
+        ref={contact}
       >
         <div className="flex flex-col md:flex-row justify-between flex-1">
           <div className="md:w-1/2 flex flex-col md:items-center space-y-5 md:mt-6 mb-16 ">
@@ -153,7 +157,6 @@ const ContactForm = () => {
     setTimeout(() => {
       setAlert(false);
     }, 4500);
-    // console.log(formData, "contact us formData.");
   });
 
   return (
