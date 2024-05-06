@@ -39,9 +39,35 @@ const Navbar = () => {
   const { about, contact, scrollToSection } = React.useContext(GlobalCTX);
   const pathname = useLocation();
   const navigate = useNavigate();
+  const navRef = React.useRef();
+
+  const handleNavItemClick = (ref) => {
+    setOpen(false);
+    if (!String("/").includes(pathname)) {
+      navigate("/");
+      return setTimeout(() => {
+        scrollToSection(ref);
+      });
+    }
+    return scrollToSection(ref);
+  };
+
+  // Detect outside navbar click
+  window.addEventListener(
+    "click",
+    (e) => {
+      if (isOpen) !navRef.current.contains(e.target) && setOpen(false);
+    },
+    true
+  );
 
   return (
-    <nav className="absolute right-0 left-0 px-5 md:px-20 py-2 text-white flex items-center justify-between backdrop-blur-sm bg-[#1111111F] z-[1]">
+    <nav
+      className={classNames(
+        "absolute right-0 left-0 px-5 md:px-20 py-2 text-white flex items-center justify-between backdrop-blur-sm z-[1] transition duration-50 ease-in-out",
+        isOpen ? "bg-blue-700 md:bg-[#1111111F]" : "bg-[#1111111F]"
+      )}
+    >
       <Link to="/">
         <img
           alt="logo"
@@ -51,41 +77,30 @@ const Navbar = () => {
         />
       </Link>
 
-      <div className="md:hidden">
+      <div className="md:hidden" ref={navRef}>
         <Hamburger size={20} toggled={isOpen} toggle={setOpen} />
       </div>
 
       <ul
         className={classNames(
-          "top-[77px] md:top-0 right-0 left-0 md:relative flex flex-col md:flex-row  *:uppercase *:font-normal gap-x-3 bg-inherit md:bg-transparent text-center *:py-2 ",
+          "top-[77px] md:top-0 right-0 left-0 md:relative flex flex-col md:flex-row *:uppercase *:font-normal gap-x-3 md:bg-transparent text-center *:py-2  bg-blue-700 pb-2 md:pb-0  *:cursor-pointer",
           !isOpen ? "hidden md:flex" : "absolute"
         )}
+        ref={navRef}
       >
         <li
           onClick={() => {
-            if (!String("/").includes(pathname)) {
-              navigate("/");
-              return setTimeout(() => {
-                scrollToSection(about);
-              });
-            }
-            return scrollToSection(about);
+            handleNavItemClick(about);
           }}
-          className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-gray-800 transition duration-75 ease-in-out"
+          className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-gray-800 hover:font-medium md:hover:font-normal transition-all duration-75 ease-in-out "
         >
           about us
         </li>
         <li
           onClick={() => {
-            if (!String("/").includes(pathname)) {
-              navigate("/");
-              return setTimeout(() => {
-                scrollToSection(contact);
-              });
-            }
-            return scrollToSection(contact);
+            handleNavItemClick(contact);
           }}
-          className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-gray-800"
+          className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-gray-800 hover:font-medium md:hover:font-normal transition-all duration-75 ease-in-out"
         >
           Contact Us
         </li>

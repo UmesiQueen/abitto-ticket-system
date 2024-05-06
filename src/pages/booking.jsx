@@ -102,7 +102,11 @@ const BookingForm = ({ tab }) => {
   const ticket_id = uuid();
 
   const onSubmit = (formData) => {
-    setFormData({ ticket_id: ticket_id.slice(0, 6), type: tab, ...formData });
+    setFormData({
+      ticket_id: ticket_id.slice(0, 6),
+      trip_type: tab,
+      ...formData,
+    });
     setLoading(true);
 
     setTimeout(() => {

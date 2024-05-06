@@ -91,7 +91,7 @@ const TicketSummary = () => {
                 </p>
                 <p>
                   <BoatIcon />
-                  {formData.type}
+                  {formData.trip_type}
                 </p>
               </div>
             </div>
