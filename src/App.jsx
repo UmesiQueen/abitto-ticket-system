@@ -61,15 +61,12 @@ const Navbar = () => {
           <Link to="/">about us</Link>
         </li>
         <li className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-gray-800">
-          <Link to="/">Career</Link>
-        </li>
-        <li className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-gray-800">
-          <Link to="/">faq</Link>
+          <Link to="/">Contact Us</Link>
         </li>
       </ul>
 
       <button className="hidden md:block text-white bg-blue-500 py-3 px-6 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out">
-        Contact Us
+        <Link to={"/booking"}>Book a Ticket</Link>
       </button>
     </nav>
   );
@@ -180,13 +177,22 @@ const Footer = () => {
 
       <ul className="flex items-center gap-3 *:w-10 *:inline-flex *:justify-center">
         <li>
-          <InstagramIcon />
+          <Link
+            target="_blank"
+            to="https://www.instagram.com/abittoglobal/?igsh=NjB5dXpnZnI5ejFs"
+          >
+            <InstagramIcon />
+          </Link>
         </li>
         <li>
-          <FacebookIcon />
+          <Link target="_blank" to="https://web.facebook.com/abittoglobal/">
+            <FacebookIcon />
+          </Link>
         </li>
         <li>
-          <TwitterIcon />
+          <Link target="_blank" to="https://twitter.com/AbittoGlobal">
+            <TwitterIcon />
+          </Link>
         </li>
         <li>
           <LinkedinIcon />

@@ -6,12 +6,33 @@ import {
   CalendarIcon,
   BoatIcon,
   ClockIcon,
+  UsersIcon,
+  CancelSquareIcon,
+  CashIcon,
+  // CheckIcon,
 } from "../assets/icons/index";
 import { format } from "date-fns";
 import { formatValue } from "react-currency-input-field";
+import Modal from "@mui/material/Modal";
+import ClipLoader from "react-spinners/ClipLoader";
+// import { useNavigate } from "react-router-dom";
 
 const TicketSummary = () => {
   const { formData } = React.useContext(BookingCTX);
+  const [open, setOpen] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const openModal = () => {
+    setLoading(true);
+
+    setTimeout(() => {
+      setLoading(false);
+      setOpen(true);
+    }, 500);
+  };
+
+  const closeModal = () => {
+    setOpen(false);
+  };
 
   return (
     <div className="bg-hero-pattern h-[750px] w-screen bg-cover bg-no-repeat bg-center relative ">
@@ -26,7 +47,9 @@ const TicketSummary = () => {
                 Abiito Ferry Terminal
               </h3>
               <p className="text-[#8E98A8] text-sm">
-                {formData?.travel_from} =={">"} {formData?.travel_to}
+                {formData?.travel_from.includes("Calabar") ? "Calabar" : "Uyo"}{" "}
+                =={">"}{" "}
+                {formData?.travel_to.includes("Calabar") ? "Calabar" : "Uyo"}
               </p>
               <p className="text-[#8E98A8] text-sm inline-flex items-center gap-1">
                 Non-refundable <InformationCircleIcon />
@@ -36,14 +59,13 @@ const TicketSummary = () => {
             <div className="mt-6">
               <h4 className="font-semibold mb-1">Terminals</h4>
               <p className="text-xs">
-                {formData?.travel_from.match("Calabar")
-                  ? "Marina"
-                  : "Nwaniba Timber Beach"}{" "}
-                Terminal -{" "}
-                {formData?.travel_to.match("Calabar")
-                  ? "Marina"
-                  : "Nwaniba Timber Beach"}{" "}
-                Terminal
+                {formData?.travel_from.includes("Calabar")
+                  ? "Marina Terminal, Calabar"
+                  : "Nwaniba Timber Beach Terminal, Uyo"}{" "}
+                =={">"}{" "}
+                {formData?.travel_to.includes("Calabar")
+                  ? "Marina Terminal, Calabar"
+                  : "Nwaniba Timber Beach Terminal, Uyo"}
               </p>
             </div>
 
@@ -56,16 +78,22 @@ const TicketSummary = () => {
                 <p>
                   <ClockIcon /> {formData?.departure_time}
                 </p>
+              </div>
+              <div className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
                 <p>
-                  <ChairIcon /> Seats: L3 & B2
+                  <UsersIcon />
+                  {Number(formData?.adults_number) +
+                    Number(formData?.children_number)}{" "}
+                  passenger(s)
+                </p>
+                <p>
+                  <ChairIcon /> Seats: L3, B2
+                </p>
+                <p>
+                  <BoatIcon />
+                  {formData.type}
                 </p>
               </div>
-              <p>
-                <BoatIcon /> Departure trip:{" "}
-                {Number(formData?.adults_number) +
-                  Number(formData?.children_number)}{" "}
-                passenger(s)
-              </p>
             </div>
 
             <div className="border-y-2 border-dashed py-2 mt-6">
@@ -73,7 +101,7 @@ const TicketSummary = () => {
                 <tbody>
                   <tr>
                     <td className="text-xs text-[#444444]">Ride Insurance</td>
-                    <td className="text-xs text-[#444444]">₦0.00</td>
+                    <td className="text-xs text-[#444444]">₦0</td>
                   </tr>
                   <tr>
                     <td className="text-xs text-[#444444]">Ticket Price</td>
@@ -97,15 +125,120 @@ const TicketSummary = () => {
             </div>
 
             <div className="flex justify-center mt-6">
-              <button className=" bg-blue-500 py-3 px-6 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white">
-                Proceed to buy ticket
+              <button
+                onClick={openModal}
+                className=" bg-blue-500 w-56 py-3 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white flex justify-center"
+              >
+                {loading ? (
+                  <ClipLoader
+                    color="#fff"
+                    loading={loading}
+                    size={20}
+                    aria-label="Loading Spinner"
+                  />
+                ) : (
+                  "Proceed to buy ticket"
+                )}
               </button>
             </div>
           </div>
         </div>
+
+        <PaymentModals open={open} closeModal={closeModal} />
       </div>
     </div>
   );
 };
 
 export default TicketSummary;
+
+// eslint-disable-next-line react/prop-types
+const PaymentModals = ({ open, closeModal }) => {
+  // const [openChild, setOpenChild] = React.useState(false);
+
+  return (
+    <>
+      <Modal
+        open={open}
+        onClose={() => {
+          closeModal();
+          // setOpenChild(false);
+        }}
+        aria-labelledby="payment-modal"
+        sx={{ backdropFilter: "blur(1px)" }}
+      >
+        <div className="mt-36 bg-white h-fit md:w-[375px] p-5 mx-auto">
+          <div>
+            <div className="flex gap-5 items-center">
+              <h2 className="font-semibold text-base text-center grow">
+                Select Payment Method
+              </h2>
+              <button
+                onClick={closeModal}
+                className=" hover:scale-[.8] rounded-lg transition duration-150 ease-in-out "
+              >
+                <CancelSquareIcon />
+              </button>
+            </div>
+            <form>
+              <ul className=" space-y-3 *:flex *:items-center *:border *:p-3 *:gap-3 [&_input]:ml-auto my-4">
+                <li>
+                  <img
+                    alt="pay-stack"
+                    src="https://i.ibb.co/QpjxrJj/Paystack.png"
+                    width={24}
+                    height={23}
+                  />
+                  <p>Pay Online</p> <input type="radio" className="" />
+                </li>
+                <li>
+                  <CashIcon /> <p>Pay with Cash (Offline)</p>{" "}
+                  <input type="radio" />
+                </li>
+              </ul>
+              <button
+                // onClick={() => {
+                //   setOpenChild(true);
+                // }}
+                className=" bg-[#C2C2C2] py-3 text-blue-50 font-semibold w-full"
+              >
+                Continue
+              </button>
+            </form>
+          </div>
+        </div>
+      </Modal>
+    </>
+  );
+};
+
+// const SuccessModal = () => {
+//   const navigate = useNavigate();
+
+//   return (
+//     <div className=" text-center flex flex-col gap-5">
+//       <div className="mx-auto w-fit">
+//         <CheckIcon />
+//       </div>
+//       <h2 className="font-semibold text-base text-[#454545] px-10 ">
+//         Your Ferry Seat has been successfully Booked!
+//       </h2>
+//       <p className="font-normal text-xs text-[#454545] px-10">
+//         Please check your email for important ticket details.
+//       </p>
+//       <div className="flex gap-6">
+//         <button className="w-full border-2 border-blue-500 text-blue-500 hover:border-blue-700 hover:text-blue-700 text-sm bg-blue-50 p-3 px-4 font-semibold transition-all duration-150 ease-in-out ">
+//           Check email
+//         </button>
+//         <button
+//           className="bg-blue-500 hover:bg-blue-700 transition-all duration-150 ease-in-out text-sm w-full text-white p-3 px-4 font-semibold"
+//           onClick={() => {
+//             navigate("/booking");
+//           }}
+//         >
+//           Continue
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };

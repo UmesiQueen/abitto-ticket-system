@@ -14,7 +14,7 @@ const ProtectedRoute = ({ children }) => {
     }, 3500);
   };
 
-  if (!formData?.ticketId) {
+  if (!formData?.ticket_id) {
     toggleAlert();
     return <Navigate to="/booking" />;
   }

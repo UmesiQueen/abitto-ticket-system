@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
 import Alert from "@mui/material/Alert";
+import { v4 as uuid } from "uuid";
 import { BookingCTX } from "../context/BookingContext";
 
 const Booking = () => {
@@ -55,10 +56,10 @@ const Booking = () => {
                 </TabList>
               </Box>
               <TabPanel value="1" sx={{ background: "#fff" }}>
-                <BookingForm tab="one-way" />
+                <BookingForm tab="One-Way Trip" />
               </TabPanel>
               <TabPanel value="2" sx={{ background: "#fff" }}>
-                <BookingForm tab="round" />
+                <BookingForm tab="Round Trip" />
               </TabPanel>
             </TabContext>
           </Box>
@@ -98,10 +99,10 @@ const BookingForm = ({ tab }) => {
   const [loading, setLoading] = React.useState(false);
   const { setFormData } = React.useContext(BookingCTX);
   const navigate = useNavigate();
-  const ticketId = React.useId();
+  const ticket_id = uuid();
 
   const onSubmit = (formData) => {
-    setFormData({ ticketId, ...formData });
+    setFormData({ ticket_id: ticket_id.slice(0, 6), type: tab, ...formData });
     setLoading(true);
 
     setTimeout(() => {
@@ -119,7 +120,7 @@ const BookingForm = ({ tab }) => {
           {...register("travel_from", { required: "Field is required." })}
           label="Travelling From"
           placeholder="Select Departure Terminal"
-          options={["Calabar", "Uyo"]}
+          options={["Calabar ==> Marina", "Uyo ==> Nwaniba Timber Beach"]}
           errors={errors}
         />
 
@@ -127,7 +128,7 @@ const BookingForm = ({ tab }) => {
           {...register("travel_to", { required: "Field is required." })}
           label="Travelling To"
           placeholder="Select Arrival Terminal"
-          options={["Calabar", "Uyo"]}
+          options={["Calabar ==> Marina", "Uyo ==> Nwaniba Timber Beach"]}
           errors={errors}
         />
 
@@ -135,7 +136,7 @@ const BookingForm = ({ tab }) => {
         <div
           className={classNames(
             "flex gap-5 w-full ",
-            tab === "one-way" ? "flex-wrap md:flex-nowrap" : ""
+            tab === "One-Way Trip" ? "flex-wrap md:flex-nowrap" : ""
           )}
         >
           <div className="w-1/2 md:w-full grow ">
@@ -155,13 +156,13 @@ const BookingForm = ({ tab }) => {
                 required: "Field is required.",
               })}
               label="Time of Departure"
-              placeholder="08:00 AM"
+              placeholder="08:00 AM ==> 08:30 AM"
               options={[
-                "08:00 AM",
-                "10:00 AM",
-                "12:00 PM",
-                "02:00 PM",
-                "04:30 PM",
+                "08:00 AM ==> 08:30 AM",
+                "10:00 AM ==> 10:30 AM",
+                "12:00 NOON ==> 12:30 PM",
+                "02:00 PM ==> 02:30 PM",
+                "04:30 PM ==> 05:00 PM",
               ]}
               errors={errors}
             />
@@ -169,7 +170,7 @@ const BookingForm = ({ tab }) => {
         </div>
 
         {/* Round Trip */}
-        {tab === "round" && (
+        {tab === "Round Trip" && (
           <div className="flex gap-5 w-full">
             <InputField
               {...register("return_date", { required: "Field is required." })}
@@ -181,13 +182,13 @@ const BookingForm = ({ tab }) => {
             <SelectField
               {...register("return_time", { required: "Field is required." })}
               label="Time of Return"
-              placeholder="08:00 AM "
+              placeholder="08:00 AM ==> 08:30 AM"
               options={[
-                "08:00 AM",
-                "10:00 AM ",
-                "12:00 PM ",
-                "02:00 PM ",
-                "04:30 PM ",
+                "08:00 AM ==> 08:30 AM",
+                "10:00 AM ==> 10:30 AM",
+                "12:00 NOON ==> 12:30 PM",
+                "02:00 PM ==> 02:30 PM",
+                "04:30 PM ==> 05:00 PM",
               ]}
               errors={errors}
             />

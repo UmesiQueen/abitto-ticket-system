@@ -10,6 +10,10 @@ import CalendarIcon from "./Calendar";
 import InformationCircleIcon from "./InformationCircle";
 import ChairIcon from "./Chair";
 import ClockIcon from "./Clock";
+import CancelSquareIcon from "./CancelSquare";
+import CashIcon from "./Cash";
+import CheckIcon from "./Check";
+import UsersIcon from "./Users";
 
 export {
   FacebookIcon,
@@ -24,4 +28,8 @@ export {
   InformationCircleIcon,
   ChairIcon,
   ClockIcon,
+  CancelSquareIcon,
+  CashIcon,
+  CheckIcon,
+  UsersIcon,
 };
