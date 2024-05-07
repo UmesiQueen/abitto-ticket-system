@@ -14,6 +14,8 @@ import { useNavigate } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
 import Alert from "@mui/material/Alert";
 import { v4 as uuid } from "uuid";
+import axios from "axios";
+// import { z } from "zod";
 import { BookingCTX } from "../context/BookingContext";
 
 const Booking = () => {
@@ -102,17 +104,23 @@ const BookingForm = ({ tab }) => {
   const ticket_id = uuid();
 
   const onSubmit = (formData) => {
-    setFormData({
-      ticket_id: ticket_id.slice(0, 6),
-      trip_type: tab,
-      ...formData,
-    });
     setLoading(true);
-
-    setTimeout(() => {
-      setLoading(false);
-      navigate("/ticket-summary");
-    }, 3000);
+    axios
+      .post("https://abitto-api.onrender.com/api/booking/new", {
+        ticket_id: ticket_id.slice(0, 6),
+        trip_type: tab,
+        ...formData,
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          setFormData(res.data?.booking);
+          setLoading(false);
+          navigate("/ticket-summary");
+        }
+      })
+      .catch((err) => {
+        console.error(err, "Error occurred.");
+      });
   };
 
   return (
@@ -160,13 +168,13 @@ const BookingForm = ({ tab }) => {
                 required: "Field is required.",
               })}
               label="Time of Departure"
-              placeholder="08:00 AM ==> 08:30 AM"
+              placeholder="08:30 AM"
               options={[
-                "08:00 AM ==> 08:30 AM",
-                "10:00 AM ==> 10:30 AM",
-                "12:00 NOON ==> 12:30 PM",
-                "02:00 PM ==> 02:30 PM",
-                "04:30 PM ==> 05:00 PM",
+                "08:30 AM",
+                "10:30 AM",
+                "12:30 PM",
+                "02:30 PM",
+                "05:00 PM",
               ]}
               errors={errors}
             />
@@ -186,13 +194,13 @@ const BookingForm = ({ tab }) => {
             <SelectField
               {...register("return_time", { required: "Field is required." })}
               label="Time of Return"
-              placeholder="08:00 AM ==> 08:30 AM"
+              placeholder="08:30 AM"
               options={[
-                "08:00 AM ==> 08:30 AM",
-                "10:00 AM ==> 10:30 AM",
-                "12:00 NOON ==> 12:30 PM",
-                "02:00 PM ==> 02:30 PM",
-                "04:30 PM ==> 05:00 PM",
+                "08:30 AM",
+                "10:30 AM",
+                "12:30 PM",
+                "02:30 PM",
+                "05:00 PM",
               ]}
               errors={errors}
             />

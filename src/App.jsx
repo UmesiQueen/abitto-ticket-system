@@ -77,7 +77,7 @@ const Navbar = () => {
         />
       </Link>
 
-      <div className="md:hidden" ref={navRef}>
+      <div className="md:hidden">
         <Hamburger size={20} toggled={isOpen} toggle={setOpen} />
       </div>
 
