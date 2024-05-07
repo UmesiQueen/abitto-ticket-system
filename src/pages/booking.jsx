@@ -159,6 +159,7 @@ const BookingForm = ({ tab }) => {
               label="Date of Departure"
               placeholder="02/04/2024"
               type="date"
+              min={new Date().toISOString().split("T")[0]}
               errors={errors}
             />
           </div>
@@ -189,6 +190,7 @@ const BookingForm = ({ tab }) => {
               label="Date of Return"
               placeholder="02/04/2024"
               type="date"
+              min={new Date().toISOString().split("T")[0]}
               errors={errors}
             />
             <SelectField
@@ -231,14 +233,14 @@ const BookingForm = ({ tab }) => {
           <InputField
             {...register("first_name", { required: "Field is required." })}
             label="First Name"
-            placeholder="john"
+            placeholder="Enter first name"
             type="text"
             errors={errors}
           />
           <InputField
             {...register("surname", { required: "Field is required." })}
             label="Surname"
-            placeholder="doe"
+            placeholder="Enter surname"
             type="text"
             errors={errors}
           />
@@ -247,7 +249,7 @@ const BookingForm = ({ tab }) => {
           <InputField
             {...register("email", { required: "Field is required." })}
             label="Email Address"
-            placeholder="johndoe@gmail.com"
+            placeholder="Enter email address"
             type="email"
             errors={errors}
           />
