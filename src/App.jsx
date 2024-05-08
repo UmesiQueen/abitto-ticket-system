@@ -67,6 +67,7 @@ const Navbar = () => {
         "absolute right-0 left-0 px-5 md:px-20 py-2 text-white flex items-center justify-between backdrop-blur-sm z-[1] transition duration-50 ease-in-out",
         isOpen ? "bg-blue-700 md:bg-[#1111111F]" : "bg-[#1111111F]"
       )}
+      ref={navRef}
     >
       <Link to="/">
         <img
@@ -86,7 +87,6 @@ const Navbar = () => {
           "top-[77px] md:top-0 right-0 left-0 md:relative flex flex-col md:flex-row *:uppercase *:font-normal gap-x-3 md:bg-transparent text-center *:py-2  bg-blue-700 pb-2 md:pb-0  *:cursor-pointer",
           !isOpen ? "hidden md:flex" : "absolute"
         )}
-        ref={navRef}
       >
         <li
           onClick={() => {

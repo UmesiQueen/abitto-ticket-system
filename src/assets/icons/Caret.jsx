@@ -9,7 +9,7 @@ const CaretIcon = () => {
     >
       <path
         d="M0.864502 1.17188C0.864502 1.17188 6.86449 5.59078 6.8645 7.17188C6.86451 8.75308 0.864502 13.1719 0.864502 13.1719"
-        stroke="#3366CC"
+        stroke="currentColor"
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"

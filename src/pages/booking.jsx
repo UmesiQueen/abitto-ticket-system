@@ -15,7 +15,8 @@ import ClipLoader from "react-spinners/ClipLoader";
 import Alert from "@mui/material/Alert";
 import { v4 as uuid } from "uuid";
 import axios from "axios";
-// import { z } from "zod";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { BookingCTX } from "../context/BookingContext";
 
 const Booking = () => {
@@ -27,7 +28,7 @@ const Booking = () => {
   };
 
   return (
-    <div className="bg-hero-pattern min-h-[1230px] w-screen bg-cover bg-no-repeat bg-center relative ">
+    <div className="bg-hero-pattern h-[1350px] w-screen bg-cover bg-no-repeat bg-center relative ">
       <div className="bg-black/40 w-full h-full absolute z-0 ">
         <div className="px-5 md:px-0 pt-28 md:w-[690px] mx-auto pb-10 md:pb-0 ">
           <Box sx={{ width: "100%", typography: "body1" }}>
@@ -91,12 +92,62 @@ const Booking = () => {
 
 export default Booking;
 
+const BookingSchema = yup.object().shape({
+  travel_from: yup.string().required("Traveling from is required."),
+  travel_to: yup
+    .string()
+    .required("Traveling to is required.")
+    .when("travel_from", (travel_from, schema) =>
+      travel_from[0]
+        ? schema.notOneOf(
+            [yup.ref("travel_from")],
+            "Traveling from and to cannot have same value."
+          )
+        : schema
+    ),
+  departure_date: yup.string().required("Departure date is required."),
+  departure_time: yup.string().required("Departure time is required."),
+  return_date: yup.string(),
+  return_time: yup.string(),
+  adults_number: yup
+    .number()
+    .required("No of adults is required.")
+    .typeError("No of adults is required."),
+  children_number: yup
+    .number()
+    .nullable(true)
+    .transform((value, originalValue) =>
+      String(originalValue).trim() === "" ? null : value
+    )
+    .notRequired(),
+  first_name: yup
+    .string()
+    .required("First name is required.")
+    .min(2, "First name must have a min of 2 characters."),
+  surname: yup
+    .string()
+    .required("Surname is required.")
+    .min(2, "Surname must have at least 2 characters."),
+  email: yup
+    .string()
+    .required("Email address is required.")
+    .email("Invalid email."),
+  phone_number: yup
+    .string()
+    .required("Phone number is required.")
+    .matches(/^\+?\d+$/, "Invalid phone number.")
+    .min(11, "Phone number must have at least 11 characters."),
+});
+
 const BookingForm = ({ tab }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    mode: "onChange",
+    resolver: yupResolver(BookingSchema),
+  });
 
   const [loading, setLoading] = React.useState(false);
   const { setFormData } = React.useContext(BookingCTX);
@@ -119,6 +170,7 @@ const BookingForm = ({ tab }) => {
         }
       })
       .catch((err) => {
+        setLoading(false);
         console.error(err, "Error occurred.");
       });
   };
@@ -129,18 +181,18 @@ const BookingForm = ({ tab }) => {
         <h3 className="font-medium text-base ">Booking Details</h3>
 
         <SelectField
-          {...register("travel_from", { required: "Field is required." })}
-          label="Travelling From"
+          {...register("travel_from")}
+          label="Traveling From"
           placeholder="Select Departure Terminal"
-          options={["Calabar ==> Marina", "Uyo ==> Nwaniba Timber Beach"]}
+          options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
           errors={errors}
         />
 
         <SelectField
-          {...register("travel_to", { required: "Field is required." })}
-          label="Travelling To"
+          {...register("travel_to")}
+          label="Traveling To"
           placeholder="Select Arrival Terminal"
-          options={["Calabar ==> Marina", "Uyo ==> Nwaniba Timber Beach"]}
+          options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
           errors={errors}
         />
 
@@ -186,7 +238,7 @@ const BookingForm = ({ tab }) => {
         {tab === "Round Trip" && (
           <div className="flex gap-5 w-full">
             <InputField
-              {...register("return_date", { required: "Field is required." })}
+              {...register("return_date")}
               label="Date of Return"
               placeholder="02/04/2024"
               type="date"
@@ -194,7 +246,7 @@ const BookingForm = ({ tab }) => {
               errors={errors}
             />
             <SelectField
-              {...register("return_time", { required: "Field is required." })}
+              {...register("return_time")}
               label="Time of Return"
               placeholder="08:30 AM"
               options={[
@@ -211,7 +263,7 @@ const BookingForm = ({ tab }) => {
 
         <div className="flex gap-5">
           <SelectField
-            {...register("adults_number", { required: "Field is required." })}
+            {...register("adults_number")}
             label="No. of Adults"
             placeholder="1"
             options={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
@@ -231,30 +283,33 @@ const BookingForm = ({ tab }) => {
         <h3 className="font-medium text-base ">Passenger Details</h3>
         <div className="flex gap-5">
           <InputField
-            {...register("first_name", { required: "Field is required." })}
+            {...register("first_name")}
             label="First Name"
             placeholder="Enter first name"
             type="text"
+            maxLength={35}
             errors={errors}
           />
           <InputField
-            {...register("surname", { required: "Field is required." })}
+            {...register("surname")}
             label="Surname"
             placeholder="Enter surname"
             type="text"
+            maxLength={35}
             errors={errors}
           />
         </div>
         <div className="flex flex-wrap md:flex-nowrap gap-5">
           <InputField
-            {...register("email", { required: "Field is required." })}
+            {...register("email")}
             label="Email Address"
             placeholder="Enter email address"
             type="email"
+            maxLength={40}
             errors={errors}
           />
           <InputField
-            {...register("phone_number", { required: "Field is required." })}
+            {...register("phone_number")}
             label="Phone Number"
             placeholder="(+234) XXXX XXX XXX"
             type="tel"
@@ -293,7 +348,7 @@ const InputField = React.forwardRef((props, ref) => {
         <input
           {...props}
           ref={ref}
-          className="h-10 bg-blue-50 p-3 border border-blue-500 font-normal text-xs w-full rounded-none "
+          className="h-10 bg-blue-50 p-3 border border-blue-500 font-normal text-xs w-full rounded-none font-poppins "
         />
       </label>
       {errors?.[name] && (
@@ -346,7 +401,7 @@ const SelectField = React.forwardRef((props, ref) => {
         </Select>
       </label>
       {errors?.[name] && (
-        <p className="text-xs pt-2 text-red-700">Field is required.</p>
+        <p className="text-xs pt-2 text-red-700">{errors?.[name].message}</p>
       )}
     </div>
   );
