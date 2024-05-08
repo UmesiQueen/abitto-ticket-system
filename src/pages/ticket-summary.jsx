@@ -201,6 +201,7 @@ export default TicketSummary;
 // eslint-disable-next-line react/prop-types
 const PaymentModals = ({ open, closeModal }) => {
   const [openChild, setOpenChild] = React.useState(false);
+  const navigate = useNavigate();
 
   return (
     <>
@@ -208,7 +209,10 @@ const PaymentModals = ({ open, closeModal }) => {
         open={open}
         onClose={() => {
           closeModal();
-          setOpenChild(false);
+          if (openChild) {
+            setOpenChild(false);
+            navigate("/");
+          }
         }}
         aria-labelledby="payment-modal"
         sx={{ backdropFilter: "blur(1px)" }}
@@ -227,37 +231,36 @@ const PaymentModals = ({ open, closeModal }) => {
                   <CancelSquareIcon />
                 </button>
               </div>
-              <form
+              {/* <form
                 action=""
                 onSubmit={(e) => {
                   e.preventDefault();
                 }}
+              > */}
+              <ul className=" space-y-3 *:flex *:items-center *:border *:p-3 *:gap-3 [&_input]:ml-auto my-4">
+                <li>
+                  <img
+                    alt="pay-stack"
+                    src="https://i.ibb.co/QpjxrJj/Paystack.png"
+                    width={24}
+                    height={23}
+                  />
+                  <p>Pay Online</p> <input type="radio" className="" disabled />
+                </li>
+                <li>
+                  <CashIcon /> <p>Pay with Cash (Offline)</p>{" "}
+                  <input type="radio" required />
+                </li>
+              </ul>
+              <button
+                onClick={() => {
+                  setOpenChild(true);
+                }}
+                className=" bg-[#C2C2C2] py-3 text-blue-50 font-semibold w-full hover:bg-[#1f1f1f] transition duration-150 ease-in-out"
               >
-                <ul className=" space-y-3 *:flex *:items-center *:border *:p-3 *:gap-3 [&_input]:ml-auto my-4">
-                  <li>
-                    <img
-                      alt="pay-stack"
-                      src="https://i.ibb.co/QpjxrJj/Paystack.png"
-                      width={24}
-                      height={23}
-                    />
-                    <p>Pay Online</p>{" "}
-                    <input type="radio" className="" disabled />
-                  </li>
-                  <li>
-                    <CashIcon /> <p>Pay with Cash (Offline)</p>{" "}
-                    <input type="radio" required />
-                  </li>
-                </ul>
-                <button
-                  onClick={() => {
-                    setOpenChild(true);
-                  }}
-                  className=" bg-[#C2C2C2] py-3 text-blue-50 font-semibold w-full"
-                >
-                  Continue
-                </button>
-              </form>
+                Continue
+              </button>
+              {/* </form> */}
             </div>
           ) : (
             <SuccessModal />

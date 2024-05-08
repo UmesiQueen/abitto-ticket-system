@@ -68,7 +68,7 @@ const Home = () => {
             <Link
               target="_blank"
               to="https://abittoglobal.com/?fbclid=PAZXh0bgNhZW0CMTEAAaaf2uWLgUdLwd18fE__CVzgHmX_XRFos7kxw4Ffa5sWyB58fZLwenzHvl8_aem_Af6umzSDXJvWgv1zoBRtzSSytwgTKLgfroif0Z8SpzdPUu-G5NWP8AMOlqscYrrjWJHGjX5_iSPUUMd4IcFzKNIs"
-              className="text-blue-500 flex items-center gap-3 cursor-pointer"
+              className="text-blue-500 hover:text-blue-700 transition duration-150 ease-in-out flex items-center gap-3 cursor-pointer"
             >
               <span className="underline font-medium">Learn more</span>
               <CaretIcon />
