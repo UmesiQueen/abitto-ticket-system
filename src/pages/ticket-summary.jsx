@@ -161,7 +161,7 @@ const TicketSummary = () => {
                         value: String(
                           (Number(formData?.adults_number) +
                             Number(formData?.children_number)) *
-                            1000
+                            (formData?.trip_type === "Round Trip" ? 2000 : 1000)
                         ),
                       })}
                     </td>
