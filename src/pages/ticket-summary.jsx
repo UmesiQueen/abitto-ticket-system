@@ -201,18 +201,19 @@ export default TicketSummary;
 // eslint-disable-next-line react/prop-types
 const PaymentModals = ({ open, closeModal }) => {
   const [openChild, setOpenChild] = React.useState(false);
-  const navigate = useNavigate();
+  const [isChecked, setChecked] = React.useState(false);
+
+  const handleClose = () => {
+    closeModal();
+    setChecked(false);
+  };
 
   return (
     <>
       <Modal
         open={open}
         onClose={() => {
-          closeModal();
-          if (openChild) {
-            setOpenChild(false);
-            navigate("/");
-          }
+          if (!openChild) handleClose();
         }}
         aria-labelledby="payment-modal"
         sx={{ backdropFilter: "blur(1px)" }}
@@ -225,7 +226,7 @@ const PaymentModals = ({ open, closeModal }) => {
                   Select Payment Method
                 </h2>
                 <button
-                  onClick={closeModal}
+                  onClick={handleClose}
                   className=" hover:scale-[.8] rounded-lg transition duration-150 ease-in-out "
                 >
                   <CancelSquareIcon />
@@ -237,33 +238,43 @@ const PaymentModals = ({ open, closeModal }) => {
                   e.preventDefault();
                 }}
               > */}
-              <ul className=" space-y-3 *:flex *:items-center *:border *:p-3 *:gap-3 [&_input]:ml-auto my-4">
+              <ul className=" space-y-3 [&_label]:flex [&_label]:items-center [&_label]:gap-3 *:border *:p-3 [&_input]:ml-auto my-4">
                 <li>
-                  <img
-                    alt="pay-stack"
-                    src="https://i.ibb.co/QpjxrJj/Paystack.png"
-                    width={24}
-                    height={23}
-                  />
-                  <p>Pay Online</p> <input type="radio" className="" disabled />
+                  <label>
+                    <img
+                      alt="pay-stack"
+                      src="https://i.ibb.co/QpjxrJj/Paystack.png"
+                      width={24}
+                      height={23}
+                    />
+                    <p>Pay Online</p>{" "}
+                    <input type="radio" className="" disabled />
+                  </label>
                 </li>
                 <li>
-                  <CashIcon /> <p>Pay with Cash (Offline)</p>{" "}
-                  <input type="radio" required />
+                  <label>
+                    <CashIcon /> <p>Pay with Cash (Offline)</p>{" "}
+                    <input
+                      type="radio"
+                      required
+                      onChange={(e) => setChecked(e.target.checked)}
+                    />
+                  </label>
                 </li>
               </ul>
               <button
                 onClick={() => {
                   setOpenChild(true);
                 }}
-                className=" bg-[#C2C2C2] py-3 text-blue-50 font-semibold w-full hover:bg-[#1f1f1f] transition duration-150 ease-in-out"
+                className=" disabled:bg-[#C2C2C2] disabled:cursor-not-allowed py-3 text-blue-50 font-semibold w-full bg-[#1f1f1f] hover:bg-[#1f1f1fea] transition duration-150 ease-in-out"
+                disabled={!isChecked}
               >
                 Continue
               </button>
               {/* </form> */}
             </div>
           ) : (
-            <SuccessModal />
+            <SuccessModal setState={setOpenChild} />
           )}
         </div>
       </Modal>
@@ -271,7 +282,8 @@ const PaymentModals = ({ open, closeModal }) => {
   );
 };
 
-const SuccessModal = () => {
+// eslint-disable-next-line react/prop-types
+const SuccessModal = ({ setState }) => {
   const navigate = useNavigate();
 
   return (
@@ -285,13 +297,14 @@ const SuccessModal = () => {
       <p className="font-normal text-xs text-[#454545] px-10">
         Please check your email for important ticket details.
       </p>
-      <div className="flex gap-6">
-        <button className="w-full border-2 border-blue-500 text-blue-500 hover:border-blue-700 hover:text-blue-700 text-sm bg-blue-50 p-3 px-4 font-semibold transition-all duration-150 ease-in-out ">
+      <div className="">
+        {/* <button className="w-full border-2 border-blue-500 text-blue-500 hover:border-blue-700 hover:text-blue-700 text-sm bg-blue-50 p-3 px-4 font-semibold transition-all duration-150 ease-in-out ">
           Check email
-        </button>
+        </button> */}
         <button
           className="bg-blue-500 hover:bg-blue-700 transition-all duration-150 ease-in-out text-sm w-full text-white p-3 px-4 font-semibold"
           onClick={() => {
+            setState(false);
             navigate("/");
           }}
         >

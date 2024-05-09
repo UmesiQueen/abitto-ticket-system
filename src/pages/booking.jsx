@@ -101,14 +101,26 @@ const BookingSchema = yup.object().shape({
       travel_from[0]
         ? schema.notOneOf(
             [yup.ref("travel_from")],
-            "Traveling from and to cannot have same value."
+            "Destination and departure cannot be the same."
           )
         : schema
     ),
   departure_date: yup.string().required("Departure date is required."),
   departure_time: yup.string().required("Departure time is required."),
-  return_date: yup.string(),
-  return_time: yup.string(),
+  return_date: yup
+    .string()
+    .when("$roundTrip", (isRoundTrip, field) =>
+      isRoundTrip
+        ? field.required("Return date is required.")
+        : field.notRequired()
+    ),
+  return_time: yup
+    .string()
+    .when("$roundTrip", (isRoundTrip, field) =>
+      isRoundTrip
+        ? field.required("Return time is required.")
+        : field.notRequired()
+    ),
   adults_number: yup
     .number()
     .required("No of adults is required.")
@@ -147,6 +159,7 @@ const BookingForm = ({ tab }) => {
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(BookingSchema),
+    context: { roundTrip: tab === "Round Trip" ? true : false },
   });
 
   const [loading, setLoading] = React.useState(false);
@@ -265,15 +278,15 @@ const BookingForm = ({ tab }) => {
           <SelectField
             {...register("adults_number")}
             label="No. of Adults"
-            placeholder="1"
+            placeholder="0"
             options={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
             errors={errors}
           />
           <SelectField
             {...register("children_number")}
             label="No. of Children"
-            placeholder="1"
-            options={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}
+            placeholder="0"
+            options={["", 1, 2, 3, 4, 5, 6, 7, 8, 9]}
             errors={errors}
           />
         </div>
@@ -360,7 +373,7 @@ const InputField = React.forwardRef((props, ref) => {
 
 // eslint-disable-next-line react/display-name
 const SelectField = React.forwardRef((props, ref) => {
-  const { label, placeholder, options, name, errors } = props;
+  const { label, placeholder, options, name, errors, onChange } = props;
   const [value, setValue] = React.useState("");
 
   const handleChange = (event) => {
@@ -375,7 +388,10 @@ const SelectField = React.forwardRef((props, ref) => {
           ref={ref}
           {...props}
           value={value}
-          onChange={handleChange}
+          onChange={(event) => {
+            handleChange(event);
+            onChange(event);
+          }}
           displayEmpty
           renderValue={
             value !== ""
