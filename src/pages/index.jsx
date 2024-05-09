@@ -44,7 +44,7 @@ const Home = () => {
               alt="about-us"
               width={100}
               height={100}
-              className=" md:-rotate-6 w-full md:w-[300px] lg:w-[350px] h-[400px] md:h-[400px]"
+              className=" md:-rotate-6 w-full md:w-[300px] lg:w-[350px] h-[400px] md:h-[400px] mx-auto"
             />
           </div>
           <div className="md:w-1/2 space-y-5">
