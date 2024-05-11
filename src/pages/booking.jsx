@@ -18,6 +18,7 @@ import axios from "axios";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { BookingCTX } from "../context/BookingContext";
+import { GlobalCTX } from "../context//GlobalContext";
 
 const Booking = () => {
   const [value, setValue] = React.useState("1");
@@ -110,14 +111,14 @@ const BookingSchema = yup.object().shape({
   return_date: yup
     .string()
     .when("$roundTrip", (isRoundTrip, field) =>
-      isRoundTrip
+      isRoundTrip[0]
         ? field.required("Return date is required.")
         : field.notRequired()
     ),
   return_time: yup
     .string()
     .when("$roundTrip", (isRoundTrip, field) =>
-      isRoundTrip
+      isRoundTrip[0]
         ? field.required("Return time is required.")
         : field.notRequired()
     ),
@@ -162,7 +163,7 @@ const BookingForm = ({ tab }) => {
     context: { roundTrip: tab === "Round Trip" ? true : false },
   });
 
-  const [loading, setLoading] = React.useState(false);
+  const { loading, setLoading } = React.useContext(GlobalCTX);
   const { setFormData } = React.useContext(BookingCTX);
   const navigate = useNavigate();
   const ticket_id = uuid();
@@ -376,10 +377,6 @@ const SelectField = React.forwardRef((props, ref) => {
   const { label, placeholder, options, name, errors, onChange } = props;
   const [value, setValue] = React.useState("");
 
-  const handleChange = (event) => {
-    setValue(event.target.value);
-  };
-
   return (
     <div className="flex flex-col w-full">
       <label className="text-sm w-full flex gap-3 flex-col ">
@@ -389,7 +386,7 @@ const SelectField = React.forwardRef((props, ref) => {
           {...props}
           value={value}
           onChange={(event) => {
-            handleChange(event);
+            setValue(event.target.value);
             onChange(event);
           }}
           displayEmpty

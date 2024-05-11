@@ -16,18 +16,19 @@ import { formatValue } from "react-currency-input-field";
 import Modal from "@mui/material/Modal";
 import ClipLoader from "react-spinners/ClipLoader";
 import { useNavigate } from "react-router-dom";
+import { GlobalCTX } from "../context/GlobalContext";
 
 const TicketSummary = () => {
   const { formData } = React.useContext(BookingCTX);
   const [open, setOpen] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
+  const { loading, setLoading } = React.useContext(GlobalCTX);
   const openModal = () => {
     setLoading(true);
 
     setTimeout(() => {
       setLoading(false);
       setOpen(true);
-    }, 500);
+    }, 1000);
   };
 
   const closeModal = () => {
@@ -161,7 +162,7 @@ const TicketSummary = () => {
                         value: String(
                           (Number(formData?.adults_number) +
                             Number(formData?.children_number)) *
-                            1000
+                            (formData?.trip_type === "Round Trip" ? 2000 : 1000)
                         ),
                       })}
                     </td>
@@ -202,6 +203,16 @@ export default TicketSummary;
 const PaymentModals = ({ open, closeModal }) => {
   const [openChild, setOpenChild] = React.useState(false);
   const [isChecked, setChecked] = React.useState(false);
+  const { setLoading } = React.useContext(GlobalCTX);
+
+  const openModal = () => {
+    setLoading(true);
+
+    setTimeout(() => {
+      setLoading(false);
+      setOpenChild(true);
+    }, 1500);
+  };
 
   const handleClose = () => {
     closeModal();
@@ -216,7 +227,7 @@ const PaymentModals = ({ open, closeModal }) => {
           if (!openChild) handleClose();
         }}
         aria-labelledby="payment-modal"
-        sx={{ backdropFilter: "blur(1px)" }}
+        sx={{ backdropFilter: "blur(1px)", zIndex: 1 }}
       >
         <div className="mt-36 bg-white h-fit md:w-[375px] p-5 mx-5 md:mx-auto">
           {!openChild ? (
@@ -263,9 +274,7 @@ const PaymentModals = ({ open, closeModal }) => {
                 </li>
               </ul>
               <button
-                onClick={() => {
-                  setOpenChild(true);
-                }}
+                onClick={openModal}
                 className=" disabled:bg-[#C2C2C2] disabled:cursor-not-allowed py-3 text-blue-50 font-semibold w-full bg-[#1f1f1f] hover:bg-[#1f1f1fea] transition duration-150 ease-in-out"
                 disabled={!isChecked}
               >
@@ -305,7 +314,7 @@ const SuccessModal = ({ setState }) => {
           className="bg-blue-500 hover:bg-blue-700 transition-all duration-150 ease-in-out text-sm w-full text-white p-3 px-4 font-semibold"
           onClick={() => {
             setState(false);
-            navigate("/");
+            navigate("/booking");
           }}
         >
           Continue

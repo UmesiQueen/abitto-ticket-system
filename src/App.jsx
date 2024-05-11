@@ -7,12 +7,13 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import classNames from "classnames";
 import {
-  FacebookIcon,
+  // FacebookIcon,
   InstagramIcon,
-  LinkedinIcon,
-  TwitterIcon,
+  // LinkedinIcon,
+  // TwitterIcon,
 } from "./assets/icons/index";
 import { GlobalCTX } from "./context/GlobalContext";
+import Loader from "./components/Loader";
 
 function App() {
   const pathname = useLocation();
@@ -28,6 +29,7 @@ function App() {
         <Outlet />
       </main>
       <Footer />
+      <Loader />
     </div>
   );
 }
@@ -134,7 +136,7 @@ const Footer = () => {
           </li>
           <li>
             <h3>Resources</h3>
-            <a>FAQ</a>
+            {/* <a>FAQ</a> */}
             <a>Career</a>
             <a>Videos</a>
           </li>
@@ -185,7 +187,7 @@ const Footer = () => {
                 Resources
               </AccordionSummary>
               <AccordionDetails sx={{ marginX: "20px" }}>
-                <a>FAQ</a>
+                {/* <a>FAQ</a> */}
                 <a>Career</a>
                 <a>Videos</a>
               </AccordionDetails>
@@ -225,7 +227,7 @@ const Footer = () => {
             <InstagramIcon />
           </Link>
         </li>
-        <li>
+        {/* <li>
           <Link target="_blank" to="https://web.facebook.com/abittoglobal/">
             <FacebookIcon />
           </Link>
@@ -237,7 +239,7 @@ const Footer = () => {
         </li>
         <li>
           <LinkedinIcon />
-        </li>
+        </li> */}
       </ul>
 
       <hr className="my-7" />
