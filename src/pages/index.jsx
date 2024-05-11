@@ -1,5 +1,5 @@
 import React from "react";
-import { MapIcon, PhoneIcon, CaretIcon } from "../assets/icons/index";
+import { MapIcon, PhoneIcon, CaretIcon, BoatIcon } from "../assets/icons/index";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import Alert from "@mui/material/Alert";
@@ -85,40 +85,97 @@ const Home = () => {
         className="py-10 px-5 md:py-20 md:px-10 lg:px-44 bg-white"
         ref={contact}
       >
-        <div className="flex flex-col md:flex-row justify-between flex-1">
-          <div className="md:w-1/2 flex flex-col md:items-center space-y-5 md:mt-6 mb-16 ">
+        <div className="flex flex-col md:flex-row md:gap-5 lg:gap-10 justify-between ">
+          <div className="md:w-1/2 flex flex-col space-y-5 md:mt-6 mb-16 flex-1">
             <div className="flex items-center md:hidden">
               <span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 " />
               <h2 className="uppercase font-medium">Our Location</h2>
             </div>
-            <img
-              src="https://i.ibb.co/z40PwNW/map.png"
-              alt="contact-us"
-              width={350}
-              height={420}
-              className="self-center"
-            />
-            <ul className="md:w-[350px] px-5 text-lg [&_a]:flex [&_a]:gap-3 [&_a]:items-center space-y-5 ">
-              <li>
-                <Link
-                  className="hover:text-blue-500 duration-150 ease-in-out transition"
-                  target="_blank"
-                  to="https://maps.google.com/maps/place//data=!4m2!3m1!1s0x10678776d57d673d:0x3a5ca1c3f4f97ad4?entry=s&sa=X&ved=1t:8290&hl=en-US&ictx=111"
-                >
-                  <MapIcon />
-                  <p>Marina Resort, Calabar</p>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="hover:text-blue-500 duration-150 ease-in-out transition"
-                  to="tel:+234 813 047 8003"
-                >
-                  <PhoneIcon />
-                  <p>+234 813 047 8003</p>
-                </Link>
-              </li>
-            </ul>
+            {/* Calabar */}
+            <div className="lg:flex gap-8 !mb-5 lg:mb-0">
+              <img
+                src="https://i.ibb.co/z40PwNW/map.png"
+                alt="contact-us"
+                width={350}
+                height={420}
+                className="self-start mb-8 lg:mb-0 w-full md:w-1/2 "
+              />
+              <ul className="text-sm [&_a]:flex [&_a]:gap-3 [&_a]:items-center space-y-5 ">
+                <li className="flex gap-3 items-center">
+                  <span>
+                    <BoatIcon />
+                  </span>
+                  <p className="font-medium">Calabar ferry Terminal</p>
+                </li>
+                <li>
+                  <Link
+                    className="hover:text-blue-500 duration-150 ease-in-out transition"
+                    to="tel:+234 813 047 8003"
+                  >
+                    <span>
+                      <PhoneIcon />
+                    </span>
+                    <p>+234 813 047 8003</p>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    className="hover:text-blue-500 duration-150 ease-in-out transition"
+                    target="_blank"
+                    to="https://maps.google.com/maps/place//data=!4m2!3m1!1s0x10678776d57d673d:0x3a5ca1c3f4f97ad4?entry=s&sa=X&ved=1t:8290&hl=en-US&ictx=111"
+                  >
+                    <span>
+                      <MapIcon />
+                    </span>
+                    <p>Marina Resort, Calabar</p>
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Uyo */}
+            <div className="lg:flex gap-8 !mb-5 lg:mb-0">
+              <img
+                src="https://i.ibb.co/z40PwNW/map.png"
+                alt="contact-us"
+                width={350}
+                height={420}
+                className="self-start mb-8 lg:mb-0 w-full md:w-1/2 "
+              />
+              <ul className="text-sm [&_a]:flex [&_a]:gap-3 [&_a]:items-center space-y-5 ">
+                <li className="flex gap-3 items-center">
+                  <span>
+                    <BoatIcon />
+                  </span>
+                  <p className="font-medium">Uyo ferry Terminal</p>
+                </li>
+                <li>
+                  <Link
+                    className="hover:text-blue-500 duration-150 ease-in-out transition"
+                    to="tel:+234 813 047 8003"
+                  >
+                    <span>
+                      <PhoneIcon />
+                    </span>
+                    <p>+234 813 047 8003</p>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    className="hover:text-blue-500 duration-150 ease-in-out transition"
+                    target="_blank"
+                    to="https://maps.google.com/maps/place//data=!4m2!3m1!1s0x10678776d57d673d:0x3a5ca1c3f4f97ad4?entry=s&sa=X&ved=1t:8290&hl=en-US&ictx=111"
+                  >
+                    <span>
+                      <MapIcon />
+                    </span>
+                    <p>
+                      Nwaniba Timber Beach, Uruan, Behind Ibom Icon Resort, Uyo
+                    </p>
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
           <div className="md:w-1/2 space-y-5 relative">
             <div className="flex items-center">

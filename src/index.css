@@ -38,3 +38,29 @@ html {
 #home .custom-shape-divider-bottom-1714584326 .shape-fill {
   fill: #ebf0fa;
 }
+
+.fadeIn path {
+  animation: fadeIn 1s infinite ease-out backwards;
+}
+
+.fadeIn path:nth-of-type(2) {
+  animation-delay: 0.1s;
+}
+
+.fadeIn path:nth-of-type(3) {
+  animation-delay: 0.2s;
+}
+.fadeIn path:last-of-type {
+  animation-delay: 0.3s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    visibility: hidden;
+  }
+  to {
+    opacity: 1;
+    visibility: visible;
+  }
+}

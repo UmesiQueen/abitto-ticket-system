@@ -18,6 +18,7 @@ import axios from "axios";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { BookingCTX } from "../context/BookingContext";
+import { GlobalCTX } from "../context//GlobalContext";
 
 const Booking = () => {
   const [value, setValue] = React.useState("1");
@@ -161,9 +162,8 @@ const BookingForm = ({ tab }) => {
     resolver: yupResolver(BookingSchema),
     context: { roundTrip: tab === "Round Trip" ? true : false },
   });
-  console.log(errors, ">>> errors");
 
-  const [loading, setLoading] = React.useState(false);
+  const { loading, setLoading } = React.useContext(GlobalCTX);
   const { setFormData } = React.useContext(BookingCTX);
   const navigate = useNavigate();
   const ticket_id = uuid();
