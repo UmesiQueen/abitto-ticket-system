@@ -14,7 +14,7 @@ const Home = () => {
       {/* Hero section */}
       <section
         id="home"
-        className="bg-hero-pattern h-screen w-screen bg-cover bg-no-repeat bg-center flex items-center relative "
+        className="slides h-screen w-full bg-cover bg-no-repeat bg-center flex items-center relative "
       >
         <div className="bg-black/40 w-full h-full absolute " />
         <div className="w-[300px] md:w-[440px] pl-5 md:pl-20 space-y-10 z-[1] pt-[78px]">
@@ -91,10 +91,11 @@ const Home = () => {
               <span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 " />
               <h2 className="uppercase font-medium">Our Location</h2>
             </div>
+
             {/* Calabar */}
             <div className="lg:flex gap-8 !mb-5 lg:mb-0">
               <img
-                src="https://i.ibb.co/z40PwNW/map.png"
+                src="https://i.ibb.co/T46yDpf/Marina.png"
                 alt="contact-us"
                 width={350}
                 height={420}
@@ -136,7 +137,7 @@ const Home = () => {
             {/* Uyo */}
             <div className="lg:flex gap-8 !mb-5 lg:mb-0">
               <img
-                src="https://i.ibb.co/z40PwNW/map.png"
+                src="https://i.ibb.co/wCRvwCG/Ibom-icon.png"
                 alt="contact-us"
                 width={350}
                 height={420}
@@ -164,7 +165,7 @@ const Home = () => {
                   <Link
                     className="hover:text-blue-500 duration-150 ease-in-out transition"
                     target="_blank"
-                    to="https://maps.google.com/maps/place//data=!4m2!3m1!1s0x10678776d57d673d:0x3a5ca1c3f4f97ad4?entry=s&sa=X&ved=1t:8290&hl=en-US&ictx=111"
+                    to="https://www.google.com/maps/dir//520106+Nwaniba+Road,+Uyo+520106,+Akwa+Ibom/@5.0557182,7.9578196,12z/data=!4m8!4m7!1m0!1m5!1m1!1s0x105d5813586afc87:0x6734e8be23eaf5d8!2m2!1d8.0402216!2d5.0557234?entry=ttu"
                   >
                     <span>
                       <MapIcon />
@@ -179,7 +180,7 @@ const Home = () => {
           </div>
           <div className="md:w-1/2 space-y-5 relative">
             <div className="flex items-center">
-              <span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 " />
+              <span className="h-3 w-3 mr-3 rounded-full bg-blue-500" />
               <h2 className="uppercase font-medium">Contact us</h2>
             </div>
             <ContactForm />
