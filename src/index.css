@@ -50,6 +50,7 @@ html {
 .fadeIn path:nth-of-type(3) {
   animation-delay: 0.2s;
 }
+
 .fadeIn path:last-of-type {
   animation-delay: 0.3s;
 }
@@ -62,5 +63,50 @@ html {
   to {
     opacity: 1;
     visibility: visible;
+  }
+}
+
+.slides {
+  transition: background 2000s;
+  animation: slide 20s infinite ease-in forwards;
+}
+
+@keyframes slide {
+  0%,
+  33% {
+    background-image: url("https://i.ibb.co/s2PKJm4/hero.jpg");
+  }
+  34%,
+  66% {
+    background-image: url("https://i.ibb.co/S5HbzhB/02-Original-Image.png");
+  }
+  67%,
+  100% {
+    background-image: url("https://i.ibb.co/LQZhSyy/03-Original-Image.png");
+  }
+}
+
+.slides::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  animation: slideOut 20s infinite;
+}
+
+@keyframes slideOut {
+  0%,
+  10%,
+  90%,
+  100% {
+    opacity: 1;
+  }
+  30%,
+  70% {
+    opacity: 0;
   }
 }
