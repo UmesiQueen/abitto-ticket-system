@@ -12,7 +12,6 @@ import Select from "@mui/material/Select";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
-import Alert from "@mui/material/Alert";
 import { v4 as uuid } from "uuid";
 import axios from "axios";
 import * as yup from "yup";
@@ -22,7 +21,6 @@ import { GlobalCTX } from "../context//GlobalContext";
 
 const Booking = () => {
   const [value, setValue] = React.useState("1");
-  const { alert } = React.useContext(BookingCTX);
 
   const handleChange = (_, newValue) => {
     setValue(newValue);
@@ -69,24 +67,6 @@ const Booking = () => {
           </Box>
         </div>
       </div>
-      {alert && (
-        <div className="absolute top-24 w-fit left-0 right-0 mx-auto ">
-          <Alert
-            variant="outlined"
-            className=" backdrop-blur"
-            sx={{
-              color: "#fff",
-              borderColor: "#244891",
-              borderWidth: "2px",
-              backgroundColor: "#3366CC83",
-              "& .MuiAlert-icon": { color: "#fff" },
-            }}
-            severity="info"
-          >
-            Please a book a ticket to view summary.
-          </Alert>
-        </div>
-      )}
     </div>
   );
 };
@@ -163,7 +143,7 @@ const BookingForm = ({ tab }) => {
     context: { roundTrip: tab === "Round Trip" ? true : false },
   });
 
-  const { loading, setLoading } = React.useContext(GlobalCTX);
+  const { loading, setLoading, handleAlert } = React.useContext(GlobalCTX);
   const { setFormData } = React.useContext(BookingCTX);
   const navigate = useNavigate();
   const ticket_id = uuid();
@@ -185,6 +165,7 @@ const BookingForm = ({ tab }) => {
       })
       .catch((err) => {
         setLoading(false);
+        handleAlert("error");
         console.error(err, "Error occurred.");
       });
   };

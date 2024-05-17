@@ -6,14 +6,13 @@ export const BookingCTX = React.createContext();
 const BookingContext = ({ children }) => {
   const store = JSON.parse(localStorage.getItem("booking-details")) || {};
   const [formData, setFormData] = React.useState(store);
-  const [alert, setAlert] = React.useState(false);
 
   React.useEffect(() => {
     localStorage.setItem("booking-details", JSON.stringify(formData));
   }, [formData]);
 
   return (
-    <BookingCTX.Provider value={{ formData, setFormData, alert, setAlert }}>
+    <BookingCTX.Provider value={{ formData, setFormData }}>
       {children}
     </BookingCTX.Provider>
   );

@@ -8,6 +8,7 @@ const GlobalContext = ({ children }) => {
   const about = React.useRef();
   const contact = React.useRef();
   const [loading, setLoading] = React.useState(false);
+  const [alert, setAlert] = React.useState({ state: false, variant: null });
 
   const scrollToSection = (e) => {
     window.scrollTo({
@@ -16,9 +17,24 @@ const GlobalContext = ({ children }) => {
     });
   };
 
+  const handleAlert = (variant) => {
+    setAlert({ state: true, variant });
+    setTimeout(() => {
+      setAlert({ state: false, variant: null });
+    }, 3500);
+  };
+
   return (
     <GlobalCTX.Provider
-      value={{ about, contact, scrollToSection, loading, setLoading }}
+      value={{
+        about,
+        contact,
+        scrollToSection,
+        loading,
+        setLoading,
+        alert,
+        handleAlert,
+      }}
     >
       <BookingContext>{children}</BookingContext>
     </GlobalCTX.Provider>
@@ -28,4 +44,5 @@ const GlobalContext = ({ children }) => {
 GlobalContext.propTypes = {
   children: PropTypes.node,
 };
+
 export default GlobalContext;
