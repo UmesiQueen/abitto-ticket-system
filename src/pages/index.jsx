@@ -2,9 +2,10 @@ import React from "react";
 import { MapIcon, PhoneIcon, CaretIcon, BoatIcon } from "../assets/icons/index";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import Alert from "@mui/material/Alert";
 import WaveSVG from "../assets/wave";
 import { GlobalCTX } from "../context/GlobalContext";
+import axios from "axios";
+import FadeInBackgroundTransition from "../components/animation/FadeIn";
 
 const Home = () => {
   const { about, contact } = React.useContext(GlobalCTX);
@@ -14,10 +15,13 @@ const Home = () => {
       {/* Hero section */}
       <section
         id="home"
-        className="slides h-screen w-full bg-cover bg-no-repeat bg-center flex items-center relative "
+        className=" h-screen w-full flex items-center relative "
       >
-        <div className="bg-black/40 w-full h-full absolute " />
-        <div className="w-[300px] md:w-[440px] pl-5 md:pl-20 space-y-10 z-[1] pt-[78px]">
+        <div className="bg-black/40 w-full h-full absolute z-[1] " />
+
+        <FadeInBackgroundTransition />
+
+        <div className="w-[300px] md:w-[440px] pl-5 md:pl-20 space-y-10 z-[2] pt-[78px]">
           <p className="font-semibold text-2xl md:text-[40px] text-white md:leading-10">
             The Easiest & Safest way to travel within Nigeria & Africa
           </p>
@@ -25,10 +29,10 @@ const Home = () => {
             <Link to={"/booking"}>Book a Ticket</Link>
           </button>
         </div>
-        <div className="hidden md:block">
+        <div className="hidden md:block z-[2]">
           <WaveSVG />
         </div>
-        <div className="md:hidden bg-blue-50 h-5 w-full absolute bottom-0 left-0 right-0 rounded-t-xl " />
+        <div className="md:hidden bg-blue-50 h-5 w-full absolute z-[2] bottom-0 left-0 right-0 rounded-t-xl " />
       </section>
 
       {/* About us  */}
@@ -99,7 +103,7 @@ const Home = () => {
                 alt="contact-us"
                 width={350}
                 height={420}
-                className="self-start mb-8 lg:mb-0 w-full md:w-1/2 "
+                className="self-start mb-8 lg:mb-0 w-full lg:w-1/2 "
               />
               <ul className="text-sm [&_a]:flex [&_a]:gap-3 [&_a]:items-center space-y-5 ">
                 <li className="flex gap-3 items-center">
@@ -141,7 +145,7 @@ const Home = () => {
                 alt="contact-us"
                 width={350}
                 height={420}
-                className="self-start mb-8 lg:mb-0 w-full md:w-1/2 "
+                className="self-start mb-8 lg:mb-0 w-full lg:w-1/2 "
               />
               <ul className="text-sm [&_a]:flex [&_a]:gap-3 [&_a]:items-center space-y-5 ">
                 <li className="flex gap-3 items-center">
@@ -200,21 +204,26 @@ const ContactForm = () => {
     formState: { errors },
     reset,
   } = useForm();
-  const [alert, setAlert] = React.useState(false);
+  const { handleAlert } = React.useContext(GlobalCTX);
   const [loading, setLoading] = React.useState(false);
 
-  const onSubmit = handleSubmit(() => {
+  const onSubmit = handleSubmit((formData) => {
     setLoading(true);
 
-    setTimeout(() => {
-      setLoading(false);
-      setAlert(true);
-      reset();
-    }, 1500);
-
-    setTimeout(() => {
-      setAlert(false);
-    }, 4500);
+    axios
+      .post("https://abitto-api.onrender.com/api/email/contact", formData)
+      .then((res) => {
+        if (res.status === 200) {
+          setLoading(false);
+          handleAlert("success");
+          reset();
+        }
+      })
+      .catch((err) => {
+        setLoading(false);
+        handleAlert("error");
+        console.error(err, "Error occurred!");
+      });
   });
 
   return (
@@ -253,24 +262,6 @@ const ContactForm = () => {
           {loading ? "Sending..." : "Send Request"}
         </button>
       </form>
-      {alert && (
-        <div className="fixed top-0 w-fit left-0 right-0 mx-auto ">
-          <Alert
-            variant="outlined"
-            className=" backdrop-blur"
-            sx={{
-              color: "#fff",
-              borderColor: "#244891",
-              borderWidth: "2px",
-              backgroundColor: "#3366CC83",
-              "& .MuiAlert-icon": { color: "#fff" },
-            }}
-            severity="info"
-          >
-            Request sent successfully.
-          </Alert>
-        </div>
-      )}
     </>
   );
 };
