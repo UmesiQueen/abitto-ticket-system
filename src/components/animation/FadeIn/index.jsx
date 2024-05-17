@@ -4,8 +4,9 @@ import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 const images = [
   "https://i.ibb.co/s2PKJm4/hero.jpg",
-  "https://i.ibb.co/S5HbzhB/02-Original-Image.png",
-  "https://i.ibb.co/LQZhSyy/03-Original-Image.png",
+  "https://i.ibb.co/S5HbzhB/hero-2.png",
+  "https://i.ibb.co/LQZhSyy/hero-3.png
+  ",
 ];
 
 export default function FadeInBackgroundTransition() {
