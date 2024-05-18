@@ -9,20 +9,22 @@ import TabPanel from "@mui/lab/TabPanel";
 import classNames from "classnames";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
-import Alert from "@mui/material/Alert";
 import { v4 as uuid } from "uuid";
 import axios from "axios";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { CalendarIcon } from "../assets/icons";
 import { BookingCTX } from "../context/BookingContext";
 import { GlobalCTX } from "../context//GlobalContext";
+import { format } from "date-fns";
 
 const Booking = () => {
   const [value, setValue] = React.useState("1");
-  const { alert } = React.useContext(BookingCTX);
 
   const handleChange = (_, newValue) => {
     setValue(newValue);
@@ -69,24 +71,6 @@ const Booking = () => {
           </Box>
         </div>
       </div>
-      {alert && (
-        <div className="absolute top-24 w-fit left-0 right-0 mx-auto ">
-          <Alert
-            variant="outlined"
-            className=" backdrop-blur"
-            sx={{
-              color: "#fff",
-              borderColor: "#244891",
-              borderWidth: "2px",
-              backgroundColor: "#3366CC83",
-              "& .MuiAlert-icon": { color: "#fff" },
-            }}
-            severity="info"
-          >
-            Please a book a ticket to view summary.
-          </Alert>
-        </div>
-      )}
     </div>
   );
 };
@@ -157,13 +141,14 @@ const BookingForm = ({ tab }) => {
     register,
     handleSubmit,
     formState: { errors },
+    control,
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(BookingSchema),
     context: { roundTrip: tab === "Round Trip" ? true : false },
   });
 
-  const { loading, setLoading } = React.useContext(GlobalCTX);
+  const { loading, setLoading, handleAlert } = React.useContext(GlobalCTX);
   const { setFormData } = React.useContext(BookingCTX);
   const navigate = useNavigate();
   const ticket_id = uuid();
@@ -185,6 +170,7 @@ const BookingForm = ({ tab }) => {
       })
       .catch((err) => {
         setLoading(false);
+        handleAlert("error");
         console.error(err, "Error occurred.");
       });
   };
@@ -218,22 +204,47 @@ const BookingForm = ({ tab }) => {
           )}
         >
           <div className="w-1/2 md:w-full grow ">
-            <InputField
-              {...register("departure_date", {
-                required: "Field is required.",
-              })}
-              label="Date of Departure"
-              placeholder="02/04/2024"
-              type="date"
-              min={new Date().toISOString().split("T")[0]}
-              errors={errors}
-            />
+            <div className="flex flex-col w-full">
+              <label className="text-sm !w-full flex flex-col ">
+                Date of Departure
+                <Controller
+                  control={control}
+                  name="departure_date"
+                  render={({ field }) => (
+                    <DatePicker
+                      minDate={new Date().toISOString().split("T")[0]}
+                      icon={<CalendarIcon />}
+                      showIcon
+                      toggleCalendarOnIconClick={true}
+                      closeOnScroll
+                      className="bg-blue-50 h-10 border border-blue-500 font-normal text-xs w-full !px-4 !rounded-none font-poppins mt-3 text-left"
+                      onChange={(date) => field.onChange(date)}
+                      selected={field.value}
+                      customInput={
+                        <button type="button">
+                          {field?.value ? (
+                            format(field?.value, "P")
+                          ) : (
+                            <span className="text-xs text-[#9fa6b2]">
+                              dd/mm/yyyy
+                            </span>
+                          )}
+                        </button>
+                      }
+                    />
+                  )}
+                />
+              </label>
+              {errors?.departure_date && (
+                <p className="text-xs pt-2 text-red-700">
+                  {errors?.departure_date.message}
+                </p>
+              )}
+            </div>
           </div>
           <div className="w-1/2  md:w-full grow">
             <SelectField
-              {...register("departure_time", {
-                required: "Field is required.",
-              })}
+              {...register("departure_time")}
               label="Time of Departure"
               placeholder="08:30 AM"
               options={[
@@ -251,14 +262,44 @@ const BookingForm = ({ tab }) => {
         {/* Round Trip */}
         {tab === "Round Trip" && (
           <div className="flex gap-5 w-full">
-            <InputField
-              {...register("return_date")}
-              label="Date of Return"
-              placeholder="02/04/2024"
-              type="date"
-              min={new Date().toISOString().split("T")[0]}
-              errors={errors}
-            />
+            <div className="flex flex-col w-full">
+              <label className="text-sm !w-full flex flex-col ">
+                Date of Return
+                <Controller
+                  control={control}
+                  name="return_date"
+                  render={({ field }) => (
+                    <DatePicker
+                      minDate={new Date().toISOString().split("T")[0]}
+                      icon={<CalendarIcon />}
+                      showIcon
+                      toggleCalendarOnIconClick={true}
+                      closeOnScroll
+                      className="bg-blue-50 h-10 border border-blue-500 font-normal text-xs w-full !px-4 !rounded-none font-poppins mt-3 text-left"
+                      onChange={(date) => field.onChange(date)}
+                      selected={field.value}
+                      customInput={
+                        <button type="button">
+                          {field?.value ? (
+                            format(field?.value, "P")
+                          ) : (
+                            <span className="text-xs text-[#9fa6b2]">
+                              dd/mm/yyyy
+                            </span>
+                          )}
+                        </button>
+                      }
+                    />
+                  )}
+                />
+              </label>
+              {errors?.return_date && (
+                <p className="text-xs pt-2 text-red-700">
+                  {errors?.return_date.message}
+                </p>
+              )}
+            </div>
+
             <SelectField
               {...register("return_time")}
               label="Time of Return"

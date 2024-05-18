@@ -7,13 +7,14 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import classNames from "classnames";
 import {
-  // FacebookIcon,
+  FacebookIcon,
   InstagramIcon,
   // LinkedinIcon,
   // TwitterIcon,
 } from "./assets/icons/index";
 import { GlobalCTX } from "./context/GlobalContext";
-import Loader from "./components/Loader";
+import Loader from "./components/animation/Loader";
+import Alert_ from "./components/Alert";
 
 function App() {
   const pathname = useLocation();
@@ -30,6 +31,7 @@ function App() {
       </main>
       <Footer />
       <Loader />
+      <Alert_ />
     </div>
   );
 }
@@ -66,7 +68,7 @@ const Navbar = () => {
   return (
     <nav
       className={classNames(
-        "absolute right-0 left-0 px-5 md:px-20 py-2 text-white flex items-center justify-between backdrop-blur-sm z-[1] transition duration-50 ease-in-out",
+        "absolute right-0 left-0 px-5 md:px-20 py-2 text-white flex items-center justify-between backdrop-blur-sm z-[3] transition duration-50 ease-in-out",
         isOpen ? "bg-blue-700 md:bg-[#1111111F]" : "bg-[#1111111F]"
       )}
       ref={navRef}
@@ -227,11 +229,12 @@ const Footer = () => {
             <InstagramIcon />
           </Link>
         </li>
-        {/* <li>
+        <li>
           <Link target="_blank" to="https://web.facebook.com/abittoglobal/">
             <FacebookIcon />
           </Link>
         </li>
+        {/* 
         <li>
           <Link target="_blank" to="https://twitter.com/AbittoGlobal">
             <TwitterIcon />
