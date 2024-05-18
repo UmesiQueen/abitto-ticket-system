@@ -7,6 +7,7 @@ const images = [
   "https://i.ibb.co/S5HbzhB/hero-2.png",
   "https://i.ibb.co/LQZhSyy/hero-3.png",
 ];
+const backgroundColor = ["#172554", "#f2ebd8", "#4b2d25"];
 
 export default function FadeInBackgroundTransition() {
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
@@ -28,7 +29,10 @@ export default function FadeInBackgroundTransition() {
       >
         <div
           className="fade-image"
-          style={{ backgroundImage: `url(${images[currentImageIndex]})` }}
+          style={{
+            backgroundImage: `url(${images[currentImageIndex]})`,
+            backgroundColor: backgroundColor[currentImageIndex],
+          }}
         />
       </CSSTransition>
     </TransitionGroup>

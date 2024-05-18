@@ -38,3 +38,9 @@ html {
 #home .custom-shape-divider-bottom-1714584326 .shape-fill {
   fill: #ebf0fa;
 }
+
+.react-datepicker__input-container svg {
+  position: absolute;
+  right: 16px;
+  top: 25px;
+}
