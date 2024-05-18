@@ -21,6 +21,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { CalendarIcon } from "../assets/icons";
 import { BookingCTX } from "../context/BookingContext";
 import { GlobalCTX } from "../context//GlobalContext";
+import { format } from "date-fns";
 
 const Booking = () => {
   const [value, setValue] = React.useState("1");
@@ -212,14 +213,24 @@ const BookingForm = ({ tab }) => {
                   render={({ field }) => (
                     <DatePicker
                       minDate={new Date().toISOString().split("T")[0]}
-                      placeholderText="dd/mm/yyyy"
                       icon={<CalendarIcon />}
                       showIcon
                       toggleCalendarOnIconClick={true}
                       closeOnScroll
-                      className="bg-blue-50 h-10 border border-blue-500 font-normal text-xs w-full !px-4 !rounded-none placeholder:text-xs font-poppins placeholder:text-[#9fa6b2] mt-3"
+                      className="bg-blue-50 h-10 border border-blue-500 font-normal text-xs w-full !px-4 !rounded-none font-poppins mt-3 text-left"
                       onChange={(date) => field.onChange(date)}
                       selected={field.value}
+                      customInput={
+                        <button type="button">
+                          {field?.value ? (
+                            format(field?.value, "P")
+                          ) : (
+                            <span className="text-xs text-[#9fa6b2]">
+                              dd/mm/yyyy
+                            </span>
+                          )}
+                        </button>
+                      }
                     />
                   )}
                 />
@@ -260,14 +271,24 @@ const BookingForm = ({ tab }) => {
                   render={({ field }) => (
                     <DatePicker
                       minDate={new Date().toISOString().split("T")[0]}
-                      placeholderText="dd/mm/yyyy"
                       icon={<CalendarIcon />}
                       showIcon
                       toggleCalendarOnIconClick={true}
                       closeOnScroll
-                      className="bg-blue-50 h-10 border border-blue-500 font-normal text-xs w-full !px-4 !rounded-none placeholder:text-xs font-poppins placeholder:text-[#9fa6b2] mt-3"
+                      className="bg-blue-50 h-10 border border-blue-500 font-normal text-xs w-full !px-4 !rounded-none font-poppins mt-3 text-left"
                       onChange={(date) => field.onChange(date)}
                       selected={field.value}
+                      customInput={
+                        <button type="button">
+                          {field?.value ? (
+                            format(field?.value, "P")
+                          ) : (
+                            <span className="text-xs text-[#9fa6b2]">
+                              dd/mm/yyyy
+                            </span>
+                          )}
+                        </button>
+                      }
                     />
                   )}
                 />
