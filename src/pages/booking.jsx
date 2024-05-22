@@ -142,16 +142,60 @@ const BookingForm = ({ tab }) => {
     handleSubmit,
     formState: { errors },
     control,
+    resetField,
+    watch,
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(BookingSchema),
     context: { roundTrip: tab === "Round Trip" ? true : false },
   });
 
+  const defaultTimeOptions = [
+    "08:30 AM",
+    "10:30 AM",
+    "12:30 PM",
+    "02:30 PM",
+    "03:30 PM",
+    "05:00 PM",
+  ];
+
   const { loading, setLoading, handleAlert } = React.useContext(GlobalCTX);
   const { setFormData } = React.useContext(BookingCTX);
+  const [timeOptions, setTimeOptions] = React.useState(defaultTimeOptions);
   const navigate = useNavigate();
   const ticket_id = uuid();
+
+  const departure_date = watch("departure_date");
+  const return_date = watch("return_date");
+
+  React.useEffect(() => {
+    resetTimeOptions("departure_time", departure_date);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [departure_date]);
+
+  React.useEffect(() => {
+    resetTimeOptions("return_time", return_date);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [return_date]);
+
+  const resetTimeOptions = (field, dateValue) => {
+    const sundayTimeOptions = ["12:30 PM", "03:30 PM"];
+    const weekdayTimeOptions = defaultTimeOptions.filter(
+      (time) => time !== "03:30 PM"
+    );
+
+    if (dateValue) {
+      const date = format(dateValue, "eeee");
+
+      if (date === "Sunday") {
+        setTimeOptions(sundayTimeOptions);
+        if (!sundayTimeOptions.includes(watch(field))) resetField(field);
+      } else {
+        setTimeOptions(weekdayTimeOptions);
+        if (!weekdayTimeOptions.includes(watch(field))) resetField(field);
+      }
+    }
+  };
 
   const onSubmit = (formData) => {
     setLoading(true);
@@ -217,7 +261,7 @@ const BookingForm = ({ tab }) => {
                       showIcon
                       toggleCalendarOnIconClick={true}
                       closeOnScroll
-                      className="bg-blue-50 h-10 border border-blue-500 font-normal text-xs w-full !px-4 !rounded-none font-poppins mt-3 text-left"
+                      className="bg-blue-50 h-10 border border-blue-500 font-normal w-full !px-4 !rounded-none font-poppins mt-3 text-left"
                       onChange={(date) => field.onChange(date)}
                       selected={field.value}
                       customInput={
@@ -247,13 +291,7 @@ const BookingForm = ({ tab }) => {
               {...register("departure_time")}
               label="Time of Departure"
               placeholder="08:30 AM"
-              options={[
-                "08:30 AM",
-                "10:30 AM",
-                "12:30 PM",
-                "02:30 PM",
-                "05:00 PM",
-              ]}
+              options={timeOptions}
               errors={errors}
             />
           </div>
@@ -275,7 +313,7 @@ const BookingForm = ({ tab }) => {
                       showIcon
                       toggleCalendarOnIconClick={true}
                       closeOnScroll
-                      className="bg-blue-50 h-10 border border-blue-500 font-normal text-xs w-full !px-4 !rounded-none font-poppins mt-3 text-left"
+                      className="bg-blue-50 h-10 border border-blue-500 font-normal w-full !px-4 !rounded-none font-poppins mt-3 text-left"
                       onChange={(date) => field.onChange(date)}
                       selected={field.value}
                       customInput={
@@ -304,13 +342,7 @@ const BookingForm = ({ tab }) => {
               {...register("return_time")}
               label="Time of Return"
               placeholder="08:30 AM"
-              options={[
-                "08:30 AM",
-                "10:30 AM",
-                "12:30 PM",
-                "02:30 PM",
-                "05:00 PM",
-              ]}
+              options={timeOptions}
               errors={errors}
             />
           </div>
@@ -374,6 +406,7 @@ const BookingForm = ({ tab }) => {
       </div>
 
       <button
+        disabled={loading}
         type="submit"
         className="mt-10 bg-blue-500 h-12 w-36 flex items-center justify-center font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white"
       >
@@ -425,7 +458,7 @@ const SelectField = React.forwardRef((props, ref) => {
         <Select
           ref={ref}
           {...props}
-          value={value}
+          value={options.includes(value) ? value : ""}
           onChange={(event) => {
             setValue(event.target.value);
             onChange(event);
