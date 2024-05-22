@@ -6,12 +6,16 @@ import WaveSVG from "@/assets/wave";
 import { GlobalCTX } from "@/context/GlobalContext";
 import axios from "axios";
 import FadeInBackgroundTransition from "@/components/animation/FadeIn";
+import { Helmet } from "react-helmet-async";
 
 const Home = () => {
   const { about, contact } = React.useContext(GlobalCTX);
 
   return (
     <>
+      <Helmet>
+        <title>Abitto Ferry - Home</title>
+      </Helmet>
       {/* Hero section */}
       <section
         id="home"

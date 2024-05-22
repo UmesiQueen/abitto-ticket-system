@@ -22,6 +22,7 @@ import { CalendarIcon } from "@/assets/icons";
 import { BookingCTX } from "@/context/BookingContext";
 import { GlobalCTX } from "@/context/GlobalContext";
 import { format } from "date-fns";
+import { Helmet } from "react-helmet-async";
 
 const Booking = () => {
   const [value, setValue] = React.useState("1");
@@ -31,47 +32,52 @@ const Booking = () => {
   };
 
   return (
-    <div className="bg-hero-pattern h-[1350px] w-screen bg-cover bg-no-repeat bg-center relative ">
-      <div className="bg-black/40 w-full h-full absolute z-0 ">
-        <div className="px-5 md:px-0 pt-28 md:w-[690px] mx-auto pb-10 md:pb-0 ">
-          <Box sx={{ width: "100%", typography: "body1" }}>
-            <TabContext value={value}>
-              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                <TabList
-                  onChange={handleChange}
-                  aria-label="booking ticket forms"
-                >
-                  <Tab
-                    label="One-Way Trip"
-                    value="1"
-                    sx={{
-                      background: "#FFFFFF99",
-                      textTransform: "capitalize",
-                      fontFamily: "Poppins, sans-serif",
-                    }}
-                  />
-                  <Tab
-                    label="Round Trip"
-                    value="2"
-                    sx={{
-                      background: "#FFFFFF99",
-                      textTransform: "capitalize",
-                      fontFamily: "Poppins, sans-serif",
-                    }}
-                  />
-                </TabList>
-              </Box>
-              <TabPanel value="1" sx={{ background: "#fff" }}>
-                <BookingForm tab="One-Way Trip" />
-              </TabPanel>
-              <TabPanel value="2" sx={{ background: "#fff" }}>
-                <BookingForm tab="Round Trip" />
-              </TabPanel>
-            </TabContext>
-          </Box>
+    <>
+      <Helmet>
+        <title>Abitto Ferry - Booking</title>
+      </Helmet>
+      <div className="bg-hero-pattern h-[1350px] w-screen bg-cover bg-no-repeat bg-center relative ">
+        <div className="bg-black/40 w-full h-full absolute z-0 ">
+          <div className="px-5 md:px-0 pt-28 md:w-[690px] mx-auto pb-10 md:pb-0 ">
+            <Box sx={{ width: "100%", typography: "body1" }}>
+              <TabContext value={value}>
+                <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                  <TabList
+                    onChange={handleChange}
+                    aria-label="booking ticket forms"
+                  >
+                    <Tab
+                      label="One-Way Trip"
+                      value="1"
+                      sx={{
+                        background: "#FFFFFF99",
+                        textTransform: "capitalize",
+                        fontFamily: "Poppins, sans-serif",
+                      }}
+                    />
+                    <Tab
+                      label="Round Trip"
+                      value="2"
+                      sx={{
+                        background: "#FFFFFF99",
+                        textTransform: "capitalize",
+                        fontFamily: "Poppins, sans-serif",
+                      }}
+                    />
+                  </TabList>
+                </Box>
+                <TabPanel value="1" sx={{ background: "#fff" }}>
+                  <BookingForm tab="One-Way Trip" />
+                </TabPanel>
+                <TabPanel value="2" sx={{ background: "#fff" }}>
+                  <BookingForm tab="Round Trip" />
+                </TabPanel>
+              </TabContext>
+            </Box>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
