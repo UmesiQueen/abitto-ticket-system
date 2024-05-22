@@ -18,9 +18,9 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { CalendarIcon } from "../assets/icons";
-import { BookingCTX } from "../context/BookingContext";
-import { GlobalCTX } from "../context//GlobalContext";
+import { CalendarIcon } from "@/assets/icons";
+import { BookingCTX } from "@/context/BookingContext";
+import { GlobalCTX } from "@/context/GlobalContext";
 import { format } from "date-fns";
 
 const Booking = () => {

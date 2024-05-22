@@ -1,5 +1,5 @@
 import React from "react";
-import { BookingCTX } from "../context/BookingContext";
+import { BookingCTX } from "@/context/BookingContext";
 import {
   ChairIcon,
   InformationCircleIcon,
@@ -10,13 +10,13 @@ import {
   CancelSquareIcon,
   CashIcon,
   CheckIcon,
-} from "../assets/icons/index";
+} from "@/assets/icons/index";
 import { format } from "date-fns";
 import { formatValue } from "react-currency-input-field";
 import Modal from "@mui/material/Modal";
 import ClipLoader from "react-spinners/ClipLoader";
 import { useNavigate } from "react-router-dom";
-import { GlobalCTX } from "../context/GlobalContext";
+import { GlobalCTX } from "@/context/GlobalContext";
 
 const TicketSummary = () => {
   const { formData } = React.useContext(BookingCTX);
