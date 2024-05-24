@@ -19,6 +19,8 @@ import SettingsIcon from "./Settings";
 import InvoiceIcon from "./Invoice";
 import TicketIcon from "./Ticket";
 import UserIcon from "./User";
+import NotificationIcon from "./Notification";
+import SearchIcon from "./Search";
 
 export {
   FacebookIcon,
@@ -42,4 +44,6 @@ export {
   UserIcon,
   TicketIcon,
   InvoiceIcon,
+  NotificationIcon,
+  SearchIcon,
 };
