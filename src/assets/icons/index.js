@@ -21,6 +21,11 @@ import TicketIcon from "./Ticket";
 import UserIcon from "./User";
 import NotificationIcon from "./Notification";
 import SearchIcon from "./Search";
+import FerryBoatIcon from "./FerryBoat";
+import UserGroupIcon from "./UserGroup";
+import WalletIcon from "./Wallet";
+import FilterIcon from "./Filter";
+import LogoutIcon from "./Logout";
 
 export {
   FacebookIcon,
@@ -46,4 +51,9 @@ export {
   InvoiceIcon,
   NotificationIcon,
   SearchIcon,
+  FerryBoatIcon,
+  UserGroupIcon,
+  WalletIcon,
+  FilterIcon,
+  LogoutIcon,
 };

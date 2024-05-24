@@ -7,6 +7,7 @@ import {
   NotificationIcon,
   CaretIcon,
   SearchIcon,
+  LogoutIcon,
 } from "@/assets/icons";
 import { Outlet, NavLink } from "react-router-dom";
 import Badge from "@mui/material/Badge";
@@ -48,20 +49,20 @@ const AdminLayout = () => {
                     isActive,
                   }) => (isActive ? "active" : "")}`}
                 >
-                  {icon}
+                  <span className="text-[#f1f1f1]">{icon}</span>
                   <span className="font-medium text-sm ">{title}</span>
                 </NavLink>
               </li>
             ))}
           </ul>
         </nav>
-        <button className=" py-5 mt-auto flex items-center justify-center gap-2  hover:bg-gray-900/80 ">
-          <DashboardSquareIcon />
+        <button className=" px-10 py-5 mt-auto flex items-center gap-2  hover:bg-gray-900/80 ">
+          <LogoutIcon />
           <span>Logout</span>
         </button>
       </aside>
-      <main className="ml-60">
-        <header className="h-16 w-full bg-white px-14 flex items-center gap-5">
+      <main className="ml-60 bg-[#F7F7F7] ">
+        <header className="h-16 w-full bg-white px-8 flex items-center gap-5">
           <div className="h-10 w-80 bg-blue-50 p-3 border border-blue-500 rounded-lg font-normal text-xs font-poppins flex items-center gap-2">
             <SearchIcon />
             <input
@@ -82,7 +83,7 @@ const AdminLayout = () => {
             <CaretIcon />
           </button>
         </header>
-        <section className=" bg-[#F7F7F7] h-[calc(100vh-64px)] p-8">
+        <section className="p-8">
           <Outlet />
         </section>
       </main>
