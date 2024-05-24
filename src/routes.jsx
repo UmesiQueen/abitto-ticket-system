@@ -13,6 +13,7 @@ import ProtectedRoute from "./context/ProtectedRoute";
 import AdminLayout from "./admin/layout";
 import Dashboard from "./admin/pages/dashboard";
 import BookingDetails from "./admin/pages/booking-details";
+import Customers from "./admin/pages/customers";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -33,6 +34,7 @@ export const router = createBrowserRouter(
       <Route element={<AdminLayout />}>
         <Route path="/admin/dashboard" element={<Dashboard />} />
         <Route path="/admin/booking-details" element={<BookingDetails />} />
+        <Route path="/admin/customers" element={<Customers />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Route>

@@ -38,7 +38,7 @@ const AdminLayout = () => {
                 "/admin/booking-details",
                 <TicketIcon key="1" />,
               ],
-              ["Customer", "/admin/customer", <UserIcon key="1" />],
+              ["Customer", "/admin/customers", <UserIcon key="1" />],
               ["Payments", "/admin/payments", <InvoiceIcon key="1" />],
               ["Settings", "/admin/settings", <SettingsIcon key="1" />],
             ].map(([title, url, icon]) => (
