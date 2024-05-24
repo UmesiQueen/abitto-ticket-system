@@ -10,20 +10,30 @@ import Booking from "./pages/booking";
 import PageNotFound from "./pages/pageNotFound";
 import TicketSummary from "./pages/ticket-summary";
 import ProtectedRoute from "./context/ProtectedRoute";
+import AdminLayout from "./admin/layout";
+import Dashboard from "./admin/pages/dashboard";
+import BookingDetails from "./admin/pages/booking-details";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<App />}>
-      <Route index element={<Home />} />
-      <Route path="/booking" element={<Booking />} />
-      <Route
-        path="/ticket-summary"
-        element={
-          <ProtectedRoute>
-            <TicketSummary />
-          </ProtectedRoute>
-        }
-      />
+    <Route path="/">
+      <Route element={<App />}>
+        <Route index element={<Home />} />
+        <Route path="/booking" element={<Booking />} />
+        <Route
+          path="/ticket-summary"
+          element={
+            <ProtectedRoute>
+              <TicketSummary />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
+
+      <Route element={<AdminLayout />}>
+        <Route path="/admin/dashboard" element={<Dashboard />} />
+        <Route path="/admin/booking-details" element={<BookingDetails />} />
+      </Route>
       <Route path="*" element={<PageNotFound />} />
     </Route>
   )

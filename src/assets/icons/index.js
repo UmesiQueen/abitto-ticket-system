@@ -14,6 +14,11 @@ import CancelSquareIcon from "./CancelSquare";
 import CashIcon from "./Cash";
 import CheckIcon from "./Check";
 import UsersIcon from "./Users";
+import DashboardSquareIcon from "./DashboardSquare";
+import SettingsIcon from "./Settings";
+import InvoiceIcon from "./Invoice";
+import TicketIcon from "./Ticket";
+import UserIcon from "./User";
 
 export {
   FacebookIcon,
@@ -32,4 +37,9 @@ export {
   CashIcon,
   CheckIcon,
   UsersIcon,
+  DashboardSquareIcon,
+  SettingsIcon,
+  UserIcon,
+  TicketIcon,
+  InvoiceIcon,
 };
