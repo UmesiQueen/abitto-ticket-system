@@ -61,7 +61,7 @@ const AdminLayout = () => {
           <span>Logout</span>
         </button>
       </aside>
-      <main className="ml-60 bg-[#F7F7F7] ">
+      <main className="ml-60 bg-[#F7F7F7] min-h-screen ">
         <header className="h-16 w-full bg-white px-8 flex items-center gap-5">
           <div className="h-10 w-80 bg-blue-50 p-3 border border-blue-500 rounded-lg font-normal text-xs font-poppins flex items-center gap-2">
             <SearchIcon />

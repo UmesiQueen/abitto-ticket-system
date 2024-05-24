@@ -26,6 +26,11 @@ import UserGroupIcon from "./UserGroup";
 import WalletIcon from "./Wallet";
 import FilterIcon from "./Filter";
 import LogoutIcon from "./Logout";
+import CloudIcon from "./Cloud";
+import RadioButtonIcon from "./RadioButton";
+import TickIcon from "./Tick";
+import PrinterIcon from "./Printer";
+import Boat2Icon from "./Boat2";
 
 export {
   FacebookIcon,
@@ -56,4 +61,9 @@ export {
   WalletIcon,
   FilterIcon,
   LogoutIcon,
+  CloudIcon,
+  RadioButtonIcon,
+  TickIcon,
+  PrinterIcon,
+  Boat2Icon,
 };
