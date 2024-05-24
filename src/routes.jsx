@@ -14,6 +14,7 @@ import AdminLayout from "./admin/layout";
 import Dashboard from "./admin/pages/dashboard";
 import BookingDetails from "./admin/pages/booking-details";
 import Customers from "./admin/pages/customers";
+import Payments from "./admin/pages/payments";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -35,6 +36,7 @@ export const router = createBrowserRouter(
         <Route path="/admin/dashboard" element={<Dashboard />} />
         <Route path="/admin/booking-details" element={<BookingDetails />} />
         <Route path="/admin/customers" element={<Customers />} />
+        <Route path="/admin/payments" element={<Payments />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Route>
