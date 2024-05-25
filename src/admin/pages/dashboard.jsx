@@ -58,8 +58,8 @@ const Dashboard = () => {
       <h1 className="text-base  font-semibold">Dashboard Overview</h1>{" "}
       <div className="mt-8 flex flex-col gap-5 ">
         <div className="bg-white rounded-lg p-5 ">
-          <ul className="border rounded-lg  p-5 flex justify-between divide-x-reverse ">
-            <li className="flex items-center gap-3 w-52 ">
+          <ul className="border rounded-lg  p-5 flex justify-between ">
+            <li className="flex items-center gap-3 w-56 ">
               <div className="rounded-lg bg-blue-50 p-2">
                 <WalletIcon />
               </div>
@@ -70,7 +70,7 @@ const Dashboard = () => {
                 </p>
               </div>
             </li>
-            <li className="flex items-center gap-3 w-52 ">
+            <li className="flex items-center gap-3 w-56 ">
               <div className="rounded-lg bg-blue-50 p-2">
                 <UserGroupIcon />
               </div>
@@ -81,7 +81,7 @@ const Dashboard = () => {
                 </p>
               </div>
             </li>
-            <li className="flex items-center gap-3 w-52 ">
+            <li className="flex items-center gap-3 w-56 ">
               <div className="rounded-lg bg-blue-50 p-2">
                 <FerryBoatIcon />
               </div>
@@ -92,7 +92,7 @@ const Dashboard = () => {
                 </p>
               </div>
             </li>
-            <li className="flex items-center gap-3 w-52 ">
+            <li className="flex items-center gap-3 w-56 ">
               <div className="rounded-lg bg-blue-50 p-2">
                 <span className="text-blue-500">
                   <TicketIcon />
@@ -110,15 +110,11 @@ const Dashboard = () => {
 
         {/* charts */}
         <div className="flex gap-5">
-          <div className="bg-white rounded-lg p-5 basis-9/12 self-center ">
-            <img alt="chart" src="/src/assets/Chart.png" />
+          <div className="bg-white rounded-lg basis-9/12 ">
+            <div className="bg-[url(https://i.ibb.co/sCr6jMM/Chart.png)] bg-contain bg-no-repeat bg-center h-[400px]" />
           </div>
-          <div className="bg-white rounded-lg p-5 basis-3/12">
-            <img
-              alt="booking"
-              src="/src/assets/today-booking.png"
-              className="mx-auto"
-            />
+          <div className="bg-white rounded-lg basis-3/12">
+            <div className="bg-[url(https://i.ibb.co/km0dbXQ/today-booking.png)] bg-contain bg-no-repeat bg-center h-[400px]" />
           </div>
         </div>
 
