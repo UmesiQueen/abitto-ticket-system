@@ -31,6 +31,7 @@ import RadioButtonIcon from "./RadioButton";
 import TickIcon from "./Tick";
 import PrinterIcon from "./Printer";
 import Boat2Icon from "./Boat2";
+import Cloud2Icon from "./Cloud2";
 
 export {
   FacebookIcon,
@@ -66,4 +67,5 @@ export {
   TickIcon,
   PrinterIcon,
   Boat2Icon,
+  Cloud2Icon,
 };
