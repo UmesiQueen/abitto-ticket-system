@@ -1,6 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 import BookingContext from "./BookingContext";
+import Alert_ from "@/components/custom/Alert";
+import Loader from "@/components/animation/Loader";
 
 export const GlobalCTX = React.createContext();
 
@@ -9,6 +11,13 @@ const GlobalContext = ({ children }) => {
   const contact = React.useRef();
   const [loading, setLoading] = React.useState(false);
   const [alert, setAlert] = React.useState({ state: false, variant: null });
+
+  const store = JSON.parse(localStorage.getItem("admin")) || {};
+  const [isAuth, setAuth] = React.useState(store);
+
+  React.useEffect(() => {
+    localStorage.setItem("admin", JSON.stringify(isAuth));
+  }, [isAuth]);
 
   const scrollToSection = (e) => {
     window.scrollTo({
@@ -34,9 +43,13 @@ const GlobalContext = ({ children }) => {
         setLoading,
         alert,
         handleAlert,
+        isAuth,
+        setAuth,
       }}
     >
       <BookingContext>{children}</BookingContext>
+      <Alert_ />
+      <Loader />
     </GlobalCTX.Provider>
   );
 };

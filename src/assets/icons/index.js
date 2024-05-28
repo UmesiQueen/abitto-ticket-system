@@ -14,6 +14,24 @@ import CancelSquareIcon from "./CancelSquare";
 import CashIcon from "./Cash";
 import CheckIcon from "./Check";
 import UsersIcon from "./Users";
+import DashboardSquareIcon from "./DashboardSquare";
+import SettingsIcon from "./Settings";
+import InvoiceIcon from "./Invoice";
+import TicketIcon from "./Ticket";
+import UserIcon from "./User";
+import NotificationIcon from "./Notification";
+import SearchIcon from "./Search";
+import FerryBoatIcon from "./FerryBoat";
+import UserGroupIcon from "./UserGroup";
+import WalletIcon from "./Wallet";
+import FilterIcon from "./Filter";
+import LogoutIcon from "./Logout";
+import CloudIcon from "./Cloud";
+import RadioButtonIcon from "./RadioButton";
+import TickIcon from "./Tick";
+import PrinterIcon from "./Printer";
+import Boat2Icon from "./Boat2";
+import Cloud2Icon from "./Cloud2";
 
 export {
   FacebookIcon,
@@ -32,4 +50,22 @@ export {
   CashIcon,
   CheckIcon,
   UsersIcon,
+  DashboardSquareIcon,
+  SettingsIcon,
+  UserIcon,
+  TicketIcon,
+  InvoiceIcon,
+  NotificationIcon,
+  SearchIcon,
+  FerryBoatIcon,
+  UserGroupIcon,
+  WalletIcon,
+  FilterIcon,
+  LogoutIcon,
+  CloudIcon,
+  RadioButtonIcon,
+  TickIcon,
+  PrinterIcon,
+  Boat2Icon,
+  Cloud2Icon,
 };

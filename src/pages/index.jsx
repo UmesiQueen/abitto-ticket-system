@@ -1,17 +1,21 @@
 import React from "react";
-import { MapIcon, PhoneIcon, CaretIcon, BoatIcon } from "../assets/icons/index";
+import { MapIcon, PhoneIcon, CaretIcon, BoatIcon } from "@/assets/icons/index";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import WaveSVG from "../assets/wave";
-import { GlobalCTX } from "../context/GlobalContext";
+import WaveSVG from "@/assets/wave";
+import { GlobalCTX } from "@/context/GlobalContext";
 import axios from "axios";
-import FadeInBackgroundTransition from "../components/animation/FadeIn";
+import FadeInBackgroundTransition from "@/components/animation/FadeIn";
+import { Helmet } from "react-helmet-async";
 
 const Home = () => {
   const { about, contact } = React.useContext(GlobalCTX);
 
   return (
     <>
+      <Helmet>
+        <title>Abitto Ferry - Home</title>
+      </Helmet>
       {/* Hero section */}
       <section
         id="home"

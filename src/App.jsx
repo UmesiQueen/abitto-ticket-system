@@ -11,10 +11,8 @@ import {
   InstagramIcon,
   // LinkedinIcon,
   // TwitterIcon,
-} from "./assets/icons/index";
-import { GlobalCTX } from "./context/GlobalContext";
-import Loader from "./components/animation/Loader";
-import Alert_ from "./components/Alert";
+} from "@/assets/icons/index";
+import { GlobalCTX } from "@/context/GlobalContext";
 
 function App() {
   const pathname = useLocation();
@@ -30,8 +28,6 @@ function App() {
         <Outlet />
       </main>
       <Footer />
-      <Loader />
-      <Alert_ />
     </div>
   );
 }
