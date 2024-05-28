@@ -8,10 +8,15 @@ const Alert_ = () => {
   } = React.useContext(GlobalCTX);
 
   const variantOptions = {
+    // error: {
+    //   borderColor: "#5d0303",
+    //   backgroundColor: "#ff000080",
+    //   text: "Request failed. Please try again later.",
+    // },
     error: {
       borderColor: "#5d0303",
       backgroundColor: "#ff000080",
-      text: "Request failed. Please try again later.",
+      text: "Incorrect email or password.",
     },
     success: {
       borderColor: "#5E7B24",

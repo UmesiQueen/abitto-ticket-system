@@ -9,11 +9,13 @@ import {
   SearchIcon,
   LogoutIcon,
 } from "@/assets/icons";
-import { Outlet, NavLink } from "react-router-dom";
+import { Outlet, NavLink, Navigate } from "react-router-dom";
 import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
+import React from "react";
+import { GlobalCTX } from "@/context/GlobalContext";
 
-const AdminLayout = () => {
+const ProtectedRoute = () => {
   return (
     <div className="font-poppins">
       {/* sidebar */}
@@ -89,6 +91,11 @@ const AdminLayout = () => {
       </main>
     </div>
   );
+};
+
+const AdminLayout = () => {
+  const { isAuth } = React.useContext(GlobalCTX);
+  return <>{isAuth?.isAdmin ? <ProtectedRoute /> : <Navigate to="/login" />}</>;
 };
 
 export default AdminLayout;
