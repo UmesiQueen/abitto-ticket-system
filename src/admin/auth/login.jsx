@@ -43,8 +43,7 @@ const Login = () => {
         setAuth({ ...formData, isAdmin: true });
         return navigate("/admin/dashboard");
       }
-
-      return handleAlert("error");
+      return handleAlert("invalid");
     }, 2000);
   });
 
