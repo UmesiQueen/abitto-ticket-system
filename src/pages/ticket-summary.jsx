@@ -154,7 +154,7 @@ const TicketSummary = () => {
                     </tr>
                     <tr>
                       <td className="text-xs text-[#444444]">Ticket Price</td>
-                      <td className="text-xs text-[#444444]">₦1,000</td>
+                      <td className="text-xs text-[#444444]">₦8,500</td>
                     </tr>
                     <tr>
                       <td className="font-medium text-base">Ticket:</td>
@@ -165,8 +165,8 @@ const TicketSummary = () => {
                             (Number(formData?.adults_number) +
                               Number(formData?.children_number)) *
                               (formData?.trip_type === "Round Trip"
-                                ? 2000
-                                : 1000)
+                                ? 17000
+                                : 8500)
                           ),
                         })}
                       </td>
