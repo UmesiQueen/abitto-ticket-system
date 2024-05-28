@@ -9,13 +9,15 @@ import {
   SearchIcon,
   LogoutIcon,
 } from "@/assets/icons";
-import { Outlet, NavLink, Navigate } from "react-router-dom";
+import { Outlet, NavLink, Navigate, useNavigate } from "react-router-dom";
 import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
 import React from "react";
 import { GlobalCTX } from "@/context/GlobalContext";
 
 const ProtectedRoute = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="font-poppins">
       {/* sidebar */}
@@ -58,7 +60,13 @@ const ProtectedRoute = () => {
             ))}
           </ul>
         </nav>
-        <button className=" px-10 py-5 mt-auto flex items-center gap-2  hover:bg-gray-900/80 ">
+        <button
+          className=" px-10 py-5 mt-auto flex items-center gap-2  hover:bg-gray-900/80 "
+          onClick={() => {
+            localStorage.removeItem("admin");
+            navigate("/login");
+          }}
+        >
           <LogoutIcon />
           <span>Logout</span>
         </button>
