@@ -112,15 +112,15 @@ const Login = () => {
             )}
           </div>
 
-          <div className="flex justify-between items-center">
-            <label className="flex items-center gap-1">
-              <input type="checkbox" />
-              <span className="text-xs">Remember me</span>
-            </label>
-            <p className="font-semibold text-sm hover:underline cursor-pointer">
+          {/* <div className="flex justify-between items-center"> */}
+          <label className="flex items-center gap-1 w-fit">
+            <input type="checkbox" />
+            <span className="text-xs">Remember me</span>
+          </label>
+          {/* <p className="font-semibold text-sm hover:underline cursor-pointer">
               Forgot password
             </p>
-          </div>
+          </div> */}
 
           <Button
             className="rounded-lg"
