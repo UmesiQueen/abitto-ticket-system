@@ -2,6 +2,7 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
+  Navigate,
 } from "react-router-dom";
 
 import App from "./App";
@@ -36,11 +37,12 @@ export const router = createBrowserRouter(
       </Route>
 
       <Route element={<AdminLayout />}>
+        <Route path="admin" element={<Navigate to="dashboard" replace />} />
         <Route path="admin">
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="booking-details" element={<BookingDetails />} />
           <Route
-            path="booking-details/:booingID"
+            path="booking-details/:bookingID"
             element={<CustomerDetails />}
           />
           <Route path="customers" element={<Customers />} />
