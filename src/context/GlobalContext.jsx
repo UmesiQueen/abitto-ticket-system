@@ -11,6 +11,7 @@ const GlobalContext = ({ children }) => {
   const contact = React.useRef();
   const [loading, setLoading] = React.useState(false);
   const [alert, setAlert] = React.useState({ state: false, variant: null });
+  const [dataQuery, setDataQuery] = React.useState([]);
 
   const store = JSON.parse(localStorage.getItem("admin")) || {};
   const [isAuth, setAuth] = React.useState(store);
@@ -45,6 +46,8 @@ const GlobalContext = ({ children }) => {
         handleAlert,
         isAuth,
         setAuth,
+        dataQuery,
+        setDataQuery,
       }}
     >
       <BookingContext>{children}</BookingContext>

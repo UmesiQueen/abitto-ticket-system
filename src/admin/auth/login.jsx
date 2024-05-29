@@ -5,8 +5,8 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { GlobalCTX } from "@/context/GlobalContext";
-import { isEqual } from "lodash";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const schema = yup.object().shape({
   email: yup
@@ -15,11 +15,6 @@ const schema = yup.object().shape({
     .email("Invalid email."),
   password: yup.string().required("Password is required."),
 });
-
-const authDetails = {
-  email: "queenumesi01@gmail.com",
-  password: "1234",
-};
 
 const Login = () => {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -35,16 +30,24 @@ const Login = () => {
 
   const onSubmit = handleSubmit((formData) => {
     setLoading(true);
-    const isAuth = isEqual(formData, authDetails);
+    const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-    setTimeout(() => {
-      setLoading(false);
-      if (isAuth) {
-        setAuth({ ...formData, isAdmin: true });
-        return navigate("/admin/dashboard");
-      }
-      return handleAlert("invalid");
-    }, 2000);
+    axios
+      .post(`${BASE_URL}/user/login`, formData)
+      .then((res) => {
+        setLoading(false);
+        if (res.status === 200) {
+          setAuth({ ...res.data?.user, isAdmin: true });
+          return navigate("/admin/dashboard");
+        }
+      })
+      .catch((err) => {
+        setLoading(false);
+        if (err.response.status === 400) {
+          return handleAlert("invalid");
+        }
+        return handleAlert("error");
+      });
   });
 
   return (
