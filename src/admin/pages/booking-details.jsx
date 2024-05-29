@@ -158,7 +158,7 @@ const BookingDetails = () => {
   const pageNumbers = Array.from({ length: table.getPageCount() }, (_, i) => i);
 
   React.useEffect(() => {
-    const BASE_URL = import.meta.env.VITE_BASE_URL;
+    const BASE_URL = import.meta.env.ABITTO_BASE_URL;
     axios
       .get(`${BASE_URL}/booking/getbooking`)
       .then((res) => {
