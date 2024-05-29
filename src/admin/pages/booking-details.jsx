@@ -11,6 +11,7 @@ import {
   UsersIcon,
   PrinterIcon,
   Boat2Icon,
+  CircleArrowLeftIcon,
 } from "@/assets/icons";
 import {
   Table,
@@ -20,6 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useNavigate } from "react-router-dom";
 
 const users = [
   {
@@ -102,6 +104,8 @@ const users = [
 ];
 
 const BookingDetails = () => {
+  const navigate = useNavigate();
+
   return (
     <div>
       <div className="flex items-center gap-5 mb-5 ">
@@ -136,7 +140,12 @@ const BookingDetails = () => {
           </TableHeader>
           <TableBody>
             {users.map((user) => (
-              <TableRow key={user.code}>
+              <TableRow
+                key={user.code}
+                onClick={() => {
+                  navigate(`${user.code}`);
+                }}
+              >
                 <TableCell>{user.code}</TableCell>
                 <TableCell>{user.date}</TableCell>
                 <TableCell>{user.time}</TableCell>
@@ -174,8 +183,27 @@ const BookingDetails = () => {
           </div>
         </div>
       </div>
+    </div>
+  );
+};
 
-      <div className="mt-5 flex gap-5">
+export default BookingDetails;
+
+export const CustomerDetails = () => {
+  const navigate = useNavigate();
+  return (
+    <div>
+      <div className="flex gap-1 items-center mb-5">
+        <button
+          onClick={() => {
+            navigate(-1);
+          }}
+        >
+          <CircleArrowLeftIcon />
+        </button>
+        <h1 className="text-base  font-semibold">Booking Details</h1>
+      </div>
+      <div className="flex gap-5">
         <div className="bg-white rounded-lg overflow-hidden basis-8/12">
           <div className="bg-blue-50 flex  gap-3 p-5 ">
             <div className="bg-white rounded-lg p-2 ">
@@ -214,7 +242,6 @@ const BookingDetails = () => {
                 <p className="text-base font-semibold">Active</p>
               </li>
             </ul>
-
             <ul className="*:flex *:flex-col *:gap-1 flex gap-16">
               <li>
                 <p className="text-xs text-[#7F7F7F] ">Ticket Type</p>
@@ -235,7 +262,6 @@ const BookingDetails = () => {
                 <p className="text-base font-semibold">Marina Terminal</p>
               </li>
             </ul>
-
             <ul className="*:flex *:flex-col *:gap-1 flex gap-16">
               <li>
                 <p className="text-xs text-[#7F7F7F] ">Payment Medium</p>
@@ -254,7 +280,6 @@ const BookingDetails = () => {
                 <p className="text-base font-semibold">TRX123456</p>
               </li>
             </ul>
-
             <ul className="*:flex *:flex-col *:gap-1 flex gap-16">
               <li>
                 <p className="text-xs text-[#7F7F7F] ">Ticket Price</p>
@@ -275,7 +300,6 @@ const BookingDetails = () => {
             </ul>
           </div>
         </div>
-
         <div className="bg-white rounded-lg basis-4/12 p-5 flex flex-col gap-6">
           <div>
             <h3 className="text-blue-500 font-semibold  text-base md:text-xl ">
@@ -285,7 +309,6 @@ const BookingDetails = () => {
               Non-refundable <InformationCircleIcon />
             </p>
           </div>
-
           <div>
             <h5 className="font-semibold mb-1">Departure Details</h5>
             <div className="flex flex-wrap gap-x-4 gap-y-1 text-[#1E1E1E] text-xs font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
@@ -309,16 +332,13 @@ const BookingDetails = () => {
               </p>
             </div>
           </div>
-
           <div>
             <h4 className="font-semibold mb-1">Terminals</h4>
             <p className="text-xs">
               Marina Terminal, Calabar - Nwaniba Timber Beach Terminal, Uyo
             </p>
           </div>
-
           <p className="font-medium text-xs">Booking ID: TRX123456</p>
-
           <div className="border-y-2 border-dashed py-2">
             <table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] ">
               <tbody>
@@ -337,7 +357,6 @@ const BookingDetails = () => {
               </tbody>
             </table>
           </div>
-
           <button className=" bg-blue-500 w-56 py-3 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white flex justify-center gap-2 mx-auto rounded-lg ">
             <PrinterIcon />
             Print
@@ -347,5 +366,3 @@ const BookingDetails = () => {
     </div>
   );
 };
-
-export default BookingDetails;

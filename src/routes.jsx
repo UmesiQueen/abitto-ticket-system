@@ -17,6 +17,7 @@ import Customers from "./admin/pages/customers";
 import Payments from "./admin/pages/payments";
 import Settings from "./admin/pages/settings";
 import Login from "./admin/auth/login";
+import { CustomerDetails } from "./admin/pages/booking-details";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -38,6 +39,10 @@ export const router = createBrowserRouter(
         <Route path="admin">
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="booking-details" element={<BookingDetails />} />
+          <Route
+            path="booking-details/:booingID"
+            element={<CustomerDetails />}
+          />
           <Route path="customers" element={<Customers />} />
           <Route path="payments" element={<Payments />} />
           <Route path="settings" element={<Settings />} />
