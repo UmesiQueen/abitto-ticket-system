@@ -4,7 +4,6 @@ import {
   WalletIcon,
   TicketIcon,
   FilterIcon,
-  CaretIcon,
 } from "@/assets/icons";
 import {
   Table,
@@ -15,44 +14,26 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
+import { cn, getTicketCost } from "@/lib/utils";
 import { BarChart } from "@tremor/react";
-
-const users = [
-  {
-    bookingID: "#00001234",
-    name: "Name & Surname",
-    email: "abitto@email.com",
-    amount: "₦16,000",
-    type: "One-way",
-    medium: "Offline",
-    paidWith: "Cash",
-    status: "Success",
-    dateTime: "May 19,2024",
-  },
-  {
-    bookingID: "#00002234",
-    name: "Name & Surname",
-    email: "abitto@email.com",
-    amount: "₦16,000",
-    type: "One-way",
-    medium: "Online",
-    paidWith: "Paystack",
-    status: "Pending",
-    dateTime: "May 19,2024",
-  },
-  {
-    bookingID: "#00003234",
-    name: "Name & Surname",
-    email: "abitto@email.com",
-    amount: "₦16,000",
-    type: "Round-trp",
-    medium: "Online",
-    paidWith: "Paystack",
-    status: "Canceled",
-    dateTime: "May 19,2024",
-  },
-];
+import {
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
+import React from "react";
+import { GlobalCTX } from "@/context/GlobalContext";
 
 const chartDataDemo = [
   {
@@ -122,7 +103,7 @@ const Dashboard = () => {
     Intl.NumberFormat("us").format(number).toString();
 
   return (
-    <div className="">
+    <div>
       <h1 className="text-lg font-semibold">Dashboard Overview</h1>
       <div className="mt-8 flex flex-col gap-5 ">
         <div className="bg-white rounded-lg p-5 ">
@@ -232,72 +213,203 @@ const Dashboard = () => {
         </div>
 
         {/* table */}
-        <div className="bg-white rounded-lg p-5 mb-5 ">
-          <div className="border rounded-lg ">
-            <div className="flex items-center gap-5 mb-5 p-5 border-b">
-              <h3 className="font-semibold">Latest Booking List</h3>
-              <div className="rounded-lg border px-4 p-2 cursor-pointer flex items-center gap-2 ml-auto">
-                <span>
-                  <FilterIcon />
-                </span>
-                Filter
-              </div>
-              <div className="rounded-lg border px-4 p-2 cursor-pointer flex items-center gap-3">
-                View all
-                <span className="rotate-90 ">
-                  <CaretIcon />
-                </span>
-              </div>
-            </div>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Booking ID</TableHead>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Medium</TableHead>
-                  <TableHead>Paid with</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Date & Time</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {users.map((user) => (
-                  <TableRow key={user.bookingID}>
-                    <TableCell>{user.bookingID}</TableCell>
-                    <TableCell>
-                      <p>{user.name}</p>
-                      <p>{user.email}</p>
-                    </TableCell>
-                    <TableCell>{user.amount}</TableCell>
-                    <TableCell>{user.type}</TableCell>
-                    <TableCell>{user.medium}</TableCell>
-                    <TableCell>{user.paidWith}</TableCell>
-                    <TableCell>
-                      <span
-                        className={cn("rounded-lg px-4 py-1 text-[10px]", {
-                          "text-green-500 bg-green-100":
-                            user.status === "Success",
-                          "text-[#E78913] bg-[#F8DAB6]":
-                            user.status === "Pending",
-                          "text-[#F00000] bg-[#FAB0B0]":
-                            user.status === "Canceled",
-                        })}
-                      >
-                        {user.status}
-                      </span>
-                    </TableCell>
-                    <TableCell>{user.dateTime}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </div>
+        <LatestBookingsTable />
       </div>
     </div>
   );
 };
 
 export default Dashboard;
+
+const columns = [
+  {
+    accessorKey: "code",
+    header: "Booking ID",
+    cell: ({ row }) => (
+      <div className="capitalize">#{row.original.ticket_id}</div>
+    ),
+  },
+  {
+    accessorKey: "customer",
+    header: "Customer",
+    cell: ({ row }) => (
+      <div>
+        <p className="text-lg">{`${row.original.first_name} ${row.original.surname}`}</p>{" "}
+        <p className="italic">{row.original.email}</p>
+      </div>
+    ),
+  },
+  {
+    accessorKey: "amount",
+    header: "Amount",
+    cell: ({ row }) => (
+      <div>
+        ₦{getTicketCost(row.original.adults_number, row.original.trip_type)}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "type",
+    header: "Type",
+    cell: ({ row }) => <div>{row.original.trip_type}</div>,
+  },
+  {
+    accessorKey: "medium",
+    header: "Medium",
+    cell: ({ row }) => <div>{row.original?.mode ?? "Online"}</div>,
+  },
+  {
+    accessorKey: "paid with",
+    header: "Paid With",
+    cell: ({ row }) => <div>{row.original?.medium ?? "Paystack"}</div>,
+  },
+  {
+    accessorKey: "status",
+    header: <div className="text-center">Status</div>,
+    cell: ({ row }) => {
+      const {
+        original: { status = "Success" },
+      } = row;
+
+      return (
+        <div
+          className={cn(
+            "rounded-lg w-20 mx-auto py-1 text-[10px] text-center",
+            {
+              "text-green-500 bg-green-100": status === "Success",
+              "text-[#E78913] bg-[#F8DAB6]": status === "Pending",
+              "text-[#F00000] bg-[#FAB0B0]": status === "Canceled",
+            }
+          )}
+        >
+          {status}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "date_time",
+    header: "Date & Time",
+    cell: ({ row }) => (
+      <div>{`${format(row.original.departure_date, "PP")} ${
+        row.original.departure_time
+      }`}</div>
+    ),
+  },
+];
+
+const LatestBookingsTable = () => {
+  const [sorting, setSorting] = React.useState([]);
+  const [columnFilters, setColumnFilters] = React.useState([]);
+  const [columnVisibility, setColumnVisibility] = React.useState({});
+  const [rowSelection, setRowSelection] = React.useState({});
+  const { dataQuery } = React.useContext(GlobalCTX);
+
+  const table = useReactTable({
+    data: dataQuery.slice(0, 3),
+    columns,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+      rowSelection,
+    },
+  });
+
+  return (
+    <div className="bg-white rounded-lg p-5 mb-5 ">
+      <div className="border rounded-lg ">
+        <div className="flex items-center gap-5 mb-5 p-5 border-b">
+          <h3 className="font-semibold">Latest Booking List</h3>
+          <div className="rounded-lg border ml-auto">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="px-5" disabled>
+                  <span className="mr-1">
+                    <FilterIcon />
+                  </span>
+                  Filter
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide())
+                  .map((column) => {
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className="capitalize"
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) =>
+                          column.toggleVisibility(!!value)
+                        }
+                      >
+                        {column.id}
+                      </DropdownMenuCheckboxItem>
+                    );
+                  })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  );
+                })}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  );
+};

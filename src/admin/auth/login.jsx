@@ -30,10 +30,10 @@ const Login = () => {
 
   const onSubmit = handleSubmit((formData) => {
     setLoading(true);
-    const BASE_URL = import.meta.env.ABITTO_BASE_URL;
+    // const BASE_URL = import.meta.env.ABITTO_BASE_URL;
 
     axios
-      .post(`${BASE_URL}/user/login`, formData)
+      .post(`https://abitto-api.onrender.com/api/user/login`, formData)
       .then((res) => {
         setLoading(false);
         if (res.status === 200) {

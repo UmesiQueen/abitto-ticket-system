@@ -21,7 +21,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import React from "react";
 import { format } from "date-fns";
 import {
@@ -40,8 +39,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { cn, humanize } from "@/lib/utils";
-import { formatValue } from "react-currency-input-field";
+import { cn, humanize, getTicketCost } from "@/lib/utils";
 import { GlobalCTX } from "@/context/GlobalContext";
 
 const columns = [
@@ -49,7 +47,7 @@ const columns = [
     accessorKey: "code",
     header: "Code",
     cell: ({ row }) => (
-      <div className="capitalize">{row.original.ticket_id}</div>
+      <div className="capitalize">#{row.original.ticket_id}</div>
     ),
   },
   {
@@ -131,7 +129,7 @@ const BookingDetails = () => {
     pageIndex: 0,
     pageSize: 7,
   });
-  const { dataQuery, setDataQuery } = React.useContext(GlobalCTX);
+  const { dataQuery } = React.useContext(GlobalCTX);
 
   const table = useReactTable({
     data: dataQuery,
@@ -156,20 +154,6 @@ const BookingDetails = () => {
   });
 
   const pageNumbers = Array.from({ length: table.getPageCount() }, (_, i) => i);
-
-  React.useEffect(() => {
-    const BASE_URL = import.meta.env.ABITTO_BASE_URL;
-    axios
-      .get(`${BASE_URL}/booking/getbooking`)
-      .then((res) => {
-        setDataQuery(res.data.bookings);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <div>
@@ -432,15 +416,7 @@ export const CustomerDetails = () => {
               <li>
                 <p className="text-xs text-[#7F7F7F] ">Ticket Price</p>
                 <p className="text-base font-semibold">
-                  N
-                  {formatValue({
-                    value: String(
-                      Number(passenger) * currentUser.trip_type ===
-                        "One-Way Trip"
-                        ? 8500
-                        : 17000
-                    ),
-                  })}
+                  N{getTicketCost(passenger, currentUser.trip_type)}
                 </p>
               </li>
               <li>
@@ -516,15 +492,7 @@ export const CustomerDetails = () => {
                 <tr>
                   <td className="font-medium text-base">Ticket:</td>
                   <td className="font-medium text-base">
-                    ₦
-                    {formatValue({
-                      value: String(
-                        Number(passenger) * currentUser.trip_type ===
-                          "One-Way Trip"
-                          ? 8500
-                          : 17000
-                      ),
-                    })}
+                    N{getTicketCost(passenger, currentUser.trip_type)}
                   </td>
                 </tr>
               </tbody>
