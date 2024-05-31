@@ -7,18 +7,9 @@ import { GlobalCTX } from "@/hooks/GlobalContext";
 import axios from "axios";
 import FadeInBackgroundTransition from "@/components/animation/FadeIn";
 import { Helmet } from "react-helmet-async";
-import YouTube from "react-youtube";
 
 const Home = () => {
   const { about, contact } = React.useContext(GlobalCTX);
-  const options = {
-    height: "inherit",
-    width: "inherit",
-    playerVars: {
-      autoplay: 1,
-      controls: 1,
-    },
-  };
 
   return (
     <>
@@ -103,14 +94,17 @@ const Home = () => {
           <h3 className="self-start uppercase font-semibold mb-6 text-lg md:text-xl ">
             At Abiito, Safety is our priority
           </h3>
-          <div className="w-full h-full">
-            <YouTube
-              options={options}
-              onReady={(event) => event.target.pauseVideo()}
-              id="video"
-              videoId="oKqH4VeBtD4"
-            />
-          </div>
+          <iframe
+            width="560"
+            height="315"
+            src="https://www.youtube.com/embed/oKqH4VeBtD4?si=S_XWOUBpzK6LS_WN"
+            title="YouTube video player"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+            className="w-full aspect-video "
+          />
           <p className="self-start text-sm font-medium text-gray-500 mt-4">
             Safety instructions for Abitto ferry services.
           </p>
