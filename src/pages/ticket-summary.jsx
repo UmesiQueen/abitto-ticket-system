@@ -185,32 +185,48 @@ export default TicketSummary;
 
 // eslint-disable-next-line react/prop-types
 const PaymentModals = ({ open, closeModal }) => {
-  const { paymentState, loading, setPaymentState } =
+  const { paymentStatus, loading, setPaymentStatus } =
     React.useContext(BookingCTX);
+  const { handleAlert } = React.useContext(GlobalCTX);
   const [successModal, setSuccessModal] = React.useState(false);
-  const [isChecked, setChecked] = React.useState("");
-  const navigate = useNavigate();
+  const [paymentMethod, setPaymentMethod] = React.useState("");
   const { onlinePayment, offlinePayment } = usePayment();
+  const navigate = useNavigate();
 
   React.useEffect(() => {
-    if (paymentState) {
-      closePaymentModal();
-      if (isChecked === "offline") return setSuccessModal(true);
-      return navigate("/booking");
+    if (paymentStatus.requestState === "success") {
+      if (paymentStatus.status === "Success") handleSuccess();
+      if (paymentStatus.status === "Cancelled") handleOnlineCancel();
+      if (paymentStatus.status === "Pending") setSuccessModal(true);
     }
+    if (paymentStatus.requestState === "error") handleBadRequest();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paymentState]);
+  }, [paymentStatus]);
 
-  const closePaymentModal = () => {
+  // clearStates
+  const clearStates = () => {
     closeModal();
-    setChecked(false);
+    setPaymentMethod("");
+    setPaymentStatus({ requestState: "", status: "" });
   };
 
-  const closeSuccessModal = () => {
-    setPaymentState(false);
-    setSuccessModal(false);
+  const handleSuccess = () => {
+    setPaymentMethod("");
+    setPaymentStatus({ requestState: "", status: "" });
     navigate("/booking");
+  };
+
+  // handleOnlineCancel
+  const handleOnlineCancel = () => {
+    clearStates();
+    // send toast that cancel occurred
+  };
+
+  //handleBadRequest
+  const handleBadRequest = () => {
+    clearStates();
+    handleAlert("error");
   };
 
   return (
@@ -218,7 +234,7 @@ const PaymentModals = ({ open, closeModal }) => {
       <Modal
         open={open}
         onClose={() => {
-          if (!successModal) closePaymentModal();
+          if (!successModal) clearStates();
         }}
         aria-labelledby="payment-modal"
         sx={{ backdropFilter: "blur(1px)", zIndex: 1 }}
@@ -231,7 +247,7 @@ const PaymentModals = ({ open, closeModal }) => {
                   Select Payment Method
                 </h2>
                 <button
-                  onClick={closePaymentModal}
+                  onClick={clearStates}
                   className=" hover:scale-[.8] rounded-lg transition duration-150 ease-in-out "
                 >
                   <CancelSquareIcon />
@@ -252,7 +268,7 @@ const PaymentModals = ({ open, closeModal }) => {
                       id="online"
                       type="radio"
                       name="medium"
-                      onChange={(e) => setChecked(e.target.id)}
+                      onChange={(e) => setPaymentMethod(e.target.id)}
                     />
                   </label>
                 </li>
@@ -263,18 +279,18 @@ const PaymentModals = ({ open, closeModal }) => {
                       id="offline"
                       type="radio"
                       name="medium"
-                      onChange={(e) => setChecked(e.target.id)}
+                      onChange={(e) => setPaymentMethod(e.target.id)}
                     />
                   </label>
                 </li>
               </ul>
               <button
                 onClick={() => {
-                  if (isChecked === "online") return onlinePayment();
+                  if (paymentMethod === "online") return onlinePayment();
                   return offlinePayment();
                 }}
                 className=" disabled:bg-[#C2C2C2] disabled:cursor-none py-3 text-blue-50 font-semibold w-full bg-[#1f1f1f] hover:bg-[#1f1f1fea] transition duration-150 ease-in-out"
-                disabled={!isChecked}
+                disabled={!paymentMethod && !loading}
               >
                 {loading ? (
                   <ClipLoader
@@ -289,7 +305,12 @@ const PaymentModals = ({ open, closeModal }) => {
               </button>
             </div>
           ) : (
-            <SuccessModal onClick={closeSuccessModal} />
+            <SuccessModal
+              onClick={() => {
+                closeModal();
+                handleSuccess();
+              }}
+            />
           )}
         </div>
       </Modal>
@@ -305,7 +326,7 @@ const SuccessModal = ({ onClick }) => {
         <CheckIcon />
       </div>
       <h2 className="font-semibold text-base text-[#454545] px-10 ">
-        Your Ferry Seat has been successfully Booked!
+        Your Ferry Seat has been successfully booked!
       </h2>
       <p className="font-normal text-xs text-[#454545] px-10">
         {/* Please check your email for important ticket details. */}
@@ -316,7 +337,7 @@ const SuccessModal = ({ onClick }) => {
           className="bg-blue-500 hover:bg-blue-700 transition-all duration-150 ease-in-out text-sm w-full text-white p-3 px-4 font-semibold"
           onClick={onClick}
         >
-          Continue
+          Download Receipt
         </button>
       </div>
     </div>

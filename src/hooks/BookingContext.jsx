@@ -5,7 +5,10 @@ export const BookingCTX = React.createContext();
 
 const BookingContext = ({ children }) => {
   const [formData, setFormData] = React.useState([]);
-  const [paymentState, setPaymentState] = React.useState(false);
+  const [paymentStatus, setPaymentStatus] = React.useState({
+    requestState: "",
+    status: "",
+  });
   const [loading, setLoading] = React.useState(false);
 
   return (
@@ -13,8 +16,8 @@ const BookingContext = ({ children }) => {
       value={{
         formData,
         setFormData,
-        paymentState,
-        setPaymentState,
+        paymentStatus,
+        setPaymentStatus,
         loading,
         setLoading,
       }}

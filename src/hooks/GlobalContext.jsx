@@ -23,17 +23,19 @@ const GlobalContext = ({ children }) => {
 
   React.useEffect(() => {
     // const BASE_URL = import.meta.env.ABITTO_BASE_URL;
-    axios
-      .get(`https://abitto-api.onrender.com/api/booking/getbooking`)
-      .then((res) => {
-        setDataQuery(res.data.bookings);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    if (isAuth?.isAdmin) {
+      axios
+        .get(`https://abitto-api.onrender.com/api/booking/getbooking`)
+        .then((res) => {
+          setDataQuery(res.data.bookings);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isAuth]);
 
   const scrollToSection = (e) => {
     window.scrollTo({

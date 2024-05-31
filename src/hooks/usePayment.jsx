@@ -2,11 +2,9 @@ import React from "react";
 import PaystackPop from "@paystack/inline-js";
 import axios from "axios";
 import { BookingCTX } from "@/hooks/BookingContext";
-import { GlobalCTX } from "@/hooks/GlobalContext";
 
 export const usePayment = () => {
-  const { handleAlert } = React.useContext(GlobalCTX);
-  const { formData, setPaymentState, setLoading } =
+  const { formData, setPaymentStatus, setLoading } =
     React.useContext(BookingCTX);
 
   const onlinePayment = () => {
@@ -37,14 +35,12 @@ export const usePayment = () => {
   };
 
   const offlinePayment = () => {
-    setTimeout(() => {
-      requestBooking({
-        status: "Pending",
-        trxRef: null,
-        medium: "Offline",
-        paid_with: "Cash",
-      });
-    }, 1500);
+    requestBooking({
+      status: "Pending",
+      trxRef: null,
+      medium: "Offline",
+      paid_with: "Cash",
+    });
   };
 
   const requestBooking = (props) => {
@@ -57,13 +53,12 @@ export const usePayment = () => {
       .then((res) => {
         setLoading(false);
         if (res.status === 200) {
-          setPaymentState(true);
+          setPaymentStatus({ requestState: "success", status: props.status });
         }
       })
       .catch(() => {
         setLoading(false);
-        handleAlert("error");
-        setPaymentState(false);
+        setPaymentStatus({ requestState: "error", status: props.status });
       });
   };
 
