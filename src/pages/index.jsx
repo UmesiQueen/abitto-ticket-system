@@ -92,7 +92,7 @@ const Home = () => {
       <section className="bg-white flex justify-center pt-10">
         <div className="flex flex-col items-center px-5 md:px-0 w-full md:w-fit">
           <h3 className="self-start uppercase font-semibold mb-6 text-lg md:text-xl ">
-            At Abiito, Safety is our priority
+            At Abitto, Your Safety is our priority
           </h3>
           <iframe
             width="560"
