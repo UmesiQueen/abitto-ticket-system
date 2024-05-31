@@ -40,7 +40,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn, humanize, getTicketCost } from "@/lib/utils";
-import { GlobalCTX } from "@/context/GlobalContext";
+import { GlobalCTX } from "@/hooks/GlobalContext";
 
 const columns = [
   {
@@ -73,12 +73,14 @@ const columns = [
   {
     accessorKey: "paid with",
     header: "Paid With",
-    cell: ({ row }) => <div>{row.original?.medium ?? "Paystack"}</div>,
+    cell: ({ row }) => (
+      <div>{row.original?.medium === "Online" ? "Paystack" : "Cash"}</div>
+    ),
   },
   {
-    accessorKey: "mode",
-    header: "Mode",
-    cell: ({ row }) => <div>{row.original?.mode ?? "Online"}</div>,
+    accessorKey: "medium",
+    header: "Medium",
+    cell: ({ row }) => <div>{row.original?.medium ?? "Online"}</div>,
   },
   {
     accessorKey: "passenger",

@@ -1,5 +1,5 @@
 import React from "react";
-import { GlobalCTX } from "@/context/GlobalContext";
+import { GlobalCTX } from "@/hooks/GlobalContext";
 import Alert from "@mui/material/Alert";
 
 const Alert_ = () => {

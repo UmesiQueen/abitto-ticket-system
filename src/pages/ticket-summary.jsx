@@ -1,10 +1,8 @@
 import React from "react";
-import { BookingCTX } from "@/context/BookingContext";
+import { BookingCTX } from "@/hooks/BookingContext";
 import {
-  ChairIcon,
   InformationCircleIcon,
   CalendarIcon,
-  // BoatIcon,
   ClockIcon,
   UsersIcon,
   CancelSquareIcon,
@@ -14,15 +12,30 @@ import {
 import { format } from "date-fns";
 import { formatValue } from "react-currency-input-field";
 import Modal from "@mui/material/Modal";
-import ClipLoader from "react-spinners/ClipLoader";
-import { useNavigate } from "react-router-dom";
-import { GlobalCTX } from "@/context/GlobalContext";
+import { useNavigate, Navigate } from "react-router-dom";
+import { GlobalCTX } from "@/hooks/GlobalContext";
 import { Helmet } from "react-helmet-async";
+import { usePayment } from "@/hooks/usePayment";
+import Button from "@/components/custom/Button";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const TicketSummary = () => {
   const { formData } = React.useContext(BookingCTX);
+  // const { handleAlert } = React.useContext(GlobalCTX);
+
+  if (!formData?.ticket_id) {
+    // handleAlert("info");
+    return <Navigate to="/booking" />;
+  }
+
+  return <ProtectedRoute />;
+};
+
+const ProtectedRoute = () => {
+  const { formData } = React.useContext(BookingCTX);
   const [open, setOpen] = React.useState(false);
   const { loading, setLoading } = React.useContext(GlobalCTX);
+
   const openModal = () => {
     setLoading(true);
 
@@ -92,12 +105,6 @@ const TicketSummary = () => {
                         Number(formData?.children_number)}{" "}
                       passenger(s)
                     </p>
-                    <p>
-                      <ChairIcon /> Seats:{" "}
-                      {formData.seat_no.map((seat, index) => (
-                        <span key={index}>{seat}</span>
-                      ))}
-                    </p>
                   </div>
                 </div>
                 {formData.trip_type === "Round Trip" && (
@@ -117,34 +124,17 @@ const TicketSummary = () => {
                           Number(formData?.children_number)}{" "}
                         passenger(s)
                       </p>
-                      <p>
+                      {/* <p>
                         <ChairIcon /> Seats:{" "}
                         {formData.seat_no.map((seat, index) => (
                           <span key={index}>{seat}</span>
                         ))}
-                      </p>
+                      </p> */}
                     </div>
                   </div>
                 )}
-                {/* <div className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
-                  <p>
-                    <UsersIcon />
-                    {Number(formData?.adults_number) +
-                      Number(formData?.children_number)}{" "}
-                    passenger(s)
-                  </p>
-                  <p>
-                    <BoatIcon />
-                    {formData.trip_type}
-                  </p>
-                  <p>
-                    <ChairIcon /> Seats:{" "}
-                    {formData.seat_no.map((seat, index) => (
-                      <span key={index}>{seat}</span>
-                    ))}
-                  </p>
-                </div> */}
               </div>
+
               <div className="border-y-2 border-dashed py-2 mt-6">
                 <table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px]   ">
                   <tbody>
@@ -175,21 +165,12 @@ const TicketSummary = () => {
                 </table>
               </div>
               <div className="flex justify-center mt-6">
-                <button
+                <Button
                   onClick={openModal}
-                  className=" bg-blue-500 w-56 py-3 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white flex justify-center"
-                >
-                  {loading ? (
-                    <ClipLoader
-                      color="#fff"
-                      loading={loading}
-                      size={20}
-                      aria-label="Loading Spinner"
-                    />
-                  ) : (
-                    "Proceed to buy ticket"
-                  )}
-                </button>
+                  loading={loading}
+                  text={"Proceed to buy ticket"}
+                  className="w-56"
+                />
               </div>
             </div>
           </div>
@@ -204,22 +185,32 @@ export default TicketSummary;
 
 // eslint-disable-next-line react/prop-types
 const PaymentModals = ({ open, closeModal }) => {
-  const [openChild, setOpenChild] = React.useState(false);
-  const [isChecked, setChecked] = React.useState(false);
-  const { setLoading } = React.useContext(GlobalCTX);
+  const { paymentState, loading, setPaymentState } =
+    React.useContext(BookingCTX);
+  const [successModal, setSuccessModal] = React.useState(false);
+  const [isChecked, setChecked] = React.useState("");
+  const navigate = useNavigate();
+  const { onlinePayment, offlinePayment } = usePayment();
 
-  const openModal = () => {
-    setLoading(true);
+  React.useEffect(() => {
+    if (paymentState) {
+      closePaymentModal();
+      if (isChecked === "offline") return setSuccessModal(true);
+      return navigate("/booking");
+    }
 
-    setTimeout(() => {
-      setLoading(false);
-      setOpenChild(true);
-    }, 1500);
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paymentState]);
 
-  const handleClose = () => {
+  const closePaymentModal = () => {
     closeModal();
     setChecked(false);
+  };
+
+  const closeSuccessModal = () => {
+    setPaymentState(false);
+    setSuccessModal(false);
+    navigate("/booking");
   };
 
   return (
@@ -227,31 +218,26 @@ const PaymentModals = ({ open, closeModal }) => {
       <Modal
         open={open}
         onClose={() => {
-          if (!openChild) handleClose();
+          if (!successModal) closePaymentModal();
         }}
         aria-labelledby="payment-modal"
         sx={{ backdropFilter: "blur(1px)", zIndex: 1 }}
       >
         <div className="mt-36 bg-white h-fit md:w-[375px] p-5 mx-5 md:mx-auto">
-          {!openChild ? (
+          {!successModal ? (
             <div>
               <div className="flex gap-5 items-center">
                 <h2 className="font-semibold text-base text-center grow">
                   Select Payment Method
                 </h2>
                 <button
-                  onClick={handleClose}
+                  onClick={closePaymentModal}
                   className=" hover:scale-[.8] rounded-lg transition duration-150 ease-in-out "
                 >
                   <CancelSquareIcon />
                 </button>
               </div>
-              {/* <form
-                action=""
-                onSubmit={(e) => {
-                  e.preventDefault();
-                }}
-              > */}
+
               <ul className=" space-y-3 [&_label]:flex [&_label]:items-center [&_label]:gap-3 *:border *:p-3 [&_input]:ml-auto my-4">
                 <li>
                   <label>
@@ -262,31 +248,48 @@ const PaymentModals = ({ open, closeModal }) => {
                       height={23}
                     />
                     <p>Pay Online</p>{" "}
-                    <input type="radio" className="" disabled />
+                    <input
+                      id="online"
+                      type="radio"
+                      name="medium"
+                      onChange={(e) => setChecked(e.target.id)}
+                    />
                   </label>
                 </li>
                 <li>
                   <label>
                     <CashIcon /> <p>Pay with Cash (Offline)</p>{" "}
                     <input
+                      id="offline"
                       type="radio"
-                      required
-                      onChange={(e) => setChecked(e.target.checked)}
+                      name="medium"
+                      onChange={(e) => setChecked(e.target.id)}
                     />
                   </label>
                 </li>
               </ul>
               <button
-                onClick={openModal}
-                className=" disabled:bg-[#C2C2C2] disabled:cursor-not-allowed py-3 text-blue-50 font-semibold w-full bg-[#1f1f1f] hover:bg-[#1f1f1fea] transition duration-150 ease-in-out"
+                onClick={() => {
+                  if (isChecked === "online") return onlinePayment();
+                  return offlinePayment();
+                }}
+                className=" disabled:bg-[#C2C2C2] disabled:cursor-none py-3 text-blue-50 font-semibold w-full bg-[#1f1f1f] hover:bg-[#1f1f1fea] transition duration-150 ease-in-out"
                 disabled={!isChecked}
               >
-                Continue
+                {loading ? (
+                  <ClipLoader
+                    color="#fff"
+                    loading={loading}
+                    size={20}
+                    aria-label="Loading Spinner"
+                  />
+                ) : (
+                  "Continue"
+                )}
               </button>
-              {/* </form> */}
             </div>
           ) : (
-            <SuccessModal setState={setOpenChild} />
+            <SuccessModal onClick={closeSuccessModal} />
           )}
         </div>
       </Modal>
@@ -295,9 +298,7 @@ const PaymentModals = ({ open, closeModal }) => {
 };
 
 // eslint-disable-next-line react/prop-types
-const SuccessModal = ({ setState }) => {
-  const navigate = useNavigate();
-
+const SuccessModal = ({ onClick }) => {
   return (
     <div className=" text-center flex flex-col gap-5">
       <div className="mx-auto w-fit">
@@ -307,18 +308,13 @@ const SuccessModal = ({ setState }) => {
         Your Ferry Seat has been successfully Booked!
       </h2>
       <p className="font-normal text-xs text-[#454545] px-10">
-        Please check your email for important ticket details.
+        {/* Please check your email for important ticket details. */}
+        Payment will be made on arrival.
       </p>
-      <div className="">
-        {/* <button className="w-full border-2 border-blue-500 text-blue-500 hover:border-blue-700 hover:text-blue-700 text-sm bg-blue-50 p-3 px-4 font-semibold transition-all duration-150 ease-in-out ">
-          Check email
-        </button> */}
+      <div>
         <button
           className="bg-blue-500 hover:bg-blue-700 transition-all duration-150 ease-in-out text-sm w-full text-white p-3 px-4 font-semibold"
-          onClick={() => {
-            setState(false);
-            navigate("/booking");
-          }}
+          onClick={onClick}
         >
           Continue
         </button>

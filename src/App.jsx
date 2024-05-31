@@ -12,7 +12,7 @@ import {
   // LinkedinIcon,
   // TwitterIcon,
 } from "@/assets/icons/index";
-import { GlobalCTX } from "@/context/GlobalContext";
+import { GlobalCTX } from "@/hooks/GlobalContext";
 
 function App() {
   const pathname = useLocation();

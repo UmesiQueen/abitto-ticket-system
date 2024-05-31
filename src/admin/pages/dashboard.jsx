@@ -33,7 +33,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import React from "react";
-import { GlobalCTX } from "@/context/GlobalContext";
+import { GlobalCTX } from "@/hooks/GlobalContext";
 
 const chartDataDemo = [
   {
@@ -256,12 +256,12 @@ const columns = [
   {
     accessorKey: "medium",
     header: "Medium",
-    cell: ({ row }) => <div>{row.original?.mode ?? "Online"}</div>,
+    cell: ({ row }) => <div>{row.original?.medium ?? "Offline"}</div>,
   },
   {
     accessorKey: "paid with",
     header: "Paid With",
-    cell: ({ row }) => <div>{row.original?.medium ?? "Paystack"}</div>,
+    cell: ({ row }) => <div>{row.original?.paid_with ?? "Cash"}</div>,
   },
   {
     accessorKey: "status",

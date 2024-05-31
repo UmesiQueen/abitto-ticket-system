@@ -10,7 +10,6 @@ import Home from "./pages";
 import Booking from "./pages/booking";
 import PageNotFound from "./pages/pageNotFound";
 import TicketSummary from "./pages/ticket-summary";
-import ProtectedRoute from "./context/ProtectedRoute";
 import AdminLayout from "./admin/layout";
 import Dashboard from "./admin/pages/dashboard";
 import BookingDetails from "./admin/pages/booking-details";
@@ -26,14 +25,7 @@ export const router = createBrowserRouter(
       <Route element={<App />}>
         <Route index element={<Home />} />
         <Route path="booking" element={<Booking />} />
-        <Route
-          path="ticket-summary"
-          element={
-            <ProtectedRoute>
-              <TicketSummary />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="ticket-summary" element={<TicketSummary />} />
       </Route>
 
       <Route element={<AdminLayout />}>
