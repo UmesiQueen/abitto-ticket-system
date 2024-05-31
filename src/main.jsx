@@ -5,7 +5,7 @@ import { HelmetProvider } from "react-helmet-async";
 
 import "./index.css";
 import { router } from "./routes";
-import GlobalContext from "./context/GlobalContext";
+import GlobalContext from "./hooks/GlobalContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

@@ -117,3 +117,15 @@ html {
   right: 16px;
   top: 25px;
 }
+
+.arc {
+  min-width: 250px;
+  aspect-ratio: 1;
+  padding: 40px; /* the boder thickness */
+  box-sizing: border-box;
+  border-radius: 50%;
+  transform: rotate(270deg);
+  background: #85ad33;
+  mask: linear-gradient(#0000 0 0) content-box intersect,
+    conic-gradient(#000 180deg, #0000 0);
+}

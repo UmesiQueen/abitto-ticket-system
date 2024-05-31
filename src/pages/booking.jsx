@@ -6,23 +6,22 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 // import { styled } from "@mui/material/styles";
-import classNames from "classnames";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { useForm, Controller } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
 import { v4 as uuid } from "uuid";
-import axios from "axios";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { CalendarIcon } from "@/assets/icons";
-import { BookingCTX } from "@/context/BookingContext";
-import { GlobalCTX } from "@/context/GlobalContext";
+import { BookingCTX } from "@/hooks/BookingContext";
+import { GlobalCTX } from "@/hooks/GlobalContext";
 import { format } from "date-fns";
 import { Helmet } from "react-helmet-async";
+import { cn } from "@/lib/utils";
 
 const Booking = () => {
   const [value, setValue] = React.useState("1");
@@ -131,10 +130,7 @@ const BookingSchema = yup.object().shape({
     .string()
     .required("Surname is required.")
     .min(2, "Surname must have at least 2 characters."),
-  email: yup
-    .string()
-    .required("Email address is required.")
-    .email("Invalid email."),
+  email: yup.string().email("Invalid email."),
   phone_number: yup
     .string()
     .required("Phone number is required.")
@@ -165,7 +161,7 @@ const BookingForm = ({ tab }) => {
     "05:00 PM",
   ];
 
-  const { loading, setLoading, handleAlert } = React.useContext(GlobalCTX);
+  const { loading, setLoading } = React.useContext(GlobalCTX);
   const { setFormData } = React.useContext(BookingCTX);
   const [timeOptions, setTimeOptions] = React.useState(defaultTimeOptions);
   const navigate = useNavigate();
@@ -204,25 +200,22 @@ const BookingForm = ({ tab }) => {
   };
 
   const onSubmit = (formData) => {
+    const total_passengers =
+      Number(formData.adults_number) + Number(formData.children_number);
+
     setLoading(true);
-    axios
-      .post("https://abitto-api.onrender.com/api/booking/new", {
+    setTimeout(() => {
+      setFormData({
         ticket_id: ticket_id.slice(0, 6),
         trip_type: tab,
+        total_passengers,
+        amount:
+          Number(total_passengers) * (tab === "One-Way Trip" ? 8500 : 17000),
         ...formData,
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          setFormData(res.data?.booking);
-          setLoading(false);
-          navigate("/ticket-summary");
-        }
-      })
-      .catch((err) => {
-        setLoading(false);
-        handleAlert("error");
-        console.error(err, "Error occurred.");
       });
+      setLoading(false);
+      navigate("/ticket-summary");
+    }, 1500);
   };
 
   return (
@@ -248,7 +241,7 @@ const BookingForm = ({ tab }) => {
 
         {/* Departure Date */}
         <div
-          className={classNames(
+          className={cn(
             "flex gap-5 w-full ",
             tab === "One-Way Trip" ? "flex-wrap md:flex-nowrap" : ""
           )}

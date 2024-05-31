@@ -3,7 +3,7 @@ import { MapIcon, PhoneIcon, CaretIcon, BoatIcon } from "@/assets/icons/index";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import WaveSVG from "@/assets/wave";
-import { GlobalCTX } from "@/context/GlobalContext";
+import { GlobalCTX } from "@/hooks/GlobalContext";
 import axios from "axios";
 import FadeInBackgroundTransition from "@/components/animation/FadeIn";
 import { Helmet } from "react-helmet-async";
@@ -41,7 +41,7 @@ const Home = () => {
 
       {/* About us  */}
       <section
-        className="p-5 md:py-20 md:px-10 lg:px-44 bg-blue-50 relative"
+        className="p-5 md:py-20 md:pb-28 md:px-10 lg:px-32  bg-blue-50 relative"
         id="about-us"
         ref={about}
       >
@@ -88,9 +88,32 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Youtube video */}
+      <section className="bg-white flex justify-center pt-10">
+        <div className="flex flex-col items-center px-5 md:px-0 w-full md:w-fit">
+          <h3 className="self-start uppercase font-semibold mb-6 text-lg md:text-xl ">
+            At Abiito, Safety is our priority
+          </h3>
+          <iframe
+            width="560"
+            height="315"
+            src="https://www.youtube.com/embed/oKqH4VeBtD4?si=S_XWOUBpzK6LS_WN"
+            title="YouTube video player"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+            className="w-full aspect-video "
+          />
+          <p className="self-start text-sm font-medium text-gray-500 mt-4">
+            Safety instructions for Abitto ferry services.
+          </p>
+        </div>
+      </section>
+
       {/* Contact us  */}
       <section
-        className="py-10 px-5 md:py-20 md:px-10 lg:px-44 bg-white"
+        className="py-10 px-5 md:py-20 md:px-10 lg:px-32 bg-white"
         ref={contact}
       >
         <div className="flex flex-col md:flex-row md:gap-5 lg:gap-10 justify-between ">

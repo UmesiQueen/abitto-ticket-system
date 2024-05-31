@@ -13,7 +13,7 @@ import { Outlet, NavLink, Navigate, useNavigate } from "react-router-dom";
 import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
 import React from "react";
-import { GlobalCTX } from "@/context/GlobalContext";
+import { GlobalCTX } from "@/hooks/GlobalContext";
 
 const ProtectedRoute = () => {
   const navigate = useNavigate();
