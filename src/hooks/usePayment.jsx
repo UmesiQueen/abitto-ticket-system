@@ -4,7 +4,7 @@ import axios from "axios";
 import { BookingCTX } from "@/hooks/BookingContext";
 
 export const usePayment = () => {
-  const { formData, setPaymentStatus, setLoading } =
+  const { formData, setPaymentStatus, setLoading, setConfirmedTicket } =
     React.useContext(BookingCTX);
 
   const onlinePayment = () => {
@@ -25,7 +25,7 @@ export const usePayment = () => {
       },
       onCancel() {
         requestBooking({
-          status: "Cancelled",
+          status: "Canceled",
           trxRef: null,
           medium: "Online",
           paid_with: "Paystack",
@@ -54,6 +54,7 @@ export const usePayment = () => {
         setLoading(false);
         if (res.status === 200) {
           setPaymentStatus({ requestState: "success", status: props.status });
+          setConfirmedTicket(res.data.booking);
         }
       })
       .catch(() => {

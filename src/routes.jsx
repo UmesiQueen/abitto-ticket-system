@@ -18,6 +18,7 @@ import Payments from "./admin/pages/payments";
 import Settings from "./admin/pages/settings";
 import Login from "./admin/auth/login";
 import { CustomerDetails } from "./admin/pages/booking-details";
+import TicketDocument from "./pages/ticket-document";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -43,6 +44,7 @@ export const router = createBrowserRouter(
         </Route>
       </Route>
 
+      <Route path="ticket-summary/:bookingID" element={<TicketDocument />} />
       <Route path="login" element={<Login />} />
       <Route path="*" element={<PageNotFound />} />
     </Route>

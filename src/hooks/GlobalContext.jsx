@@ -19,10 +19,7 @@ const GlobalContext = ({ children }) => {
 
   React.useEffect(() => {
     localStorage.setItem("admin", JSON.stringify(isAuth));
-  }, [isAuth]);
 
-  React.useEffect(() => {
-    // const BASE_URL = import.meta.env.ABITTO_BASE_URL;
     if (isAuth?.isAdmin) {
       axios
         .get(`https://abitto-api.onrender.com/api/booking/getbooking`)
@@ -33,8 +30,6 @@ const GlobalContext = ({ children }) => {
           console.error(err);
         });
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuth]);
 
   const scrollToSection = (e) => {
