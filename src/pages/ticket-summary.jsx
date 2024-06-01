@@ -12,7 +12,7 @@ import {
 import { format } from "date-fns";
 import { formatValue } from "react-currency-input-field";
 import Modal from "@mui/material/Modal";
-import { useNavigate, Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { GlobalCTX } from "@/hooks/GlobalContext";
 import { Helmet } from "react-helmet-async";
 import { usePayment } from "@/hooks/usePayment";
@@ -21,10 +21,8 @@ import ClipLoader from "react-spinners/ClipLoader";
 
 const TicketSummary = () => {
   const { formData } = React.useContext(BookingCTX);
-  // const { handleAlert } = React.useContext(GlobalCTX);
 
   if (!formData?.ticket_id) {
-    // handleAlert("info");
     return <Navigate to="/booking" />;
   }
 
@@ -185,7 +183,7 @@ export default TicketSummary;
 
 // eslint-disable-next-line react/prop-types
 const PaymentModals = ({ open, closeModal }) => {
-  const { paymentStatus, loading, setPaymentStatus } =
+  const { paymentStatus, loading, setPaymentStatus, confirmedTicket } =
     React.useContext(BookingCTX);
   const { handleAlert } = React.useContext(GlobalCTX);
   const [successModal, setSuccessModal] = React.useState(false);
@@ -196,7 +194,7 @@ const PaymentModals = ({ open, closeModal }) => {
   React.useEffect(() => {
     if (paymentStatus.requestState === "success") {
       if (paymentStatus.status === "Success") handleSuccess();
-      if (paymentStatus.status === "Cancelled") handleOnlineCancel();
+      if (paymentStatus.status === "Canceled") handleOnlineCancel();
       if (paymentStatus.status === "Pending") setSuccessModal(true);
     }
     if (paymentStatus.requestState === "error") handleBadRequest();
@@ -214,7 +212,7 @@ const PaymentModals = ({ open, closeModal }) => {
   const handleSuccess = () => {
     setPaymentMethod("");
     setPaymentStatus({ requestState: "", status: "" });
-    navigate("/booking");
+    navigate(`/ticket-summary/${confirmedTicket._id}`);
   };
 
   // handleOnlineCancel
@@ -228,6 +226,10 @@ const PaymentModals = ({ open, closeModal }) => {
     clearStates();
     handleAlert("error");
   };
+
+  // const printTicket = () => {
+  //   return <Navigate to={`${confirmedTicket._id}`} />;
+  // };
 
   return (
     <>

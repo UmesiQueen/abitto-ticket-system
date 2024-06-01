@@ -10,6 +10,7 @@ const BookingContext = ({ children }) => {
     status: "",
   });
   const [loading, setLoading] = React.useState(false);
+  const [confirmedTicket, setConfirmedTicket] = React.useState([]);
 
   return (
     <BookingCTX.Provider
@@ -20,6 +21,8 @@ const BookingContext = ({ children }) => {
         setPaymentStatus,
         loading,
         setLoading,
+        confirmedTicket,
+        setConfirmedTicket,
       }}
     >
       {children}

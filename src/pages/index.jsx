@@ -102,7 +102,7 @@ const Home = () => {
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             referrerPolicy="strict-origin-when-cross-origin"
-            allowfullscreen
+            allowFullScreen
             className="w-full aspect-video "
           />
           <p className="self-start text-sm font-medium text-gray-500 mt-4">
