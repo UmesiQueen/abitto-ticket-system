@@ -152,49 +152,43 @@ const BookingForm = ({ tab }) => {
     context: { roundTrip: tab === "Round Trip" ? true : false },
   });
 
-  const defaultTimeOptions = [
-    "08:30 AM",
-    "10:30 AM",
-    "12:30 PM",
-    "02:30 PM",
-    "03:30 PM",
-    "05:00 PM",
-  ];
+  const defaultTimeOptions = ["12:00 PM", "01:30 PM", "03:30 PM", "05:00 PM"];
 
   const { loading, setLoading } = React.useContext(GlobalCTX);
   const { setFormData } = React.useContext(BookingCTX);
-  const [timeOptions, setTimeOptions] = React.useState(defaultTimeOptions);
+  const [timeOptions, setTimeOptions] = React.useState({
+    departure_time: defaultTimeOptions,
+    return_time: defaultTimeOptions,
+  });
   const navigate = useNavigate();
   const ticket_id = uuid();
-
-  const departure_date = watch("departure_date");
-  const return_date = watch("return_date");
+  const travel_from = watch("travel_from");
 
   React.useEffect(() => {
-    resetTimeOptions("departure_time", departure_date);
+    resetTimeOptions(travel_from);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [departure_date]);
+  }, [travel_from]);
 
-  React.useEffect(() => {
-    resetTimeOptions("return_time", return_date);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [return_date]);
+  const resetTimeOptions = (travel_from) => {
+    const calabarTimeOptions = ["12:00 PM", "03:30 PM"];
+    const uyoTimeOptions = ["01:30 PM", "05:00 PM"];
 
-  const resetTimeOptions = (field, dateValue) => {
-    const sundayTimeOptions = ["12:30 PM", "03:30 PM"];
-    const weekdayTimeOptions = defaultTimeOptions.filter(
-      (time) => time !== "03:30 PM"
-    );
+    if (travel_from) {
+      travel_from === "Nwaniba Timber Beach, Uyo"
+        ? setTimeOptions({
+            departure_time: uyoTimeOptions,
+            return_time: calabarTimeOptions,
+          })
+        : travel_from === "Marina, Calabar"
+        ? setTimeOptions({
+            departure_time: calabarTimeOptions,
+            return_time: uyoTimeOptions,
+          })
+        : "";
 
-    if (dateValue) {
-      const date = format(dateValue, "eeee");
-
-      if (date === "Sunday") {
-        setTimeOptions(sundayTimeOptions);
-        if (!sundayTimeOptions.includes(watch(field))) resetField(field);
-      } else {
-        setTimeOptions(weekdayTimeOptions);
-        if (!weekdayTimeOptions.includes(watch(field))) resetField(field);
+      if (tab === "Round Trip") {
+        resetField("departure_time");
+        resetField("return_time");
       }
     }
   };
@@ -290,8 +284,9 @@ const BookingForm = ({ tab }) => {
               {...register("departure_time")}
               label="Time of Departure"
               placeholder="08:30 AM"
-              options={timeOptions}
+              options={timeOptions.departure_time}
               errors={errors}
+              disabled={!travel_from}
             />
           </div>
         </div>
@@ -341,8 +336,9 @@ const BookingForm = ({ tab }) => {
               {...register("return_time")}
               label="Time of Return"
               placeholder="08:30 AM"
-              options={timeOptions}
+              options={timeOptions.return_time}
               errors={errors}
+              disabled={!travel_from}
             />
           </div>
         )}
