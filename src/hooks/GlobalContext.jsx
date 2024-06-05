@@ -24,13 +24,20 @@ const GlobalContext = ({ children }) => {
       axios
         .get(`https://abitto-api.onrender.com/api/booking/getbooking`)
         .then((res) => {
-          setDataQuery(res.data.bookings);
+          setDataQuery(res.data.bookings.reverse());
         })
         .catch((err) => {
           console.error(err);
         });
     }
   }, [isAuth]);
+
+  // React.useEffect(() => {
+  //   const totalEarnings = dataQuery
+  //     .map((booking) => booking.amount)
+  //     .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+  // }, [dataQuery]);
 
   const scrollToSection = (e) => {
     window.scrollTo({
@@ -46,22 +53,22 @@ const GlobalContext = ({ children }) => {
     }, 3500);
   };
 
+  const ctxValue = {
+    about,
+    contact,
+    scrollToSection,
+    loading,
+    setLoading,
+    alert,
+    handleAlert,
+    isAuth,
+    setAuth,
+    dataQuery,
+    setDataQuery,
+  };
+
   return (
-    <GlobalCTX.Provider
-      value={{
-        about,
-        contact,
-        scrollToSection,
-        loading,
-        setLoading,
-        alert,
-        handleAlert,
-        isAuth,
-        setAuth,
-        dataQuery,
-        setDataQuery,
-      }}
-    >
+    <GlobalCTX.Provider value={ctxValue}>
       <BookingContext>{children}</BookingContext>
       <Alert_ />
       <Loader />
@@ -74,3 +81,14 @@ GlobalContext.propTypes = {
 };
 
 export default GlobalContext;
+
+// export const bookingLoader = () => {
+//   axios
+//     .get(`https://abitto-api.onrender.com/api/booking/getbooking`)
+//     .then((res) => {
+//       setDataQuery(res.data.bookings.reverse());
+//     })
+//     .catch((err) => {
+//       console.error(err);
+//     });
+// };

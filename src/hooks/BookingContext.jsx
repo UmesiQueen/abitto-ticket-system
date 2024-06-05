@@ -10,24 +10,20 @@ const BookingContext = ({ children }) => {
     status: "",
   });
   const [loading, setLoading] = React.useState(false);
-  const [confirmedTicket, setConfirmedTicket] = React.useState([]);
+  const [confirmedTicket, setConfirmedTicket] = React.useState();
 
-  return (
-    <BookingCTX.Provider
-      value={{
-        formData,
-        setFormData,
-        paymentStatus,
-        setPaymentStatus,
-        loading,
-        setLoading,
-        confirmedTicket,
-        setConfirmedTicket,
-      }}
-    >
-      {children}
-    </BookingCTX.Provider>
-  );
+  const ctxValue = {
+    formData,
+    setFormData,
+    paymentStatus,
+    setPaymentStatus,
+    loading,
+    setLoading,
+    confirmedTicket,
+    setConfirmedTicket,
+  };
+
+  return <BookingCTX.Provider value={ctxValue}>{children}</BookingCTX.Provider>;
 };
 
 BookingContext.propTypes = {
