@@ -281,7 +281,7 @@ const BookingForm = ({ tab }) => {
             <SelectField
               {...register("departure_time")}
               label="Time of Departure"
-              placeholder="08:30 AM"
+              placeholder="12:00 PM"
               options={timeOptions.departure_time}
               errors={errors}
               disabled={!travel_from}
@@ -333,7 +333,7 @@ const BookingForm = ({ tab }) => {
             <SelectField
               {...register("return_time")}
               label="Time of Return"
-              placeholder="08:30 AM"
+              placeholder="12:00 PM"
               options={timeOptions.return_time}
               errors={errors}
               disabled={!travel_from}
