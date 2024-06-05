@@ -2,11 +2,8 @@ import React from "react";
 import { BookingCTX } from "@/hooks/BookingContext";
 import {
   InformationCircleIcon,
-  CalendarIcon,
-  ClockIcon,
-  UsersIcon,
   CancelSquareIcon,
-  CashIcon,
+  // CashIcon,
   CheckIcon,
 } from "@/assets/icons/index";
 import { format } from "date-fns";
@@ -18,6 +15,8 @@ import { Helmet } from "react-helmet-async";
 import { usePayment } from "@/hooks/usePayment";
 import Button from "@/components/custom/Button";
 import ClipLoader from "react-spinners/ClipLoader";
+import PropTypes from "prop-types";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const TicketSummary = () => {
   const { formData } = React.useContext(BookingCTX);
@@ -52,7 +51,7 @@ const ProtectedRoute = () => {
       <Helmet>
         <title>Abitto Ferry - Ticket Summary</title>
       </Helmet>
-      <div className="bg-hero-pattern h-[800px] w-screen bg-cover bg-no-repeat bg-center relative ">
+      <div className="bg-hero-pattern h-[900px] w-screen bg-cover bg-no-repeat bg-center relative ">
         <div className="bg-black/40 w-full h-full absolute z-0 md:flex justify-center ">
           <div className="mt-28 flex flex-col h-fit px-5">
             <h2 className="text-center text-white mb-10 text-base md:text-2xl font-medium">
@@ -77,58 +76,82 @@ const ProtectedRoute = () => {
               <div className="mt-6">
                 <h4 className="font-semibold mb-1">Terminals</h4>
                 <p className="text-xs">
-                  {formData?.travel_from.includes("Calabar")
-                    ? "Marina Terminal, Calabar"
-                    : "Nwaniba Timber Beach Terminal, Uyo"}{" "}
-                  =={">"}{" "}
-                  {formData?.travel_to.includes("Calabar")
-                    ? "Marina Terminal, Calabar"
-                    : "Nwaniba Timber Beach Terminal, Uyo"}
+                  {formData?.travel_from} - {formData?.travel_to}
                 </p>
               </div>
-              <div className="my-9 text-[#1E1E1E] text-xs md:text-sm font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
+              <div className=" mt-5 mb-9 text-[#1E1E1E] space-y-5 text-xs md:text-sm font-normal [&_li]:inline-flex [&_li]:items-center [&_li]:gap-1 [&_li]:font-medium">
+                <div>
+                  <h5 className="font-semibold mb-1">Customer Info</h5>
+                  <ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
+                    <li>
+                      <span className="text-xs text-gray-500 font-normal">
+                        Name:
+                      </span>{" "}
+                      {`${formData.first_name} ${formData.surname}`}
+                    </li>
+                    <li>
+                      <span className="text-xs text-gray-500 font-normal">
+                        Phone:{" "}
+                      </span>
+                      {formData.phone_number}
+                    </li>
+                    {formData.email && (
+                      <li>
+                        <span className="text-xs text-gray-500 font-normal">
+                          Email:{" "}
+                        </span>
+                        {formData.email}
+                      </li>
+                    )}
+                    <li>
+                      <span className="text-xs text-gray-500 font-normal">
+                        Type:{" "}
+                      </span>
+                      {formData.trip_type}
+                    </li>
+                    <li>
+                      <span className="text-xs text-gray-500 font-normal">
+                        Passenger(s):{" "}
+                      </span>
+                      {Number(formData?.adults_number) +
+                        Number(formData?.children_number)}
+                    </li>
+                  </ul>
+                </div>
                 <div>
                   <h5 className="font-semibold mb-1">Departure Details</h5>
-                  <div className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
-                    <p>
-                      <CalendarIcon />
+                  <ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
+                    <li>
+                      <span className="text-xs text-gray-500 font-normal">
+                        Date:
+                      </span>
                       {format(new Date(formData?.departure_date), "PP")}
-                    </p>
-                    <p>
-                      <ClockIcon /> {formData?.departure_time}
-                    </p>
-                    <p>
-                      <UsersIcon />
-                      {Number(formData?.adults_number) +
-                        Number(formData?.children_number)}{" "}
-                      passenger(s)
-                    </p>
-                  </div>
+                    </li>
+                    <li>
+                      <span className="text-xs text-gray-500 font-normal">
+                        Time:
+                      </span>{" "}
+                      {formData?.departure_time}
+                    </li>
+                  </ul>
                 </div>
                 {formData.trip_type === "Round Trip" && (
-                  <div className="my-6">
+                  <div>
                     <h5 className="font-semibold mb-1">Return Details</h5>
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
-                      <p>
-                        <CalendarIcon />
+                    <ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
+                      <li>
+                        <span className="text-xs text-gray-500 font-normal">
+                          Date:
+                        </span>
                         {format(new Date(formData?.return_date), "PP")}
-                      </p>
-                      <p>
-                        <ClockIcon /> {formData?.return_time}
-                      </p>
-                      <p>
-                        <UsersIcon />
-                        {Number(formData?.adults_number) +
-                          Number(formData?.children_number)}{" "}
-                        passenger(s)
-                      </p>
-                      {/* <p>
-                        <ChairIcon /> Seats:{" "}
-                        {formData.seat_no.map((seat, index) => (
-                          <span key={index}>{seat}</span>
-                        ))}
-                      </p> */}
-                    </div>
+                      </li>
+                      <li>
+                        <span className="text-xs text-gray-500 font-normal">
+                          Time:
+                        </span>{" "}
+                        {formData?.return_time}
+                      </li>
+                    </ul>
                   </div>
                 )}
               </div>
@@ -145,7 +168,7 @@ const ProtectedRoute = () => {
                       <td className="text-xs text-[#444444]">₦8,500</td>
                     </tr>
                     <tr>
-                      <td className="font-medium text-base">Ticket:</td>
+                      <td className="font-medium text-base">Total</td>
                       <td className="font-medium text-base">
                         ₦
                         {formatValue({
@@ -166,7 +189,7 @@ const ProtectedRoute = () => {
                 <Button
                   onClick={openModal}
                   loading={loading}
-                  text={"Proceed to buy ticket"}
+                  text={"Purchase ticket"}
                   className="w-56"
                 />
               </div>
@@ -181,7 +204,6 @@ const ProtectedRoute = () => {
 
 export default TicketSummary;
 
-// eslint-disable-next-line react/prop-types
 const PaymentModals = ({ open, closeModal }) => {
   const { paymentStatus, loading, setPaymentStatus, confirmedTicket } =
     React.useContext(BookingCTX);
@@ -218,7 +240,7 @@ const PaymentModals = ({ open, closeModal }) => {
   // handleOnlineCancel
   const handleOnlineCancel = () => {
     clearStates();
-    // send toast that cancel occurred
+    handleAlert("cancel");
   };
 
   //handleBadRequest
@@ -226,10 +248,6 @@ const PaymentModals = ({ open, closeModal }) => {
     clearStates();
     handleAlert("error");
   };
-
-  // const printTicket = () => {
-  //   return <Navigate to={`${confirmedTicket._id}`} />;
-  // };
 
   return (
     <>
@@ -241,70 +259,77 @@ const PaymentModals = ({ open, closeModal }) => {
         aria-labelledby="payment-modal"
         sx={{ backdropFilter: "blur(1px)", zIndex: 1 }}
       >
-        <div className="mt-36 bg-white h-fit md:w-[375px] p-5 mx-5 md:mx-auto">
+        <div className="mt-36 h-fit md:w-[375px] mx-5 md:mx-auto">
           {!successModal ? (
-            <div>
-              <div className="flex gap-5 items-center">
+            <div className="flex flex-col md:flex-row-reverse items-start gap-2">
+              <button
+                onClick={clearStates}
+                className=" hover:scale-[.8] rounded-lg transition duration-150 ease-in-out bg-white ml-auto "
+              >
+                <CancelSquareIcon />
+              </button>
+              <div className="bg-white p-5 grow min-w-full w-36">
                 <h2 className="font-semibold text-base text-center grow">
                   Select Payment Method
                 </h2>
+                <ul className="my-7 space-y-3 [&_label]:flex [&_label]:items-center [&_label]:gap-3 *:border *:p-3 [&_input]:ml-auto">
+                  <li>
+                    <label>
+                      <img
+                        alt="pay-stack"
+                        src="https://i.ibb.co/QpjxrJj/Paystack.png"
+                        width={24}
+                        height={23}
+                      />
+                      <p>Pay with Paystack</p>{" "}
+                      <Checkbox
+                        onCheckedChange={(value) => {
+                          value
+                            ? setPaymentMethod("online")
+                            : setPaymentMethod("");
+                        }}
+                        className="ml-auto"
+                      />
+                      {/* <input
+                        id="online"
+                        type="radio"
+                        name="medium"
+                        onChange={(e) => setPaymentMethod(e.target.id)}
+                      /> */}
+                    </label>
+                  </li>
+                  {/* <li>
+                    <label>
+                      <CashIcon /> <p>Pay with Cash (Offline)</p>{" "}
+                      <input
+                        id="offline"
+                        type="radio"
+                        name="medium"
+                        onChange={(e) => setPaymentMethod(e.target.id)}
+                      />
+                    </label>
+                  </li> */}
+                </ul>
                 <button
-                  onClick={clearStates}
-                  className=" hover:scale-[.8] rounded-lg transition duration-150 ease-in-out "
+                  onClick={() => {
+                    if (paymentMethod === "online") return onlinePayment();
+                    return offlinePayment();
+                  }}
+                  className=" disabled:bg-[#C2C2C2] disabled:cursor-none py-3 text-blue-50 font-semibold w-full bg-[#1f1f1f] hover:bg-[#1f1f1fea] transition duration-150 ease-in-out"
+                  disabled={!paymentMethod && !loading}
                 >
-                  <CancelSquareIcon />
+                  {loading ? (
+                    <ClipLoader
+                      color="#fff"
+                      loading={loading}
+                      size={20}
+                      aria-label="Loading Spinner"
+                    />
+                  ) : (
+                    "Continue"
+                  )}
                 </button>
               </div>
-
-              <ul className=" space-y-3 [&_label]:flex [&_label]:items-center [&_label]:gap-3 *:border *:p-3 [&_input]:ml-auto my-4">
-                <li>
-                  <label>
-                    <img
-                      alt="pay-stack"
-                      src="https://i.ibb.co/QpjxrJj/Paystack.png"
-                      width={24}
-                      height={23}
-                    />
-                    <p>Pay Online</p>{" "}
-                    <input
-                      id="online"
-                      type="radio"
-                      name="medium"
-                      onChange={(e) => setPaymentMethod(e.target.id)}
-                    />
-                  </label>
-                </li>
-                <li>
-                  <label>
-                    <CashIcon /> <p>Pay with Cash (Offline)</p>{" "}
-                    <input
-                      id="offline"
-                      type="radio"
-                      name="medium"
-                      onChange={(e) => setPaymentMethod(e.target.id)}
-                    />
-                  </label>
-                </li>
-              </ul>
-              <button
-                onClick={() => {
-                  if (paymentMethod === "online") return onlinePayment();
-                  return offlinePayment();
-                }}
-                className=" disabled:bg-[#C2C2C2] disabled:cursor-none py-3 text-blue-50 font-semibold w-full bg-[#1f1f1f] hover:bg-[#1f1f1fea] transition duration-150 ease-in-out"
-                disabled={!paymentMethod && !loading}
-              >
-                {loading ? (
-                  <ClipLoader
-                    color="#fff"
-                    loading={loading}
-                    size={20}
-                    aria-label="Loading Spinner"
-                  />
-                ) : (
-                  "Continue"
-                )}
-              </button>
             </div>
           ) : (
             <SuccessModal
@@ -320,10 +345,14 @@ const PaymentModals = ({ open, closeModal }) => {
   );
 };
 
-// eslint-disable-next-line react/prop-types
+PaymentModals.propTypes = {
+  open: PropTypes.bool,
+  closeModal: PropTypes.func,
+};
+
 const SuccessModal = ({ onClick }) => {
   return (
-    <div className=" text-center flex flex-col gap-5">
+    <div className=" bg-white text-center flex flex-col gap-5">
       <div className="mx-auto w-fit">
         <CheckIcon />
       </div>
@@ -344,4 +373,8 @@ const SuccessModal = ({ onClick }) => {
       </div>
     </div>
   );
+};
+
+SuccessModal.propTypes = {
+  onClick: PropTypes.func,
 };

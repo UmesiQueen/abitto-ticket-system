@@ -37,7 +37,17 @@ const Login = () => {
       .then((res) => {
         setLoading(false);
         if (res.status === 200) {
-          setAuth({ ...res.data?.user, isAdmin: true });
+          const data = res.data.user;
+          setAuth({
+            account_type: data.account_type,
+            email: data.email,
+            first_name: data.first_name,
+            last_name: data.last_name,
+            profile_picture: data.profile_picture,
+            gender: data.gender,
+            city: data.city,
+            isAdmin: true,
+          });
           return navigate("/admin/dashboard");
         }
       })

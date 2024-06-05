@@ -3,21 +3,29 @@ import { humanize, cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { formatValue } from "react-currency-input-field";
 import { Button } from "@/components/ui/button";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import { BookingCTX } from "@/hooks/BookingContext";
+import { GlobalCTX } from "@/hooks/GlobalContext";
 import { Helmet } from "react-helmet-async";
+import { CaretIcon } from "@/assets/icons";
 
 const TicketDocument = () => {
-  const { confirmedTicket: resData } = React.useContext(BookingCTX);
+  const { confirmedTicket } = React.useContext(BookingCTX);
   const navigate = useNavigate();
+  const { bookingID } = useParams();
+  const { dataQuery, isAuth } = React.useContext(GlobalCTX);
   const componentRef = React.useRef();
 
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
 
-  if (!resData?.ticket_id) return <Navigate to="/booking" />;
+  const currentUser = confirmedTicket
+    ? confirmedTicket
+    : dataQuery.filter((data) => data._id === bookingID)[0];
+
+  if (!currentUser?.ticket_id) return <Navigate to="/pageNotFound" />;
 
   return (
     <>
@@ -26,18 +34,30 @@ const TicketDocument = () => {
       </Helmet>
       <div className="bg-gray-300 min-h-screen p-5">
         <div className=" w-full  md:w-[700px] flex flex-col mx-auto ">
-          <div className="flex gap-2 mb-5 ">
-            <Button
-              className=" ml-auto bg-blue-500 hover:bg-blue-700 "
-              onClick={() => {
-                navigate("/booking");
-              }}
-            >
-              Book New Ticket
-            </Button>
-            <Button className="   " onClick={handlePrint}>
-              Download
-            </Button>
+          <div className="flex gap-2 mb-5 justify-end ">
+            {isAuth?.isAdmin ? (
+              <Button
+                className=" bg-green-500 hover:bg-green-700 "
+                onClick={() => {
+                  navigate(-1);
+                }}
+              >
+                <span className="rotate-180 mr-2">
+                  <CaretIcon />
+                </span>
+                Return
+              </Button>
+            ) : (
+              <Button
+                className=" bg-blue-500 hover:bg-blue-700 "
+                onClick={() => {
+                  navigate("/booking");
+                }}
+              >
+                Book New Ticket
+              </Button>
+            )}
+            <Button onClick={handlePrint}>Download</Button>
           </div>
           <div ref={componentRef} className="bg-white p-10 pb-20 space-y-5">
             <div>
@@ -58,136 +78,154 @@ const TicketDocument = () => {
                 <p className="nowrap font-semibold text-4xl md:text-5xl ">
                   <span className="text-2xl">₦</span>
                   {formatValue({
-                    value: String(resData?.amount),
+                    value: String(currentUser?.amount),
                   })}
                 </p>
               </div>
             </div>
-            <ul className="*:flex *:flex-col *:gap-1 flex flex-wrap gap-x-5 gap-y-3 md:gap-16 pb-2 border-b">
+            <ul className="*:flex *:flex-col *:gap-1 flex flex-wrap gap-x-5 gap-y-3 md:gap-12 pb-2 border-b">
               <li>
                 <p className=" text-xs text-[#7F7F7F]">Booking ID</p>
                 <p className="text-base font-semibold uppercase">
-                  #{resData?.ticket_id}
+                  #{currentUser?.ticket_id}
                 </p>
               </li>
               <li>
                 <p className=" text-xs text-[#7F7F7F]">Customer Name</p>
-                <p className="text-base font-semibold capitalize">{`${resData?.first_name} ${resData?.surname}`}</p>
+                <p className="text-base font-semibold capitalize">{`${currentUser?.first_name} ${currentUser?.surname}`}</p>
+              </li>
+              <li>
+                <p className=" text-xs text-[#7F7F7F]">Phone Number</p>
+                <p className="text-base font-semibold lowercase">
+                  {currentUser?.phone_number}
+                </p>
               </li>
               <li>
                 <p className=" text-xs text-[#7F7F7F]">Email</p>
                 <p className="text-base font-semibold lowercase">
-                  {resData?.email}
+                  {currentUser?.email}
                 </p>
               </li>
             </ul>
-            <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-16 pb-2 border-b">
+            <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-12 pb-2 border-b">
               <li>
                 <p className=" text-xs text-[#7F7F7F] ">Ticket Type</p>
-                <p className="text-base font-semibold">{resData?.trip_type}</p>
+                <p className="text-base font-semibold">
+                  {currentUser?.trip_type}
+                </p>
               </li>
               <li>
                 <p className=" text-xs text-[#7F7F7F]">No. Passenger(s)</p>
                 <p className="text-base font-semibold">
-                  {resData?.total_passengers}
+                  {currentUser?.total_passengers}
+                </p>
+              </li>
+            </ul>
+            <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-12 pb-2 border-b">
+              <li>
+                <p className=" text-xs text-[#7F7F7F]">Travel From</p>
+                <p className="text-base font-semibold">
+                  {currentUser?.travel_from}
+                </p>
+              </li>
+              <li>
+                <p className=" text-xs text-[#7F7F7F]">Travel To</p>
+                <p className="text-base font-semibold">
+                  {currentUser?.travel_to}
                 </p>
               </li>
               <li>
                 <p className=" text-xs text-[#7F7F7F]">Seat No.</p>
                 <p className="text-base font-semibold">
-                  {humanize(resData?.seat_no)}
+                  {humanize(currentUser?.seat_no)}
                 </p>
               </li>
             </ul>
-            <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-16 pb-2 border-b">
-              <li>
-                <p className=" text-xs text-[#7F7F7F]">Travel From</p>
-                <p className="text-base font-semibold">
-                  {resData?.travel_from}
-                </p>
-              </li>
-              <li>
-                <p className=" text-xs text-[#7F7F7F]">Travel To</p>
-                <p className="text-base font-semibold">{resData?.travel_to}</p>
-              </li>
-            </ul>
-            <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-16 pb-2 border-b">
+            <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-12 pb-2 border-b">
               <li>
                 <p className=" text-xs text-[#7F7F7F]">Departure Date</p>
                 <p className="text-base font-semibold">
-                  {format(resData?.departure_date, "PP")}
+                  {format(currentUser?.departure_date, "PP")}
                 </p>
               </li>
               <li>
                 <p className=" text-xs text-[#7F7F7F]">Departure Time</p>
                 <p className="text-base font-semibold">
-                  {resData?.departure_time}
+                  {currentUser?.departure_time}
                 </p>
               </li>
             </ul>
-            {resData?.trip_type === "Round Trip" && (
+            {currentUser?.trip_type === "Round Trip" && (
               <>
-                <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-16  pb-2 border-b">
+                <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-12  pb-2 border-b">
                   <li>
                     <p className=" text-xs text-[#7F7F7F]">Return From</p>
                     <p className="text-base font-semibold">
-                      {resData?.return_from}
+                      {currentUser?.travel_to}
                     </p>
                   </li>
                   <li>
                     <p className=" text-xs text-[#7F7F7F]">Return To</p>
                     <p className="text-base font-semibold">
-                      {resData?.return_to}
+                      {currentUser?.travel_from}
                     </p>
                   </li>
+                  {/* <li>
+                    <p className=" text-xs text-[#7F7F7F]">Seat No.</p>
+                    <p className="text-base font-semibold">
+                      {humanize(["N/A"])}
+                    </p>
+                  </li> */}
                 </ul>
-                <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-16 pb-2 border-b">
+                <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-12 pb-2 border-b">
                   <li>
                     <p className=" text-xs text-[#7F7F7F]">Return Date</p>
                     <p className="text-base font-semibold">
-                      {format(resData?.return_date, "PP")}
+                      {format(currentUser?.return_date, "PP")}
                     </p>
                   </li>
                   <li>
                     <p className=" text-xs text-[#7F7F7F]">Return Time</p>
                     <p className="text-base font-semibold">
-                      {resData?.return_time}
+                      {currentUser?.return_time}
                     </p>
                   </li>
                 </ul>
               </>
             )}
-            <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-16 pb-2 border-b">
+            <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-12 pb-2 border-b">
               <li>
-                <p className=" text-xs text-[#7F7F7F] ">Payment Medium</p>
-                <p className="text-base font-semibold">{resData?.medium}</p>
+                <p className=" text-xs text-[#7F7F7F] ">Booking Medium</p>
+                <p className="text-base font-semibold">{currentUser?.medium}</p>
               </li>
               <li>
-                <p className=" text-xs text-[#7F7F7F]">Booking Status</p>
+                <p className=" text-xs text-[#7F7F7F]">Payment Status</p>
                 <p
                   className={cn(
                     "text-center font-semibold rounded-lg w-16 py-1 text-xs",
                     {
                       "text-green-500 bg-green-100":
-                        resData?.status === "Success",
+                        currentUser?.status === "Success",
                       "text-[#E78913] bg-[#F8DAB6]":
-                        resData?.status === "Pending",
+                        currentUser?.status === "Pending",
                       "text-[#F00000] bg-[#FAB0B0]":
-                        resData?.status === "Canceled",
+                        currentUser?.status === "Canceled",
                     }
                   )}
                 >
-                  {resData?.status}
+                  {currentUser?.status}
                 </p>
               </li>
               <li>
-                <p className=" text-xs text-[#7F7F7F]">Paid With</p>
-                <p className="text-base font-semibold">{resData?.paid_with}</p>
+                <p className=" text-xs text-[#7F7F7F]">Payment Method</p>
+                <p className="text-base font-semibold">
+                  {currentUser?.paid_with}
+                </p>
               </li>
               <li>
                 <p className=" text-xs text-[#7F7F7F]">Transaction Reference</p>
                 <p className="text-base font-semibold">
-                  {resData?.trxRef ?? "-"}
+                  {currentUser?.trxRef ?? "-"}
                 </p>
               </li>
             </ul>
@@ -207,7 +245,7 @@ const TicketDocument = () => {
                     <td className="font-medium text-lg">
                       <span className="text-base">₦</span>
                       {formatValue({
-                        value: String(resData?.amount),
+                        value: String(currentUser?.amount),
                       })}
                     </td>
                   </tr>

@@ -3,7 +3,6 @@ import {
   UserGroupIcon,
   WalletIcon,
   TicketIcon,
-  FilterIcon,
 } from "@/assets/icons";
 import {
   Table,
@@ -14,7 +13,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Separator } from "@/components/ui/separator";
-import { cn, getTicketCost } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { formatValue } from "react-currency-input-field";
 import { BarChart } from "@tremor/react";
 import {
   flexRender,
@@ -24,15 +24,9 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { GlobalCTX } from "@/hooks/GlobalContext";
 
 const chartDataDemo = [
@@ -115,7 +109,7 @@ const Dashboard = () => {
               <div>
                 <p className="text-xs text-[#7F7F7F] ">Total Earnings (MRR)</p>
                 <p className="text-base">
-                  <b>₦2,654,002.01</b>
+                  <b>₦0</b>
                 </p>
               </div>
             </li>
@@ -127,7 +121,7 @@ const Dashboard = () => {
               <div>
                 <p className="text-xs text-[#7F7F7F] ">Total Passengers</p>
                 <p className="text-base">
-                  <b>1020</b>
+                  <b>0</b>
                 </p>
               </div>
             </li>
@@ -139,7 +133,7 @@ const Dashboard = () => {
               <div>
                 <p className="text-xs text-[#7F7F7F] ">Total Completed Trips</p>
                 <p className="text-base">
-                  <b>204</b>
+                  <b>0</b>
                 </p>
               </div>
             </li>
@@ -153,7 +147,7 @@ const Dashboard = () => {
               <div>
                 <p className="text-xs text-[#7F7F7F] ">New Bookings</p>
                 <p className="text-base">
-                  <b>120</b>
+                  <b>0</b>
                 </p>
               </div>
             </li>
@@ -167,7 +161,7 @@ const Dashboard = () => {
             <div className="flex justify-between mb-7">
               <hgroup className="flex gap-1 items-center">
                 <h3 className="font-semibold">Sales Revenue</h3>
-                <span>(N1,303,030)</span>
+                <span>(₦0)</span>
               </hgroup>
 
               <div className="flex items-center gap-2">
@@ -195,7 +189,7 @@ const Dashboard = () => {
                 <div className="arc" />
                 <div className="w-fit absolute top-24 left-1/2 right-1/2 -translate-x-1/2 space-y-3">
                   <p className="text-center flex flex-col">
-                    <b className=" text-3xl font-semibold">120</b>
+                    <b className=" text-3xl font-semibold">0</b>
                     <span className="text-[#7F7F7F] text-base">
                       Total Bookings
                     </span>
@@ -204,15 +198,13 @@ const Dashboard = () => {
                     0 Offline Booking
                   </p>
                   <p className=" text-[#7F7F7F] before:content-[''] before:px-3 before:rounded-full before:bg-green-500 before:mr-3 text-nowrap">
-                    120 Online Booking
+                    0 Online Booking
                   </p>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
-        {/* table */}
         <LatestBookingsTable />
       </div>
     </div>
@@ -223,10 +215,10 @@ export default Dashboard;
 
 const columns = [
   {
-    accessorKey: "code",
+    accessorKey: "id",
     header: "Booking ID",
     cell: ({ row }) => (
-      <div className="capitalize">#{row.original.ticket_id}</div>
+      <div className="uppercase">#{row.original.ticket_id}</div>
     ),
   },
   {
@@ -234,17 +226,8 @@ const columns = [
     header: "Customer",
     cell: ({ row }) => (
       <div>
-        <p className="text-lg">{`${row.original.first_name} ${row.original.surname}`}</p>{" "}
+        <p className="text-base font-medium">{`${row.original.first_name} ${row.original.surname}`}</p>{" "}
         <p className="italic">{row.original.email}</p>
-      </div>
-    ),
-  },
-  {
-    accessorKey: "amount",
-    header: "Amount",
-    cell: ({ row }) => (
-      <div>
-        ₦{getTicketCost(row.original.adults_number, row.original.trip_type)}
       </div>
     ),
   },
@@ -254,14 +237,39 @@ const columns = [
     cell: ({ row }) => <div>{row.original.trip_type}</div>,
   },
   {
+    accessorKey: "date_time",
+    header: "Date & Time",
+    cell: ({ row }) => (
+      <div>{`${format(row.original.departure_date, "PP")} ${
+        row.original.departure_time
+      }`}</div>
+    ),
+  },
+  {
     accessorKey: "medium",
-    header: "Medium",
-    cell: ({ row }) => <div>{row.original?.medium ?? "Offline"}</div>,
+    header: "Booking Medium",
+    cell: ({ row }) => (
+      <div className="text-center">{row.original?.medium ?? "Offline"}</div>
+    ),
   },
   {
     accessorKey: "paid with",
-    header: "Paid With",
-    cell: ({ row }) => <div>{row.original?.paid_with ?? "Cash"}</div>,
+    header: "Payment Method",
+    cell: ({ row }) => (
+      <div className="text-center">{row.original?.paid_with ?? "Cash"}</div>
+    ),
+  },
+  {
+    accessorKey: "amount",
+    header: "Amount",
+    cell: ({ row }) => (
+      <div>
+        ₦
+        {formatValue({
+          value: String(row.getValue("amount")),
+        })}
+      </div>
+    ),
   },
   {
     accessorKey: "status",
@@ -287,15 +295,6 @@ const columns = [
       );
     },
   },
-  {
-    accessorKey: "date_time",
-    header: "Date & Time",
-    cell: ({ row }) => (
-      <div>{`${format(row.original.departure_date, "PP")} ${
-        row.original.departure_time
-      }`}</div>
-    ),
-  },
 ];
 
 const LatestBookingsTable = () => {
@@ -304,9 +303,10 @@ const LatestBookingsTable = () => {
   const [columnVisibility, setColumnVisibility] = React.useState({});
   const [rowSelection, setRowSelection] = React.useState({});
   const { dataQuery } = React.useContext(GlobalCTX);
+  const navigate = useNavigate();
 
   const table = useReactTable({
-    data: dataQuery.slice(0, 3),
+    data: dataQuery.slice(0, 5),
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -327,39 +327,8 @@ const LatestBookingsTable = () => {
   return (
     <div className="bg-white rounded-lg p-5 mb-5 ">
       <div className="border rounded-lg ">
-        <div className="flex items-center gap-5 mb-5 p-5 border-b">
+        <div className=" mb-5 p-5 border-b">
           <h3 className="font-semibold">Latest Booking List</h3>
-          <div className="rounded-lg border ml-auto">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="px-5" disabled>
-                  <span className="mr-1">
-                    <FilterIcon />
-                  </span>
-                  Filter
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {table
-                  .getAllColumns()
-                  .filter((column) => column.getCanHide())
-                  .map((column) => {
-                    return (
-                      <DropdownMenuCheckboxItem
-                        key={column.id}
-                        className="capitalize"
-                        checked={column.getIsVisible()}
-                        onCheckedChange={(value) =>
-                          column.toggleVisibility(!!value)
-                        }
-                      >
-                        {column.id}
-                      </DropdownMenuCheckboxItem>
-                    );
-                  })}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
         </div>
         <Table>
           <TableHeader>
@@ -386,6 +355,9 @@ const LatestBookingsTable = () => {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  onClick={() => {
+                    navigate(`/admin/booking-details/${row.original._id}`);
+                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
