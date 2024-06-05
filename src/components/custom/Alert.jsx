@@ -14,6 +14,12 @@ const Alert_ = () => {
       backgroundColor: "#ff000080",
       text: "Request failed. Please try again later.",
     },
+    cancel: {
+      severity: "error",
+      borderColor: "#5d0303",
+      backgroundColor: "#ff000080",
+      text: "Booking Canceled. Retry Payment.",
+    },
     invalid: {
       severity: "error",
       borderColor: "#5d0303",

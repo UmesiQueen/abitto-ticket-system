@@ -3,7 +3,7 @@ import { BookingCTX } from "@/hooks/BookingContext";
 import {
   InformationCircleIcon,
   CancelSquareIcon,
-  CashIcon,
+  // CashIcon,
   CheckIcon,
 } from "@/assets/icons/index";
 import { format } from "date-fns";
@@ -16,6 +16,7 @@ import { usePayment } from "@/hooks/usePayment";
 import Button from "@/components/custom/Button";
 import ClipLoader from "react-spinners/ClipLoader";
 import PropTypes from "prop-types";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const TicketSummary = () => {
   const { formData } = React.useContext(BookingCTX);
@@ -239,7 +240,7 @@ const PaymentModals = ({ open, closeModal }) => {
   // handleOnlineCancel
   const handleOnlineCancel = () => {
     clearStates();
-    // send toast that cancel occurred
+    handleAlert("cancel");
   };
 
   //handleBadRequest
@@ -258,70 +259,77 @@ const PaymentModals = ({ open, closeModal }) => {
         aria-labelledby="payment-modal"
         sx={{ backdropFilter: "blur(1px)", zIndex: 1 }}
       >
-        <div className="mt-36 bg-white h-fit md:w-[375px] p-5 mx-5 md:mx-auto">
+        <div className="mt-36 h-fit md:w-[375px] mx-5 md:mx-auto">
           {!successModal ? (
-            <div>
-              <div className="flex gap-5 items-center">
+            <div className="flex flex-col md:flex-row-reverse items-start gap-2">
+              <button
+                onClick={clearStates}
+                className=" hover:scale-[.8] rounded-lg transition duration-150 ease-in-out bg-white ml-auto "
+              >
+                <CancelSquareIcon />
+              </button>
+              <div className="bg-white p-5 grow min-w-full w-36">
                 <h2 className="font-semibold text-base text-center grow">
                   Select Payment Method
                 </h2>
+                <ul className="my-7 space-y-3 [&_label]:flex [&_label]:items-center [&_label]:gap-3 *:border *:p-3 [&_input]:ml-auto">
+                  <li>
+                    <label>
+                      <img
+                        alt="pay-stack"
+                        src="https://i.ibb.co/QpjxrJj/Paystack.png"
+                        width={24}
+                        height={23}
+                      />
+                      <p>Pay with Paystack</p>{" "}
+                      <Checkbox
+                        onCheckedChange={(value) => {
+                          value
+                            ? setPaymentMethod("online")
+                            : setPaymentMethod("");
+                        }}
+                        className="ml-auto"
+                      />
+                      {/* <input
+                        id="online"
+                        type="radio"
+                        name="medium"
+                        onChange={(e) => setPaymentMethod(e.target.id)}
+                      /> */}
+                    </label>
+                  </li>
+                  {/* <li>
+                    <label>
+                      <CashIcon /> <p>Pay with Cash (Offline)</p>{" "}
+                      <input
+                        id="offline"
+                        type="radio"
+                        name="medium"
+                        onChange={(e) => setPaymentMethod(e.target.id)}
+                      />
+                    </label>
+                  </li> */}
+                </ul>
                 <button
-                  onClick={clearStates}
-                  className=" hover:scale-[.8] rounded-lg transition duration-150 ease-in-out "
+                  onClick={() => {
+                    if (paymentMethod === "online") return onlinePayment();
+                    return offlinePayment();
+                  }}
+                  className=" disabled:bg-[#C2C2C2] disabled:cursor-none py-3 text-blue-50 font-semibold w-full bg-[#1f1f1f] hover:bg-[#1f1f1fea] transition duration-150 ease-in-out"
+                  disabled={!paymentMethod && !loading}
                 >
-                  <CancelSquareIcon />
+                  {loading ? (
+                    <ClipLoader
+                      color="#fff"
+                      loading={loading}
+                      size={20}
+                      aria-label="Loading Spinner"
+                    />
+                  ) : (
+                    "Continue"
+                  )}
                 </button>
               </div>
-
-              <ul className=" space-y-3 [&_label]:flex [&_label]:items-center [&_label]:gap-3 *:border *:p-3 [&_input]:ml-auto my-4">
-                <li>
-                  <label>
-                    <img
-                      alt="pay-stack"
-                      src="https://i.ibb.co/QpjxrJj/Paystack.png"
-                      width={24}
-                      height={23}
-                    />
-                    <p>Pay Online</p>{" "}
-                    <input
-                      id="online"
-                      type="radio"
-                      name="medium"
-                      onChange={(e) => setPaymentMethod(e.target.id)}
-                    />
-                  </label>
-                </li>
-                <li>
-                  <label>
-                    <CashIcon /> <p>Pay with Cash (Offline)</p>{" "}
-                    <input
-                      id="offline"
-                      type="radio"
-                      name="medium"
-                      onChange={(e) => setPaymentMethod(e.target.id)}
-                    />
-                  </label>
-                </li>
-              </ul>
-              <button
-                onClick={() => {
-                  if (paymentMethod === "online") return onlinePayment();
-                  return offlinePayment();
-                }}
-                className=" disabled:bg-[#C2C2C2] disabled:cursor-none py-3 text-blue-50 font-semibold w-full bg-[#1f1f1f] hover:bg-[#1f1f1fea] transition duration-150 ease-in-out"
-                disabled={!paymentMethod && !loading}
-              >
-                {loading ? (
-                  <ClipLoader
-                    color="#fff"
-                    loading={loading}
-                    size={20}
-                    aria-label="Loading Spinner"
-                  />
-                ) : (
-                  "Continue"
-                )}
-              </button>
             </div>
           ) : (
             <SuccessModal
@@ -344,7 +352,7 @@ PaymentModals.propTypes = {
 
 const SuccessModal = ({ onClick }) => {
   return (
-    <div className=" text-center flex flex-col gap-5">
+    <div className=" bg-white text-center flex flex-col gap-5">
       <div className="mx-auto w-fit">
         <CheckIcon />
       </div>
