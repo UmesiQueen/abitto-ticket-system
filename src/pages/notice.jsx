@@ -1,12 +1,16 @@
 const Notice = () => {
   return (
-    <div className="bg-hero-pattern h-[1200px] md:h-[700px] lg:h-screen w-screen bg-cover bg-no-repeat bg-center relative font-poppins">
+    <div className="bg-hero-pattern h-[800px] lg:h-screen w-screen bg-cover bg-no-repeat bg-center relative font-poppins">
       <div className="bg-black/40 w-full h-full absolute z-0 md:flex justify-center ">
-        <div className="mt-16 md:mt-28 flex flex-col px-5 md:px-0">
-          <h2 className="text-center text-white mb-10 text-base md:text-2xl font-medium">
-            Notice Letter
-          </h2>
-          <div className="h-fit w-full md:w-[700px] p-5 bg-white self-center border-[20px] border-white/92 space-y-5 leading-7 ">
+        <div className="mt-16 md:mt-20 flex flex-col items-center px-5 md:px-0">
+          <img
+            alt="logo"
+            src="https://i.ibb.co/17zsqj1/logo2.png"
+            width={200}
+            height={150}
+            className="mb-6"
+          />
+          <div className="h-fit w-full md:w-[700px] p-[10px] md:p-5 bg-white self-center border-[10px] md:border-[20px] border-white/92 space-y-5 text-sm  md:text-base !leading-7">
             <p>
               Dear Valued Customer,
               <span className="py-1 block" />
