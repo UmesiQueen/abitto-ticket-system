@@ -140,7 +140,9 @@ const Footer = () => {
           </li>
           <li>
             <h3>Contact Us</h3>
-            <a>hi@abitto.com</a>
+            <a href="mailto:info.abittoferryservices@gmail.com">
+              info.abittoferryservices@gmail.com
+            </a>
             <a>Twitter Support</a>
           </li>
         </ul>
@@ -208,7 +210,9 @@ const Footer = () => {
                 Contact Us
               </AccordionSummary>
               <AccordionDetails sx={{ marginX: "20px" }}>
-                <a>hi@abitto.com</a>
+                <a href="mailto:info.abittoferryservices@gmail.com">
+                  info.abittoferryservices@gmail.com
+                </a>
                 <a>Twitter Support</a>
               </AccordionDetails>
             </Accordion>

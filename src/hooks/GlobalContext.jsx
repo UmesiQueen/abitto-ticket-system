@@ -14,15 +14,18 @@ const GlobalContext = ({ children }) => {
   const [alert, setAlert] = React.useState({ state: false, variant: null });
   const [dataQuery, setDataQuery] = React.useState([]);
 
-  const store = JSON.parse(localStorage.getItem("admin")) || {};
+  const store = JSON.parse(localStorage.getItem("admin")) || "";
   const [isAuth, setAuth] = React.useState(store);
 
   React.useEffect(() => {
     localStorage.setItem("admin", JSON.stringify(isAuth));
+    // const BASE_URL = import.meta.env.DEV ?
+    //    import.meta.env.VITE_ABITTO_BASE_URL
+    //   : import.meta.env.ABITTO_BASE_URL;
 
     if (isAuth?.isAdmin) {
       axios
-        .get(`https://abitto-api.onrender.com/api/booking/getbooking`)
+        .get("https://abitto-api.onrender.com/api/booking/getbooking")
         .then((res) => {
           setDataQuery(res.data.bookings.reverse());
         })
@@ -81,14 +84,3 @@ GlobalContext.propTypes = {
 };
 
 export default GlobalContext;
-
-// export const bookingLoader = () => {
-//   axios
-//     .get(`https://abitto-api.onrender.com/api/booking/getbooking`)
-//     .then((res) => {
-//       setDataQuery(res.data.bookings.reverse());
-//     })
-//     .catch((err) => {
-//       console.error(err);
-//     });
-// };

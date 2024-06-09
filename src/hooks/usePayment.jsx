@@ -45,6 +45,10 @@ export const usePayment = () => {
 
   const requestBooking = (props) => {
     setLoading(true);
+    // const BASE_URL = import.meta.env.DEV  ?
+    //    import.meta.env.VITE_ABITTO_BASE_URL
+    //   : import.meta.env.ABITTO_BASE_URL;
+
     axios
       .post("https://abitto-api.onrender.com/api/booking/new", {
         ...formData,

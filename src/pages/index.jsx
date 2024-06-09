@@ -236,6 +236,9 @@ const ContactForm = () => {
 
   const onSubmit = handleSubmit((formData) => {
     setLoading(true);
+    // const BASE_URL = import.meta.env.DEV ?
+    //   import.meta.env.VITE_ABITTO_BASE_URL
+    //   : import.meta.env.ABITTO_BASE_URL;
 
     axios
       .post("https://abitto-api.onrender.com/api/email/contact", formData)

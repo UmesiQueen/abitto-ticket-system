@@ -436,7 +436,7 @@ export const CustomerDetails = () => {
                 </h2>
                 <p className="text-[10px]">
                   Great news! The ferry trip has been successfully confirmed
-                  from our salespoint.
+                  from our sales point.
                 </p>
               </div>
             </div>
@@ -608,17 +608,17 @@ export const CustomerDetails = () => {
                 </li>
               </ul>
             </div>
-            <div className="flex px-5 mb-8">
+            {/* <div className="flex px-5 mb-8">
               <button className="ml-auto  bg-blue-500 w-36 py-3 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white rounded-lg ">
                 Update
               </button>
-            </div>
+            </div> */}
           </div>
 
           <div className="bg-white rounded-lg basis-4/12 p-5 flex flex-col gap-6">
             <div>
               <h3 className="text-blue-500 font-semibold  text-base md:text-xl ">
-                Abiito Ferry Terminal
+                Abitto Ferry Terminal
               </h3>
               <p className="text-[#8E98A8] text-sm inline-flex items-center gap-1">
                 Non-refundable <InformationCircleIcon />
@@ -667,7 +667,7 @@ export const CustomerDetails = () => {
                   </tr>
                   <tr>
                     <td className="text-xs text-[#444444]">Ticket Price</td>
-                    <td className="text-xs text-[#444444]">₦8,500</td>
+                    <td className="text-xs text-[#444444]">₦8,800</td>
                   </tr>
                   <tr>
                     <td className="font-medium text-base">Total</td>

@@ -83,7 +83,7 @@ const TicketDocument = () => {
                 </p>
               </div>
             </div>
-            <ul className="*:flex *:flex-col *:gap-1 flex flex-wrap gap-x-5 gap-y-3 md:gap-12 pb-2 border-b">
+            <ul className="*:flex *:flex-col *:gap-1 flex flex-wrap gap-x-5 gap-y-3 md:gap-x-12 pb-2 border-b">
               <li>
                 <p className=" text-xs text-[#7F7F7F]">Booking ID</p>
                 <p className="text-base font-semibold uppercase">
@@ -107,7 +107,7 @@ const TicketDocument = () => {
                 </p>
               </li>
             </ul>
-            <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-12 pb-2 border-b">
+            <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-x-12 pb-2 border-b">
               <li>
                 <p className=" text-xs text-[#7F7F7F] ">Ticket Type</p>
                 <p className="text-base font-semibold">
@@ -121,7 +121,7 @@ const TicketDocument = () => {
                 </p>
               </li>
             </ul>
-            <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-12 pb-2 border-b">
+            <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-x-12 pb-2 border-b">
               <li>
                 <p className=" text-xs text-[#7F7F7F]">Travel From</p>
                 <p className="text-base font-semibold">
@@ -141,7 +141,7 @@ const TicketDocument = () => {
                 </p>
               </li>
             </ul>
-            <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-12 pb-2 border-b">
+            <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-x-12 pb-2 border-b">
               <li>
                 <p className=" text-xs text-[#7F7F7F]">Departure Date</p>
                 <p className="text-base font-semibold">
@@ -157,7 +157,7 @@ const TicketDocument = () => {
             </ul>
             {currentUser?.trip_type === "Round Trip" && (
               <>
-                <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-12  pb-2 border-b">
+                <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-x-12  pb-2 border-b">
                   <li>
                     <p className=" text-xs text-[#7F7F7F]">Return From</p>
                     <p className="text-base font-semibold">
@@ -177,7 +177,7 @@ const TicketDocument = () => {
                     </p>
                   </li> */}
                 </ul>
-                <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-12 pb-2 border-b">
+                <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-x-12 pb-2 border-b">
                   <li>
                     <p className=" text-xs text-[#7F7F7F]">Return Date</p>
                     <p className="text-base font-semibold">
@@ -193,7 +193,7 @@ const TicketDocument = () => {
                 </ul>
               </>
             )}
-            <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-12 pb-2 border-b">
+            <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-x-12 pb-2 border-b">
               <li>
                 <p className=" text-xs text-[#7F7F7F] ">Booking Medium</p>
                 <p className="text-base font-semibold">{currentUser?.medium}</p>
@@ -238,7 +238,7 @@ const TicketDocument = () => {
                   </tr>
                   <tr>
                     <td className="text-xs text-[#444444]">Ticket Price</td>
-                    <td className="text-xs text-[#444444]">₦8,500</td>
+                    <td className="text-xs text-[#444444]">₦8,800</td>
                   </tr>
                   <tr>
                     <td className="font-medium text-base">Total</td>
