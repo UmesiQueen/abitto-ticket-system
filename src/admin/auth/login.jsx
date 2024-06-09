@@ -30,10 +30,12 @@ const Login = () => {
 
   const onSubmit = handleSubmit((formData) => {
     setLoading(true);
-    // const BASE_URL = import.meta.env.ABITTO_BASE_URL;
+    // const API_BASE_URL = import.meta.env.DEV ?
+    //   import.meta.env.VITE_ABITTO_BASE_URL
+    //   : import.meta.env.ABITTO_BASE_URL;
 
     axios
-      .post(`https://abitto-api.onrender.com/api/user/login`, formData)
+      .post("https://abitto-api.onrender.com/api/user/login", formData)
       .then((res) => {
         setLoading(false);
         if (res.status === 200) {
@@ -56,6 +58,7 @@ const Login = () => {
         if (err.response.status === 400) {
           return handleAlert("invalid");
         }
+        console.error(err);
         return handleAlert("error");
       });
   });

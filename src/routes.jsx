@@ -5,28 +5,26 @@ import {
   Navigate,
 } from "react-router-dom";
 
-// import App from "./App";
-// import Home from "./pages";
-// import Booking from "./pages/booking";
-// import PageNotFound from "./pages/pageNotFound";
-// import TicketSummary from "./pages/ticketSummary";
-// import AdminLayout from "./admin/layout";
-// import Dashboard from "./admin/pages/dashboard";
-// import BookingDetails from "./admin/pages/bookingDetails";
-// import Customers from "./admin/pages/customers";
-// import Payments from "./admin/pages/payments";
-// import Settings from "./admin/pages/settings";
-// import Login from "./admin/auth/login";
-// import { CustomerDetails } from "./admin/pages/bookingDetails";
-// import TicketDocument from "./components/custom/TicketSummary.doc";
-import Notice from "./pages/notice";
+import App from "./App";
+import Home from "./pages";
+import Booking from "./pages/booking";
+import PageNotFound from "./pages/pageNotFound";
+import TicketSummary from "./pages/ticketSummary";
+import AdminLayout from "./admin/layout";
+import Dashboard from "./admin/pages/dashboard";
+import BookingDetails from "./admin/pages/bookingDetails";
+import Customers from "./admin/pages/customers";
+import Payments from "./admin/pages/payments";
+import Settings from "./admin/pages/settings";
+import Login from "./admin/auth/login";
+import { CustomerDetails } from "./admin/pages/bookingDetails";
+import TicketDocument from "./components/custom/TicketSummary.doc";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/">
-      <Route index element={<Notice />} />
-      {/* <Route element={<App />}>
-        <Route element={<Home />} />
+      <Route element={<App />}>
+        <Route index element={<Home />} />
         <Route path="booking" element={<Booking />} />
         <Route path="ticket-summary" element={<TicketSummary />} />
       </Route>
@@ -45,9 +43,8 @@ export const router = createBrowserRouter(
       </Route>
 
       <Route path="ticket-summary/:bookingID" element={<TicketDocument />} />
-      <Route path="login" element={<Login />} /> 
-      <Route path="*" element={<PageNotFound />} />*/}
-      <Route path="*" element={<Navigate to="/" />} />
+      <Route path="login" element={<Login />} />
+      <Route path="*" element={<PageNotFound />} />
     </Route>
   )
 );

@@ -165,7 +165,7 @@ const ProtectedRoute = () => {
                     </tr>
                     <tr>
                       <td className="text-xs text-[#444444]">Ticket Price</td>
-                      <td className="text-xs text-[#444444]">₦8,500</td>
+                      <td className="text-xs text-[#444444]">₦8,800</td>
                     </tr>
                     <tr>
                       <td className="font-medium text-base">Total</td>
@@ -176,8 +176,8 @@ const ProtectedRoute = () => {
                             (Number(formData?.adults_number) +
                               Number(formData?.children_number)) *
                               (formData?.trip_type === "Round Trip"
-                                ? 17000
-                                : 8500)
+                                ? 17600
+                                : 8800)
                           ),
                         })}
                       </td>
@@ -253,18 +253,18 @@ const PaymentModals = ({ open, closeModal }) => {
     <>
       <Modal
         open={open}
-        onClose={() => {
-          if (!successModal) clearStates();
-        }}
+        // onClose={() => {
+        //   if (!successModal) clearStates();
+        // }}
         aria-labelledby="payment-modal"
         sx={{ backdropFilter: "blur(1px)", zIndex: 1 }}
       >
         <div className="mt-36 h-fit md:w-[375px] mx-5 md:mx-auto">
           {!successModal ? (
-            <div className="flex flex-col md:flex-row-reverse items-start gap-2">
+            <div className=" relative">
               <button
                 onClick={clearStates}
-                className=" hover:scale-[.8] rounded-lg transition duration-150 ease-in-out bg-white ml-auto "
+                className=" hover:scale-[.7] scale-[.9] rounded-lg transition duration-150 ease-in-out bg-white  ml-auto absolute md:-right-9 right-0 -top-10 md:-top-4"
               >
                 <CancelSquareIcon />
               </button>
