@@ -33,6 +33,8 @@ import PrinterIcon from "./Printer";
 import Boat2Icon from "./Boat2";
 import Cloud2Icon from "./Cloud2";
 import CircleArrowLeftIcon from "./CircleArrowLeft";
+import BoatPart2 from "./BoatPart2";
+import BoatPart1 from "./BoatPart1";
 
 export {
   FacebookIcon,
@@ -70,4 +72,6 @@ export {
   Boat2Icon,
   Cloud2Icon,
   CircleArrowLeftIcon,
+  BoatPart1,
+  BoatPart2,
 };
