@@ -1,8 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import BookingContext from "./BookingContext";
-import Alert_ from "@/components/custom/Alert";
-import Loader from "@/components/animation/Loader";
 import axios from "axios";
 
 export const GlobalCTX = React.createContext();
@@ -11,7 +9,6 @@ const GlobalContext = ({ children }) => {
   const about = React.useRef();
   const contact = React.useRef();
   const [loading, setLoading] = React.useState(false);
-  const [alert, setAlert] = React.useState({ state: false, variant: null });
   const [dataQuery, setDataQuery] = React.useState([]);
 
   const store = JSON.parse(localStorage.getItem("admin")) || "";
@@ -49,21 +46,12 @@ const GlobalContext = ({ children }) => {
     });
   };
 
-  const handleAlert = (variant) => {
-    setAlert({ state: true, variant });
-    setTimeout(() => {
-      setAlert({ state: false, variant: null });
-    }, 3500);
-  };
-
   const ctxValue = {
     about,
     contact,
     scrollToSection,
     loading,
     setLoading,
-    alert,
-    handleAlert,
     isAuth,
     setAuth,
     dataQuery,
@@ -73,8 +61,6 @@ const GlobalContext = ({ children }) => {
   return (
     <GlobalCTX.Provider value={ctxValue}>
       <BookingContext>{children}</BookingContext>
-      <Alert_ />
-      <Loader />
     </GlobalCTX.Provider>
   );
 };

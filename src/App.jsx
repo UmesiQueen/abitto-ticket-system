@@ -15,14 +15,8 @@ import {
 import { GlobalCTX } from "@/hooks/GlobalContext";
 
 function App() {
-  const pathname = useLocation();
-
-  React.useEffect(() => {
-    if (window.scrollY !== 0) window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [pathname]);
-
   return (
-    <div className="relative overflow-hidden font-poppins">
+    <div className="relative">
       <Navbar />
       <main className="min-h-[70vh] bg-blue-950">
         <Outlet />

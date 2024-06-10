@@ -17,6 +17,7 @@ import Button from "@/components/custom/Button";
 import ClipLoader from "react-spinners/ClipLoader";
 import PropTypes from "prop-types";
 import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "sonner";
 
 const TicketSummary = () => {
   const { formData } = React.useContext(BookingCTX);
@@ -207,7 +208,6 @@ export default TicketSummary;
 const PaymentModals = ({ open, closeModal }) => {
   const { paymentStatus, loading, setPaymentStatus, confirmedTicket } =
     React.useContext(BookingCTX);
-  const { handleAlert } = React.useContext(GlobalCTX);
   const [successModal, setSuccessModal] = React.useState(false);
   const [paymentMethod, setPaymentMethod] = React.useState("");
   const { onlinePayment, offlinePayment } = usePayment();
@@ -240,13 +240,13 @@ const PaymentModals = ({ open, closeModal }) => {
   // handleOnlineCancel
   const handleOnlineCancel = () => {
     clearStates();
-    handleAlert("cancel");
+    toast.error("Booking Canceled. Retry Payment.");
   };
 
   //handleBadRequest
   const handleBadRequest = () => {
     clearStates();
-    handleAlert("error");
+    toast.error("Request failed. Please try again later.");
   };
 
   return (

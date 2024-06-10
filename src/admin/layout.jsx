@@ -23,7 +23,7 @@ const ProtectedRoute = () => {
       <Helmet>
         <title>Abitto Ferry | Admin</title>
       </Helmet>
-      <div className="font-poppins">
+      <div className="relative">
         {/* sidebar */}
         <aside className=" h-screen w-60 bg-black text-white flex flex-col gap-10 fixed">
           <img

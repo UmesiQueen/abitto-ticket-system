@@ -7,6 +7,7 @@ import { GlobalCTX } from "@/hooks/GlobalContext";
 import axios from "axios";
 import FadeInBackgroundTransition from "@/components/animation/FadeIn";
 import { Helmet } from "react-helmet-async";
+import { toast } from "sonner";
 
 const Home = () => {
   const { about, contact } = React.useContext(GlobalCTX);
@@ -231,7 +232,6 @@ const ContactForm = () => {
     formState: { errors },
     reset,
   } = useForm();
-  const { handleAlert } = React.useContext(GlobalCTX);
   const [loading, setLoading] = React.useState(false);
 
   const onSubmit = handleSubmit((formData) => {
@@ -245,14 +245,13 @@ const ContactForm = () => {
       .then((res) => {
         if (res.status === 200) {
           setLoading(false);
-          handleAlert("success");
+          toast.success("Request sent successfully.");
           reset();
         }
       })
-      .catch((err) => {
+      .catch(() => {
         setLoading(false);
-        handleAlert("error");
-        console.error(err, "Error occurred!");
+        toast.error("Request failed. Please try again later.");
       });
   });
 

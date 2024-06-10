@@ -7,6 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { GlobalCTX } from "@/hooks/GlobalContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "sonner";
 
 const schema = yup.object().shape({
   email: yup
@@ -19,7 +20,7 @@ const schema = yup.object().shape({
 const Login = () => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const { handleAlert, setAuth } = React.useContext(GlobalCTX);
+  const { setAuth } = React.useContext(GlobalCTX);
   const navigate = useNavigate();
 
   const {
@@ -56,10 +57,10 @@ const Login = () => {
       .catch((err) => {
         setLoading(false);
         if (err.response.status === 400) {
-          return handleAlert("invalid");
+          return toast.error("Invalid email or password.");
         }
         console.error(err);
-        return handleAlert("error");
+        return toast.error("Request failed. Please try again later.");
       });
   });
 
