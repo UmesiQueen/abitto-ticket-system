@@ -6,26 +6,27 @@ import {
 } from "react-router-dom";
 
 import App from "./App";
-import Home from "./pages";
-import Booking from "./pages/booking";
-import PageNotFound from "./pages/pageNotFound";
-import TicketSummary from "./pages/ticketSummary";
+import Home from "./main/pages";
+import Booking from "./main/pages/booking";
+import PageNotFound from "./main/pages/404";
+import TicketSummary from "./main/pages/ticket-summary";
 import AdminLayout from "./admin/layout";
 import Dashboard from "./admin/pages/dashboard";
-import BookingDetails from "./admin/pages/bookingDetails";
+import BookingDetails from "./admin/pages/booking-details";
 import Customers from "./admin/pages/customers";
 import Payments from "./admin/pages/payments";
 import Settings from "./admin/pages/settings";
 import Login from "./admin/auth/login";
-import { CustomerDetails } from "./admin/pages/bookingDetails";
+import { CustomerDetails } from "./admin/pages/booking-details";
 import TicketDocument from "./components/custom/TicketSummary.doc";
 // import Notice from "./pages/notice";
+import MainLayout from "./main/layout";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/">
+    <Route path="/" element={<App />}>
       {/* <Route index element={<Notice/>} /> */}
-      <Route element={<App />}>
+      <Route element={<MainLayout />}>
         <Route index element={<Home />} />
         <Route path="booking" element={<Booking />} />
         <Route path="ticket-summary" element={<TicketSummary />} />

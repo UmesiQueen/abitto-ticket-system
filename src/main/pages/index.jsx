@@ -20,7 +20,7 @@ const Home = () => {
       {/* Hero section */}
       <section
         id="home"
-        className=" h-screen w-full flex items-center relative "
+        className="h-[650px] md:h-[calc(100vh+25px)] w-full flex items-center relative "
       >
         <div className="bg-black/40 w-full h-full absolute z-[1] " />
 
@@ -42,7 +42,7 @@ const Home = () => {
 
       {/* About us  */}
       <section
-        className="p-5 md:py-20 md:pb-28 md:px-10 lg:px-32  bg-blue-50 relative"
+        className="p-5 md:pt-20 md:pb-28 md:px-10 lg:px-32  bg-blue-50 relative"
         id="about-us"
         ref={about}
       >
