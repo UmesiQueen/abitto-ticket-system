@@ -21,6 +21,7 @@ import { CustomerDetails } from "./admin/pages/booking-details";
 import TicketDocument from "./components/custom/TicketSummary.doc";
 // import Notice from "./pages/notice";
 import MainLayout from "./main/layout";
+import About from "./main/pages/about";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -30,6 +31,7 @@ export const router = createBrowserRouter(
         <Route index element={<Home />} />
         <Route path="booking" element={<Booking />} />
         <Route path="ticket-summary" element={<TicketSummary />} />
+        <Route path="about" element={<About />} />
       </Route>
 
       <Route path="admin" element={<Navigate to="dashboard" replace />} />
