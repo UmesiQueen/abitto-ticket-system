@@ -13,7 +13,7 @@ const Button = ({
       disabled={loading}
       type={type}
       onClick={onClick}
-      className={`bg-blue-500 py-3 max-w-full font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white flex justify-center ${className}`}
+      className={`bg-blue-500 py-3 max-w-full font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white flex justify-center rounded-lg ${className}`}
     >
       {loading ? (
         <ClipLoader
