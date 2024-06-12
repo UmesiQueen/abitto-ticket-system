@@ -5,7 +5,7 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import classNames from "classnames";
+import { cn } from "@/lib/utils";
 import {
   FacebookIcon,
   InstagramIcon,
@@ -31,7 +31,8 @@ export default MainLayout;
 
 const Navbar = () => {
   const [isOpen, setOpen] = React.useState(false);
-  const { about, contact, scrollToSection } = React.useContext(GlobalCTX);
+  const [scroll, setScroll] = React.useState(false);
+  const { contact, scrollToSection } = React.useContext(GlobalCTX);
   const pathname = useLocation();
   const navigate = useNavigate();
   const navRef = React.useRef();
@@ -56,11 +57,18 @@ const Navbar = () => {
     true
   );
 
+  window.addEventListener("scroll", () => {
+    if (window.scrollY >= 1) return setScroll(true);
+
+    return setScroll(false);
+  });
+
   return (
     <nav
-      className={
-        "fixed right-0 left-0 px-5 md:px-20 py-2 text-white flex items-center justify-between backdrop-blur-[1px] z-[3] transition duration-50 ease-in-out bg-[#111111]/90"
-      }
+      className={cn(
+        "fixed right-0 left-0 px-5 md:px-20 py-2 text-white flex items-center justify-between backdrop-blur-[1px] z-[3] transition duration-50 ease-in-out md:bg-[#111111]/90",
+        isOpen || scroll ? "bg-[#111111]/90" : ""
+      )}
       ref={navRef}
     >
       <Link to="/">
@@ -69,6 +77,7 @@ const Navbar = () => {
           src="https://i.ibb.co/17zsqj1/logo2.png"
           width={176}
           height={60}
+          className="w-36 md:w-44"
         />
       </Link>
 
@@ -77,24 +86,24 @@ const Navbar = () => {
       </div>
 
       <ul
-        className={classNames(
-          "top-[77px] md:top-0 right-0 left-0 md:relative flex flex-col md:flex-row *:uppercase *:font-normal gap-x-6 md:bg-transparent text-center *:py-2  bg-[#111111]/90 pb-2 md:pb-0  *:cursor-pointer",
+        className={cn(
+          "top-[66.2px] md:top-0 right-0 left-0 md:relative flex flex-col md:flex-row *:uppercase *:font-normal gap-x-6 md:bg-transparent text-center *:py-2  bg-[#111111]/90 pb-2 md:pb-0  *:cursor-pointer",
           !isOpen ? "hidden md:flex" : "absolute"
         )}
       >
         <li
-          onClick={() => {
-            handleNavItemClick(about);
-          }}
-          className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-blue-500 hover:font-medium md:hover:font-normal transition-all duration-75 ease-in-out "
+          // onClick={() => {
+          //   handleNavItemClick(about);
+          // }}
+          className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-blue-500 hover:font-medium md:hover:font-normal transition-all duration-75 ease-in-out text-sm md:text-base"
         >
-          about us
+          <Link to="/about">about us</Link>
         </li>
         <li
           onClick={() => {
             handleNavItemClick(contact);
           }}
-          className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-blue-500 hover:font-medium md:hover:font-normal transition-all duration-75 ease-in-out"
+          className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-blue-500 hover:font-medium md:hover:font-normal transition-all duration-75 ease-in-out text-sm md:text-base"
         >
           Contact Us
         </li>
@@ -114,7 +123,7 @@ const Navbar = () => {
 const Footer = () => {
   return (
     <footer className="bg-[#111111] px-5 py-10 md:px-10 lg:px-20 text-white ">
-      <div className=" md:flex justify-between ">
+      <div className=" md:flex justify-between gap-x-5 ">
         <Link to="/">
           <img
             src="https://i.ibb.co/17zsqj1/logo2.png"
@@ -127,7 +136,7 @@ const Footer = () => {
         <ul className="hidden md:flex gap-x-10 lg:gap-x-28 [&_a]:block [&_a]:mb-2 [&_a]:text-sm [&_a]:font-normal [&_h3]:font-medium [&_h3]:text-2xl [&_h3]:mb-5">
           <li>
             <h3>Company</h3>
-            <a>About Us</a>
+            <Link to="/about">About Us</Link>
             <a>Terms of Service</a>
           </li>
           <li>
@@ -166,7 +175,7 @@ const Footer = () => {
                 Company
               </AccordionSummary>
               <AccordionDetails sx={{ marginX: "20px" }}>
-                <a>About Us</a>
+                <Link to="/about">About Us</Link>
                 <a>Terms of Service</a>
               </AccordionDetails>
             </Accordion>
