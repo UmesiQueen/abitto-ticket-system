@@ -1,62 +1,62 @@
 import React from "react";
 import { MapIcon, PhoneIcon, CaretIcon, BoatIcon } from "@/assets/icons/index";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import WaveSVG from "@/assets/wave";
+// import WaveSVG from "@/assets/wave";
 import { GlobalCTX } from "@/hooks/GlobalContext";
 import axios from "axios";
 import FadeInBackgroundTransition from "@/components/animation/FadeIn";
 import { Helmet } from "react-helmet-async";
 import { toast } from "sonner";
+import Button from "@/components/custom/Button";
 
 const Home = () => {
   const { about, contact } = React.useContext(GlobalCTX);
+  const navigate = useNavigate();
 
   return (
     <>
       <Helmet>
-        <title>Abitto Ferry - Home</title>
+        <title>Home | Abitto Ferry</title>
       </Helmet>
       {/* Hero section */}
       <section
         id="home"
-        className="h-[650px] md:h-[calc(100vh+25px)] w-full flex items-center relative "
+        className="h-[650px] md:h-screen w-full flex items-center relative bg-blue-700"
       >
         <div className="bg-black/40 w-full h-full absolute z-[1] " />
-
         <FadeInBackgroundTransition />
-
-        <div className="w-[300px] md:w-[440px] pl-5 md:pl-20 space-y-10 z-[2] pt-[78px]">
-          <p className="font-semibold text-2xl md:text-[40px] text-white md:leading-10">
+        <div className="w-[250px] md:w-[600px] ml-5 md:ml-20 space-y-10 z-[2] pt-[78px]">
+          <p className="font-semibold text-2xl md:text-[50px] text-white md:leading-[60px]  ">
             The Easiest & Safest way to travel within Nigeria & Africa
           </p>
-          <button className="text-white bg-blue-500 py-3 px-6 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out ">
-            <Link to={"/booking"}>Book a Ticket</Link>
-          </button>
+          <Button
+            text="Book a Ticket"
+            onClick={() => {
+              navigate("/booking");
+            }}
+            className="px-6"
+          />
         </div>
-        <div className="hidden md:block z-[2]">
+        {/* <div className="hidden md:block z-[2]">
           <WaveSVG />
-        </div>
-        <div className="md:hidden bg-blue-50 h-5 w-full absolute z-[2] bottom-0 left-0 right-0 rounded-t-xl " />
+        </div> */}
+        {/* <div className="md:hidden bg-blue-50 h-5 w-full absolute z-[2] bottom-0 left-0 right-0 rounded-t-xl " /> */}
       </section>
 
       {/* About us  */}
-      <section
-        className="p-5 md:pt-20 md:pb-28 md:px-10 lg:px-32  bg-blue-50 relative"
-        id="about-us"
-        ref={about}
-      >
-        <div className="flex flex-col md:flex-row justify-between flex-1 ">
-          <div className="md:w-1/2 mb-10 md:mb-0 self-center">
+      <section className="px-5 py-20 md:px-20" id="about-us" ref={about}>
+        <div className="flex flex-col md:flex-row justify-between md:gap-20 lg:gap-28">
+          <div className="basis-2/6 mb-10 md:mb-0 self-center">
             <img
               src="https://i.ibb.co/8BLhcJw/about.jpg"
               alt="about-us"
               width={100}
               height={100}
-              className=" md:-rotate-6 w-full md:w-[300px] lg:w-[350px] h-[400px] md:h-[400px] mx-auto"
+              className="rounded-lg shadow-2xl w-full md:w-[500px] h-[300px] md:h-[400px] "
             />
           </div>
-          <div className="md:w-1/2 space-y-5">
+          <div className=" flex-1 space-y-5 lg:pr-44">
             <div className="flex items-center">
               <span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 " />
               <h2 className="uppercase font-medium">About us</h2>
@@ -65,7 +65,7 @@ const Home = () => {
               Welcome to Abitto, where innovation meets reliability in public
               water travel.
             </p>
-            <p className="text-black/80">
+            <p className="text-black/80 ">
               {/* eslint-disable-next-line react/no-unescaped-entities */}
               At Abitto, we're not just ferrying passengers; we're transforming
               the way you experience water transportation. With a focus on
@@ -84,56 +84,62 @@ const Home = () => {
             </Link>
           </div>
         </div>
-        <div className="hidden md:block">
+        {/* <div className="hidden md:block">
           <WaveSVG />
-        </div>
+        </div> */}
       </section>
 
       {/* Youtube video */}
-      <section className="bg-white flex justify-center pt-10">
-        <div className="flex flex-col items-center px-5 md:px-0 w-full md:w-fit">
-          <h3 className="self-start uppercase font-semibold mb-6 text-lg md:text-xl ">
+      <section className="bg-white flex justify-center px-5 pb-20 md:p-20">
+        <div className="w-full bg-black rounded-lg overflow-hidden ">
+          {/* <div className="flex flex-col items-center w-full "> */}
+          {/* <h3 className="self-start uppercase font-semibold mb-6 text-lg md:text-xl ">
             At Abitto, Your Safety is our priority
-          </h3>
+          </h3> */}
           <iframe
             width="560"
-            height="315"
+            height="560"
             src="https://www.youtube.com/embed/oKqH4VeBtD4?si=S_XWOUBpzK6LS_WN"
-            title="YouTube video player"
+            title="At Abitto, Your Safety is our priority"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             referrerPolicy="strict-origin-when-cross-origin"
             allowFullScreen
-            className="w-full aspect-video "
+            className="w-full aspect-video h-full lg:h-[560px] "
           />
-          <p className="self-start text-sm font-medium text-gray-500 mt-4">
+          {/* <p className="self-start text-sm font-medium text-gray-500 mt-4">
             Safety instructions for Abitto ferry services.
-          </p>
+          </p> */}
         </div>
       </section>
 
+      {/* Client Testimonials */}
+      <section className="py-20 px-5 md:px-20 bg-blue-50 h-[500px]">
+        <h2 className="font-semibold text-2xl text-center">
+          Client Testimonials
+        </h2>
+      </section>
+
       {/* Contact us  */}
-      <section
-        className="py-10 px-5 md:py-20 md:px-10 lg:px-32 bg-white"
-        ref={contact}
-      >
-        <div className="flex flex-col md:flex-row md:gap-5 lg:gap-10 justify-between ">
-          <div className="md:w-1/2 flex flex-col space-y-5 md:mt-6 mb-16 flex-1">
-            <div className="flex items-center md:hidden">
+      <section className="py-20 px-5 md:px-20" ref={contact}>
+        <h2 className="font-semibold text-2xl text-center mb-7">Contact Us</h2>
+        <div className="flex flex-col-reverse md:flex-row gap-10 lg:gap-16 justify-between ">
+          <div className="flex flex-col flex-1">
+            <div className="flex items-center md:hidden mb-5">
               <span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 " />
               <h2 className="uppercase font-medium">Our Location</h2>
             </div>
 
             {/* Calabar */}
-            <div className="lg:flex gap-8 !mb-5 lg:mb-0">
+            <div className="lg:flex gap-8 mb-10 md:bg-blue-50 p-0 md:p-5 rounded-lg">
               <img
                 src="https://i.ibb.co/T46yDpf/Marina.png"
                 alt="contact-us"
                 width={350}
                 height={420}
-                className="self-start mb-8 lg:mb-0 w-full lg:w-1/2 "
+                className="self-start mb-8 lg:mb-0 w-full lg:w-1/2 rounded-lg shadow-lg"
               />
-              <ul className="text-sm [&_a]:flex [&_a]:gap-3 [&_a]:items-center space-y-5 ">
+              <ul className="text-sm [&_a]:flex [&_a]:gap-3 [&_a]:items-center space-y-7 ">
                 <li className="flex gap-3 items-center">
                   <span>
                     <BoatIcon />
@@ -167,15 +173,15 @@ const Home = () => {
             </div>
 
             {/* Uyo */}
-            <div className="lg:flex gap-8 !mb-5 lg:mb-0">
+            <div className="lg:flex gap-8 md:bg-blue-50 rounded-lg  p-0 md:p-5 ">
               <img
                 src="https://i.ibb.co/wCRvwCG/Ibom-icon.png"
                 alt="contact-us"
                 width={350}
                 height={420}
-                className="self-start mb-8 lg:mb-0 w-full lg:w-1/2 "
+                className="self-start mb-8 lg:mb-0 w-full lg:w-1/2 rounded-lg shadow-lg"
               />
-              <ul className="text-sm [&_a]:flex [&_a]:gap-3 [&_a]:items-center space-y-5 ">
+              <ul className="text-sm [&_a]:flex [&_a]:gap-3 [&_a]:items-center space-y-7 ">
                 <li className="flex gap-3 items-center">
                   <span>
                     <BoatIcon />
@@ -210,11 +216,11 @@ const Home = () => {
               </ul>
             </div>
           </div>
-          <div className="md:w-1/2 space-y-5 relative">
-            <div className="flex items-center">
+          <div className="flex-1 md:bg-blue-50 rounded-lg p-0 md:p-5 self-start w-full">
+            {/* <div className="flex items-center">
               <span className="h-3 w-3 mr-3 rounded-full bg-blue-500" />
               <h2 className="uppercase font-medium">Contact us</h2>
-            </div>
+            </div> */}
             <ContactForm />
           </div>
         </div>
@@ -258,7 +264,7 @@ const ContactForm = () => {
   return (
     <>
       <form
-        className="flex flex-col gap-y-5 *:bg-[#EEEEEE] *:p-2"
+        className="flex flex-col gap-y-5 *:p-3 *:rounded-lg h-full *:bg-[#EEEEEE] md:*:bg-white"
         onSubmit={onSubmit}
       >
         <input
@@ -286,7 +292,7 @@ const ContactForm = () => {
         )}
         <button
           type="submit"
-          className=" border-2 border-blue-500 text-blue-500 bg-blue-50 hover:border-blue-700 hover:text-blue-700 py-3 px-6 font-semibold text-sm !bg-transparent self-start transition-all duration-150 ease-in-out"
+          className=" border-2 border-blue-500 text-blue-500 bg-blue-50 hover:border-blue-700 hover:text-blue-700 py-3 w-40 font-semibold text-sm !bg-transparent self-start transition-all duration-150 ease-in-out mt-auto"
         >
           {loading ? "Sending..." : "Send Request"}
         </button>

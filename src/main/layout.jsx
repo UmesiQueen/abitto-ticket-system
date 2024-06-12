@@ -13,12 +13,13 @@ import {
   // TwitterIcon,
 } from "@/assets/icons/index";
 import { GlobalCTX } from "@/hooks/GlobalContext";
+import Button from "@/components/custom/Button";
 
 const MainLayout = () => {
   return (
     <div className="relative">
       <Navbar />
-      <main className="min-h-[70vh] bg-blue-950">
+      <main>
         <Outlet />
       </main>
       <Footer />
@@ -50,17 +51,16 @@ const Navbar = () => {
   window.addEventListener(
     "click",
     (e) => {
-      if (isOpen) !navRef.current.contains(e.target) && setOpen(false);
+      if (isOpen) !navRef.current?.contains(e.target) && setOpen(false);
     },
     true
   );
 
   return (
     <nav
-      className={classNames(
-        "absolute right-0 left-0 px-5 md:px-20 py-2 text-white flex items-center justify-between backdrop-blur-sm z-[3] transition duration-50 ease-in-out",
-        isOpen ? "bg-blue-700 md:bg-[#1111111F]" : "bg-[#1111111F]"
-      )}
+      className={
+        "fixed right-0 left-0 px-5 md:px-20 py-2 text-white flex items-center justify-between backdrop-blur-[1px] z-[3] transition duration-50 ease-in-out bg-[#111111]/90"
+      }
       ref={navRef}
     >
       <Link to="/">
@@ -78,7 +78,7 @@ const Navbar = () => {
 
       <ul
         className={classNames(
-          "top-[77px] md:top-0 right-0 left-0 md:relative flex flex-col md:flex-row *:uppercase *:font-normal gap-x-3 md:bg-transparent text-center *:py-2  bg-blue-700 pb-2 md:pb-0  *:cursor-pointer",
+          "top-[77px] md:top-0 right-0 left-0 md:relative flex flex-col md:flex-row *:uppercase *:font-normal gap-x-6 md:bg-transparent text-center *:py-2  bg-[#111111]/90 pb-2 md:pb-0  *:cursor-pointer",
           !isOpen ? "hidden md:flex" : "absolute"
         )}
       >
@@ -86,7 +86,7 @@ const Navbar = () => {
           onClick={() => {
             handleNavItemClick(about);
           }}
-          className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-gray-800 hover:font-medium md:hover:font-normal transition-all duration-75 ease-in-out "
+          className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-blue-500 hover:font-medium md:hover:font-normal transition-all duration-75 ease-in-out "
         >
           about us
         </li>
@@ -94,15 +94,19 @@ const Navbar = () => {
           onClick={() => {
             handleNavItemClick(contact);
           }}
-          className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-gray-800 hover:font-medium md:hover:font-normal transition-all duration-75 ease-in-out"
+          className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-blue-500 hover:font-medium md:hover:font-normal transition-all duration-75 ease-in-out"
         >
           Contact Us
         </li>
       </ul>
 
-      <button className="hidden md:block text-white bg-blue-500 py-3 px-6 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out">
-        <Link to={"/booking"}>Book a Ticket</Link>
-      </button>
+      <Button
+        text="Book a Ticket"
+        onClick={() => {
+          navigate("/booking");
+        }}
+        className="hidden md:block px-6"
+      />
     </nav>
   );
 };
@@ -134,7 +138,10 @@ const Footer = () => {
           </li>
           <li>
             <h3>Contact Us</h3>
-            <a href="mailto:info.abittoferryservices@gmail.com">
+            <a
+              href="mailto:info.abittoferryservices@gmail.com"
+              className="hover:text-blue-500 transition ease-in-out"
+            >
               info.abittoferryservices@gmail.com
             </a>
             <a>Twitter Support</a>
@@ -204,7 +211,10 @@ const Footer = () => {
                 Contact Us
               </AccordionSummary>
               <AccordionDetails sx={{ marginX: "20px" }}>
-                <a href="mailto:info.abittoferryservices@gmail.com">
+                <a
+                  href="mailto:info.abittoferryservices@gmail.com"
+                  className="hover:text-blue-500 transition ease-in-out"
+                >
                   info.abittoferryservices@gmail.com
                 </a>
                 <a>Twitter Support</a>
@@ -241,8 +251,17 @@ const Footer = () => {
 
       <hr className="my-7" />
 
-      <div className="md:flex justify-between space-y-4 md:space-y-0">
-        <p>© 2023 Hello, Abitto</p>
+      <div className="flex flex-col-reverse  gap-4 md:flex-row md:justify-between md:space-y-0">
+        <p className="text-xs mt-5 md:text-sm md:mt-0">
+          Developed by{" "}
+          <a
+            href="https://lifewithallin.com/"
+            target="_blank"
+            className="border-b pb-[2px] hover:text-blue-500 hover:border-blue-500 transition ease-in-out"
+          >
+            All-in Technologies
+          </a>
+        </p>
 
         <ul className="md:flex gap-8 space-y-4 md:space-y-0">
           <li>Privacy</li>

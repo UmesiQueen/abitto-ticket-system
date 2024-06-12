@@ -41,7 +41,7 @@ const GlobalContext = ({ children }) => {
 
   const scrollToSection = (e) => {
     window.scrollTo({
-      top: e.current.offsetTop,
+      top: e.current.offsetTop - 70,
       behavior: "smooth",
     });
   };
