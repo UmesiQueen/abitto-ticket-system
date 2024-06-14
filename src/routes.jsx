@@ -18,7 +18,7 @@ import Payments from "./admin/pages/payments";
 import Settings from "./admin/pages/settings";
 import Login from "./admin/auth/login";
 import { CustomerDetails } from "./admin/pages/booking-details";
-import TicketDocument from "./components/custom/TicketSummary.doc";
+import TicketInvoice from "./components/custom/TicketInvoice";
 // import Notice from "./pages/notice";
 import MainLayout from "./main/layout";
 import About from "./main/pages/about";
@@ -30,7 +30,7 @@ export const router = createBrowserRouter(
       <Route element={<MainLayout />}>
         <Route index element={<Home />} />
         <Route path="booking" element={<Booking />} />
-        <Route path="ticket-summary" element={<TicketSummary />} />
+        <Route path="booking/ticket-summary" element={<TicketSummary />} />
         <Route path="about" element={<About />} />
       </Route>
 
@@ -47,7 +47,7 @@ export const router = createBrowserRouter(
         <Route path="settings" element={<Settings />} />
       </Route>
 
-      <Route path="ticket-summary/:bookingID" element={<TicketDocument />} />
+      <Route path="ticket-invoice/:bookingID" element={<TicketInvoice />} />
       <Route path="login" element={<Login />} />
       <Route path="*" element={<PageNotFound />} />
     </Route>

@@ -234,7 +234,7 @@ const PaymentModals = ({ open, closeModal }) => {
   const handleSuccess = () => {
     setPaymentMethod("");
     setPaymentStatus({ requestState: "", status: "" });
-    navigate(`/ticket-summary/${confirmedTicket._id}`);
+    navigate(`/ticket-invoice/${confirmedTicket._id}`);
   };
 
   // handleOnlineCancel

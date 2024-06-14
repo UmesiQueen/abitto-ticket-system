@@ -10,7 +10,7 @@ import { GlobalCTX } from "@/hooks/GlobalContext";
 import { Helmet } from "react-helmet-async";
 import { CaretIcon } from "@/assets/icons";
 
-const TicketDocument = () => {
+const TicketInvoice = () => {
   const { confirmedTicket } = React.useContext(BookingCTX);
   const navigate = useNavigate();
   const { bookingID } = useParams();
@@ -30,7 +30,7 @@ const TicketDocument = () => {
   return (
     <>
       <Helmet>
-        <title>Abitto Ticket Receipt</title>
+        <title>Ticket Invoice | Abitto Ticket</title>
       </Helmet>
       <div className="bg-gray-300 min-h-screen p-5">
         <div className=" w-full  md:w-[700px] flex flex-col mx-auto ">
@@ -69,7 +69,7 @@ const TicketDocument = () => {
                 className="w-32 md:w-56"
               />
               <h1 className="uppercase font-bold mt-3 text-sm md:text-base">
-                Ticket Summary
+                Ticket Invoice
               </h1>
               <div className="w-full text-right pb-4 mt-3 md:mt-0">
                 <p className="text-xs font-bold text-[#7F7F7F] mb-1">
@@ -259,4 +259,4 @@ const TicketDocument = () => {
   );
 };
 
-export default TicketDocument;
+export default TicketInvoice;

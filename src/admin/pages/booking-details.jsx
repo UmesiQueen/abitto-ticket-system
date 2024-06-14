@@ -684,7 +684,7 @@ export const CustomerDetails = () => {
             <button
               className=" bg-blue-500 w-56 py-3 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white flex justify-center gap-2 mx-auto rounded-lg "
               onClick={() => {
-                navigate(`/ticket-summary/${currentUser._id}`);
+                navigate(`/ticket-invoice/${currentUser._id}`);
               }}
             >
               <PrinterIcon />
