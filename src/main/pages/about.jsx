@@ -42,7 +42,7 @@ const About = () => {
 
         {/* History */}
         <section className="px-5 py-20 md:px-20 lg:px-32">
-          <div className="flex flex-col lg:flex-row gap-y-10 gap-x-20 justify-between">
+          <div className="flex flex-col lg:flex-row gap-y-10 justify-between">
             <div className="basis-1/4 space-y-5">
               <div className="flex items-center">
                 <span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 " />
@@ -61,8 +61,8 @@ const About = () => {
                 Why Choose US
               </p>
             </div>
-            <div className="basis-3/4">
-              <div className="bg-green-50 lg:max-w-[720px] rounded-lg p-5  md:p-20 ml-auto text-sm lg:text-base">
+            <div className="basis-2/4">
+              <div className="bg-green-50 lg:min-w-[720px] rounded-lg p-5  md:p-20 ml-auto text-sm lg:text-base">
                 <p>
                   Abitto Global Services Limited is a multi-disciplinary company
                   committed to exceptional client satisfaction and quality
@@ -89,7 +89,7 @@ const About = () => {
               </div>
             </div>
             <div className="flex-1 w-full">
-              <div className=" lg:w-[400px] mx-auto grid lg:grid-cols-2 gap-5 lg:gap-y-10 [&_p]:flex [&_p]:flex-col [&_p]:gap-2 [&_span:first-of-type]:font-semibold [&_span:first-of-type]:text-3xl [&_span:last-of-type]:text-sm">
+              <div className=" lg:w-[400px] grid lg:grid-cols-2 gap-5 lg:gap-y-10 [&_p]:flex [&_p]:flex-col [&_p]:gap-2 [&_span:first-of-type]:font-semibold [&_span:first-of-type]:text-3xl [&_span:last-of-type]:text-sm">
                 <p>
                   <span>10 +</span>
                   <span>Years in business</span>

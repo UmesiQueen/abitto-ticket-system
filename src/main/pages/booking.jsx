@@ -5,23 +5,24 @@ import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-// import { styled } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { useForm, Controller } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import ClipLoader from "react-spinners/ClipLoader";
 import { v4 as uuid } from "uuid";
 import { yupResolver } from "@hookform/resolvers/yup";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { CalendarIcon } from "@/assets/icons";
+import { CalendarIcon, CircleArrowLeftIcon } from "@/assets/icons";
 import { BookingCTX } from "@/hooks/BookingContext";
 import { GlobalCTX } from "@/hooks/GlobalContext";
 import { format } from "date-fns";
 import { Helmet } from "react-helmet-async";
 import { cn } from "@/lib/utils";
 import { bookingSchema } from "@/lib/validators/bookingSchema";
+import { Button as IconButton } from "@/components/ui/button";
+import Button from "@/components/custom/Button";
 
 const Booking = () => {
   const [value, setValue] = React.useState("1");
@@ -33,15 +34,15 @@ const Booking = () => {
   return (
     <>
       <Helmet>
-        <title>Abitto Ferry - Booking</title>
+        <title>Booking | Abitto Ferry</title>
       </Helmet>
       <div className="bg-hero-pattern h-[1350px] w-screen bg-cover bg-no-repeat bg-center relative ">
         <div className="bg-black/40 w-full h-full absolute z-0 ">
-          <div className="px-5 md:px-0 pt-28 md:w-[690px] mx-auto pb-10 md:pb-0 ">
+          <div className="px-5 md:px-0 pt-36 md:w-[690px] mx-auto pb-10 md:pb-0 ">
             <Box sx={{ width: "100%", typography: "body1" }}>
               <TabContext value={value}>
                 <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                  <TabList
+                  <StyledTabList
                     onChange={handleChange}
                     aria-label="booking ticket forms"
                   >
@@ -63,12 +64,12 @@ const Booking = () => {
                         fontFamily: "Poppins, sans-serif",
                       }}
                     />
-                  </TabList>
+                  </StyledTabList>
                 </Box>
-                <TabPanel value="1" sx={{ background: "#fff" }}>
+                <TabPanel value="1" sx={{ background: "#fff", padding: "0" }}>
                   <BookingForm tab="One-Way Trip" />
                 </TabPanel>
-                <TabPanel value="2" sx={{ background: "#fff" }}>
+                <TabPanel value="2" sx={{ background: "#fff", padding: "0" }}>
                   <BookingForm tab="Round Trip" />
                 </TabPanel>
               </TabContext>
@@ -155,9 +156,21 @@ const BookingForm = ({ tab }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="font-poppins md:p-5 ">
-      <div className="space-y-5">
-        <h3 className="font-medium text-base ">Booking Details</h3>
+    <form onSubmit={handleSubmit(onSubmit)} className="font-poppins pb-10">
+      <div className="space-y-5 py-8 px-10">
+        <div className="flex items-center gap-1 -ml-2">
+          <IconButton
+            variant="ghost"
+            size="icon"
+            type="button"
+            onClick={() => {
+              navigate(-1);
+            }}
+          >
+            <CircleArrowLeftIcon />
+          </IconButton>
+          <h3 className="font-medium text-base ">Booking Details</h3>
+        </div>
 
         <SelectField
           {...register("travel_from")}
@@ -303,7 +316,7 @@ const BookingForm = ({ tab }) => {
         </div>
       </div>
 
-      <div className=" mt-10 space-y-5">
+      <div className="space-y-5 py-8 px-10 border-dashed border-t-[3px] border-gray-400 ">
         <h3 className="font-medium text-base ">Passenger Details</h3>
         <div className="flex gap-5">
           <InputField
@@ -342,22 +355,12 @@ const BookingForm = ({ tab }) => {
         </div>
       </div>
 
-      <button
-        disabled={loading}
+      <Button
+        text="Continue"
         type="submit"
-        className="mt-10 bg-blue-500 h-12 w-36 flex items-center justify-center font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white"
-      >
-        {loading ? (
-          <ClipLoader
-            color="#fff"
-            loading={loading}
-            size={30}
-            aria-label="Loading Spinner"
-          />
-        ) : (
-          "Search Trip"
-        )}
-      </button>
+        loading={loading}
+        className="px-4 mt-2 ml-10"
+      />
     </form>
   );
 };
@@ -431,23 +434,31 @@ const SelectField = React.forwardRef((props, ref) => {
   );
 });
 
-// const StyledTabList = styled((props) => (
-//   <TabList
-//     {...props}
-//     TabIndicatorProps={{ children: <span className="MuiTabs-indicatorSpan" /> }}
-//   />
-// ))({
-//   "& .MuiTabs-indicator": {
-//     display: "flex",
-//     justifyContent: "center",
-//     height: "100%",
-//     backgroundColor: "3366cc",
-//   },
-//   "& .MuiTabs-indicatorSpan": {
-//     width: "100%",
-//     height: "15px",
-//     borderRadius: "49% 49% 0% 0% / 88% 89% 11% 12%;",
-//     marginTop: "auto",
-//     backgroundColor: "#D9D9D91F",
-//   },
-// });
+const StyledTabList = styled((props) => (
+  <TabList
+    {...props}
+    TabIndicatorProps={{ children: <span className="MuiTabs-indicatorSpan" /> }}
+  />
+))({
+  "& .MuiTabs-indicator": {
+    display: "flex",
+    justifyContent: "center",
+    height: "100%",
+    backgroundColor: "3366cc",
+  },
+  "& .MuiTabs-indicatorSpan": {
+    width: "100%",
+    height: "15px",
+    borderRadius: "49% 49% 0% 0% / 88% 89% 11% 12%;",
+    marginTop: "auto",
+    backgroundColor: "#D9D9D91F",
+  },
+  "& .css-1ro49qa-MuiButtonBase-root-MuiTab-root.Mui-selected": {
+    color: "white",
+    background: "transparent",
+    zIndex: 1,
+  },
+  "& .MuiTab-root": {
+    width: "140px",
+  },
+});
