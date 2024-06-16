@@ -99,7 +99,7 @@ const BookingForm = ({ tab }) => {
 
   const defaultTimeOptions = ["09:30 AM", "11:00 AM", "03:30 PM", "04:30 PM"];
 
-  const { loading, setLoading } = React.useContext(GlobalCTX);
+  const { loading, setLoading, toggleModal } = React.useContext(GlobalCTX);
   const { setFormData } = React.useContext(BookingCTX);
   const [timeOptions, setTimeOptions] = React.useState({
     departure_time: defaultTimeOptions,
@@ -151,7 +151,7 @@ const BookingForm = ({ tab }) => {
         ...formData,
       });
       setLoading(false);
-      navigate("/ticket-summary");
+      toggleModal();
     }, 1500);
   };
 
@@ -303,14 +303,14 @@ const BookingForm = ({ tab }) => {
             {...register("adults_number")}
             label="No. of Adults"
             placeholder="0"
-            options={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
+            options={[1, 2, 3, 4, 5]}
             errors={errors}
           />
           <SelectField
             {...register("children_number")}
             label="No. of Children"
             placeholder="0"
-            options={["", 1, 2, 3, 4, 5, 6, 7, 8, 9]}
+            options={["", 1, 2, 3]}
             errors={errors}
           />
         </div>
@@ -453,8 +453,8 @@ const StyledTabList = styled((props) => (
     marginTop: "auto",
     backgroundColor: "#D9D9D91F",
   },
-  "& .css-1ro49qa-MuiButtonBase-root-MuiTab-root.Mui-selected": {
-    color: "white",
+  "& .Mui-selected": {
+    color: "white !important",
     background: "transparent",
     zIndex: 1,
   },

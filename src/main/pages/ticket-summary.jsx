@@ -114,11 +114,17 @@ const ProtectedRoute = () => {
                       <span className="text-xs text-gray-500 font-normal">
                         Passenger(s):{" "}
                       </span>
-                      {Number(formData?.adults_number) +
-                        Number(formData?.children_number)}
+                      {formData.total_passengers}
+                    </li>
+                    <li>
+                      <span className="text-xs text-gray-500 font-normal">
+                        Seats:
+                      </span>{" "}
+                      <span className="tracking-wider ">{`${formData.seats_selected}`}</span>
                     </li>
                   </ul>
                 </div>
+
                 <div>
                   <h5 className="font-semibold mb-1">Departure Details</h5>
                   <ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1">

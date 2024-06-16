@@ -2,16 +2,22 @@ import React from "react";
 import PropTypes from "prop-types";
 import { cn } from "@/lib/utils";
 import Button from "../custom/Button";
+import { BookingCTX } from "@/hooks/BookingContext";
+import { useNavigate } from "react-router-dom";
+import { GlobalCTX } from "@/hooks/GlobalContext";
 
 const SeatSelection = () => {
   const [seatSelected, setSeatSelected] = React.useState([]);
   const [selectionExceeded, setSelectionExceeded] = React.useState(false);
-  const passengers = 5;
+  const { formData, setFormData } = React.useContext(BookingCTX);
+  const { toggleModal } = React.useContext(GlobalCTX);
+  const passengers = formData?.total_passengers;
+  const navigate = useNavigate();
 
   React.useEffect(() => {
-    if (seatSelected.length >= passengers) return setSelectionExceeded(true);
-    return setSelectionExceeded(false);
-  }, [seatSelected]);
+    if (seatSelected.length >= passengers) setSelectionExceeded(true);
+    else setSelectionExceeded(false);
+  }, [seatSelected, passengers]);
 
   const handleSelection = (target, checked) => {
     if (!checked) return setSeatSelected((prev) => [...prev, target]);
@@ -19,7 +25,7 @@ const SeatSelection = () => {
   };
 
   return (
-    <div className=" w-full max-w-[1000px] h-full min-h-[550px] rounded-lg bg-white p-5 grid gap-y-8 md:gap-0 md:grid-cols-2 md:grid-rows-2">
+    <div className=" w-full md:w-[950px] h-full md:h-[550px] rounded-lg bg-white p-5 grid gap-y-8 md:gap-0 md:grid-cols-2 md:grid-rows-2">
       <div className=" order-1 space-y-8 p-2 h-full md:h-fit [&_p]:text-[#5B5B5B]">
         <hgroup className="space-y-2">
           <h1 className="text-blue-500 font-semibold text-2xl">
@@ -29,17 +35,17 @@ const SeatSelection = () => {
             Select a seat that will enhance your experience
           </p>
         </hgroup>
-        {/* <div className="space-y-2">
-              <h4 className="font-semibold mb-1 text-blue-500 uppercase">
-                Departure Ferry
-              </h4>
-              <p>
-                <b>From:</b> Calabar - <b>Destination:</b> Uyo
-              </p>
-            </div> */}
+        <div className="space-y-2">
+          <h4 className="font-semibold mb-1 text-blue-500 uppercase">
+            Departure Ferry
+          </h4>
+          <p>
+            <b>From:</b> Calabar - <b>Destination:</b> Uyo
+          </p>
+        </div>
         <div className="space-y-3">
           <h4 className="font-semibold mb-1">Seat Options</h4>
-          <ul className="grid grid-cols-2 gap-y-5 *:inline-flex *:gap-2 *:items-center [&_button]:w-6 [&_button]:h-6 [&_button]:rounded-sm [&_button]:inline-flex [&_button]:items-center [&_button]:justify-center [&_button]:cursor-pointer [&_button]:transition-all [&_button]:ease-in-out [&_button]:border-[2px] ">
+          <ul className="grid grid-cols-2 gap-y-5 *:inline-flex *:gap-2 *:items-center [&_div]:w-6 [&_div]:h-6 [&_div]:rounded-sm [&_div]:inline-flex [&_div]:items-center [&_div]:justify-center [&_div]:cursor-pointer [&_div]:transition-all [&_div]:ease-in-out [&_div]:border-[2px] ">
             <li>
               <div className="bg-black border-black" />
               <p>Not a Seat</p>
@@ -59,18 +65,30 @@ const SeatSelection = () => {
           </ul>
         </div>
       </div>
+
       <div className="order-3 gap-8 flex flex-col">
-        <p>{passengers} Passenger(s)</p>
+        <p className="mt-auto">{passengers} Passenger(s)</p>
         <input
           disabled
           value={seatSelected}
-          className="w-full md:w-72 h-14 rounded-lg border-2 border-[#b6b6b6] px-5 placeholder:text-sm font-medium tracking-wider "
+          className="w-full md:w-80 h-14 rounded-lg border-2 border-[#b6b6b6] px-5 placeholder:text-sm font-medium tracking-wider "
           type="text"
           placeholder="Selected seats will appear here"
         />
         <Button
+          onClick={() => {
+            // TODO: SELECTION OF SEAT SHOULD BE OPTIONAL
+            if (selectionExceeded) {
+              toggleModal();
+              setFormData((prev) => ({
+                ...prev,
+                seats_selected: seatSelected,
+              }));
+              navigate("/booking/ticket-summary");
+            }
+          }}
           text={"Purchase ticket"}
-          className="w-full md:w-72 py-4 rounded-lg"
+          className="w-full md:w-56 rounded-lg"
         />
       </div>
       <div className="order-2 md:row-span-2 h-full">

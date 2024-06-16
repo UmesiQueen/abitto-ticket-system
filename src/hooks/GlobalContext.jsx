@@ -10,6 +10,7 @@ const GlobalContext = ({ children }) => {
   const contact = React.useRef();
   const [loading, setLoading] = React.useState(false);
   const [dataQuery, setDataQuery] = React.useState([]);
+  const [showModal, setShowModal] = React.useState(false);
 
   const store = JSON.parse(localStorage.getItem("admin")) || "";
   const [isAuth, setAuth] = React.useState(store);
@@ -46,6 +47,11 @@ const GlobalContext = ({ children }) => {
     });
   };
 
+  const toggleModal = () => {
+    if (showModal) return setShowModal(false);
+    return setShowModal(true);
+  };
+
   const ctxValue = {
     about,
     contact,
@@ -56,6 +62,8 @@ const GlobalContext = ({ children }) => {
     setAuth,
     dataQuery,
     setDataQuery,
+    showModal,
+    toggleModal,
   };
 
   return (
