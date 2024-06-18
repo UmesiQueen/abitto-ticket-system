@@ -9,6 +9,8 @@ import FadeInBackgroundTransition from "@/components/animation/FadeIn";
 import { Helmet } from "react-helmet-async";
 import { toast } from "sonner";
 import Button from "@/components/custom/Button";
+import { cn } from "@/lib/utils";
+import PropTypes from "prop-types";
 
 const Home = () => {
   const { about, contact } = React.useContext(GlobalCTX);
@@ -114,14 +116,41 @@ const Home = () => {
       </section>
 
       {/* Client Testimonials */}
-      <section className="py-20 px-5 md:px-20 bg-blue-50 h-[500px]">
-        <h2 className="font-semibold text-2xl text-center">
-          Client Testimonials
-        </h2>
+      <section className="py-20 px-5 md:px-20 bg-blue-50 space-y-8">
+        <hgroup className="text-center space-y-2">
+          <h2 className="font-semibold text-2xl">Clients Testimonials</h2>
+          <p className="text-sm">{"Here's"} what some of them are saying.</p>
+        </hgroup>
+        <div className="flex gap-8 mx-auto overflow-auto no-scrollbar snap-x snap-mandatory">
+          {Testimonials.map((item) => (
+            <CarouselItem key={item.id} {...item} />
+          ))}
+        </div>
+        <div>
+          {/* TODO: Add functionality to this section */}
+          <div className="flex gap-2 items-center ">
+            <div className="flex items-center gap-2">
+              {Array.from({ length: Testimonials.length }).map((_, index) => (
+                <div
+                  key={index}
+                  className={cn("w-2 h-2 bg-white shadow-sm rounded-full", {
+                    "bg-black": index + 1 === 1,
+                  })}
+                />
+              ))}
+            </div>
+            <button className="w-10 h-10 rounded-full bg-white font-bold text-xl inline-flex items-center justify-center ml-auto">
+              <span>←</span>
+            </button>
+            <button className="w-10 h-10 rounded-full bg-blue-500 text-white font-bold text-xl inline-flex items-center justify-center">
+              <span>→</span>
+            </button>
+          </div>
+        </div>
       </section>
 
       {/* Contact us  */}
-      <section className="py-20 px-5 md:px-20" ref={contact}>
+      <section className="py-20 px-5 md:px-20" ref={contact} id="contact-us">
         <h2 className="font-semibold text-2xl text-center mb-7">Contact Us</h2>
         <div className="flex flex-col-reverse md:flex-row gap-10 lg:gap-16 justify-between ">
           <div className="flex flex-col flex-1">
@@ -299,4 +328,45 @@ const ContactForm = () => {
       </form>
     </>
   );
+};
+
+const Testimonials = [
+  {
+    id: 1,
+    name: "Jennifer",
+    imgUrl: "https://i.ibb.co/GT9fdRX/Jeniffer-Client.png",
+    review:
+      "Absolutely delightful experience! The ferry was clean and comfortable, and the views during the ride were breathtaking. Will definitely be using this Abitto ferry again.",
+  },
+  {
+    id: 2,
+    name: "Mr.Kalu",
+    imgUrl: "https://i.ibb.co/Tqv0zDR/Mr-kalu-Client.jpg",
+    review:
+      "Such a relaxing way to travel! I took the ferry with my family and we all loved it. A fantastic option for anyone looking to avoid the hassle of traffic and enjoy the journey.",
+  },
+];
+
+const CarouselItem = ({ review, name, imgUrl }) => {
+  return (
+    <div className="snap-always snap-start min-w-[500px] h-[306px] p-8 bg-white rounded-lg flex flex-col gap-3 items-start">
+      <span className="font-bold text-4xl">“</span>
+      <p className="font-medium text-base w-3/4 ">{review}</p>
+      <div className="flex items-center gap-3 mt-auto">
+        <div className="w-12 aspect-square rounded-full bg-blue-500 overflow-hidden ring-black ring-1">
+          <img src={imgUrl} alt="profile" className="min-w-full " />
+        </div>
+        <div className="space-y-1">
+          <h3 className="font-semibold ">{name}</h3>
+          <p className="font-medium text-[#606060]">Client</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+CarouselItem.propTypes = {
+  review: PropTypes.string,
+  name: PropTypes.string,
+  imgUrl: PropTypes.string,
 };
