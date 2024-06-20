@@ -4,7 +4,6 @@ import Loader from "@/components/animation/Loader";
 import { Toaster } from "sonner";
 import GlobalContext from "./hooks/GlobalContext";
 import "./index.css";
-import Overlays from "@/components/custom/Overlays";
 
 const App = () => {
   const pathname = useLocation();
@@ -19,7 +18,6 @@ const App = () => {
         <Outlet />
         <Loader />
         <Toaster position="top-center" expand={true} richColors />
-        <Overlays />
       </div>
     </GlobalContext>
   );
