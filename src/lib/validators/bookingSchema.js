@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-export const bookingSchema = yup.object().shape({
+const travelDetailsSchema = yup.object().shape({
   travel_from: yup.string().required("Traveling from is required."),
   travel_to: yup
     .string()
@@ -40,6 +40,9 @@ export const bookingSchema = yup.object().shape({
       String(originalValue).trim() === "" ? null : value
     )
     .notRequired(),
+});
+
+const customerDetailsSchema = yup.object().shape({
   first_name: yup
     .string()
     .required("First name is required.")
@@ -55,3 +58,5 @@ export const bookingSchema = yup.object().shape({
     .matches(/^\+?\d+$/, "Invalid phone number.")
     .min(11, "Phone number must have at least 11 characters."),
 });
+
+export { travelDetailsSchema, customerDetailsSchema };
