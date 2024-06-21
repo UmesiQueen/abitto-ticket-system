@@ -152,7 +152,7 @@ const TravelDetailsForm = ({ tab }) => {
       });
       setLoading(false);
       onNextClick();
-    }, 1500);
+    }, 600);
   };
 
   return (
@@ -187,7 +187,7 @@ const TravelDetailsForm = ({ tab }) => {
         >
           <div className="w-1/2 md:w-full grow ">
             <div className="flex flex-col w-full">
-              <label className="text-sm !w-full flex flex-col ">
+              <label className="text-xs md:text-sm !w-full flex flex-col ">
                 Date of Departure
                 <Controller
                   control={control}
@@ -199,7 +199,7 @@ const TravelDetailsForm = ({ tab }) => {
                       showIcon
                       toggleCalendarOnIconClick={true}
                       closeOnScroll
-                      className="bg-blue-50 h-10 border border-blue-500 font-normal w-full !px-4 !rounded-none font-poppins mt-3 text-left"
+                      className="bg-blue-50 h-10 border border-blue-500 font-normal w-full !px-4 !rounded-none font-poppins mt-2 md:mt-3 text-left"
                       onChange={(date) => field.onChange(date)}
                       selected={field.value}
                       customInput={
@@ -240,7 +240,7 @@ const TravelDetailsForm = ({ tab }) => {
         {tab === "Round Trip" && (
           <div className="flex gap-5 w-full">
             <div className="flex flex-col w-full">
-              <label className="text-sm !w-full flex flex-col ">
+              <label className="text-xs md:text-sm !w-full flex flex-col ">
                 Date of Return
                 <Controller
                   control={control}
@@ -252,7 +252,7 @@ const TravelDetailsForm = ({ tab }) => {
                       showIcon
                       toggleCalendarOnIconClick={true}
                       closeOnScroll
-                      className="bg-blue-50 h-10 border border-blue-500 font-normal w-full !px-4 !rounded-none font-poppins mt-3 text-left"
+                      className="bg-blue-50 h-10 border border-blue-500 font-normal w-full !px-4 !rounded-none font-poppins mt-2 md:mt-3 text-left"
                       onChange={(date) => field.onChange(date)}
                       selected={field.value}
                       customInput={
@@ -343,7 +343,7 @@ const TravelDetailsForm = ({ tab }) => {
         text="Continue"
         type="submit"
         loading={loading}
-        className="px-4 mt-2 ml-5 md:ml-10"
+        className="px-4 mt-2 ml-5 md:ml-10  w-32 md:56 "
       />
     </form>
   );
@@ -356,7 +356,7 @@ const SelectField = React.forwardRef((props, ref) => {
 
   return (
     <div className="flex flex-col w-full">
-      <label className="text-sm w-full flex gap-3 flex-col ">
+      <label className="text-xs md:text-sm w-full flex gap-2 md:gap-3 flex-col ">
         {label}
         <Select
           ref={ref}

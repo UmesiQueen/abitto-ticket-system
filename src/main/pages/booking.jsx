@@ -13,6 +13,7 @@ import PaymentForm from "@/components/forms/PaymentForm";
 
 const Booking = () => {
   const { activeStep, onNextClick, onPrevClick } = useStepper();
+
   React.useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -25,14 +26,10 @@ const Booking = () => {
       <Helmet>
         <title>Booking | Abitto Ferry</title>
       </Helmet>
-      <div className="bg-hero-pattern h-screen min-h-[1200px] w-screen bg-cover bg-no-repeat bg-center relative ">
+      <div className="bg-hero-pattern h-screen min-h-[1500px] w-screen bg-cover bg-no-repeat bg-center relative">
         <div className="bg-black/40 w-full h-full absolute z-0 ">
-          <div className="px-5 md:px-0 pt-32 mx-auto pb-10 md:pb-0">
+          <div className="px-2 md:px-0 py-32 mx-auto ">
             <MaterialUIStepper />
-            <div className="flex justify-center gap-3 mb-3 *:bg-blue-50 *:px-2">
-              <button onClick={onPrevClick}>Prev</button>
-              <button onClick={onNextClick}>Next</button>
-            </div>
 
             {activeStep === 0 ? (
               <TravelDetails />
@@ -45,6 +42,10 @@ const Booking = () => {
             ) : (
               ""
             )}
+            <div className="flex gap-2 justify-center *:bg-blue-500 text-white mt-2 *:px-2">
+              <button onClick={onPrevClick}>Prev</button>
+              <button onClick={onNextClick}>Next</button>
+            </div>
           </div>
         </div>
       </div>
@@ -57,24 +58,43 @@ export default Booking;
 const MaterialUIStepper = () => {
   // const { activeStep, onNextClick, onPrevClick } = useStepper();
   const { activeStep } = useStepper();
-  const steps = Array.from({ length: 4 }, (_, i) => i);
+  // const steps = Array.from({ length: 4 }, (_, i) => i);
+  const steps = [
+    "Trip Details",
+    "Customer Details",
+    "Seat Selection",
+    "Payment",
+  ];
 
   return (
     <Box
       sx={{
         width: "100%",
-        maxWidth: "300px",
+        maxWidth: "600px",
         marginX: "auto",
         marginBottom: "40px",
       }}
     >
-      <Stepper activeStep={activeStep}>
+      <Stepper activeStep={activeStep} alternativeLabel>
         {steps.map((label) => {
           return (
             <Step key={label}>
               <StepLabel
-                sx={{ "& .MuiStepLabel-iconContainer": { padding: "0" } }}
-              />
+                sx={{
+                  "& .MuiStepLabel-label": {
+                    color: "white",
+                    fontWeight: "500",
+                    fontFamily: "Poppins, sans-serif",
+                  },
+                  "& .MuiStepLabel-label.Mui-active, & .MuiStepLabel-label.Mui-completed":
+                    {
+                      color: "rgba(250,250,250, 0.7) !important",
+                      fontWeight: 400,
+                    },
+                }}
+              >
+                {label}
+              </StepLabel>
             </Step>
           );
         })}

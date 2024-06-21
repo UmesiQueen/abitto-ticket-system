@@ -2,6 +2,11 @@ import React from "react";
 import {
   InformationCircleIcon,
   CircleArrowLeftIcon,
+  CalendarIcon,
+  ChairIcon,
+  ClockIcon,
+  Boat2Icon,
+  UserIcon,
 } from "@/assets/icons/index";
 import { format } from "date-fns";
 import { formatValue } from "react-currency-input-field";
@@ -14,10 +19,14 @@ const PaymentForm = () => {
   const { formData, ticketCost } = React.useContext(BookingCTX);
   const { onPrevClick } = useStepper();
 
+  React.useEffect(() => {
+    console.log(formData, "formData");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <div className="flex flex-col h-fit p-5 rounded-lg bg-blue-50 w-full max-w-[1000px] mx-auto">
-      {/* <h2 className="text-center text-white mb-10 text-base md:text-2xl font-medium"></h2> */}
-      <div className="p-5 bg-white rounded-lg ">
+    <div className="flex flex-col h-fit p-5 bg-blue-50 w-full max-w-[1000px] mx-auto">
+      <div className="p-3 md:p-5 bg-white">
         <IconButton
           variant="ghost"
           type="button"
@@ -32,143 +41,181 @@ const PaymentForm = () => {
         </IconButton>
 
         <section className="px-3">
-          <div className="space-y-2">
+          <hgroup className="md:space-y-2">
             <h3 className="text-blue-500 font-semibold  text-base md:text-xl ">
               Ticket Summary
             </h3>
-            {/* <p className="text-[#8E98A8] text-sm">
-                {formData?.travel_from.includes("Calabar") ? "Calabar" : "Uyo"} ==
-                {">"}{" "}
-                {formData?.travel_to.includes("Calabar") ? "Calabar" : "Uyo"}
-              </p> */}
             <p className="text-[#8E98A8] text-sm inline-flex items-center gap-1">
               Non-refundable <InformationCircleIcon />
             </p>
-          </div>
-          <div className="mt-6">
-            <h4 className="font-semibold mb-1">Terminals</h4>
-            <p className="text-xs">
-              {formData?.travel_from} - {formData?.travel_to}
+          </hgroup>
+
+          {/* total cost */}
+          <div className="w-full text-right my-3 md:my-0">
+            <p className="text-xs font-bold text-[#7F7F7F] mb-1">
+              Ticket total(NGN)
+            </p>
+            <p className="nowrap font-semibold text-4xl md:text-5xl ">
+              <span className="text-2xl">₦</span>
+              {formatValue({
+                value: String(formData?.amount),
+              })}
             </p>
           </div>
-          <div className="mt-5 mb-9 text-[#1E1E1E] space-y-5 text-xs md:text-sm font-normal [&_li]:inline-flex [&_li]:items-center [&_li]:gap-1 [&_li]:font-medium">
-            <div>
-              <h5 className="font-semibold mb-1">Customer Info</h5>
+
+          <div className="text-xs md:text-base space-y-5 [&_li]:inline-flex [&_li]:items-center [&_li]:gap-1 *:pb-3 [&>*:not(:last-of-type)]:border-b">
+            {/* Trip Details */}
+            <div className="space-y-3">
+              <hgroup>
+                <h4 className="font-semibold mb-1 flex gap-1">
+                  Terminals <Boat2Icon />
+                </h4>
+                <p>
+                  {formData?.travel_from} - {formData?.travel_to}
+                </p>
+              </hgroup>
               <ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
                 <li>
-                  <span className="text-xs text-gray-500 font-normal">
-                    Name:
-                  </span>{" "}
-                  {`${formData.first_name} ${formData.surname}`}
+                  <p className="text-xs text-gray-500 font-normal">
+                    Trip Type:
+                  </p>
+                  <p>{formData.trip_type}</p>
                 </li>
                 <li>
-                  <span className="text-xs text-gray-500 font-normal">
-                    Phone:{" "}
-                  </span>
-                  {formData.phone_number}
-                </li>
-                {formData.email && (
-                  <li>
-                    <span className="text-xs text-gray-500 font-normal">
-                      Email:{" "}
-                    </span>
-                    {formData.email}
-                  </li>
-                )}
-                <li>
-                  <span className="text-xs text-gray-500 font-normal">
-                    Type:{" "}
-                  </span>
-                  {formData.trip_type}
-                </li>
-                <li>
-                  <span className="text-xs text-gray-500 font-normal">
-                    Passenger(s):{" "}
-                  </span>
-                  {formData.total_passengers}
-                </li>
-                <li>
-                  <span className="text-xs text-gray-500 font-normal">
-                    Seats:
-                  </span>{" "}
-                  <span className="tracking-wider ">{`${formData.seats_selected}`}</span>
+                  <p className="text-xs text-gray-500 font-normal">
+                    Passenger(s):
+                  </p>
+                  <p>{formData.total_passengers}</p>
                 </li>
               </ul>
             </div>
-            <div>
-              <h5 className="font-semibold mb-1">Departure Details</h5>
-              <ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
-                <li>
-                  <span className="text-xs text-gray-500 font-normal">
-                    Date:
-                  </span>
-                  {format(new Date(formData?.departure_date), "PP")}
-                </li>
-                <li>
-                  <span className="text-xs text-gray-500 font-normal">
-                    Time:
-                  </span>{" "}
-                  {formData?.departure_time}
-                </li>
-              </ul>
-            </div>
-            {formData.trip_type === "Round Trip" && (
+
+            {/* time and return */}
+            <div className="flex flex-wrap gap-x-5 gap-y-3">
               <div>
-                <h5 className="font-semibold mb-1">Return Details</h5>
+                <h5 className="font-semibold mb-1">Departure Details</h5>
                 <ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
                   <li>
-                    <span className="text-xs text-gray-500 font-normal">
-                      Date:
-                    </span>
-                    {format(new Date(formData?.return_date), "PP")}
+                    <CalendarIcon />
+                    <p>{format(new Date(formData?.departure_date), "PP")}</p>
                   </li>
                   <li>
-                    <span className="text-xs text-gray-500 font-normal">
-                      Time:
-                    </span>{" "}
-                    {formData?.return_time}
+                    <ClockIcon />
+                    <p>{formData?.departure_time}</p>
+                  </li>
+                  <li>
+                    <ChairIcon />
+                    <p className="tracking-widest">{`${formData?.departure_seats}`}</p>
                   </li>
                 </ul>
               </div>
+              {formData.trip_type === "Round Trip" && (
+                <div>
+                  <h5 className="font-semibold mb-1">Return Details</h5>
+                  <ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
+                    <li>
+                      <CalendarIcon />
+                      <p>{format(new Date(formData?.return_date), "PP")}</p>
+                    </li>
+                    <li>
+                      <ClockIcon />
+                      <p>{formData?.return_time}</p>
+                    </li>
+                    <li>
+                      <ChairIcon />
+                      <p className="tracking-widest">{`${formData?.return_seats}`}</p>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            {/* customer details */}
+            {formData?.adults_number <= 1 ||
+            !formData?.passenger2_first_name ? (
+              <div>
+                <h5 className="font-semibold mb-1">Passenger Details</h5>
+                <ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
+                  <li>
+                    <span className="text-xs text-gray-500 font-normal">
+                      Full name:
+                    </span>{" "}
+                    {`${formData.first_name} ${formData.surname}`}
+                  </li>
+                  <li>
+                    <span className="text-xs text-gray-500 font-normal">
+                      Phone:{" "}
+                    </span>
+                    {formData.phone_number}
+                  </li>
+                  {formData.email && (
+                    <li>
+                      <span className="text-xs text-gray-500 font-normal">
+                        Email:{" "}
+                      </span>
+                      {formData.email}
+                    </li>
+                  )}
+                </ul>
+              </div>
+            ) : (
+              <div>
+                <h5 className="font-semibold mb-1 ">Passenger Names</h5>
+                <div className="flex flex-wrap gap-x-4 gap-y-1">
+                  <p className="flex gap-x-1 items-center">
+                    <span className="text-[#ACACAC]">
+                      <UserIcon />
+                    </span>
+                    {`${formData.first_name} ${formData.surname}`}
+                  </p>
+                  {/* FIXME: 5 shows undefined */}
+                  {Array.from({ length: formData.total_passengers - 1 }).map(
+                    (_, i) => {
+                      const num = i + 2;
+                      return (
+                        <p key={num} className="flex gap-1 items-center">
+                          <span className="text-[#ACACAC]">
+                            <UserIcon />
+                          </span>
+                          {`${formData[`passenger${num}_first_name`]} ${
+                            formData[`passenger${num}_surname`]
+                          }`}
+                        </p>
+                      );
+                    }
+                  )}
+                </div>
+              </div>
             )}
           </div>
-          <div className="border-y-2 border-dashed py-2 mt-6">
-            <table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px]   ">
-              <tbody>
-                <tr>
-                  <td className="text-xs text-[#444444]">Ride Insurance</td>
-                  <td className="text-xs text-[#444444]">₦0</td>
-                </tr>
-                <tr>
-                  <td className="text-xs text-[#444444]">Ticket Price</td>
-                  <td className="text-xs text-[#444444]">₦8,800</td>
-                </tr>
-                <tr>
-                  <td className="font-medium text-base">Total</td>
-                  <td className="font-medium text-base">
-                    ₦
-                    {formatValue({
-                      value: String(
-                        (Number(formData?.adults_number) +
-                          Number(formData?.children_number)) *
-                          (formData?.trip_type === "Round Trip"
-                            ? ticketCost * 2
-                            : ticketCost)
-                      ),
-                    })}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+
+          <div className=" border-t-2 mt-8 pt-3 space-y-1 text-xs md:text-sm ">
+            <p>
+              <span className="uppercase">Notice: </span> Each ticket cost{" "}
+              {formatValue({ value: String(ticketCost), prefix: "₦" })}
+            </p>
+            <p>
+              Abitto Ferry check-in counters open <b>1 hours</b> before
+              departure.
+            </p>
+            <p>
+              Ensure to arrive early to your Terminal as boarding starts{" "}
+              <b>30 minutes</b> before your scheduled take off.
+            </p>
+            <p>
+              <strong>
+                This ticket is Non-refundable and cannot be rescheduled if
+                scheduled time is missed.
+              </strong>
+            </p>
           </div>
-          <div className="flex justify-center mt-6">
-            <Button
-              //   onClick={openModal}
-              //   loading={loading}
-              text={"Purchase ticket"}
-              className="w-56"
-            />
-          </div>
+
+          <Button
+            //   onClick={openModal}
+            //   loading={loading}
+            text={"Pay with paystack"}
+            className="w-56 uppercase mt-10 mb-5 mx-auto"
+          />
         </section>
       </div>
     </div>

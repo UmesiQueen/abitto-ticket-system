@@ -10,8 +10,15 @@ import { CircleArrowLeftIcon } from "@/assets/icons";
 import { Button as IconButton } from "@/components/ui/button";
 import Button from "@/components/custom/Button";
 import { useStepper } from "@/hooks/useStepper";
+import { format } from "date-fns";
 
 const CustomerDetails = () => {
+  const { loading, setLoading } = React.useContext(GlobalCTX);
+  const { setFormData, formData } = React.useContext(BookingCTX);
+  const [isChecked, setChecked] = React.useState(false);
+  const { onPrevClick, onNextClick } = useStepper();
+  const adults_number = formData?.adults_number;
+
   const {
     register,
     handleSubmit,
@@ -19,12 +26,8 @@ const CustomerDetails = () => {
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(customerDetailsSchema),
+    context: { adultPassengers: adults_number, isChecked },
   });
-  const { loading, setLoading } = React.useContext(GlobalCTX);
-  const { setFormData, formData } = React.useContext(BookingCTX);
-  const [isChecked, setChecked] = React.useState(false);
-  const { onPrevClick, onNextClick } = useStepper();
-  const adults_number = formData?.adults_number;
 
   const onSubmit = handleSubmit((formData) => {
     setLoading(true);
@@ -35,36 +38,48 @@ const CustomerDetails = () => {
       }));
       setLoading(false);
       onNextClick();
-    }, 1500);
+    }, 600);
   });
 
   return (
     <>
-      <div className="bg-blue-500/80 max-w-[1000px] mx-auto mb-5 min-h-20 p-2 flex items-center ">
+      <div className="bg-blue-500/70 max-w-[1000px] mx-auto mb-5 min-h-20 p-2 flex items-center ">
         <ul className=" w-full [&_h4]:uppercase [&_h4]:text-[#BFBFBF] [&_h4]:text-xs [&_p]:text-white [&_p]:text-sm flex flex-wrap items-center gap-5 md:justify-around divide-x-2 h-full [&_li:not(:first-of-type)]:pl-5 *:space-y-1">
           <li>
             <h4>Trip type</h4>
-            <p>Round Trip</p>
+            <p>{formData?.trip_type}</p>
           </li>
           <li>
             <h4>Route</h4>
-            <p>Uyo {"==>"} Calabar</p>
+            <p>
+              {formData?.travel_from.includes("Calabar") ? "Calabar" : "Uyo"} ==
+              {">"}{" "}
+              {formData?.travel_to.includes("Calabar") ? "Calabar" : "Uyo"}
+            </p>
           </li>
           <li>
             <h4> Departure Date & Time</h4>
-            <p>Jun 12, 2024 - 10:30 AM</p>
+            <p>
+              {format(new Date(formData?.departure_date), "PP")} -{" "}
+              {formData?.departure_time}
+            </p>
           </li>
-          <li>
-            <h4> Return Date & Time</h4>
-            <p>Jun 13, 2024 - 03:30 PM</p>
-          </li>
+          {formData?.trip_type === "Round Trip" && (
+            <li>
+              <h4> Return Date & Time</h4>
+              <p>
+                {format(new Date(formData?.return_date), "PP")} -{" "}
+                {formData?.return_time}
+              </p>
+            </li>
+          )}
           <li>
             <h4>Adult</h4>
-            <p>3</p>
+            <p>{formData?.adults_number}</p>
           </li>
           <li>
             <h4>Children</h4>
-            <p>0</p>
+            <p>{formData?.children_number ?? 0}</p>
           </li>
         </ul>
       </div>
@@ -87,7 +102,6 @@ const CustomerDetails = () => {
         </IconButton>
         <div className="space-y-8 gap-x-10 grid grid-col-2 px-3">
           <div className="space-y-5">
-            {/* <h3 className="font-medium text-base ">Passenger Details</h3> */}
             <h3 className="text-blue-500 font-semibold  text-base md:text-xl ">
               Passenger Details
             </h3>
@@ -152,7 +166,9 @@ const CustomerDetails = () => {
                         </h4>
                         <div className="flex gap-5">
                           <InputField
-                            {...register(`${currentPassenger}_first_name`)}
+                            {...register(`${currentPassenger}_first_name`, {
+                              required: "This field is required..",
+                            })}
                             label="First Name"
                             placeholder="Enter first name"
                             type="text"
