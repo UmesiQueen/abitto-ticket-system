@@ -141,3 +141,18 @@ html {
   mask: linear-gradient(#0000 0 0) content-box intersect,
     conic-gradient(#000 180deg, #0000 0);
 }
+@media screen and (max-width: 767px) {
+  .MuiStepLabel-label,
+  .MuiTab-root {
+    font-size: 0.75rem !important;
+  }
+
+  .MuiTab-root {
+    width: 120px !important;
+    padding: 12px !important;
+  }
+
+  .react-datepicker__input-container svg {
+    top: 20px;
+  }
+}

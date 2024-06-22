@@ -15,14 +15,14 @@ import DatePicker from "react-datepicker";
 import { format } from "date-fns";
 import { formatValue } from "react-currency-input-field";
 import { cn } from "@/lib/utils";
-import { travelDetailsSchema } from "@/lib/validators/bookingSchema";
+import { bookingDetailsSchema } from "@/lib/validators/bookingSchema";
 import { CalendarIcon } from "@/assets/icons";
 import { BookingCTX } from "@/hooks/BookingContext";
 import { GlobalCTX } from "@/hooks/GlobalContext";
 import Button from "@/components/custom/Button";
 import { useStepper } from "@/hooks/useStepper";
 
-const TravelDetails = () => {
+const BookingDetails = () => {
   const [value, setValue] = React.useState("1");
 
   const handleChange = (_, newValue) => {
@@ -66,17 +66,17 @@ const TravelDetails = () => {
           </StyledTabList>
         </Box>
         <TabPanel value="1" sx={{ background: "#fff", padding: "0" }}>
-          <TravelDetailsForm tab="One-Way Trip" />
+          <BookingForm tab="One-Way Trip" />
         </TabPanel>
         <TabPanel value="2" sx={{ background: "#fff", padding: "0" }}>
-          <TravelDetailsForm tab="Round Trip" />
+          <BookingForm tab="Round Trip" />
         </TabPanel>
       </TabContext>
     </Box>
   );
 };
 
-const TravelDetailsForm = ({ tab }) => {
+const BookingForm = ({ tab }) => {
   const {
     register,
     handleSubmit,
@@ -86,7 +86,7 @@ const TravelDetailsForm = ({ tab }) => {
     watch,
   } = useForm({
     mode: "onChange",
-    resolver: yupResolver(travelDetailsSchema),
+    resolver: yupResolver(bookingDetailsSchema),
     context: { roundTrip: tab === "Round Trip" ? true : false },
   });
 
@@ -199,7 +199,7 @@ const TravelDetailsForm = ({ tab }) => {
                       showIcon
                       toggleCalendarOnIconClick={true}
                       closeOnScroll
-                      className="bg-blue-50 h-10 border border-blue-500 font-normal w-full !px-4 !rounded-none font-poppins mt-2 md:mt-3 text-left"
+                      className="bg-blue-50 h-10 md:h-12 border border-blue-500 font-normal w-full !px-4 !rounded-lg font-poppins mt-2 md:mt-3 text-left"
                       onChange={(date) => field.onChange(date)}
                       selected={field.value}
                       customInput={
@@ -252,7 +252,7 @@ const TravelDetailsForm = ({ tab }) => {
                       showIcon
                       toggleCalendarOnIconClick={true}
                       closeOnScroll
-                      className="bg-blue-50 h-10 border border-blue-500 font-normal w-full !px-4 !rounded-none font-poppins mt-2 md:mt-3 text-left"
+                      className="bg-blue-50 h-10 md:h-12 border border-blue-500 font-normal w-full !px-4 !rounded-lg font-poppins mt-2 md:mt-3 text-left"
                       onChange={(date) => field.onChange(date)}
                       selected={field.value}
                       customInput={
@@ -310,19 +310,19 @@ const TravelDetailsForm = ({ tab }) => {
         <div className="border-y-2 border-dashed py-8 px-5 md:px-10 mb-8">
           <table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] ">
             <tbody>
-              <tr>
+              {/* <tr>
                 <td className="text-xs text-[#444444]">Ride Insurance</td>
                 <td className="text-xs text-[#444444]">₦0</td>
-              </tr>
-              <tr>
-                <td className="text-xs text-[#444444]">Ticket Price</td>
-                <td className="text-xs text-[#444444]">
+              </tr> */}
+              <tr className="text-xs md:text-base text-[#444444]">
+                <td>Ticket Price</td>
+                <td>
                   {formatValue({ value: String(ticketCost), prefix: "₦" })}
                 </td>
               </tr>
-              <tr>
-                <td className="font-medium text-base">Total</td>
-                <td className="font-medium text-base">
+              <tr className="font-medium text-base md:text-lg">
+                <td>Total</td>
+                <td className="md:text-xl tracking-wider">
                   {formatValue({
                     value: String(
                       totalPassengers *
@@ -343,7 +343,7 @@ const TravelDetailsForm = ({ tab }) => {
         text="Continue"
         type="submit"
         loading={loading}
-        className="px-4 mt-2 ml-5 md:ml-10  w-32 md:56 "
+        className="ml-5 md:ml-10 w-40 "
       />
     </form>
   );
@@ -379,7 +379,7 @@ const SelectField = React.forwardRef((props, ref) => {
           sx={{
             "& .MuiOutlinedInput-notchedOutline": { display: "none" },
           }}
-          className="bg-blue-50 h-10 border border-blue-500 font-normal text-xs w-full !rounded-none"
+          className="bg-blue-50 h-10 md:h-12 border border-blue-500 font-normal text-xs w-full !rounded-lg"
         >
           {options.map((option, index) => {
             return (
@@ -428,4 +428,4 @@ const StyledTabList = styled((props) => (
   },
 });
 
-export default TravelDetails;
+export default BookingDetails;

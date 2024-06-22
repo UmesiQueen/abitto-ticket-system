@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from "react";
-import { customerDetailsSchema } from "@/lib/validators/bookingSchema";
+import { passengerDetailsSchema } from "@/lib/validators/passengerSchema";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -12,7 +12,7 @@ import Button from "@/components/custom/Button";
 import { useStepper } from "@/hooks/useStepper";
 import { format } from "date-fns";
 
-const CustomerDetails = () => {
+const PassengerDetails = () => {
   const { loading, setLoading } = React.useContext(GlobalCTX);
   const { setFormData, formData } = React.useContext(BookingCTX);
   const [isChecked, setChecked] = React.useState(false);
@@ -25,17 +25,27 @@ const CustomerDetails = () => {
     formState: { errors },
   } = useForm({
     mode: "onChange",
-    resolver: yupResolver(customerDetailsSchema),
+    resolver: yupResolver(passengerDetailsSchema),
     context: { adultPassengers: adults_number, isChecked },
   });
 
   const onSubmit = handleSubmit((formData) => {
     setLoading(true);
     setTimeout(() => {
-      setFormData((prev) => ({
-        ...prev,
-        ...formData,
-      }));
+      setFormData((prev) =>
+        isChecked
+          ? {
+              ...prev,
+              first_name: formData.first_name,
+              surname: formData.surname,
+              phone_number: formData.phone_number,
+              email: formData.email,
+            }
+          : {
+              ...prev,
+              ...formData,
+            }
+      );
       setLoading(false);
       onNextClick();
     }, 600);
@@ -86,7 +96,7 @@ const CustomerDetails = () => {
 
       <form
         onSubmit={onSubmit}
-        className="bg-white max-w-[1000px] mx-auto p-3 pb-8 md:p-10"
+        className="bg-white max-w-[1000px] mx-auto p-3 pb-8 md:p-7"
       >
         <IconButton
           variant="ghost"
@@ -212,7 +222,7 @@ const CustomerDetails = () => {
             text="Continue"
             type="submit"
             loading={loading}
-            className="px-4 col-start-1 w-32 md:56 "
+            className="col-start-1 w-40 "
           />
         </div>
       </form>
@@ -233,7 +243,7 @@ const InputField = React.forwardRef((props, ref) => {
         <input
           {...props}
           ref={ref}
-          className="h-10 bg-blue-50 p-3 border border-blue-500 font-normal text-xs w-full rounded-none font-poppins "
+          className="h-10 md:h-12 bg-blue-50 p-3 border border-blue-500 font-normal text-xs w-full rounded-lg font-poppins "
         />
       </label>
       {errors?.[name] && (
@@ -243,4 +253,4 @@ const InputField = React.forwardRef((props, ref) => {
   );
 });
 
-export default CustomerDetails;
+export default PassengerDetails;

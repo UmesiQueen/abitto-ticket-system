@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { cn } from "@/lib/utils";
-import Button from "../custom/Button";
+import Button from "@/components/custom/Button";
 import { BookingCTX } from "@/hooks/BookingContext";
 import { GlobalCTX } from "@/hooks/GlobalContext";
 import { useStepper } from "@/hooks/useStepper";
@@ -45,6 +45,7 @@ const SeatSelection = () => {
         setFormData((prev) => ({
           ...prev,
           departure_seats: seatSelected.departure,
+          // FIXME: make return seat conditional, should only be sent when its a return trip
           return_seats: seatSelected.return,
         }));
         setLoading(false);
@@ -152,7 +153,7 @@ const SeatSelection = () => {
         </div>
 
         {/* input */}
-        <div className="order-3 md:col-start-1 md:row-start-2 gap-8 flex flex-col px-3 md:pr-0 md:mt-8 pb-2 md:pb-0">
+        <div className="order-3 md:col-start-1 md:row-start-2 flex flex-col justify-between gap-y-8 md:gap-0 px-3 md:pr-0 md:mt-8 pb-2 md:pb-0">
           <p className="first-letter:capitalize">{tab} seat(s) selected :</p>
           <input
             disabled

@@ -6,13 +6,14 @@ import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import { useStepper } from "@/hooks/useStepper";
-import SeatSelection from "@/components/forms/SeatSelectionForm";
-import CustomerDetails from "@/components/forms/CustomerDetailsForm";
-import TravelDetails from "@/components/forms/TravelDetailsForm";
-import PaymentForm from "@/components/forms/PaymentForm";
+import SeatSelection from "@/components/SeatSelection";
+import PassengerDetails from "@/components/PassengerDetailsForm";
+import BookingDetails from "@/components/BookingDetailsForm";
+import Payment from "@/components/Payment";
 
 const Booking = () => {
-  const { activeStep, onNextClick, onPrevClick } = useStepper();
+  // const { activeStep, onNextClick, onPrevClick } = useStepper();
+  const { activeStep } = useStepper();
 
   React.useEffect(() => {
     window.scrollTo({
@@ -32,20 +33,20 @@ const Booking = () => {
             <MaterialUIStepper />
 
             {activeStep === 0 ? (
-              <TravelDetails />
+              <BookingDetails />
             ) : activeStep === 1 ? (
-              <CustomerDetails />
+              <PassengerDetails />
             ) : activeStep === 2 ? (
               <SeatSelection />
             ) : activeStep === 3 ? (
-              <PaymentForm />
+              <Payment />
             ) : (
               ""
             )}
-            <div className="flex gap-2 justify-center *:bg-blue-500 text-white mt-2 *:px-2">
+            {/* <div className="flex gap-2 justify-center *:bg-blue-500 text-white mt-2 *:px-2">
               <button onClick={onPrevClick}>Prev</button>
               <button onClick={onNextClick}>Next</button>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -56,12 +57,10 @@ const Booking = () => {
 export default Booking;
 
 const MaterialUIStepper = () => {
-  // const { activeStep, onNextClick, onPrevClick } = useStepper();
   const { activeStep } = useStepper();
-  // const steps = Array.from({ length: 4 }, (_, i) => i);
   const steps = [
-    "Trip Details",
-    "Customer Details",
+    "Booking Details",
+    "Passenger Details",
     "Seat Selection",
     "Payment",
   ];

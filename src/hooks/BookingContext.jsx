@@ -31,7 +31,6 @@ export const BookingCTX = React.createContext();
 // };
 
 const BookingContext = ({ children }) => {
-  // const store = localStorage.getItem("formData") ?? [];
   const [activeStep, setActiveStep] = React.useState(0);
   const [formData, setFormData] = React.useState([]);
   // const [formData, setFormData] = React.useState(formDataDemo);
@@ -42,10 +41,6 @@ const BookingContext = ({ children }) => {
   const [loading, setLoading] = React.useState(false);
   const [confirmedTicket, setConfirmedTicket] = React.useState();
   const ticketCost = 8800;
-
-  React.useEffect(() => {
-    localStorage.setItem("formData", formData);
-  }, [formData]);
 
   const ctxValue = {
     formData,

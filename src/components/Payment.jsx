@@ -15,7 +15,7 @@ import Button from "@/components/custom/Button";
 import { Button as IconButton } from "@/components/ui/button";
 import { useStepper } from "@/hooks/useStepper";
 
-const PaymentForm = () => {
+const Payment = () => {
   const { formData, ticketCost } = React.useContext(BookingCTX);
   const { onPrevClick } = useStepper();
 
@@ -222,4 +222,4 @@ const PaymentForm = () => {
   );
 };
 
-export default PaymentForm;
+export default Payment;
