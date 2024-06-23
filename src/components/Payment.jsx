@@ -1,4 +1,10 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import { createPortal } from "react-dom";
+import Modal from "@mui/material/Modal";
+import PropTypes from "prop-types";
+import { format } from "date-fns";
+import { formatValue } from "react-currency-input-field";
 import {
   InformationCircleIcon,
   CircleArrowLeftIcon,
@@ -7,22 +13,18 @@ import {
   ClockIcon,
   Boat2Icon,
   UserIcon,
+  CheckIcon,
 } from "@/assets/icons/index";
-import { format } from "date-fns";
-import { formatValue } from "react-currency-input-field";
 import { BookingCTX } from "@/contexts/BookingContext";
 import Button from "@/components/custom/Button";
 import { Button as IconButton } from "@/components/ui/button";
 import { useStepper } from "@/hooks/useStepper";
+import { usePayment } from "@/hooks/usePayment";
 
 const Payment = () => {
-  const { formData, ticketCost } = React.useContext(BookingCTX);
+  const { formData, ticketCost, loading } = React.useContext(BookingCTX);
   const { onPrevClick } = useStepper();
-
-  React.useEffect(() => {
-    console.log(formData, "formData");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { onlinePayment } = usePayment();
 
   return (
     <div className="flex flex-col h-fit p-5 bg-blue-50 w-full max-w-[1000px] mx-auto">
@@ -105,7 +107,7 @@ const Payment = () => {
                   </li>
                   <li>
                     <ChairIcon />
-                    <p className="tracking-widest">{`${formData?.departure_seats}`}</p>
+                    <p className="st">{`${formData?.departure_seats}`}</p>
                   </li>
                 </ul>
               </div>
@@ -123,7 +125,7 @@ const Payment = () => {
                     </li>
                     <li>
                       <ChairIcon />
-                      <p className="tracking-widest">{`${formData?.return_seats}`}</p>
+                      <p className="st">{`${formData?.return_seats}`}</p>
                     </li>
                   </ul>
                 </div>
@@ -211,15 +213,80 @@ const Payment = () => {
           </div>
 
           <Button
-            //   onClick={openModal}
-            //   loading={loading}
+            onClick={onlinePayment}
+            loading={loading}
             text={"Pay with paystack"}
             className="w-56 uppercase mt-10 mb-5 mx-auto"
           />
         </section>
       </div>
+      <SuccessModal />
     </div>
   );
 };
 
 export default Payment;
+
+const SuccessModal = () => {
+  const {
+    showModal,
+    setShowModal,
+    setActiveStep,
+    setFormData,
+    confirmedTicket,
+  } = React.useContext(BookingCTX);
+
+  const handleOnClick = () => {
+    setShowModal(false);
+    setActiveStep(0);
+    setFormData([]);
+  };
+
+  return (
+    <>
+      {showModal &&
+        createPortal(
+          <Modal
+            open={showModal}
+            aria-labelledby="payment-modal"
+            sx={{ backdropFilter: "blur(1px)", zIndex: 1, paddingX: "5" }}
+          >
+            <div className="px-3">
+              <div className="font-poppins mx-auto mt-32 py-10 px-5  md:p-16 w-full max-w-[450px] bg-white text-center flex flex-col gap-5 rounded-lg">
+                <div className="mx-auto w-fit">
+                  <CheckIcon />
+                </div>
+                <h2 className="font-semibold text-base md:text-lg text-[#454545] px-5 md:px-10 ">
+                  Your Ferry Seat has been successfully booked!
+                </h2>
+                <p className="font-normal text-xs text-[#454545] px-10">
+                  Please check your email for important ticket details.
+                </p>
+                <Link
+                  target={"_blank"}
+                  to={`/ticket-invoice/${confirmedTicket._id}`}
+                >
+                  <Button
+                    text={"Print Ticket"}
+                    className="md:py-5 w-full"
+                    onClick={handleOnClick}
+                  />
+                </Link>
+                <Button
+                  text={"Continue"}
+                  variant="outline"
+                  className=" md:py-5 "
+                  onClick={handleOnClick}
+                />
+              </div>
+            </div>
+          </Modal>,
+          document.body
+        )}
+    </>
+  );
+};
+
+SuccessModal.propTypes = {
+  onClick: PropTypes.func,
+};

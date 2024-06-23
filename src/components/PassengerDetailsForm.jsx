@@ -155,12 +155,15 @@ const PassengerDetails = () => {
             <div className="space-y-8 ">
               <div className="rounded-lg flex gap-2 items-center p-3 bg-green-100 border border-green-500 text-xs md:text-sm font-semibold">
                 <Checkbox
+                  id="checkbox"
                   className="border-white rounded-full w-6 h-6"
                   onCheckedChange={(state) => {
                     setChecked(state);
                   }}
                 />
-                <p>Use same Information as above for all adult passengers.</p>
+                <label htmlFor="checkbox">
+                  Use same Information as above for all adult passengers.
+                </label>
               </div>
               {!isChecked && (
                 <div className="gap-8 flex flex-wrap">
