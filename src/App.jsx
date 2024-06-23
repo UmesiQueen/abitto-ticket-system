@@ -2,7 +2,7 @@ import React from "react";
 import { useLocation, Outlet } from "react-router-dom";
 import Loader from "@/components/animation/Loader";
 import { Toaster } from "sonner";
-import GlobalContext from "./hooks/GlobalContext";
+import GlobalContext from "@/contexts/GlobalContext";
 import "./index.css";
 
 const App = () => {

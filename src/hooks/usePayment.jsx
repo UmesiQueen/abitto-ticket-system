@@ -1,7 +1,7 @@
 import React from "react";
 import PaystackPop from "@paystack/inline-js";
 import axios from "axios";
-import { BookingCTX } from "@/hooks/BookingContext";
+import { BookingCTX } from "@/contexts/BookingContext";
 
 export const usePayment = () => {
   const { formData, setPaymentStatus, setLoading, setConfirmedTicket } =

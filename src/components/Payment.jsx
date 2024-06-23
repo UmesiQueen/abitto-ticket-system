@@ -10,7 +10,7 @@ import {
 } from "@/assets/icons/index";
 import { format } from "date-fns";
 import { formatValue } from "react-currency-input-field";
-import { BookingCTX } from "@/hooks/BookingContext";
+import { BookingCTX } from "@/contexts/BookingContext";
 import Button from "@/components/custom/Button";
 import { Button as IconButton } from "@/components/ui/button";
 import { useStepper } from "@/hooks/useStepper";

@@ -12,7 +12,7 @@ import { Outlet, NavLink, Navigate, useNavigate } from "react-router-dom";
 import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
 import React from "react";
-import { GlobalCTX } from "@/hooks/GlobalContext";
+import { GlobalCTX } from "@/contexts/GlobalContext";
 import { Helmet } from "react-helmet-async";
 
 const ProtectedRoute = () => {

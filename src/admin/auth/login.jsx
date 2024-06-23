@@ -4,7 +4,7 @@ import { Eye, EyeSlash } from "iconsax-react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { GlobalCTX } from "@/hooks/GlobalContext";
+import { GlobalCTX } from "@/contexts/GlobalContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";

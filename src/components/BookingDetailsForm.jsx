@@ -17,8 +17,8 @@ import { formatValue } from "react-currency-input-field";
 import { cn } from "@/lib/utils";
 import { bookingDetailsSchema } from "@/lib/validators/bookingSchema";
 import { CalendarIcon } from "@/assets/icons";
-import { BookingCTX } from "@/hooks/BookingContext";
-import { GlobalCTX } from "@/hooks/GlobalContext";
+import { BookingCTX } from "@/contexts/BookingContext";
+import { GlobalCTX } from "@/contexts/GlobalContext";
 import Button from "@/components/custom/Button";
 import { useStepper } from "@/hooks/useStepper";
 

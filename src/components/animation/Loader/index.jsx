@@ -1,5 +1,5 @@
 import React from "react";
-import { GlobalCTX } from "@/hooks/GlobalContext";
+import { GlobalCTX } from "@/contexts/GlobalContext";
 import "./styles.css";
 
 const Loader = () => {

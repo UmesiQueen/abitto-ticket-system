@@ -5,8 +5,8 @@ import { formatValue } from "react-currency-input-field";
 import { Button } from "@/components/ui/button";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
-import { BookingCTX } from "@/hooks/BookingContext";
-import { GlobalCTX } from "@/hooks/GlobalContext";
+import { BookingCTX } from "@/contexts/BookingContext";
+import { GlobalCTX } from "@/contexts/GlobalContext";
 import { Helmet } from "react-helmet-async";
 import { CaretIcon } from "@/assets/icons";
 

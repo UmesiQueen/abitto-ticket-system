@@ -43,7 +43,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { formatValue } from "react-currency-input-field";
 import { capitalize } from "lodash";
 import { cn, humanize } from "@/lib/utils";
-import { GlobalCTX } from "@/hooks/GlobalContext";
+import { GlobalCTX } from "@/contexts/GlobalContext";
 import { PaginationEllipsis } from "@/components/ui/pagination";
 
 const columns = [

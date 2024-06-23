@@ -1,5 +1,5 @@
 import React from "react";
-import { BookingCTX } from "./BookingContext";
+import { BookingCTX } from "../contexts/BookingContext";
 
 export const useStepper = () => {
   const { activeStep, setActiveStep } = React.useContext(BookingCTX);

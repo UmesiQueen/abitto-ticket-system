@@ -3,7 +3,7 @@ import { MapIcon, PhoneIcon, CaretIcon, BoatIcon } from "@/assets/icons/index";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 // import WaveSVG from "@/assets/wave";
-import { GlobalCTX } from "@/hooks/GlobalContext";
+import { GlobalCTX } from "@/contexts/GlobalContext";
 import axios from "axios";
 import FadeInBackgroundTransition from "@/components/animation/FadeIn";
 import { Helmet } from "react-helmet-async";

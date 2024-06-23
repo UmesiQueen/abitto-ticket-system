@@ -27,7 +27,7 @@ import {
 import { format } from "date-fns";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { GlobalCTX } from "@/hooks/GlobalContext";
+import { GlobalCTX } from "@/contexts/GlobalContext";
 
 const chartDataDemo = [
   {

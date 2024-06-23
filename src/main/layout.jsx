@@ -12,7 +12,7 @@ import {
   // LinkedinIcon,
   // TwitterIcon,
 } from "@/assets/icons/index";
-import { GlobalCTX } from "@/hooks/GlobalContext";
+import { GlobalCTX } from "@/contexts/GlobalContext";
 import Button from "@/components/custom/Button";
 
 const MainLayout = () => {
