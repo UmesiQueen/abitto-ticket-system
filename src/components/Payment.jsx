@@ -13,13 +13,13 @@ import {
   ClockIcon,
   Boat2Icon,
   UserIcon,
-  CheckIcon,
 } from "@/assets/icons/index";
 import { BookingCTX } from "@/contexts/BookingContext";
 import Button from "@/components/custom/Button";
 import { Button as IconButton } from "@/components/ui/button";
 import { useStepper } from "@/hooks/useStepper";
 import { usePayment } from "@/hooks/usePayment";
+import checkGIF from "@/assets/check.gif";
 
 const Payment = () => {
   const { formData, ticketCost, loading } = React.useContext(BookingCTX);
@@ -252,14 +252,19 @@ const SuccessModal = () => {
             sx={{ backdropFilter: "blur(1px)", zIndex: 1, paddingX: "5" }}
           >
             <div className="px-3">
-              <div className="font-poppins mx-auto mt-32 py-10 px-5  md:p-16 w-full max-w-[450px] bg-white text-center flex flex-col gap-5 rounded-lg">
+              <div className="font-poppins mx-auto mt-32 py-10 px-5 md:p-16 w-full max-w-[450px] bg-white text-center flex flex-col rounded-lg">
                 <div className="mx-auto w-fit">
-                  <CheckIcon />
+                  <img
+                    src={checkGIF}
+                    alt="checkIcon"
+                    width={200}
+                    height={100}
+                  />
                 </div>
-                <h2 className="font-semibold text-base md:text-lg text-[#454545] px-5 md:px-10 ">
+                <h2 className="font-semibold text-base md:text-lg text-[#454545] px-5 md:px-10 mb-5">
                   Your Ferry Seat has been successfully booked!
                 </h2>
-                <p className="font-normal text-xs text-[#454545] px-10">
+                <p className="font-normal text-xs text-[#454545] px-10 mb-5">
                   Please check your email for important ticket details.
                 </p>
                 <Link
@@ -268,7 +273,7 @@ const SuccessModal = () => {
                 >
                   <Button
                     text={"Print Ticket"}
-                    className="md:py-5 w-full"
+                    className="md:py-5 w-full mb-5"
                     onClick={handleOnClick}
                   />
                 </Link>
