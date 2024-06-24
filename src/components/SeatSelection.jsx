@@ -153,7 +153,7 @@ const SeatSelection = () => {
         </div>
 
         {/* input */}
-        <div className="order-3 md:col-start-1 md:row-start-2 flex flex-col justify-between gap-y-8 md:gap-0 px-3 md:pr-0 md:mt-8 pb-2 md:pb-0">
+        <div className="order-3 md:col-start-1 md:row-start-2 flex flex-col justify-between gap-y-8 px-3 md:pr-0 md:mt-8 pb-2 md:pb-0">
           <p className="first-letter:capitalize">{tab} seat(s) selected :</p>
           <input
             disabled
