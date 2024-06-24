@@ -99,17 +99,36 @@ const BookingForm = ({ tab }) => {
     departure_time: defaultTimeOptions,
     return_time: defaultTimeOptions,
   });
+  const [availableDate, setAvailableDate] = React.useState(
+    new Date().toISOString().split("T")[0]
+  );
   const { onNextClick } = useStepper();
   const ticket_id = uuid();
   const travel_from = watch("travel_from");
   const adults_number = watch("adults_number");
   const children_number = watch("children_number");
+  const departure_date = watch("departure_date");
+  const return_date = watch("return_date");
   const total_passengers = Number(adults_number) + Number(children_number);
 
   React.useEffect(() => {
     if (adults_number) setTotalPassengers(total_passengers);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [adults_number, children_number]);
+
+  React.useEffect(() => {
+    if (departure_date) {
+      const departureDate = new Date(departure_date);
+      const availableDate = new Date(departureDate).setDate(
+        departureDate.getDate() + 1
+      );
+      setAvailableDate(new Date(availableDate).toISOString().split("T")[0]);
+
+      if (return_date < departure_date) resetField("return_date");
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [departure_date]);
 
   React.useEffect(() => {
     resetTimeOptions(travel_from);
@@ -247,7 +266,7 @@ const BookingForm = ({ tab }) => {
                   name="return_date"
                   render={({ field }) => (
                     <DatePicker
-                      minDate={new Date().toISOString().split("T")[0]}
+                      minDate={availableDate}
                       icon={<CalendarIcon />}
                       showIcon
                       toggleCalendarOnIconClick={true}
