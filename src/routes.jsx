@@ -9,7 +9,6 @@ import App from "./App";
 import Home from "./main/pages";
 import Booking from "./main/pages/booking";
 import PageNotFound from "./main/pages/404";
-import TicketSummary from "./main/pages/ticket-summary";
 import AdminLayout from "./admin/layout";
 import Dashboard from "./admin/pages/dashboard";
 import BookingDetails from "./admin/pages/booking-details";
@@ -18,7 +17,7 @@ import Payments from "./admin/pages/payments";
 import Settings from "./admin/pages/settings";
 import Login from "./admin/auth/login";
 import { CustomerDetails } from "./admin/pages/booking-details";
-import TicketInvoice from "./components/custom/TicketInvoice";
+import TicketInvoice from "./components/TicketInvoice";
 // import Notice from "./pages/notice";
 import MainLayout from "./main/layout";
 import About from "./main/pages/about";
@@ -30,7 +29,6 @@ export const router = createBrowserRouter(
       <Route element={<MainLayout />}>
         <Route index element={<Home />} />
         <Route path="booking" element={<Booking />} />
-        <Route path="booking/ticket-summary" element={<TicketSummary />} />
         <Route path="about" element={<About />} />
       </Route>
 
