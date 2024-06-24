@@ -1,16 +1,17 @@
 import React from "react";
-import { MapIcon, PhoneIcon, CaretIcon, BoatIcon } from "@/assets/icons/index";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-// import WaveSVG from "@/assets/wave";
-import { GlobalCTX } from "@/contexts/GlobalContext";
 import axios from "axios";
-import FadeInBackgroundTransition from "@/components/animation/FadeIn";
 import { Helmet } from "react-helmet-async";
 import { toast } from "sonner";
+import PropTypes from "prop-types";
+// import WaveSVG from "@/assets/wave";
+import { MapIcon, PhoneIcon, CaretIcon, BoatIcon } from "@/assets/icons";
+import { rentalBoat, rentalBoat2, rentalBoat3 } from "@/assets/images";
+import { GlobalCTX } from "@/contexts/GlobalContext";
+import FadeInBackgroundTransition from "@/components/animation/FadeIn";
 import Button from "@/components/custom/Button";
 import { cn } from "@/lib/utils";
-import PropTypes from "prop-types";
 
 const Home = () => {
   const { about, contact } = React.useContext(GlobalCTX);
@@ -112,6 +113,68 @@ const Home = () => {
           {/* <p className="self-start text-sm font-medium text-gray-500 mt-4">
             Safety instructions for Abitto ferry services.
           </p> */}
+        </div>
+      </section>
+
+      {/* Rental service */}
+      <section className=" px-5 pb-20 md:p-20">
+        <hgroup className="text-center space-y-2">
+          <h2 className="font-semibold text-2xl">Boat Rental Package</h2>
+          <p className="text-sm">
+            Choose from our range of boat rental packages.
+          </p>
+        </hgroup>
+
+        <div className="grid grid-cols-3 gap-8 mt-10 ">
+          <div className="space-y-6">
+            <img
+              src={rentalBoat}
+              alt="rental"
+              className="rounded-lg h-[300px] w-full object-cover"
+            />
+            <div className="flex justify-between px-3">
+              <div>
+                <p>
+                  <strong>₦150,000.00</strong> / day
+                </p>
+                <p>Rent Within Marina</p>
+              </div>
+              <Button text="Select" className="px-5" />
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <img
+              src={rentalBoat2}
+              alt="rental"
+              className="rounded-lg h-[300px] w-full object-cover"
+            />
+            <div className="flex justify-between px-3">
+              <div>
+                <p>
+                  <strong>₦300,000.00</strong> / day
+                </p>
+                <p>Rent From Uyo - Calabar</p>
+              </div>
+              <Button text="Select" className="px-5" />
+            </div>
+          </div>
+          <div className="space-y-6">
+            <img
+              src={rentalBoat3}
+              alt="rental"
+              className="rounded-lg h-[300px] w-full object-cover"
+            />
+            <div className="flex justify-between px-3">
+              <div>
+                <p>
+                  <strong>₦300,000.00</strong> / day
+                </p>
+                <p>Rent From Calabar - Uyo</p>
+              </div>
+              <Button text="Select" className="px-5" />
+            </div>
+          </div>
         </div>
       </section>
 
