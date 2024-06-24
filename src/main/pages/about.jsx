@@ -1,6 +1,7 @@
 import { Helmet } from "react-helmet-async";
-import Button from "@/components/custom/Button";
 import { useNavigate } from "react-router-dom";
+import Button from "@/components/custom/Button";
+import { about, about2 } from "@/assets/images";
 
 const About = () => {
   const navigate = useNavigate();
@@ -12,7 +13,10 @@ const About = () => {
       </Helmet>
       <div>
         {/* hero section */}
-        <section className="h-[650px] lg:h-screen w-full flex items-center relative bg-[url('https://i.ibb.co/280zDd4/about-hero.jpg')] bg-cover lg:bg-center bg-right bg-no-repeat">
+        <section
+          className="h-[650px] lg:h-screen w-full flex items-center relative bg-cover lg:bg-center bg-right bg-no-repeat"
+          style={{ backgroundImage: `url(${about})` }}
+        >
           <div className="lg:hidden bg-black/40 w-full h-full absolute z-[1] " />
           <div
             className="hidden lg:block absolute w-full h-full"
@@ -108,7 +112,10 @@ const About = () => {
         </section>
 
         {/* Extra */}
-        <section className="w-full h-[300px] flex lg:flex-row-reverse items-center bg-boat bg-cover bg-no-repeat bg-center relative text-white">
+        <section
+          className="w-full h-[300px] flex lg:flex-row-reverse items-center bg-cover bg-no-repeat bg-center relative text-white"
+          style={{ backgroundImage: `url(${about2})` }}
+        >
           <div className="w-full h-full bg-gradient-to-b from-white/0 from-50% to-blue-500/40 absolute z-[1]" />
           <div className="bg-black/80 w-full h-full absolute" />
           <div className=" w-full z-[1] space-y-8 ">

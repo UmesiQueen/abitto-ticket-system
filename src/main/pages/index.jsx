@@ -7,7 +7,13 @@ import { toast } from "sonner";
 import PropTypes from "prop-types";
 // import WaveSVG from "@/assets/wave";
 import { MapIcon, PhoneIcon, CaretIcon, BoatIcon } from "@/assets/icons";
-import { rentalBoat, rentalBoat2, rentalBoat3 } from "@/assets/images";
+import {
+  rentalBoat,
+  rentalBoat2,
+  rentalBoat3,
+  marinaMap,
+  timberMap,
+} from "@/assets/images";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import FadeInBackgroundTransition from "@/components/animation/FadeIn";
 import Button from "@/components/custom/Button";
@@ -62,7 +68,7 @@ const Home = () => {
           <div className=" flex-1 space-y-5 lg:pr-44">
             <div className="flex items-center">
               <span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 " />
-              <h2 className="uppercase font-medium">About us</h2>
+              <h3 className="uppercase font-medium">About us</h3>
             </div>
             <p className="font-medium text-2xl ">
               Welcome to Abitto, where innovation meets reliability in public
@@ -119,20 +125,22 @@ const Home = () => {
       {/* Rental service */}
       <section className=" px-5 pb-20 md:p-20">
         <hgroup className="text-center space-y-2">
-          <h2 className="font-semibold text-2xl">Boat Rental Package</h2>
-          <p className="text-sm">
+          <h2 className="font-semibold text-xl md:text-2xl">
+            Boat Rental Package
+          </h2>
+          <p className="text-xs md:text-sm">
             Choose from our range of boat rental packages.
           </p>
         </hgroup>
 
-        <div className=" grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-10 ">
+        <div className=" grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-10 text-sm md:text-base ">
           <div className="space-y-6">
             <img
               src={rentalBoat}
               alt="rental"
               className="rounded-lg h-[300px] w-full object-cover"
             />
-            <div className="flex justify-between gap-3 items-center px-3">
+            <div className="flex justify-between gap-3 items-end px-3">
               <div>
                 <p>
                   <strong>₦150,000.00</strong> / day
@@ -149,7 +157,7 @@ const Home = () => {
               alt="rental"
               className="rounded-lg h-[300px] w-full object-cover"
             />
-            <div className="flex justify-between gap-3 items-center px-3">
+            <div className="flex justify-between gap-3 items-end px-3">
               <div>
                 <p>
                   <strong>₦300,000.00</strong> / day
@@ -159,13 +167,14 @@ const Home = () => {
               <Button text="Select" className="px-5" />
             </div>
           </div>
+
           <div className="space-y-6">
             <img
               src={rentalBoat3}
               alt="rental"
               className="rounded-lg h-[300px] w-full object-cover"
             />
-            <div className="flex justify-between gap-3 items-center px-3">
+            <div className="flex justify-between gap-3 items-end px-3">
               <div>
                 <p>
                   <strong>₦300,000.00</strong> / day
@@ -181,8 +190,12 @@ const Home = () => {
       {/* Client Testimonials */}
       <section className="py-20 px-5 md:px-20 bg-blue-50 space-y-8">
         <hgroup className="text-center space-y-2">
-          <h2 className="font-semibold text-2xl">Clients Testimonials</h2>
-          <p className="text-sm">{"Here's"} what some of them are saying.</p>
+          <h2 className="font-semibold text-xl md:text-2xl">
+            Clients Testimonials
+          </h2>
+          <p className="text-xs md:text-sm">
+            {"Here's"} what some of them are saying.
+          </p>
         </hgroup>
         <div className="flex gap-8 mx-auto overflow-auto no-scrollbar snap-x snap-mandatory">
           {Testimonials.map((item) => (
@@ -214,24 +227,24 @@ const Home = () => {
 
       {/* Contact us  */}
       <section className="py-20 px-5 md:px-20" ref={contact} id="contact-us">
-        <h2 className="font-semibold text-2xl text-center mb-7">Contact Us</h2>
+        <h2 className="font-semibold text-xl md:text-2xl text-center mb-7">
+          Contact Us
+        </h2>
         <div className="flex flex-col-reverse md:flex-row gap-10 lg:gap-16 justify-between ">
           <div className="flex flex-col flex-1">
             <div className="flex items-center md:hidden mb-5">
               <span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 " />
-              <h2 className="uppercase font-medium">Our Location</h2>
+              <h3 className="uppercase font-medium">Our Location</h3>
             </div>
 
             {/* Calabar */}
             <div className="lg:flex gap-8 mb-10 md:bg-blue-50 p-0 md:p-5 rounded-lg">
               <img
-                src="https://i.ibb.co/T46yDpf/Marina.png"
+                src={marinaMap}
                 alt="contact-us"
-                width={350}
-                height={420}
-                className="self-start mb-8 lg:mb-0 w-full lg:w-1/2 rounded-lg shadow-lg"
+                className="lg:flex-1 self-start mb-8 lg:mb-0 h-[200px] w-full rounded-lg shadow-lg object-cover"
               />
-              <ul className="text-sm [&_a]:flex [&_a]:gap-3 [&_a]:items-center space-y-7 ">
+              <ul className="lg:flex-1 text-sm [&_a]:flex [&_a]:gap-3 [&_a]:items-center space-y-7 ">
                 <li className="flex gap-3 items-center">
                   <span>
                     <BoatIcon />
@@ -267,13 +280,11 @@ const Home = () => {
             {/* Uyo */}
             <div className="lg:flex gap-8 md:bg-blue-50 rounded-lg  p-0 md:p-5 ">
               <img
-                src="https://i.ibb.co/wCRvwCG/Ibom-icon.png"
+                src={timberMap}
                 alt="contact-us"
-                width={350}
-                height={420}
-                className="self-start mb-8 lg:mb-0 w-full lg:w-1/2 rounded-lg shadow-lg"
+                className="lg:flex-1 self-start mb-8 lg:mb-0 h-[200px] w-full rounded-lg shadow-lg object-cover"
               />
-              <ul className="text-sm [&_a]:flex [&_a]:gap-3 [&_a]:items-center space-y-7 ">
+              <ul className="lg:flex-1 text-sm [&_a]:flex [&_a]:gap-3 [&_a]:items-center space-y-7 ">
                 <li className="flex gap-3 items-center">
                   <span>
                     <BoatIcon />
