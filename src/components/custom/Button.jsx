@@ -1,5 +1,6 @@
 import ClipLoader from "react-spinners/ClipLoader";
 import PropTypes from "prop-types";
+import { cn } from "@/lib/utils";
 
 const Button = ({
   text = "Button",
@@ -8,13 +9,22 @@ const Button = ({
   className,
   type = "button",
   onClick,
+  variant = "primary",
 }) => {
   return (
     <button
       disabled={disabled}
       type={type}
       onClick={onClick}
-      className={`bg-blue-500 h-[40px] max-w-full font-semibold text-sm hover:bg-blue-700 hover:text-stone-200 transition-all duration-150 ease-in-out text-white flex justify-center items-center rounded-lg  disabled:pointer-events-none disabled:hover:text-white disabled:bg-[#C2C2C2] disabled:border-[#C2C2C2] border-2 border-blue-500 ${className}`}
+      className={cn(
+        `h-[40px] max-w-full font-semibold text-xs md:text-sm transition-all duration-150 ease-in-out  flex justify-center items-center rounded-lg  disabled:pointer-events-none disabled:border-[#C2C2C2] border-2 border-blue-500 tracking-wide ${className}`,
+        {
+          "bg-blue-500 hover:bg-blue-700 hover:border-blue-700 text-white hover:text-stone-200 disabled:bg-[#C2C2C2] ":
+            variant === "primary",
+          "!bg-transparent hover:border-blue-700 text-blue-500 hover:text-blue-700 hover:bg-blue-50 disabled:text-[#C2C2C2]":
+            variant === "outline",
+        }
+      )}
     >
       {loading ? (
         <ClipLoader
@@ -37,6 +47,7 @@ Button.propTypes = {
   type: PropTypes.string,
   onClick: PropTypes.func,
   disabled: PropTypes.bool,
+  variant: PropTypes.string,
 };
 
 export default Button;

@@ -319,12 +319,13 @@ const ContactForm = () => {
         ) : (
           ""
         )}
-        <button
+        <Button
+          variant="outline"
           type="submit"
-          className=" border-2 border-blue-500 text-blue-500 bg-blue-50 hover:border-blue-700 hover:text-blue-700 py-3 w-40 font-semibold text-sm !bg-transparent self-start transition-all duration-150 ease-in-out mt-auto"
-        >
-          {loading ? "Sending..." : "Send Request"}
-        </button>
+          loading={loading}
+          text={"Send Request"}
+          className="w-full md:w-40"
+        />
       </form>
     </>
   );
