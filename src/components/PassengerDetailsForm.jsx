@@ -11,6 +11,7 @@ import { Button as IconButton } from "@/components/ui/button";
 import Button from "@/components/custom/Button";
 import { useStepper } from "@/hooks/useStepper";
 import { format } from "date-fns";
+import InputField from "./custom/InputField";
 
 const PassengerDetails = () => {
   const { loading, setLoading } = React.useContext(GlobalCTX);
@@ -27,6 +28,7 @@ const PassengerDetails = () => {
     mode: "onChange",
     resolver: yupResolver(passengerDetailsSchema),
     context: { adultPassengers: adults_number, isChecked },
+    defaultValues: formData,
   });
 
   const onSubmit = handleSubmit((formData) => {
@@ -232,28 +234,5 @@ const PassengerDetails = () => {
     </>
   );
 };
-
-// eslint-disable-next-line react/display-name
-const InputField = React.forwardRef((props, ref) => {
-  const { name, errors, label } = props;
-
-  return (
-    <div className="flex flex-col w-full">
-      <label
-        className={"text-xs md:text-sm !w-full flex gap-2 md:gap-3 flex-col"}
-      >
-        {label}
-        <input
-          {...props}
-          ref={ref}
-          className="h-10 md:h-12 bg-blue-50 p-3 border border-blue-500 font-normal text-xs w-full rounded-lg font-poppins "
-        />
-      </label>
-      {errors?.[name] && (
-        <p className="text-xs pt-2 text-red-700">{errors?.[name].message}</p>
-      )}
-    </div>
-  );
-});
 
 export default PassengerDetails;

@@ -8,15 +8,13 @@ import { useStepper } from "@/hooks/useStepper";
 import { CaretIcon, CircleArrowLeftIcon } from "@/assets/icons";
 import { Button as IconButton } from "@/components/ui/button";
 import { format } from "date-fns";
+import { toast } from "sonner";
 
 const SeatSelection = () => {
-  const [seatSelected, setSeatSelected] = React.useState({
-    departure: [],
-    return: [],
-  });
   const [tab, setTab] = React.useState("departure");
   const [selectionExceeded, setSelectionExceeded] = React.useState(false);
-  const { formData, setFormData } = React.useContext(BookingCTX);
+  const { formData, setFormData, setSeatSelected, seatSelected } =
+    React.useContext(BookingCTX);
   const { loading, setLoading } = React.useContext(GlobalCTX);
   const passengers = formData?.total_passengers;
   const { onPrevClick, onNextClick } = useStepper();
@@ -27,7 +25,7 @@ const SeatSelection = () => {
   }, [seatSelected, tab, passengers]);
 
   const handleSelection = (target, checked) => {
-    if (!checked)
+    if (!checked && !selectionExceeded)
       return setSeatSelected((prev) => ({
         ...prev,
         [tab]: [...prev[tab], target],
@@ -177,33 +175,51 @@ const SeatSelection = () => {
                 }
                 className="w-24 rounded-lg mt-auto disabled:bg-[#C2C2C2]/40 disabled:text-[#C2C2C2]"
               />
+              <div
+                onClick={() => {
+                  if (!selectionExceeded)
+                    toast.info(
+                      `Please select all ${passengers} seat(s) to proceed.`
+                    );
+                }}
+              >
+                <Button
+                  disabled={!selectionExceeded}
+                  loading={loading}
+                  onClick={tab == "departure" ? handleNextClick : handleSubmit}
+                  text={
+                    tab == "departure" ? (
+                      <p className="flex items-center gap-2">
+                        Next
+                        <span>
+                          <CaretIcon />
+                        </span>
+                      </p>
+                    ) : (
+                      "Purchase Ticket"
+                    )
+                  }
+                  className="w-fit px-6 rounded-lg mt-auto"
+                />
+              </div>
+            </div>
+          ) : (
+            <div
+              onClick={() => {
+                if (!selectionExceeded)
+                  toast.info(
+                    `Please select all ${passengers} seat(s) to proceed.`
+                  );
+              }}
+            >
               <Button
                 disabled={!selectionExceeded}
                 loading={loading}
-                onClick={tab == "departure" ? handleNextClick : handleSubmit}
-                text={
-                  tab == "departure" ? (
-                    <p className="flex items-center gap-2">
-                      Next
-                      <span>
-                        <CaretIcon />
-                      </span>
-                    </p>
-                  ) : (
-                    "Purchase Ticket"
-                  )
-                }
-                className="w-fit px-6 rounded-lg mt-auto"
+                onClick={handleSubmit}
+                text={"Purchase Ticket"}
+                className="w-full md:w-56 rounded-lg mt-auto"
               />
             </div>
-          ) : (
-            <Button
-              disabled={!selectionExceeded}
-              loading={loading}
-              onClick={handleSubmit}
-              text={"Purchase Ticket"}
-              className="w-full md:w-56 rounded-lg mt-auto"
-            />
           )}
         </div>
 

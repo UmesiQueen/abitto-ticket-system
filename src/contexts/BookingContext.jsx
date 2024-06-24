@@ -2,6 +2,54 @@ import React from "react";
 import PropTypes from "prop-types";
 
 export const BookingCTX = React.createContext();
+
+const BookingContext = ({ children }) => {
+  const [activeStep, setActiveStep] = React.useState(0);
+  const [formData, setFormData] = React.useState({});
+  const [loading, setLoading] = React.useState(false);
+  const ticketStore = JSON.parse(localStorage.getItem("ticket")) ?? null;
+  const [confirmedTicket, setConfirmedTicket] = React.useState(ticketStore);
+  const [showModal, setShowModal] = React.useState(false);
+  const [seatSelected, setSeatSelected] = React.useState({
+    departure: formData?.departure_seat ?? [],
+    return: formData?.return_seat ?? [],
+  });
+  const ticketCost = 8800;
+
+  React.useEffect(() => {
+    if (confirmedTicket)
+      localStorage.setItem("ticket", JSON.stringify(confirmedTicket));
+  }, [confirmedTicket]);
+
+  React.useEffect(() => {
+    console.log(formData, "formData");
+  }, [formData]);
+
+  const ctxValue = {
+    formData,
+    setFormData,
+    loading,
+    setLoading,
+    confirmedTicket,
+    setConfirmedTicket,
+    ticketCost,
+    activeStep,
+    setActiveStep,
+    showModal,
+    setShowModal,
+    seatSelected,
+    setSeatSelected,
+  };
+
+  return <BookingCTX.Provider value={ctxValue}>{children}</BookingCTX.Provider>;
+};
+
+BookingContext.propTypes = {
+  children: PropTypes.node,
+};
+
+export default BookingContext;
+
 // const formDataDemo = {
 //   _id: "665a5714d2f76d6fc3d61830",
 //   paid_with: "Cash",
@@ -11,8 +59,10 @@ export const BookingCTX = React.createContext();
 //   status: "Pending",
 //   medium: "Offline",
 //   ticket_id: "f624cd",
-//  // seat_no: ["1", "2", "3", "4", "5", "6"],
-//   trip_type: "Round Trip",
+//   seat_no: ["1", "2", "3"],
+//   departure_seat: ["2D", "4D", "5D"],
+//   return_seat: [],
+//   trip_type: "One-Way Trip",
 //   travel_from: "Marina, Calabar",
 //   travel_to: "Nwaniba Timber Beach, Uyo",
 //   departure_date:
@@ -29,40 +79,3 @@ export const BookingCTX = React.createContext();
 //   created_at: "2024-05-31T23:02:44.085Z",
 //   __v: 0,
 // };
-const store = JSON.parse(localStorage.getItem("ticket")) ?? null;
-const BookingContext = ({ children }) => {
-  const [activeStep, setActiveStep] = React.useState(0);
-  const [formData, setFormData] = React.useState([]);
-  // const [formData, setFormData] = React.useState(formDataDemo);
-  const [loading, setLoading] = React.useState(false);
-  const [confirmedTicket, setConfirmedTicket] = React.useState(store);
-  const [showModal, setShowModal] = React.useState(false);
-  const ticketCost = 8800;
-
-  React.useEffect(() => {
-    if (confirmedTicket)
-      localStorage.setItem("ticket", JSON.stringify(confirmedTicket));
-  }, [confirmedTicket]);
-
-  const ctxValue = {
-    formData,
-    setFormData,
-    loading,
-    setLoading,
-    confirmedTicket,
-    setConfirmedTicket,
-    ticketCost,
-    activeStep,
-    setActiveStep,
-    showModal,
-    setShowModal,
-  };
-
-  return <BookingCTX.Provider value={ctxValue}>{children}</BookingCTX.Provider>;
-};
-
-BookingContext.propTypes = {
-  children: PropTypes.node,
-};
-
-export default BookingContext;

@@ -6,8 +6,6 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import { styled } from "@mui/material/styles";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
 import { useForm, Controller } from "react-hook-form";
 import { v4 as uuid } from "uuid";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -21,6 +19,7 @@ import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import Button from "@/components/custom/Button";
 import { useStepper } from "@/hooks/useStepper";
+import SelectField from "./custom/SelectField";
 
 const BookingDetails = () => {
   const [value, setValue] = React.useState("1");
@@ -76,25 +75,11 @@ const BookingDetails = () => {
   );
 };
 
+const defaultTimeOptions = ["09:30 AM", "11:00 AM", "03:30 PM", "04:30 PM"];
 const BookingForm = ({ tab }) => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    control,
-    resetField,
-    watch,
-  } = useForm({
-    mode: "onChange",
-    resolver: yupResolver(bookingDetailsSchema),
-    context: { roundTrip: tab === "Round Trip" ? true : false },
-  });
-
-  const defaultTimeOptions = ["09:30 AM", "11:00 AM", "03:30 PM", "04:30 PM"];
-
   const [totalPassengers, setTotalPassengers] = React.useState(0);
   const { loading, setLoading } = React.useContext(GlobalCTX);
-  const { setFormData, ticketCost } = React.useContext(BookingCTX);
+  const { setFormData, ticketCost, formData } = React.useContext(BookingCTX);
   const [timeOptions, setTimeOptions] = React.useState({
     departure_time: defaultTimeOptions,
     return_time: defaultTimeOptions,
@@ -104,6 +89,21 @@ const BookingForm = ({ tab }) => {
   );
   const { onNextClick } = useStepper();
   const ticket_id = uuid();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, defaultValues },
+    control,
+    resetField,
+    watch,
+  } = useForm({
+    mode: "onChange",
+    resolver: yupResolver(bookingDetailsSchema),
+    context: { roundTrip: tab === "Round Trip" ? true : false },
+    defaultValues: formData,
+  });
+
   const travel_from = watch("travel_from");
   const adults_number = watch("adults_number");
   const children_number = watch("children_number");
@@ -158,16 +158,20 @@ const BookingForm = ({ tab }) => {
   };
 
   const onSubmit = (formData) => {
+    console.log({ ...formData, trip_type: tab });
     setLoading(true);
     setTimeout(() => {
-      setFormData({
-        ticket_id: ticket_id.slice(0, 6),
-        trip_type: tab,
-        total_passengers: totalPassengers,
-        amount:
-          Number(totalPassengers) *
-          (tab === "One-Way Trip" ? ticketCost : ticketCost * 2),
-        ...formData,
+      setFormData((prev) => {
+        console.log(prev);
+        return {
+          ticket_id: ticket_id.slice(0, 6),
+          trip_type: tab,
+          total_passengers: totalPassengers,
+          amount:
+            Number(totalPassengers) *
+            (tab === "One-Way Trip" ? ticketCost : ticketCost * 2),
+          ...formData,
+        };
       });
       setLoading(false);
       onNextClick();
@@ -183,6 +187,7 @@ const BookingForm = ({ tab }) => {
 
         <SelectField
           {...register("travel_from")}
+          defaultValue={defaultValues["travel_from"]}
           label="Traveling From"
           placeholder="Select Departure Terminal"
           options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
@@ -191,6 +196,7 @@ const BookingForm = ({ tab }) => {
 
         <SelectField
           {...register("travel_to")}
+          defaultValue={defaultValues["travel_to"]}
           label="Traveling To"
           placeholder="Select Arrival Terminal"
           options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
@@ -246,6 +252,7 @@ const BookingForm = ({ tab }) => {
           <div className="w-1/2  md:w-full grow">
             <SelectField
               {...register("departure_time")}
+              defaultValue={defaultValues["departure_time"]}
               label="Time of Departure"
               placeholder="12:00 PM"
               options={timeOptions.departure_time}
@@ -298,6 +305,7 @@ const BookingForm = ({ tab }) => {
 
             <SelectField
               {...register("return_time")}
+              defaultValue={defaultValues["return_time"]}
               label="Time of Return"
               placeholder="12:00 PM"
               options={timeOptions.return_time}
@@ -310,6 +318,7 @@ const BookingForm = ({ tab }) => {
         <div className="flex gap-5">
           <SelectField
             {...register("adults_number")}
+            defaultValue={defaultValues["adults_number"]}
             label="No. of Adults"
             placeholder="0"
             options={[1, 2, 3, 4, 5]}
@@ -317,6 +326,7 @@ const BookingForm = ({ tab }) => {
           />
           <SelectField
             {...register("children_number")}
+            defaultValue={defaultValues["children_number"]}
             label="No. of Children"
             placeholder="0"
             options={["", 1, 2, 3, 4, 5]}
@@ -327,7 +337,7 @@ const BookingForm = ({ tab }) => {
 
       {totalPassengers ? (
         <div className="border-y-2 border-dashed py-8 px-5 md:px-10 mb-8">
-          <table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] ">
+          <table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] tracking-wide">
             <tbody>
               {/* <tr>
                 <td className="text-xs text-[#444444]">Ride Insurance</td>
@@ -336,7 +346,8 @@ const BookingForm = ({ tab }) => {
               <tr className="text-xs md:text-base text-[#444444]">
                 <td>Ticket Price</td>
                 <td>
-                  {formatValue({ value: String(ticketCost), prefix: "₦" })}
+                  {formatValue({ value: String(ticketCost), prefix: "₦" })} x{" "}
+                  {totalPassengers}
                 </td>
               </tr>
               <tr className="font-medium text-base md:text-lg">
@@ -367,54 +378,6 @@ const BookingForm = ({ tab }) => {
     </form>
   );
 };
-
-// eslint-disable-next-line react/display-name
-const SelectField = React.forwardRef((props, ref) => {
-  const { label, placeholder, options, name, errors, onChange } = props;
-  const [value, setValue] = React.useState("");
-
-  return (
-    <div className="flex flex-col w-full">
-      <label className="text-xs md:text-sm w-full flex gap-2 md:gap-3 flex-col ">
-        {label}
-        <Select
-          ref={ref}
-          {...props}
-          value={options.includes(value) ? value : ""}
-          onChange={(event) => {
-            setValue(event.target.value);
-            onChange(event);
-          }}
-          displayEmpty
-          renderValue={
-            value !== ""
-              ? undefined
-              : () => (
-                  <span className="noTranslate text-xs font-poppins text-[#9fa6b2]">
-                    {placeholder}
-                  </span>
-                )
-          }
-          sx={{
-            "& .MuiOutlinedInput-notchedOutline": { display: "none" },
-          }}
-          className="bg-blue-50 h-10 md:h-12 border border-blue-500 font-normal text-xs w-full !rounded-lg"
-        >
-          {options.map((option, index) => {
-            return (
-              <MenuItem value={option} key={index}>
-                {option}
-              </MenuItem>
-            );
-          })}
-        </Select>
-      </label>
-      {errors?.[name] && (
-        <p className="text-xs pt-2 text-red-700">{errors?.[name].message}</p>
-      )}
-    </div>
-  );
-});
 
 const StyledTabList = styled((props) => (
   <TabList
