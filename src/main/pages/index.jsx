@@ -125,14 +125,14 @@ const Home = () => {
           </p>
         </hgroup>
 
-        <div className="grid grid-cols-3 gap-8 mt-10 ">
+        <div className=" grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-10 ">
           <div className="space-y-6">
             <img
               src={rentalBoat}
               alt="rental"
               className="rounded-lg h-[300px] w-full object-cover"
             />
-            <div className="flex justify-between px-3">
+            <div className="flex justify-between gap-3 items-center px-3">
               <div>
                 <p>
                   <strong>₦150,000.00</strong> / day
@@ -149,7 +149,7 @@ const Home = () => {
               alt="rental"
               className="rounded-lg h-[300px] w-full object-cover"
             />
-            <div className="flex justify-between px-3">
+            <div className="flex justify-between gap-3 items-center px-3">
               <div>
                 <p>
                   <strong>₦300,000.00</strong> / day
@@ -165,7 +165,7 @@ const Home = () => {
               alt="rental"
               className="rounded-lg h-[300px] w-full object-cover"
             />
-            <div className="flex justify-between px-3">
+            <div className="flex justify-between gap-3 items-center px-3">
               <div>
                 <p>
                   <strong>₦300,000.00</strong> / day
