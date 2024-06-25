@@ -105,7 +105,7 @@ export const usePayment = () => {
         setShowModal(true);
       },
       onCancel() {
-        toast.error("Transaction failed. Please try again later.");
+        toast.error("Transaction failed. Please try again.");
       },
     });
   };
