@@ -14,6 +14,7 @@ const BookingContext = ({ children }) => {
     departure: formData?.departure_seat ?? [],
     return: formData?.return_seat ?? [],
   });
+  const [isChecked, setChecked] = React.useState(false);
   const ticketCost = 8800;
 
   React.useEffect(() => {
@@ -39,6 +40,8 @@ const BookingContext = ({ children }) => {
     setShowModal,
     seatSelected,
     setSeatSelected,
+    isChecked,
+    setChecked,
   };
 
   return <BookingCTX.Provider value={ctxValue}>{children}</BookingCTX.Provider>;

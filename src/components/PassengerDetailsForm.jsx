@@ -15,8 +15,8 @@ import InputField from "./custom/InputField";
 
 const PassengerDetails = () => {
   const { loading, setLoading } = React.useContext(GlobalCTX);
-  const { setFormData, formData } = React.useContext(BookingCTX);
-  const [isChecked, setChecked] = React.useState(false);
+  const { setFormData, formData, setChecked, isChecked } =
+    React.useContext(BookingCTX);
   const { onPrevClick, onNextClick } = useStepper();
   const adults_number = formData?.adults_number;
 
@@ -31,26 +31,45 @@ const PassengerDetails = () => {
     defaultValues: formData,
   });
 
-  const onSubmit = handleSubmit((formData) => {
-    setLoading(true);
-    setTimeout(() => {
-      setFormData((prev) =>
-        isChecked
-          ? {
-              ...prev,
-              first_name: formData.first_name,
-              surname: formData.surname,
-              phone_number: formData.phone_number,
-              email: formData.email,
-            }
-          : {
-              ...prev,
-              ...formData,
-            }
-      );
-      setLoading(false);
+  const onSubmit = handleSubmit((formData_) => {
+    const formValues = {
+      ticket_id: formData.ticket_id,
+      trip_type: formData.trip_type,
+      travel_from: formData.travel_from,
+      travel_to: formData.travel_to,
+      departure_date: formData.departure_date,
+      departure_time: formData.departure_time,
+      adults_number: formData.adults_number,
+      children_number: formData.children_number,
+      total_passengers: formData.total_passengers,
+      amount: formData.amount,
+      ...(formData.trip_type === "Round Trip" && {
+        return_date: formData.return_date,
+        return_time: formData.return_time,
+      }),
+      ...(isChecked
+        ? {
+            first_name: formData_.first_name,
+            surname: formData_.surname,
+            phone_number: formData_.phone_number,
+            email: formData_.email,
+          }
+        : {
+            ...formData_,
+          }),
+    };
+
+    if (formData?.first_name) {
+      setFormData(() => formValues);
       onNextClick();
-    }, 600);
+    } else {
+      setLoading(true);
+      setTimeout(() => {
+        setFormData(() => formValues);
+        setLoading(false);
+        onNextClick();
+      }, 600);
+    }
   });
 
   return (
@@ -159,6 +178,7 @@ const PassengerDetails = () => {
                 <Checkbox
                   id="checkbox"
                   className="border-white rounded-full w-6 h-6"
+                  checked={isChecked}
                   onCheckedChange={(state) => {
                     setChecked(state);
                   }}

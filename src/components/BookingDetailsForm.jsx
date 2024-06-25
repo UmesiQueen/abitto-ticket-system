@@ -157,25 +157,46 @@ const BookingForm = ({ tab }) => {
     }
   };
 
-  const onSubmit = (formData) => {
-    console.log({ ...formData, trip_type: tab });
-    setLoading(true);
-    setTimeout(() => {
-      setFormData((prev) => {
-        console.log(prev);
-        return {
-          ticket_id: ticket_id.slice(0, 6),
-          trip_type: tab,
-          total_passengers: totalPassengers,
-          amount:
-            Number(totalPassengers) *
-            (tab === "One-Way Trip" ? ticketCost : ticketCost * 2),
-          ...formData,
-        };
-      });
-      setLoading(false);
+  const onSubmit = (formData_) => {
+    const total_passengers =
+      Number(formData_.adults_number) + Number(formData_.children_number);
+
+    const formValues = {
+      trip_type: tab,
+      total_passengers,
+      amount:
+        total_passengers *
+        (tab === "One-Way Trip" ? ticketCost : ticketCost * 2),
+      travel_from: formData_.travel_from,
+      travel_to: formData_.travel_to,
+      departure_date: formData_.departure_date,
+      departure_time: formData_.departure_time,
+      adults_number: formData_.adults_number,
+      children_number: formData_.children_number,
+      ...(tab === "Round Trip" && {
+        return_date: formData_.return_date,
+        return_time: formData_.return_time,
+      }),
+    };
+
+    if (Object.keys(formData).length) {
+      setFormData((prev) => ({
+        ticket_id: prev.ticket_id,
+        ...prev,
+        ...formValues,
+      }));
       onNextClick();
-    }, 600);
+    } else {
+      setLoading(true);
+      setTimeout(() => {
+        setFormData(() => ({
+          ticket_id: ticket_id.slice(0, 6),
+          ...formValues,
+        }));
+        setLoading(false);
+        onNextClick();
+      }, 600);
+    }
   };
 
   return (

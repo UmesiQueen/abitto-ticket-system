@@ -18,13 +18,14 @@ import { BookingCTX } from "@/contexts/BookingContext";
 import Button from "@/components/custom/Button";
 import { Button as IconButton } from "@/components/ui/button";
 import { useStepper } from "@/hooks/useStepper";
-import { usePayment } from "@/hooks/usePayment";
+// import { usePayment } from "@/hooks/usePayment";
 import checkGIF from "@/assets/check.gif";
 
 const Payment = () => {
-  const { formData, ticketCost, loading } = React.useContext(BookingCTX);
+  const { formData, ticketCost, loading, setShowModal } =
+    React.useContext(BookingCTX);
   const { onPrevClick } = useStepper();
-  const { onlinePayment } = usePayment();
+  // const { onlinePayment } = usePayment();
 
   return (
     <div className="flex flex-col h-fit p-5 bg-blue-50 w-full max-w-[1000px] mx-auto">
@@ -213,7 +214,10 @@ const Payment = () => {
           </div>
 
           <Button
-            onClick={onlinePayment}
+            // onClick={onlinePayment}
+            onClick={() => {
+              setShowModal(true);
+            }}
             loading={loading}
             text={"Pay with paystack"}
             className="w-56 uppercase mt-10 mb-5 mx-auto"

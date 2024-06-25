@@ -37,19 +37,32 @@ const SeatSelection = () => {
   };
 
   const handleSubmit = () => {
-    setLoading(true);
-    setTimeout(() => {
-      if (selectionExceeded) {
+    const formValues = {
+      departure_seats: seatSelected.departure,
+      ...(formData.trip_type === "Round Trip" && {
+        return_seats: seatSelected.return,
+      }),
+    };
+
+    if (selectionExceeded) {
+      if (formData?.departure_seat) {
         setFormData((prev) => ({
           ...prev,
-          departure_seats: seatSelected.departure,
-          // FIXME: make return seat conditional, should only be sent when its a return trip
-          return_seats: seatSelected.return,
+          ...formValues,
         }));
-        setLoading(false);
         onNextClick();
+      } else {
+        setLoading(true);
+        setTimeout(() => {
+          setFormData((prev) => ({
+            ...prev,
+            ...formValues,
+          }));
+          setLoading(false);
+          onNextClick();
+        }, 600);
       }
-    }, 600);
+    }
   };
 
   const handlePrevClick = () => {
