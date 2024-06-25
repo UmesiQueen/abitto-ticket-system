@@ -14,11 +14,11 @@ export const usePayment = () => {
     paystack.newTransaction({
       key: "pk_live_297c0c356506ae67d9de7d6a51967914d9af9567",
       // key: "pk_test_5d5cd21c077f1395d701366d2880665b3e9fb0f5",
-      amount: formData?.amount * 100,
-      email: formData?.email,
-      firstname: formData?.first_name,
-      lastname: formData?.surname,
-      phone: formData?.phone_number,
+      amount: formData.bookingDetails?.amount * 100,
+      email: formData.passengerDetails?.email,
+      firstname: formData.passengerDetails?.first_name,
+      lastname: formData.passengerDetails?.surname,
+      phone: formData.passengerDetails?.phone_number,
       onSuccess(res) {
         handleOnlineBooking({
           status: "Success",
@@ -38,13 +38,18 @@ export const usePayment = () => {
     // const BASE_URL = import.meta.env.DEV  ?
     //    import.meta.env.VITE_ABITTO_BASE_URL
     //   : import.meta.env.ABITTO_BASE_URL;
+    const { ticket_id, bookingDetails, passengerDetails, seatDetails } =
+      formData;
 
     axios
       .post("https://abitto-api.onrender.com/api/booking/new", {
-        ...formData,
-        ...props,
+        ticket_id,
         medium: "Online",
         paid_with: "Paystack",
+        ...props,
+        ...bookingDetails,
+        ...passengerDetails,
+        ...seatDetails,
       })
       .then((res) => {
         setLoading(false);
@@ -73,5 +78,37 @@ export const usePayment = () => {
     toast.error("Request failed. Please try again later.");
   };
 
-  return { onlinePayment };
+  const fakeOnlinePayment = () => {
+    const { ticket_id, bookingDetails, passengerDetails, seatDetails } =
+      formData;
+    const requestData = {
+      ticket_id,
+      ...bookingDetails,
+      ...passengerDetails,
+      ...seatDetails,
+      medium: "Online",
+      paid_with: "Paystack",
+      status: "Success",
+    };
+
+    const paystack = new PaystackPop();
+
+    paystack.newTransaction({
+      key: "pk_test_5d5cd21c077f1395d701366d2880665b3e9fb0f5",
+      amount: formData.bookingDetails?.amount * 100,
+      email: formData.passengerDetails?.email,
+      firstname: formData.passengerDetails?.first_name,
+      lastname: formData.passengerDetails?.surname,
+      phone: formData.passengerDetails?.phone_number,
+      onSuccess(res) {
+        setConfirmedTicket({ trxRef: res.trxref, ...requestData });
+        setShowModal(true);
+      },
+      onCancel() {
+        toast.error("Transaction failed. Please try again later.");
+      },
+    });
+  };
+
+  return { onlinePayment, fakeOnlinePayment };
 };
