@@ -5,18 +5,16 @@ import axios from "axios";
 
 export const GlobalCTX = React.createContext();
 
+const adminStore = JSON.parse(localStorage.getItem("admin")) || null;
 const GlobalContext = ({ children }) => {
   const about = React.useRef();
   const contact = React.useRef();
   const [loading, setLoading] = React.useState(false);
   const [dataQuery, setDataQuery] = React.useState([]);
-  const [showModal, setShowModal] = React.useState(false);
-
-  const store = JSON.parse(localStorage.getItem("admin")) || "";
-  const [isAuth, setAuth] = React.useState(store);
+  const [isAuth, setAuth] = React.useState(adminStore);
 
   React.useEffect(() => {
-    localStorage.setItem("admin", JSON.stringify(isAuth));
+    if (isAuth) localStorage.setItem("admin", JSON.stringify(isAuth));
     // const BASE_URL = import.meta.env.DEV ?
     //    import.meta.env.VITE_ABITTO_BASE_URL
     //   : import.meta.env.ABITTO_BASE_URL;
@@ -47,11 +45,6 @@ const GlobalContext = ({ children }) => {
     });
   };
 
-  const toggleModal = () => {
-    if (showModal) return setShowModal(false);
-    return setShowModal(true);
-  };
-
   const ctxValue = {
     about,
     contact,
@@ -62,8 +55,6 @@ const GlobalContext = ({ children }) => {
     setAuth,
     dataQuery,
     setDataQuery,
-    showModal,
-    toggleModal,
   };
 
   return (
