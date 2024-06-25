@@ -9,12 +9,28 @@ const SelectField = React.forwardRef((props, ref) => {
   const { label, placeholder, options, name, errors, onChange, defaultValue } =
     props;
   const [value, setValue] = React.useState(defaultValue ?? "");
+  const [open, setOpen] = React.useState(false);
+
+  window.addEventListener("scroll", () => {
+    if (open) handleClose();
+  });
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
 
   return (
     <div className="flex flex-col w-full">
       <label className="text-xs md:text-sm w-full flex gap-2 md:gap-3 flex-col ">
         {label}
         <Select
+          open={open}
+          onClose={handleClose}
+          onOpen={handleOpen}
           ref={ref}
           {...props}
           value={options.includes(value) ? value : ""}
