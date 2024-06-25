@@ -51,11 +51,11 @@ const SelectField = React.forwardRef((props, ref) => {
           sx={{
             "& .MuiOutlinedInput-notchedOutline": { display: "none" },
           }}
-          className="bg-blue-50 h-10 md:h-12 border border-blue-500 font-normal text-xs w-full !rounded-lg"
+          className="bg-blue-50 h-10 md:h-12 border border-blue-500 font-normal text-xs w-full !rounded-lg !font-poppins"
         >
           {options.map((option, index) => {
             return (
-              <MenuItem value={option} key={index}>
+              <MenuItem value={option} key={index} className="!font-poppins">
                 {option}
               </MenuItem>
             );

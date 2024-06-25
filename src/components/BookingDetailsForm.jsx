@@ -255,7 +255,7 @@ const BookingForm = ({ tab }) => {
                       showIcon
                       toggleCalendarOnIconClick={true}
                       closeOnScroll
-                      className="bg-blue-50 h-10 md:h-12 border border-blue-500 font-normal w-full !px-4 !rounded-lg font-poppins mt-2 md:mt-3 text-left"
+                      className="bg-blue-50 h-10 md:h-12 border border-blue-500 font-normal text-base w-full !px-4 !rounded-lg font-poppins mt-2 md:mt-3 text-left"
                       onChange={(date) => field.onChange(date)}
                       selected={field.value}
                       customInput={
@@ -309,7 +309,7 @@ const BookingForm = ({ tab }) => {
                       showIcon
                       toggleCalendarOnIconClick={true}
                       closeOnScroll
-                      className="bg-blue-50 h-10 md:h-12 border border-blue-500 font-normal w-full !px-4 !rounded-lg font-poppins mt-2 md:mt-3 text-left"
+                      className="bg-blue-50 h-10 md:h-12 border border-blue-500 font-normal text-base w-full !px-4 !rounded-lg font-poppins mt-2 md:mt-3 text-left"
                       onChange={(date) => field.onChange(date)}
                       selected={field.value}
                       customInput={
