@@ -51,17 +51,22 @@ const Navbar = () => {
   // Detect outside navbar click
   window.addEventListener(
     "click",
-    (e) => {
-      if (isOpen) !navRef.current?.contains(e.target) && setOpen(false);
+    (event) => {
+      if (isOpen) !navRef.current?.contains(event.target) && setOpen(false);
     },
     true
   );
 
   window.addEventListener("scroll", () => {
-    if (window.scrollY >= 1) return setScroll(true);
-
-    return setScroll(false);
+    if (window.scrollY >= 1) {
+      setOpen(false);
+      setScroll(true);
+    } else setScroll(false);
   });
+
+  const closeNavbar = () => {
+    if (isOpen) setOpen(false);
+  };
 
   return (
     <nav
@@ -71,7 +76,7 @@ const Navbar = () => {
       )}
       ref={navRef}
     >
-      <Link to="/">
+      <Link to="/" onClick={closeNavbar}>
         <img
           alt="logo"
           src="https://i.ibb.co/17zsqj1/logo2.png"
@@ -91,13 +96,10 @@ const Navbar = () => {
           !isOpen ? "hidden md:flex" : "absolute"
         )}
       >
-        <li
-          // onClick={() => {
-          //   handleNavItemClick(about);
-          // }}
-          className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-blue-500 hover:font-medium md:hover:font-normal transition-all duration-75 ease-in-out text-sm md:text-base"
-        >
-          <Link to="/about">about us</Link>
+        <li className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-blue-500 hover:font-medium md:hover:font-normal transition-all duration-75 ease-in-out text-sm md:text-base">
+          <Link to="/about" onClick={closeNavbar}>
+            about us
+          </Link>
         </li>
         <li
           onClick={() => {
