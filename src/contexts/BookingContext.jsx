@@ -15,8 +15,8 @@ const BookingContext = ({ children }) => {
   const [confirmedTicket, setConfirmedTicket] = React.useState(ticketStore);
   const [showModal, setShowModal] = React.useState(false);
   const [seatSelected, setSeatSelected] = React.useState({
-    departure: formData?.departure_seat ?? [],
-    return: formData?.return_seat ?? [],
+    departure: formData.seatDetails?.departure_seat ?? [],
+    return: formData.seatDetails?.return_seat ?? [],
   });
   const [isChecked, setChecked] = React.useState(false);
   const ticketCost = 8800;
@@ -27,8 +27,14 @@ const BookingContext = ({ children }) => {
   }, [confirmedTicket]);
 
   React.useEffect(() => {
-    console.log(formData, "formData");
-  }, [formData]);
+    if (Object.keys(formData.seatDetails).length) {
+      setSeatSelected({
+        departure: [],
+        return: [],
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.bookingDetails?.total_passengers]);
 
   const ctxValue = {
     formData,

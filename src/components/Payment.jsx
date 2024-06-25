@@ -251,6 +251,7 @@ const SuccessModal = () => {
     setActiveStep,
     setFormData,
     confirmedTicket,
+    setChecked,
   } = React.useContext(BookingCTX);
 
   const handleOnClick = () => {
@@ -261,6 +262,7 @@ const SuccessModal = () => {
       passengerDetails: {},
       seatDetails: {},
     });
+    setChecked(false);
   };
 
   return (
