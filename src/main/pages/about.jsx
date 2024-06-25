@@ -14,7 +14,7 @@ const About = () => {
       <div>
         {/* hero section */}
         <section
-          className="h-[650px] lg:h-screen w-full flex items-center relative bg-cover lg:bg-center bg-right bg-no-repeat"
+          className=" h-[670px] lg:h-screen w-full flex items-center relative bg-cover lg:bg-center bg-right bg-no-repeat"
           style={{ backgroundImage: `url(${about})` }}
         >
           <div className="lg:hidden bg-black/40 w-full h-full absolute z-[1] " />

@@ -31,7 +31,7 @@ const Home = () => {
       {/* Hero section */}
       <section
         id="home"
-        className="h-[650px] md:h-screen w-full flex items-center relative bg-blue-700"
+        className="h-[670px] md:h-screen w-full flex items-center relative bg-blue-700"
       >
         <div className="bg-black/40 w-full h-full absolute z-[1] " />
         <FadeInBackgroundTransition />
@@ -239,11 +239,16 @@ const Home = () => {
 
             {/* Calabar */}
             <div className="lg:flex gap-8 mb-10 md:bg-blue-50 p-0 md:p-5 rounded-lg">
-              <img
-                src={marinaMap}
-                alt="contact-us"
-                className="lg:flex-1 self-start mb-8 lg:mb-0 h-[200px] w-full rounded-lg shadow-lg object-cover"
-              />
+              <Link
+                target="_blank"
+                to="https://maps.google.com/maps/place//data=!4m2!3m1!1s0x10678776d57d673d:0x3a5ca1c3f4f97ad4?entry=s&sa=X&ved=1t:8290&hl=en-US&ictx=111"
+              >
+                <img
+                  src={marinaMap}
+                  alt="contact-us"
+                  className="lg:flex-1 self-start mb-8 lg:mb-0 h-[200px] w-full rounded-lg shadow-lg object-cover"
+                />
+              </Link>
               <ul className="lg:flex-1 text-sm [&_a]:flex [&_a]:gap-3 [&_a]:items-center space-y-7 ">
                 <li className="flex gap-3 items-center">
                   <span>
@@ -279,11 +284,16 @@ const Home = () => {
 
             {/* Uyo */}
             <div className="lg:flex gap-8 md:bg-blue-50 rounded-lg  p-0 md:p-5 ">
-              <img
-                src={timberMap}
-                alt="contact-us"
-                className="lg:flex-1 self-start mb-8 lg:mb-0 h-[200px] w-full rounded-lg shadow-lg object-cover"
-              />
+              <Link
+                target="_blank"
+                to="https://www.google.com/maps/dir//520106+Nwaniba+Road,+Uyo+520106,+Akwa+Ibom/@5.0557182,7.9578196,12z/data=!4m8!4m7!1m0!1m5!1m1!1s0x105d5813586afc87:0x6734e8be23eaf5d8!2m2!1d8.0402216!2d5.0557234?entry=ttu"
+              >
+                <img
+                  src={timberMap}
+                  alt="contact-us"
+                  className="lg:flex-1 self-start mb-8 lg:mb-0 h-[200px] w-full rounded-lg shadow-lg object-cover"
+                />
+              </Link>
               <ul className="lg:flex-1 text-sm [&_a]:flex [&_a]:gap-3 [&_a]:items-center space-y-7 ">
                 <li className="flex gap-3 items-center">
                   <span>
@@ -319,11 +329,7 @@ const Home = () => {
               </ul>
             </div>
           </div>
-          <div className="flex-1 md:bg-blue-50 rounded-lg p-0 md:p-5 self-start w-full">
-            {/* <div className="flex items-center">
-              <span className="h-3 w-3 mr-3 rounded-full bg-blue-500" />
-              <h2 className="uppercase font-medium">Contact us</h2>
-            </div> */}
+          <div className="flex-1 md:bg-blue-50 rounded-lg p-0 md:p-5 w-full self-start lg:self-stretch">
             <ContactForm />
           </div>
         </div>
@@ -367,7 +373,7 @@ const ContactForm = () => {
   return (
     <>
       <form
-        className="flex flex-col gap-y-5 *:p-3 *:rounded-lg h-full *:bg-[#EEEEEE] md:*:bg-white"
+        className="flex flex-col gap-y-5 *:p-3 *:rounded-lg h-full *:bg-[#EEEEEE] md:*:bg-white [&>*:not(&_button)]:shadow-md"
         onSubmit={onSubmit}
       >
         <input
@@ -381,7 +387,7 @@ const ContactForm = () => {
           {...register("email", { required: true })}
         />
         <textarea
-          rows={8}
+          rows={10}
           placeholder="Type message here..."
           className=" resize-none"
           {...register("message", { required: true })}
@@ -398,7 +404,7 @@ const ContactForm = () => {
           type="submit"
           loading={loading}
           text={"Send Request"}
-          className="w-full md:w-40"
+          className="w-full md:w-40 !mt-auto"
         />
       </form>
     </>
