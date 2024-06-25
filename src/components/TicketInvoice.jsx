@@ -1,5 +1,5 @@
 import React from "react";
-import { humanize, cn } from "@/lib/utils";
+// import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { formatValue } from "react-currency-input-field";
 import { Button } from "@/components/ui/button";
@@ -8,22 +8,29 @@ import { useReactToPrint } from "react-to-print";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { Helmet } from "react-helmet-async";
-import { CaretIcon } from "@/assets/icons";
+import {
+  CaretIcon,
+  CalendarIcon,
+  ChairIcon,
+  ClockIcon,
+  Boat2Icon,
+  UserIcon,
+} from "@/assets/icons";
 
 const TicketInvoice = () => {
-  const { confirmedTicket } = React.useContext(BookingCTX);
+  const { confirmedTicket, ticketCost } = React.useContext(BookingCTX);
   const navigate = useNavigate();
   const { bookingID } = useParams();
   const { dataQuery, isAuth } = React.useContext(GlobalCTX);
   const componentRef = React.useRef();
-
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-  });
-
   const currentUser = confirmedTicket
     ? confirmedTicket
     : dataQuery.filter((data) => data._id === bookingID)[0];
+
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+    documentTitle: `Abitto Ticket - ${currentUser?.ticket_id}`,
+  });
 
   if (!currentUser?.ticket_id) return <Navigate to="/pageNotFound" />;
 
@@ -33,7 +40,7 @@ const TicketInvoice = () => {
         <title>Ticket Invoice | Abitto Ticket</title>
       </Helmet>
       <div className="bg-gray-300 min-h-screen p-5">
-        <div className=" w-full  md:w-[700px] flex flex-col mx-auto ">
+        <div className=" w-full md:w-[700px] flex flex-col mx-auto ">
           <div className="flex gap-2 mb-5 justify-end ">
             {isAuth?.isAdmin ? (
               <Button
@@ -59,7 +66,10 @@ const TicketInvoice = () => {
             )}
             <Button onClick={handlePrint}>Download</Button>
           </div>
-          <div ref={componentRef} className="bg-white p-10 pb-20 space-y-5">
+          <div
+            ref={componentRef}
+            className="bg-white p-5 md:p-10 md:pb-20 space-y-5"
+          >
             <div>
               <img
                 alt="logo"
@@ -83,174 +93,211 @@ const TicketInvoice = () => {
                 </p>
               </div>
             </div>
-            <ul className="*:flex *:flex-col *:gap-1 flex flex-wrap gap-x-5 gap-y-3 md:gap-x-12 pb-2 border-b">
-              <li>
-                <p className=" text-xs text-[#7F7F7F]">Booking ID</p>
-                <p className="text-base font-semibold uppercase">
-                  #{currentUser?.ticket_id}
-                </p>
-              </li>
-              <li>
-                <p className=" text-xs text-[#7F7F7F]">Customer Name</p>
-                <p className="text-base font-semibold capitalize">{`${currentUser?.first_name} ${currentUser?.surname}`}</p>
-              </li>
-              <li>
-                <p className=" text-xs text-[#7F7F7F]">Phone Number</p>
-                <p className="text-base font-semibold lowercase">
-                  {currentUser?.phone_number}
-                </p>
-              </li>
-              <li>
-                <p className=" text-xs text-[#7F7F7F]">Email</p>
-                <p className="text-base font-semibold lowercase">
-                  {currentUser?.email}
-                </p>
-              </li>
-            </ul>
-            <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-x-12 pb-2 border-b">
-              <li>
-                <p className=" text-xs text-[#7F7F7F] ">Ticket Type</p>
-                <p className="text-base font-semibold">
-                  {currentUser?.trip_type}
-                </p>
-              </li>
-              <li>
-                <p className=" text-xs text-[#7F7F7F]">No. Passenger(s)</p>
-                <p className="text-base font-semibold">
-                  {currentUser?.total_passengers}
-                </p>
-              </li>
-            </ul>
-            <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-x-12 pb-2 border-b">
-              <li>
-                <p className=" text-xs text-[#7F7F7F]">Travel From</p>
-                <p className="text-base font-semibold">
-                  {currentUser?.travel_from}
-                </p>
-              </li>
-              <li>
-                <p className=" text-xs text-[#7F7F7F]">Travel To</p>
-                <p className="text-base font-semibold">
-                  {currentUser?.travel_to}
-                </p>
-              </li>
-              <li>
-                <p className=" text-xs text-[#7F7F7F]">Seat No.</p>
-                <p className="text-base font-semibold">
-                  {humanize(currentUser?.seat_no)}
-                </p>
-              </li>
-            </ul>
-            <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-x-12 pb-2 border-b">
-              <li>
-                <p className=" text-xs text-[#7F7F7F]">Departure Date</p>
-                <p className="text-base font-semibold">
-                  {format(currentUser?.departure_date, "PP")}
-                </p>
-              </li>
-              <li>
-                <p className=" text-xs text-[#7F7F7F]">Departure Time</p>
-                <p className="text-base font-semibold">
-                  {currentUser?.departure_time}
-                </p>
-              </li>
-            </ul>
-            {currentUser?.trip_type === "Round Trip" && (
-              <>
-                <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-x-12  pb-2 border-b">
+
+            <div className="text-xs md:text-sm space-y-3 [&_li]:inline-flex [&_li]:items-center [&_li]:gap-1 *:pb-3 [&>*:not(:last-of-type)]:border-b">
+              {/* Trip Details */}
+              <div className="space-y-3">
+                <hgroup>
+                  <h4 className="font-semibold mb-1 flex gap-1">
+                    Terminals <Boat2Icon />
+                  </h4>
+                  <p>
+                    {currentUser.travel_from} - {currentUser.travel_to}
+                  </p>
+                </hgroup>
+                <ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
                   <li>
-                    <p className=" text-xs text-[#7F7F7F]">Return From</p>
-                    <p className="text-base font-semibold">
-                      {currentUser?.travel_to}
+                    <p className=" text-xs text-[#7F7F7F]">ID:</p>
+                    <p className="uppercase">#{currentUser?.ticket_id}</p>
+                  </li>
+
+                  <li>
+                    <p className="text-xs text-gray-500 font-normal">
+                      Trip Type:
                     </p>
+                    <p>{currentUser.trip_type}</p>
                   </li>
                   <li>
-                    <p className=" text-xs text-[#7F7F7F]">Return To</p>
-                    <p className="text-base font-semibold">
-                      {currentUser?.travel_from}
+                    <p className="text-xs text-gray-500 font-normal">
+                      Passenger(s):
                     </p>
+                    <p>{currentUser.total_passengers}</p>
+                  </li>
+                </ul>
+              </div>
+
+              {/* time and return */}
+              <div className="flex flex-wrap gap-x-5 gap-y-3">
+                <div>
+                  <h5 className="font-semibold mb-1">Departure Details</h5>
+                  <ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
+                    <li>
+                      <CalendarIcon />
+                      <p>
+                        {format(new Date(currentUser.departure_date), "PP")}
+                      </p>
+                    </li>
+                    <li>
+                      <ClockIcon />
+                      <p>{currentUser.departure_time}</p>
+                    </li>
+                    <li>
+                      <ChairIcon />
+                      <p>{`${currentUser.departure_seats}`}</p>
+                    </li>
+                  </ul>
+                </div>
+                {currentUser.trip_type === "Round Trip" && (
+                  <div>
+                    <h5 className="font-semibold mb-1">Return Details</h5>
+                    <ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
+                      <li>
+                        <CalendarIcon />
+                        <p>
+                          {format(new Date(currentUser?.return_date), "PP")}
+                        </p>
+                      </li>
+                      <li>
+                        <ClockIcon />
+                        <p>{currentUser?.return_time}</p>
+                      </li>
+                      <li>
+                        <ChairIcon />
+                        <p>{`${currentUser?.return_seats}`}</p>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+
+              {/* customer details */}
+              {currentUser?.adults_number <= 1 ||
+              !currentUser?.passenger2_first_name ? (
+                <div>
+                  <h5 className="font-semibold mb-1">Passenger Details</h5>
+                  <ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
+                    <li>
+                      <span className="text-xs text-gray-500 font-normal">
+                        Full name:
+                      </span>{" "}
+                      {`${currentUser.first_name} ${currentUser.surname}`}
+                    </li>
+                    <li>
+                      <span className="text-xs text-gray-500 font-normal">
+                        Phone:{" "}
+                      </span>
+                      {currentUser.phone_number}
+                    </li>
+                    {currentUser.email && (
+                      <li>
+                        <span className="text-xs text-gray-500 font-normal">
+                          Email:{" "}
+                        </span>
+                        {currentUser.email}
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              ) : (
+                <div>
+                  <h5 className="font-semibold mb-1 ">Passenger Names</h5>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1">
+                    <p className="flex gap-x-1 items-center">
+                      <span className="text-[#ACACAC]">
+                        <UserIcon />
+                      </span>
+                      {`${currentUser.first_name} ${currentUser.surname}`}
+                    </p>
+                    {/* FIXME: 5 shows undefined */}
+                    {Array.from({
+                      length: currentUser.total_passengers - 1,
+                    }).map((_, i) => {
+                      const num = i + 2;
+                      return (
+                        <p key={num} className="flex gap-1 items-center">
+                          <span className="text-[#ACACAC]">
+                            <UserIcon />
+                          </span>
+                          {`${currentUser[`passenger${num}_first_name`]} ${
+                            currentUser[`passenger${num}_surname`]
+                          }`}
+                        </p>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* payment info */}
+              <div>
+                {/* <h5 className="font-semibold mb-1">Payment Details</h5> */}
+                <ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
+                  <li>
+                    <p className="text-xs text-gray-500 font-normal">
+                      Booking Medium:
+                    </p>
+                    <p>{currentUser?.medium}</p>
+                  </li>
+                  <li>
+                    <p className="text-xs text-gray-500 font-normal">
+                      Payment Method:
+                    </p>
+                    <p>{currentUser?.paid_with}</p>
                   </li>
                   {/* <li>
-                    <p className=" text-xs text-[#7F7F7F]">Seat No.</p>
-                    <p className="text-base font-semibold">
-                      {humanize(["N/A"])}
+                    <p className="text-xs text-gray-500 font-normal">
+                      Payment Status:
+                    </p>
+                    <p
+                      className={cn(
+                        "text-center font-medium rounded-lg w-16 py-1 text-[10px]",
+                        {
+                          "text-green-500 bg-green-100":
+                            currentUser?.status === "Success",
+                          "text-[#E78913] bg-[#F8DAB6]":
+                            currentUser?.status === "Pending",
+                          "text-[#F00000] bg-[#FAB0B0]":
+                            currentUser?.status === "Canceled",
+                        }
+                      )}
+                    >
+                      {currentUser?.status}
                     </p>
                   </li> */}
-                </ul>
-                <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-x-12 pb-2 border-b">
                   <li>
-                    <p className=" text-xs text-[#7F7F7F]">Return Date</p>
-                    <p className="text-base font-semibold">
-                      {format(currentUser?.return_date, "PP")}
+                    <p className="text-xs text-gray-500 font-normal">
+                      Trx Ref:
                     </p>
-                  </li>
-                  <li>
-                    <p className=" text-xs text-[#7F7F7F]">Return Time</p>
-                    <p className="text-base font-semibold">
-                      {currentUser?.return_time}
-                    </p>
+                    <p>{currentUser?.trxRef ?? "-"}</p>
                   </li>
                 </ul>
-              </>
-            )}
-            <ul className="*:flex *:flex-col *:gap-1 flex  flex-wrap gap-x-5 gap-y-3  md:gap-x-12 pb-2 border-b">
-              <li>
-                <p className=" text-xs text-[#7F7F7F] ">Booking Medium</p>
-                <p className="text-base font-semibold">{currentUser?.medium}</p>
-              </li>
-              <li>
-                <p className=" text-xs text-[#7F7F7F]">Payment Status</p>
-                <p
-                  className={cn(
-                    "text-center font-semibold rounded-lg w-16 py-1 text-xs",
-                    {
-                      "text-green-500 bg-green-100":
-                        currentUser?.status === "Success",
-                      "text-[#E78913] bg-[#F8DAB6]":
-                        currentUser?.status === "Pending",
-                      "text-[#F00000] bg-[#FAB0B0]":
-                        currentUser?.status === "Canceled",
-                    }
-                  )}
-                >
-                  {currentUser?.status}
-                </p>
-              </li>
-              <li>
-                <p className=" text-xs text-[#7F7F7F]">Payment Method</p>
-                <p className="text-base font-semibold">
-                  {currentUser?.paid_with}
-                </p>
-              </li>
-              <li>
-                <p className=" text-xs text-[#7F7F7F]">Transaction Reference</p>
-                <p className="text-base font-semibold">
-                  {currentUser?.trxRef ?? "-"}
-                </p>
-              </li>
-            </ul>
-            <div className="border-y-2 border-dashed py-2 w-56 md:w-64  ml-auto !mt-20">
-              <table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] ">
-                <tbody>
-                  <tr>
-                    <td className="text-xs text-[#444444]">Ride Insurance</td>
-                    <td className="text-xs text-[#444444]">₦0</td>
-                  </tr>
-                  <tr>
-                    <td className="text-xs text-[#444444]">Ticket Price</td>
-                    <td className="text-xs text-[#444444]">₦8,800</td>
-                  </tr>
-                  <tr>
-                    <td className="font-medium text-base">Total</td>
-                    <td className="font-medium text-lg">
-                      <span className="text-base">₦</span>
-                      {formatValue({
-                        value: String(currentUser?.amount),
-                      })}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              </div>
+            </div>
+
+            {/* Notice */}
+            <div className=" border-t-2 !my-10 pt-3 space-y-1 text-[10px] md:text-xs ">
+              <p>
+                <span className="uppercase">Notice: </span> Each ticket cost{" "}
+                {formatValue({ value: String(ticketCost), prefix: "₦" })}
+              </p>
+              <p>
+                You may need to show this invoice to prove return or onward
+                travel to ferry officials.
+              </p>
+              <p>
+                Abitto Ferry check-in counters open <b>1 hours</b> before
+                departure.
+              </p>
+              <p>
+                Ensure to arrive early to your Terminal as boarding starts{" "}
+                <b>30 minutes</b> before your scheduled take off.
+              </p>
+              <p>
+                <strong>
+                  This ticket is Non-refundable and cannot be rescheduled if
+                  scheduled time is missed.
+                </strong>
+              </p>
             </div>
           </div>
         </div>
