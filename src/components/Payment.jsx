@@ -18,14 +18,14 @@ import { BookingCTX } from "@/contexts/BookingContext";
 import Button from "@/components/custom/Button";
 import { Button as IconButton } from "@/components/ui/button";
 import { useStepper } from "@/hooks/useStepper";
-// import { usePayment } from "@/hooks/usePayment";
+import { usePayment } from "@/hooks/usePayment";
 import checkGIF from "@/assets/check.gif";
 
 const Payment = () => {
-  const { formData, ticketCost, loading, setShowModal } =
-    React.useContext(BookingCTX);
+  const { ticketCost, loading, formData } = React.useContext(BookingCTX);
   const { onPrevClick } = useStepper();
   // const { onlinePayment } = usePayment();
+  const { fakeOnlinePayment } = usePayment();
 
   return (
     <div className="flex flex-col h-fit p-5 bg-blue-50 w-full max-w-[1000px] mx-auto">
@@ -61,7 +61,7 @@ const Payment = () => {
             <p className="nowrap font-semibold text-4xl md:text-5xl ">
               <span className="text-2xl">₦</span>
               {formatValue({
-                value: String(formData?.amount),
+                value: String(formData.bookingDetails.amount),
               })}
             </p>
           </div>
@@ -74,7 +74,8 @@ const Payment = () => {
                   Terminals <Boat2Icon />
                 </h4>
                 <p>
-                  {formData?.travel_from} - {formData?.travel_to}
+                  {formData.bookingDetails.travel_from} -{" "}
+                  {formData.bookingDetails.travel_to}
                 </p>
               </hgroup>
               <ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
@@ -82,13 +83,13 @@ const Payment = () => {
                   <p className="text-xs text-gray-500 font-normal">
                     Trip Type:
                   </p>
-                  <p>{formData.trip_type}</p>
+                  <p>{formData.bookingDetails.trip_type}</p>
                 </li>
                 <li>
                   <p className="text-xs text-gray-500 font-normal">
                     Passenger(s):
                   </p>
-                  <p>{formData.total_passengers}</p>
+                  <p>{formData.bookingDetails.total_passengers}</p>
                 </li>
               </ul>
             </div>
@@ -100,33 +101,43 @@ const Payment = () => {
                 <ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
                   <li>
                     <CalendarIcon />
-                    <p>{format(new Date(formData?.departure_date), "PP")}</p>
+                    <p>
+                      {format(
+                        new Date(formData.bookingDetails.departure_date),
+                        "PP"
+                      )}
+                    </p>
                   </li>
                   <li>
                     <ClockIcon />
-                    <p>{formData?.departure_time}</p>
+                    <p>{formData.bookingDetails.departure_time}</p>
                   </li>
                   <li>
                     <ChairIcon />
-                    <p className="st">{`${formData?.departure_seats}`}</p>
+                    <p>{`${formData.seatDetails.departure_seats}`}</p>
                   </li>
                 </ul>
               </div>
-              {formData.trip_type === "Round Trip" && (
+              {formData.bookingDetails.trip_type === "Round Trip" && (
                 <div>
                   <h5 className="font-semibold mb-1">Return Details</h5>
                   <ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
                     <li>
                       <CalendarIcon />
-                      <p>{format(new Date(formData?.return_date), "PP")}</p>
+                      <p>
+                        {format(
+                          new Date(formData.bookingDetails?.return_date),
+                          "PP"
+                        )}
+                      </p>
                     </li>
                     <li>
                       <ClockIcon />
-                      <p>{formData?.return_time}</p>
+                      <p>{formData.bookingDetails?.return_time}</p>
                     </li>
                     <li>
                       <ChairIcon />
-                      <p className="st">{`${formData?.return_seats}`}</p>
+                      <p>{`${formData.seatDetails?.return_seats}`}</p>
                     </li>
                   </ul>
                 </div>
@@ -134,8 +145,8 @@ const Payment = () => {
             </div>
 
             {/* customer details */}
-            {formData?.adults_number <= 1 ||
-            !formData?.passenger2_first_name ? (
+            {formData.bookingDetails?.adults_number <= 1 ||
+            !formData.passengerDetails?.passenger2_first_name ? (
               <div>
                 <h5 className="font-semibold mb-1">Passenger Details</h5>
                 <ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
@@ -143,20 +154,20 @@ const Payment = () => {
                     <span className="text-xs text-gray-500 font-normal">
                       Full name:
                     </span>{" "}
-                    {`${formData.first_name} ${formData.surname}`}
+                    {`${formData.passengerDetails.first_name} ${formData.passengerDetails.surname}`}
                   </li>
                   <li>
                     <span className="text-xs text-gray-500 font-normal">
                       Phone:{" "}
                     </span>
-                    {formData.phone_number}
+                    {formData.passengerDetails.phone_number}
                   </li>
-                  {formData.email && (
+                  {formData.passengerDetails.email && (
                     <li>
                       <span className="text-xs text-gray-500 font-normal">
                         Email:{" "}
                       </span>
-                      {formData.email}
+                      {formData.passengerDetails.email}
                     </li>
                   )}
                 </ul>
@@ -169,24 +180,28 @@ const Payment = () => {
                     <span className="text-[#ACACAC]">
                       <UserIcon />
                     </span>
-                    {`${formData.first_name} ${formData.surname}`}
+                    {`${formData.passengerDetails.first_name} ${formData.passengerDetails.surname}`}
                   </p>
                   {/* FIXME: 5 shows undefined */}
-                  {Array.from({ length: formData.total_passengers - 1 }).map(
-                    (_, i) => {
-                      const num = i + 2;
-                      return (
-                        <p key={num} className="flex gap-1 items-center">
-                          <span className="text-[#ACACAC]">
-                            <UserIcon />
-                          </span>
-                          {`${formData[`passenger${num}_first_name`]} ${
-                            formData[`passenger${num}_surname`]
-                          }`}
-                        </p>
-                      );
-                    }
-                  )}
+                  {Array.from({
+                    length: formData.bookingDetails.total_passengers - 1,
+                  }).map((_, i) => {
+                    const num = i + 2;
+                    return (
+                      <p key={num} className="flex gap-1 items-center">
+                        <span className="text-[#ACACAC]">
+                          <UserIcon />
+                        </span>
+                        {`${
+                          formData.passengerDetails[
+                            `passenger${num}_first_name`
+                          ]
+                        } ${
+                          formData.passengerDetails[`passenger${num}_surname`]
+                        }`}
+                      </p>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -215,9 +230,7 @@ const Payment = () => {
 
           <Button
             // onClick={onlinePayment}
-            onClick={() => {
-              setShowModal(true);
-            }}
+            onClick={fakeOnlinePayment}
             loading={loading}
             text={"Pay with paystack"}
             className="w-56 uppercase mt-10 mb-5 mx-auto"
@@ -243,7 +256,11 @@ const SuccessModal = () => {
   const handleOnClick = () => {
     setShowModal(false);
     setActiveStep(0);
-    setFormData([]);
+    setFormData({
+      bookingDetails: {},
+      passengerDetails: {},
+      seatDetails: {},
+    });
   };
 
   return (
@@ -273,7 +290,8 @@ const SuccessModal = () => {
                 </p>
                 <Link
                   target={"_blank"}
-                  to={`/ticket-invoice/${confirmedTicket._id}`}
+                  // to={`/ticket-invoice/${confirmedTicket._id}`}
+                  to={`/ticket-invoice/${confirmedTicket.ticket_id}`}
                 >
                   <Button
                     text={"Print Ticket"}

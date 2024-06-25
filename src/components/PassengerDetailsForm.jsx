@@ -15,10 +15,10 @@ import InputField from "./custom/InputField";
 
 const PassengerDetails = () => {
   const { loading, setLoading } = React.useContext(GlobalCTX);
-  const { setFormData, formData, setChecked, isChecked } =
+  const { setChecked, isChecked, formData, setFormData } =
     React.useContext(BookingCTX);
   const { onPrevClick, onNextClick } = useStepper();
-  const adults_number = formData?.adults_number;
+  const adults_number = formData.bookingDetails?.adults_number;
 
   const {
     register,
@@ -28,25 +28,11 @@ const PassengerDetails = () => {
     mode: "onChange",
     resolver: yupResolver(passengerDetailsSchema),
     context: { adultPassengers: adults_number, isChecked },
-    defaultValues: formData,
+    defaultValues: formData.passengerDetails,
   });
 
   const onSubmit = handleSubmit((formData_) => {
     const formValues = {
-      ticket_id: formData.ticket_id,
-      trip_type: formData.trip_type,
-      travel_from: formData.travel_from,
-      travel_to: formData.travel_to,
-      departure_date: formData.departure_date,
-      departure_time: formData.departure_time,
-      adults_number: formData.adults_number,
-      children_number: formData.children_number,
-      total_passengers: formData.total_passengers,
-      amount: formData.amount,
-      ...(formData.trip_type === "Round Trip" && {
-        return_date: formData.return_date,
-        return_time: formData.return_time,
-      }),
       ...(isChecked
         ? {
             first_name: formData_.first_name,
@@ -59,13 +45,19 @@ const PassengerDetails = () => {
           }),
     };
 
-    if (formData?.first_name) {
-      setFormData(() => formValues);
+    if (Object.keys(formData.passengerDetails).length) {
+      setFormData((prev) => ({
+        ...prev,
+        passengerDetails: formValues,
+      }));
       onNextClick();
     } else {
       setLoading(true);
       setTimeout(() => {
-        setFormData(() => formValues);
+        setFormData((prev) => ({
+          ...prev,
+          passengerDetails: formValues,
+        }));
         setLoading(false);
         onNextClick();
       }, 600);
@@ -78,39 +70,44 @@ const PassengerDetails = () => {
         <ul className=" w-full [&_h4]:uppercase [&_h4]:text-[#BFBFBF] [&_h4]:text-xs [&_p]:text-white [&_p]:text-sm flex flex-wrap items-center gap-5 md:justify-around divide-x-2 h-full [&_li:not(:first-of-type)]:pl-5 *:space-y-1">
           <li>
             <h4>Trip type</h4>
-            <p>{formData?.trip_type}</p>
+            <p>{formData.bookingDetails?.trip_type}</p>
           </li>
           <li>
             <h4>Route</h4>
             <p>
-              {formData?.travel_from.includes("Calabar") ? "Calabar" : "Uyo"} ==
+              {formData.bookingDetails?.travel_from.includes("Calabar")
+                ? "Calabar"
+                : "Uyo"}{" "}
+              ==
               {">"}{" "}
-              {formData?.travel_to.includes("Calabar") ? "Calabar" : "Uyo"}
+              {formData.bookingDetails?.travel_to.includes("Calabar")
+                ? "Calabar"
+                : "Uyo"}
             </p>
           </li>
           <li>
             <h4> Departure Date & Time</h4>
             <p>
-              {format(new Date(formData?.departure_date), "PP")} -{" "}
-              {formData?.departure_time}
+              {format(new Date(formData.bookingDetails?.departure_date), "PP")}{" "}
+              - {formData.bookingDetails?.departure_time}
             </p>
           </li>
-          {formData?.trip_type === "Round Trip" && (
+          {formData.bookingDetails?.trip_type === "Round Trip" && (
             <li>
               <h4> Return Date & Time</h4>
               <p>
-                {format(new Date(formData?.return_date), "PP")} -{" "}
-                {formData?.return_time}
+                {format(new Date(formData.bookingDetails?.return_date), "PP")} -{" "}
+                {formData.bookingDetails?.return_time}
               </p>
             </li>
           )}
           <li>
             <h4>Adult</h4>
-            <p>{formData?.adults_number}</p>
+            <p>{formData.bookingDetails?.adults_number}</p>
           </li>
           <li>
             <h4>Children</h4>
-            <p>{formData?.children_number ?? 0}</p>
+            <p>{formData.bookingDetails?.children_number ?? 0}</p>
           </li>
         </ul>
       </div>

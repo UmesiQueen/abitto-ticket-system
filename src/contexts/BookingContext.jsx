@@ -5,7 +5,11 @@ export const BookingCTX = React.createContext();
 
 const BookingContext = ({ children }) => {
   const [activeStep, setActiveStep] = React.useState(0);
-  const [formData, setFormData] = React.useState({});
+  const [formData, setFormData] = React.useState({
+    bookingDetails: {},
+    passengerDetails: {},
+    seatDetails: {},
+  });
   const [loading, setLoading] = React.useState(false);
   const ticketStore = JSON.parse(localStorage.getItem("ticket")) ?? null;
   const [confirmedTicket, setConfirmedTicket] = React.useState(ticketStore);

@@ -79,7 +79,7 @@ const defaultTimeOptions = ["09:30 AM", "11:00 AM", "03:30 PM", "04:30 PM"];
 const BookingForm = ({ tab }) => {
   const [totalPassengers, setTotalPassengers] = React.useState(0);
   const { loading, setLoading } = React.useContext(GlobalCTX);
-  const { setFormData, ticketCost, formData } = React.useContext(BookingCTX);
+  const { ticketCost, formData, setFormData } = React.useContext(BookingCTX);
   const [timeOptions, setTimeOptions] = React.useState({
     departure_time: defaultTimeOptions,
     return_time: defaultTimeOptions,
@@ -101,7 +101,7 @@ const BookingForm = ({ tab }) => {
     mode: "onChange",
     resolver: yupResolver(bookingDetailsSchema),
     context: { roundTrip: tab === "Round Trip" ? true : false },
-    defaultValues: formData,
+    defaultValues: formData.bookingDetails,
   });
 
   const travel_from = watch("travel_from");
@@ -160,38 +160,48 @@ const BookingForm = ({ tab }) => {
   const onSubmit = (formData_) => {
     const total_passengers =
       Number(formData_.adults_number) + Number(formData_.children_number);
+    const {
+      travel_from,
+      travel_to,
+      departure_date,
+      departure_time,
+      adults_number,
+      children_number,
+      return_date,
+      return_time,
+    } = formData_;
 
     const formValues = {
       trip_type: tab,
+      travel_from,
+      travel_to,
+      departure_date,
+      departure_time,
+      adults_number,
+      children_number,
       total_passengers,
       amount:
         total_passengers *
         (tab === "One-Way Trip" ? ticketCost : ticketCost * 2),
-      travel_from: formData_.travel_from,
-      travel_to: formData_.travel_to,
-      departure_date: formData_.departure_date,
-      departure_time: formData_.departure_time,
-      adults_number: formData_.adults_number,
-      children_number: formData_.children_number,
       ...(tab === "Round Trip" && {
-        return_date: formData_.return_date,
-        return_time: formData_.return_time,
+        return_date,
+        return_time,
       }),
     };
 
-    if (Object.keys(formData).length) {
+    if (Object.keys(formData.bookingDetails).length) {
       setFormData((prev) => ({
-        ticket_id: prev.ticket_id,
         ...prev,
-        ...formValues,
+        bookingDetails: formValues,
       }));
       onNextClick();
     } else {
       setLoading(true);
       setTimeout(() => {
-        setFormData(() => ({
+        setFormData((prev) => ({
+          ...prev,
           ticket_id: ticket_id.slice(0, 6),
-          ...formValues,
+          bookingDetails: formValues,
         }));
         setLoading(false);
         onNextClick();

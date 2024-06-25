@@ -13,10 +13,10 @@ import { toast } from "sonner";
 const SeatSelection = () => {
   const [tab, setTab] = React.useState("departure");
   const [selectionExceeded, setSelectionExceeded] = React.useState(false);
-  const { formData, setFormData, setSeatSelected, seatSelected } =
+  const { setSeatSelected, seatSelected, formData, setFormData } =
     React.useContext(BookingCTX);
   const { loading, setLoading } = React.useContext(GlobalCTX);
-  const passengers = formData?.total_passengers;
+  const passengers = formData.bookingDetails.total_passengers;
   const { onPrevClick, onNextClick } = useStepper();
 
   React.useEffect(() => {
@@ -39,24 +39,21 @@ const SeatSelection = () => {
   const handleSubmit = () => {
     const formValues = {
       departure_seats: seatSelected.departure,
-      ...(formData.trip_type === "Round Trip" && {
+      ...(formData.bookingDetails.trip_type === "Round Trip" && {
         return_seats: seatSelected.return,
       }),
     };
 
     if (selectionExceeded) {
-      if (formData?.departure_seat) {
-        setFormData((prev) => ({
-          ...prev,
-          ...formValues,
-        }));
+      if (Object.keys(formData.seatDetails).length) {
+        setFormData((prev) => ({ ...prev, seatDetails: formValues }));
         onNextClick();
       } else {
         setLoading(true);
         setTimeout(() => {
           setFormData((prev) => ({
             ...prev,
-            ...formValues,
+            seatDetails: formValues,
           }));
           setLoading(false);
           onNextClick();
@@ -79,39 +76,44 @@ const SeatSelection = () => {
         <ul className=" w-full [&_h4]:uppercase [&_h4]:text-[#BFBFBF] [&_h4]:text-xs [&_p]:text-white [&_p]:text-sm flex flex-wrap items-center gap-5 md:justify-around divide-x-2 h-full [&_li:not(:first-of-type)]:pl-5 *:space-y-1">
           <li>
             <h4>Trip type</h4>
-            <p>{formData?.trip_type}</p>
+            <p>{formData.bookingDetails.trip_type}</p>
           </li>
           <li>
             <h4>Route</h4>
             <p>
-              {formData?.travel_from.includes("Calabar") ? "Calabar" : "Uyo"} ==
+              {formData.bookingDetails.travel_from.includes("Calabar")
+                ? "Calabar"
+                : "Uyo"}{" "}
+              ==
               {">"}{" "}
-              {formData?.travel_to.includes("Calabar") ? "Calabar" : "Uyo"}
+              {formData.bookingDetails.travel_to.includes("Calabar")
+                ? "Calabar"
+                : "Uyo"}
             </p>
           </li>
           <li>
             <h4> Departure Date & Time</h4>
             <p>
-              {format(new Date(formData?.departure_date), "PP")} -{" "}
-              {formData?.departure_time}
+              {format(new Date(formData.bookingDetails.departure_date), "PP")} -{" "}
+              {formData.bookingDetails.departure_time}
             </p>
           </li>
-          {formData?.trip_type === "Round Trip" && (
+          {formData.bookingDetails.trip_type === "Round Trip" && (
             <li>
               <h4> Return Date & Time</h4>
               <p>
-                {format(new Date(formData?.return_date), "PP")} -{" "}
-                {formData?.return_time}
+                {format(new Date(formData.bookingDetails?.return_date), "PP")} -{" "}
+                {formData.bookingDetails?.return_time}
               </p>
             </li>
           )}
           <li>
             <h4>Adult</h4>
-            <p>{formData?.adults_number}</p>
+            <p>{formData.bookingDetails.adults_number}</p>
           </li>
           <li>
             <h4>Children</h4>
-            <p>{formData?.children_number ?? 0}</p>
+            <p>{formData.bookingDetails.children_number ?? 0}</p>
           </li>
         </ul>
       </div>
@@ -173,7 +175,7 @@ const SeatSelection = () => {
             type="text"
             placeholder="Selected seats will appear here"
           />
-          {formData.trip_type === "Round Trip" ? (
+          {formData.bookingDetails.trip_type === "Round Trip" ? (
             <div className=" flex gap-3">
               <Button
                 disabled={tab === "departure"}
@@ -186,7 +188,7 @@ const SeatSelection = () => {
                     Prev
                   </p>
                 }
-                className="w-24 rounded-lg mt-auto disabled:bg-[#C2C2C2]/40 disabled:text-[#C2C2C2]"
+                className="w-24 mt-auto"
               />
               <div
                 onClick={() => {
@@ -273,34 +275,6 @@ const SeatSelection = () => {
                 <li className="text-center flex-1 order-2">{index + 1}</li>
               </ul>
             ))}
-            {/* {seatDemo.map((seat, index) => (
-              <ul key={index} className="flex">
-                {seat.map((item, index) => (
-                  <li
-                    key={index}
-                    className={cn("flex justify-center flex-1 ", {
-                      "order-1": index === 0,
-                      "order-2": index === 1,
-                      "order-3": index === 2,
-                      "order-5": index === 3,
-                    })}
-                  >
-                    <SeatButton
-                      status={item.status}
-                      id={item.seat}
-                      onClick={handleSelection}
-                      disabled={
-                        selectionExceeded &&
-                        !seatSelected[tab].includes(item.seat)
-                          ? true
-                          : false
-                      }
-                    />
-                  </li>
-                ))}
-                <li className="text-center flex-1 order-2">{index + 1}</li>
-              </ul>
-            ))} */}
           </div>
         </div>
       </div>
@@ -309,57 +283,6 @@ const SeatSelection = () => {
 };
 
 export default SeatSelection;
-
-// const seatDemo = [
-//   [
-//     { seat: "1A", status: "na" },
-//     { seat: "1B", status: "none" },
-//     { seat: "1C", status: "none" },
-//     { seat: "1D", status: "available" },
-//   ],
-//   [
-//     { seat: "2A", status: "available" },
-//     { seat: "2B", status: "available" },
-//     { seat: "2C", status: "available" },
-//     { seat: "2D", status: "available" },
-//   ],
-//   [
-//     { seat: "3A", status: "available" },
-//     { seat: "3B", status: "available" },
-//     { seat: "3C", status: "taken" },
-//     { seat: "3D", status: "available" },
-//   ],
-//   [
-//     { seat: "4A", status: "available" },
-//     { seat: "4B", status: "available" },
-//     { seat: "4C", status: "available" },
-//     { seat: "4D", status: "available" },
-//   ],
-//   [
-//     { seat: "5A", status: "available" },
-//     { seat: "5B", status: "available" },
-//     { seat: "5C", status: "available" },
-//     { seat: "5D", status: "available" },
-//   ],
-//   [
-//     { seat: "6A", status: "available" },
-//     { seat: "6B", status: "available" },
-//     { seat: "6C", status: "available" },
-//     { seat: "6D", status: "available" },
-//   ],
-//   [
-//     { seat: "7A", status: "available" },
-//     { seat: "7B", status: "available" },
-//     { seat: "7C", status: "taken" },
-//     { seat: "7D", status: "available" },
-//   ],
-//   [
-//     { seat: "8A", status: "available" },
-//     { seat: "8B", status: "available" },
-//     { seat: "8C", status: "available" },
-//     { seat: "8D", status: "available" },
-//   ],
-// ];
 
 const availableDepartureSeats = [
   // "1A",
