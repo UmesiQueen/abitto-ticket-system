@@ -133,7 +133,7 @@ const PassengerDetails = () => {
             <h3 className="text-blue-500 font-semibold  text-base md:text-xl ">
               Passenger Details
             </h3>
-            <div className="flex gap-5">
+            <div className="flex gap-3 md:gap-5">
               <InputField
                 {...register("first_name")}
                 label="First Name"
@@ -196,7 +196,7 @@ const PassengerDetails = () => {
                         <h4 className="font-medium text-sm ">
                           Passenger Details {i + 2} (Adult)
                         </h4>
-                        <div className="flex gap-5">
+                        <div className="flex gap-3 md:gap-5">
                           <InputField
                             {...register(`${currentPassenger}_first_name`, {
                               required: "This field is required..",

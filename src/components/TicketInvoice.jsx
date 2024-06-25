@@ -82,7 +82,7 @@ const TicketInvoice = () => {
                 Ticket Invoice
               </h1>
               <div className="w-full text-right pb-4 mt-3 md:mt-0">
-                <p className="text-xs font-bold text-[#7F7F7F] mb-1">
+                <p className="text-xs font-bold text-gray-500 mb-1">
                   Ticket total(NGN)
                 </p>
                 <p className="nowrap font-semibold text-4xl md:text-5xl ">
@@ -107,10 +107,9 @@ const TicketInvoice = () => {
                 </hgroup>
                 <ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
                   <li>
-                    <p className=" text-xs text-[#7F7F7F]">ID:</p>
+                    <p className="text-xs text-gray-500 font-normal">ID:</p>
                     <p className="uppercase">#{currentUser?.ticket_id}</p>
                   </li>
-
                   <li>
                     <p className="text-xs text-gray-500 font-normal">
                       Trip Type:

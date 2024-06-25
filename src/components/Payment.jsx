@@ -55,7 +55,7 @@ const Payment = () => {
 
           {/* total cost */}
           <div className="w-full text-right my-3 md:my-0">
-            <p className="text-xs font-bold text-[#7F7F7F] mb-1">
+            <p className="text-xs font-bold text-gray-500 mb-1">
               Ticket total(NGN)
             </p>
             <p className="nowrap font-semibold text-4xl md:text-5xl ">
@@ -182,7 +182,6 @@ const Payment = () => {
                     </span>
                     {`${formData.passengerDetails.first_name} ${formData.passengerDetails.surname}`}
                   </p>
-                  {/* FIXME: 5 shows undefined */}
                   {Array.from({
                     length: formData.bookingDetails.total_passengers - 1,
                   }).map((_, i) => {

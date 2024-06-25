@@ -27,27 +27,26 @@ const Booking = () => {
       <Helmet>
         <title>Booking | Abitto Ferry</title>
       </Helmet>
-      <div className="bg-hero-pattern h-screen min-h-[1500px] w-screen bg-cover bg-no-repeat bg-center relative">
-        <div className="bg-black/40 w-full h-full absolute z-0 ">
-          <div className="px-2 md:px-0 py-32 mx-auto ">
-            <MaterialUIStepper />
+      <div className="bg-hero-pattern min-h-screen w-screen bg-cover bg-no-repeat bg-center relative">
+        <div className="bg-black/40 w-full h-full absolute" />
 
-            {activeStep === 0 ? (
-              <BookingDetails />
-            ) : activeStep === 1 ? (
-              <PassengerDetails />
-            ) : activeStep === 2 ? (
-              <SeatSelection />
-            ) : activeStep === 3 ? (
-              <Payment />
-            ) : (
-              ""
-            )}
-            {/* <div className="flex gap-2 justify-center *:bg-blue-500 text-white mt-2 *:px-2">
-              <button onClick={onPrevClick}>Prev</button>
-              <button onClick={onNextClick}>Next</button>
-            </div> */}
-          </div>
+        <div className="px-2 md:px-0 py-32 mx-auto relative ">
+          <MaterialUIStepper />
+          {activeStep === 0 ? (
+            <BookingDetails />
+          ) : activeStep === 1 ? (
+            <PassengerDetails />
+          ) : activeStep === 2 ? (
+            <SeatSelection />
+          ) : activeStep === 3 ? (
+            <Payment />
+          ) : (
+            ""
+          )}
+          {/* <div className="flex gap-2 justify-center *:bg-blue-500 text-white mt-2 *:px-2">
+                <button onClick={onPrevClick}>Prev</button>
+                <button onClick={onNextClick}>Next</button>
+              </div> */}
         </div>
       </div>
     </>
