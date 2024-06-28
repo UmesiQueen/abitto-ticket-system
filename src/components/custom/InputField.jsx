@@ -3,7 +3,7 @@
 import React from "react";
 
 const InputField = React.forwardRef((props, ref) => {
-  const { name, errors, label } = props;
+  const { name, errors, label, className } = props;
 
   return (
     <div className="flex flex-col w-full">
@@ -14,7 +14,7 @@ const InputField = React.forwardRef((props, ref) => {
         <input
           {...props}
           ref={ref}
-          className="h-10 md:h-12 bg-blue-50 p-3 border border-blue-500 font-normal !text-base placeholder:text-xs w-full rounded-lg font-poppins "
+          className={`h-10 md:h-12 bg-blue-50 p-3 border border-blue-500 font-normal !text-base placeholder:text-xs w-full rounded-lg font-poppins ${className}`}
         />
       </label>
       {errors?.[name] && (

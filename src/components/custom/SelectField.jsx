@@ -6,8 +6,16 @@ import MenuItem from "@mui/material/MenuItem";
 // import PropTypes from "prop-types";
 
 const SelectField = React.forwardRef((props, ref) => {
-  const { label, placeholder, options, name, errors, onChange, defaultValue } =
-    props;
+  const {
+    label,
+    placeholder,
+    options,
+    name,
+    errors,
+    onChange,
+    defaultValue,
+    className,
+  } = props;
   const [value, setValue] = React.useState(defaultValue ?? "");
   const [open, setOpen] = React.useState(false);
 
@@ -51,7 +59,7 @@ const SelectField = React.forwardRef((props, ref) => {
           sx={{
             "& .MuiOutlinedInput-notchedOutline": { display: "none" },
           }}
-          className="bg-blue-50 h-10 md:h-12 border border-blue-500 font-normal text-xs w-full !rounded-lg !font-poppins"
+          className={`bg-blue-50 h-10 md:h-12 border border-blue-500 font-normal text-xs w-full !rounded-lg !font-poppins ${className} `}
         >
           {options.map((option, index) => {
             return (
