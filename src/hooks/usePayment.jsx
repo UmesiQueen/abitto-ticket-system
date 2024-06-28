@@ -5,8 +5,14 @@ import { BookingCTX } from "@/contexts/BookingContext";
 import { toast } from "sonner";
 
 export const usePayment = () => {
-  const { formData, setLoading, setConfirmedTicket, setShowModal } =
-    React.useContext(BookingCTX);
+  const {
+    formData,
+    setLoading,
+    setConfirmedTicket,
+    setShowModal,
+    ticketCost,
+    handleReset,
+  } = React.useContext(BookingCTX);
 
   const onlinePayment = () => {
     const paystack = new PaystackPop();
@@ -78,7 +84,7 @@ export const usePayment = () => {
     toast.error("Request failed. Please try again later.");
   };
 
-  const fakeOnlinePayment = () => {
+  const testOnlinePayment = () => {
     const { ticket_id, bookingDetails, passengerDetails, seatDetails } =
       formData;
     const requestData = {
@@ -110,5 +116,38 @@ export const usePayment = () => {
     });
   };
 
-  return { onlinePayment, fakeOnlinePayment };
+  const testOfflinePayment = (data) => {
+    setLoading(true);
+    const { bookingDetails, passengerDetails, seatDetails } = formData;
+    const requestData = {
+      ticket_id: formData.ticket_id,
+      ...bookingDetails,
+      ...passengerDetails,
+      ...seatDetails,
+      status: data.payment_status,
+      paid_with: data.payment_method,
+      trxRef: data.transaction_ref,
+      medium: "Offline",
+      booked_by: "Queen",
+      ticket_price: ticketCost,
+    };
+
+    const status = data.payment_status;
+
+    setTimeout(() => {
+      // setConfirmedTicket(requestData);
+      console.log(requestData, "test booking");
+      status === "Success"
+        ? toast.success("Booking successful.")
+        : status === "Pending"
+        ? toast.warning("Booking Pending.")
+        : status === "Canceled"
+        ? toast.error("Booking Canceled.")
+        : null;
+      handleReset();
+      setLoading(false);
+    }, 1000);
+  };
+
+  return { onlinePayment, testOnlinePayment, testOfflinePayment };
 };

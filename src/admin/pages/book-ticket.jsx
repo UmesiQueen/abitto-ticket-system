@@ -31,6 +31,7 @@ import { bookingDetailsSchema } from "@/lib/validators/bookingSchema";
 import { passengerDetailsSchema } from "@/lib/validators/passengerSchema";
 import SelectField from "@/components/custom/SelectField";
 import InputField from "@/components/custom/InputField";
+import { usePayment } from "@/hooks/usePayment";
 
 const BookTicket = () => {
   const { activeStep } = useStepper();
@@ -983,6 +984,7 @@ const SeatButton = ({ id, onClick, disabled, seatSelected, currentTab }) => {
 const Payment = () => {
   const { formData, loading } = React.useContext(BookingCTX);
   const { onPrevClick } = useStepper();
+  const { testOfflinePayment } = usePayment();
 
   const paymentSchema = yup.object().shape({
     payment_status: yup.string().required("This field is required."),
@@ -1002,8 +1004,8 @@ const Payment = () => {
     resolver: yupResolver(paymentSchema),
   });
 
-  const onSubmit = handleSubmit(() => {
-    //do stuff
+  const onSubmit = handleSubmit((formData) => {
+    testOfflinePayment(formData);
   });
 
   return (

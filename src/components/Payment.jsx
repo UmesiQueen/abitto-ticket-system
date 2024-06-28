@@ -25,7 +25,7 @@ const Payment = () => {
   const { ticketCost, loading, formData } = React.useContext(BookingCTX);
   const { onPrevClick } = useStepper();
   // const { onlinePayment } = usePayment();
-  const { fakeOnlinePayment } = usePayment();
+  const { testOnlinePayment } = usePayment();
 
   return (
     <div className="flex flex-col h-fit p-5 bg-blue-50 w-full max-w-[1000px] mx-auto">
@@ -229,7 +229,7 @@ const Payment = () => {
 
           <Button
             // onClick={onlinePayment}
-            onClick={fakeOnlinePayment}
+            onClick={testOnlinePayment}
             loading={loading}
             text={"Pay with paystack"}
             className="w-56 uppercase mt-10 mb-5 mx-auto"
