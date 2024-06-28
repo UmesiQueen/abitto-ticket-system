@@ -40,6 +40,21 @@ const BookingContext = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.bookingDetails?.total_passengers]);
 
+  const handleReset = () => {
+    setShowModal(false);
+    setActiveStep(0);
+    setFormData({
+      bookingDetails: {},
+      passengerDetails: {},
+      seatDetails: {},
+    });
+    setSeatSelected({
+      departure: [],
+      return: [],
+    });
+    setChecked(false);
+  };
+
   const ctxValue = {
     formData,
     setFormData,
@@ -56,6 +71,7 @@ const BookingContext = ({ children }) => {
     setSeatSelected,
     isChecked,
     setChecked,
+    handleReset,
   };
 
   return <BookingCTX.Provider value={ctxValue}>{children}</BookingCTX.Provider>;

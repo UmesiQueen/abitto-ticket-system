@@ -244,30 +244,8 @@ const Payment = () => {
 export default Payment;
 
 const SuccessModal = () => {
-  const {
-    showModal,
-    setShowModal,
-    setActiveStep,
-    setFormData,
-    confirmedTicket,
-    setChecked,
-    setSeatSelected,
-  } = React.useContext(BookingCTX);
-
-  const handleOnClick = () => {
-    setShowModal(false);
-    setActiveStep(0);
-    setFormData({
-      bookingDetails: {},
-      passengerDetails: {},
-      seatDetails: {},
-    });
-    setSeatSelected({
-      departure: [],
-      return: [],
-    });
-    setChecked(false);
-  };
+  const { showModal, confirmedTicket, handleReset } =
+    React.useContext(BookingCTX);
 
   return (
     <>
@@ -302,14 +280,14 @@ const SuccessModal = () => {
                   <Button
                     text={"Print Ticket"}
                     className="md:py-5 w-full mb-5"
-                    onClick={handleOnClick}
+                    onClick={handleReset}
                   />
                 </Link>
                 <Button
                   text={"Continue"}
                   variant="outline"
                   className=" md:py-5 "
-                  onClick={handleOnClick}
+                  onClick={handleReset}
                 />
               </div>
             </div>
