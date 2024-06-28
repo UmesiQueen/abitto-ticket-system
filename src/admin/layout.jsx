@@ -42,6 +42,11 @@ const ProtectedRoute = () => {
                   <DashboardSquareIcon key="1" />,
                 ],
                 [
+                  "Book a Ticket",
+                  "/admin/book-ticket",
+                  <DashboardSquareIcon key="1" />,
+                ],
+                [
                   "Booking Details",
                   "/admin/booking-details",
                   <TicketIcon key="1" />,

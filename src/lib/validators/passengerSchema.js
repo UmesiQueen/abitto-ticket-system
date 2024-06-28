@@ -15,6 +15,16 @@ export const passengerDetailsSchema = yup.object().shape({
     .required("Phone number is required.")
     .matches(/^\+?\d+$/, "Invalid phone number.")
     .min(11, "Phone number must have at least 11 characters."),
+  departure_seat: yup.lazy((val) =>
+    Array.isArray(val)
+      ? yup.array().of(yup.string())
+      : yup.string().notRequired()
+  ),
+  return_seat: yup.lazy((val) =>
+    Array.isArray(val)
+      ? yup.array().of(yup.string())
+      : yup.string().notRequired()
+  ),
   passenger2_first_name: yup
     .string()
     .when(
