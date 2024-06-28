@@ -12,6 +12,7 @@ const GlobalContext = ({ children }) => {
   const [loading, setLoading] = React.useState(false);
   const [dataQuery, setDataQuery] = React.useState([]);
   const [isAuth, setAuth] = React.useState(adminStore);
+  const [currentPageIndex, setCurrentPageIndex] = React.useState(0);
 
   React.useEffect(() => {
     if (isAuth) localStorage.setItem("admin", JSON.stringify(isAuth));
@@ -55,6 +56,8 @@ const GlobalContext = ({ children }) => {
     setAuth,
     dataQuery,
     setDataQuery,
+    currentPageIndex,
+    setCurrentPageIndex,
   };
 
   return (

@@ -45,6 +45,7 @@ import { capitalize } from "lodash";
 import { cn, humanize } from "@/lib/utils";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { PaginationEllipsis } from "@/components/ui/pagination";
+import ReactPaginate from "react-paginate";
 
 const columns = [
   {
@@ -157,6 +158,7 @@ const columns = [
 
 const BookingDetails = () => {
   const navigate = useNavigate();
+  const { dataQuery, currentPageIndex } = React.useContext(GlobalCTX);
   const [sorting, setSorting] = React.useState([]);
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({});
@@ -165,7 +167,7 @@ const BookingDetails = () => {
     pageIndex: 0,
     pageSize: 7,
   });
-  const { dataQuery } = React.useContext(GlobalCTX);
+  const [extraRows, setExtraRows] = React.useState(0);
 
   const table = useReactTable({
     data: dataQuery,
@@ -179,7 +181,7 @@ const BookingDetails = () => {
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     onPaginationChange: setPagination,
-    pageCount: Math.ceil(dataQuery.length / 7),
+    pageCount: Math.ceil(dataQuery.length / pagination.pageSize),
     state: {
       sorting,
       columnFilters,
@@ -188,6 +190,20 @@ const BookingDetails = () => {
       pagination,
     },
   });
+
+  React.useEffect(() => {
+    table.setPageIndex(currentPageIndex);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  React.useEffect(() => {
+    const pageRowCount = table.getRowModel().rows.length;
+    if (pageRowCount) {
+      const extraRows = pagination.pageSize - pageRowCount;
+      setExtraRows(extraRows);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pagination.pageIndex]);
 
   return (
     <div>
@@ -250,24 +266,36 @@ const BookingDetails = () => {
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  onClick={() => {
-                    navigate(row.original._id);
-                  }}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+              <>
+                {table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                    onClick={() => {
+                      navigate(row.original._id);
+                    }}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id} className="h-[77px]">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+                {extraRows
+                  ? Array.from({ length: extraRows }).map((_, index) => (
+                      <TableRow key={index}>
+                        <TableCell
+                          colSpan={columns.length}
+                          className="h-[77px]"
+                        />
+                      </TableRow>
+                    ))
+                  : ""}
+              </>
             ) : (
               <TableRow>
                 <TableCell
@@ -280,13 +308,14 @@ const BookingDetails = () => {
             )}
           </TableBody>
         </Table>
+
         {/* Pagination */}
         <div className="flex items-center gap-8  p-4">
           <div className="font-medium text-sm">
             {table.getFilteredSelectedRowModel().rows.length} of{" "}
             {table.getFilteredRowModel().rows.length} row(s) selected.
           </div>
-          <PaginationSection props={{ table, pagination }} />
+          <Pagination props={{ table }} />
         </div>
       </div>
     </div>
@@ -295,24 +324,31 @@ const BookingDetails = () => {
 
 export default BookingDetails;
 
-const PaginationSection = (props) => {
-  const { table, pagination } = props.props;
-  const pageNumbers = Array.from({ length: table.getPageCount() }, (_, i) => i);
-
-  // const pageNumLimit = 3;
-  // const currentPage = pagination.pageIndex;
-
-  // let activePages = pageNumbers.slice(
-  //   Math.max(1, currentPage - pageNumLimit),
-  //   currentPage - 3
-  // );
-
-  // console.log(activePages);
+const Pagination = ({ props: { table } }) => {
+  const pageCount = table.getPageCount();
+  const { setCurrentPageIndex, currentPageIndex } = React.useContext(GlobalCTX);
 
   return (
-    <div>
-      <div className="flex gap-2 items-center">
-        {/* Previous Button */}
+    <ReactPaginate
+      breakLabel={<PaginationEllipsis />}
+      nextLabel={
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          <CaretIcon />
+        </Button>
+      }
+      onPageChange={(val) => {
+        table.setPageIndex(val.selected);
+        setCurrentPageIndex(val.selected);
+      }}
+      initialPage={currentPageIndex}
+      pageRangeDisplayed={3}
+      pageCount={pageCount}
+      previousLabel={
         <Button
           variant="ghost"
           size="sm"
@@ -323,84 +359,10 @@ const PaginationSection = (props) => {
             <CaretIcon />
           </span>
         </Button>
-        {pageNumbers.length <= 6 ? (
-          <>
-            {pageNumbers.map((pageIndex) => (
-              <Button
-                key={pageIndex}
-                size="sm"
-                variant="ghost"
-                className={cn(
-                  "rounded-lg text-xs font-normal w-7 h-8 inline-flex items-center justify-center transition duration-100 ease-in-out",
-                  {
-                    "bg-blue-500 text-white":
-                      pagination.pageIndex === pageIndex,
-                  }
-                )}
-                onClick={() => {
-                  table.setPageIndex(pageIndex);
-                }}
-              >
-                {pageIndex + 1}
-              </Button>
-            ))}
-          </>
-        ) : (
-          <>
-            {/* FIXME: Page numbers should move */}
-            {pageNumbers.slice(0, 3).map((pageIndex) => (
-              <Button
-                key={pageIndex}
-                size="sm"
-                variant="ghost"
-                className={cn(
-                  "rounded-lg text-xs font-normal w-7 h-8 inline-flex items-center justify-center transition duration-100 ease-in-out",
-                  {
-                    "bg-blue-500 text-white":
-                      pagination.pageIndex === pageIndex,
-                  }
-                )}
-                onClick={() => {
-                  table.setPageIndex(pageIndex);
-                }}
-              >
-                {pageIndex + 1}
-              </Button>
-            ))}
-            <PaginationEllipsis />
-            {pageNumbers.slice(-3).map((pageIndex) => (
-              <Button
-                key={pageIndex}
-                size="sm"
-                variant="ghost"
-                className={cn(
-                  "rounded-lg text-xs font-normal w-7 h-8 inline-flex items-center justify-center transition duration-100 ease-in-out",
-                  {
-                    "bg-blue-500 text-white":
-                      pagination.pageIndex === pageIndex,
-                  }
-                )}
-                onClick={() => {
-                  table.setPageIndex(pageIndex);
-                }}
-              >
-                {pageIndex + 1}
-              </Button>
-            ))}
-          </>
-        )}
-
-        {/* Next Button */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          <CaretIcon />
-        </Button>
-      </div>
-    </div>
+      }
+      renderOnZeroPageCount={null}
+      className="flex gap-2 items-center text-xs font-normal [&_a]:inline-flex [&_a]:items-center [&_a]:justify-center [&_a]:min-w-7 [&_a]:h-8 [&_a]:rounded-lg *:text-center *:[&_.selected]:bg-blue-500  *:[&_.selected]:text-white [&_.disabled]:pointer-events-none "
+    />
   );
 };
 
