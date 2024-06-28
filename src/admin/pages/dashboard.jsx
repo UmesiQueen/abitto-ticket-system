@@ -19,9 +19,6 @@ import { BarChart } from "@tremor/react";
 import {
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import { format } from "date-fns";
@@ -298,37 +295,20 @@ const columns = [
 ];
 
 const LatestBookingsTable = () => {
-  const [sorting, setSorting] = React.useState([]);
-  const [columnFilters, setColumnFilters] = React.useState([]);
-  const [columnVisibility, setColumnVisibility] = React.useState({});
-  const [rowSelection, setRowSelection] = React.useState({});
   const { dataQuery } = React.useContext(GlobalCTX);
   const navigate = useNavigate();
 
   const table = useReactTable({
     data: dataQuery.slice(0, 5),
     columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-    },
   });
 
   return (
     <div className="bg-white rounded-lg p-5 mb-5 ">
       <div className="border rounded-lg ">
         <div className=" mb-5 p-5 border-b">
-          <h3 className="font-semibold">Latest Booking List</h3>
+          <h3 className="font-semibold">Recent Booking</h3>
         </div>
         <Table>
           <TableHeader>
@@ -354,7 +334,6 @@ const LatestBookingsTable = () => {
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
                   onClick={() => {
                     navigate(`/admin/booking-details/${row.original._id}`);
                   }}
