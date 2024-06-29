@@ -32,13 +32,6 @@ const GlobalContext = ({ children }) => {
     }
   }, [isAuth]);
 
-  // React.useEffect(() => {
-  //   const totalEarnings = dataQuery
-  //     .map((booking) => booking.amount)
-  //     .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-
-  // }, [dataQuery]);
-
   const scrollToSection = (e) => {
     window.scrollTo({
       top: e.current.offsetTop - 70,
