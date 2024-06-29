@@ -8,7 +8,7 @@ import { v4 as uuid } from "uuid";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import DatePicker from "react-datepicker";
-import { format } from "date-fns";
+import { format, addHours } from "date-fns";
 // import PropTypes from "prop-types";
 import { formatValue } from "react-currency-input-field";
 import { cn, humanize } from "@/lib/utils";
@@ -108,6 +108,7 @@ const BookingForm = ({ tab }) => {
   const [availableDate, setAvailableDate] = React.useState(
     new Date().toISOString().split("T")[0]
   );
+  const [arrivalTime, setArrivalTime] = React.useState("");
   const { onNextClick } = useStepper();
   const ticket_id = uuid();
 
@@ -130,6 +131,7 @@ const BookingForm = ({ tab }) => {
   const adults_number = watch("adults_number");
   const children_number = watch("children_number");
   const departure_date = watch("departure_date");
+  const departure_time = watch("departure_time");
   const return_date = watch("return_date");
   const total_passengers = Number(adults_number) + Number(children_number);
 
@@ -145,13 +147,23 @@ const BookingForm = ({ tab }) => {
       const availableDate = new Date(departureDate).setDate(
         departureDate.getDate() + 1
       );
-      setAvailableDate(new Date(availableDate).toISOString().split("T")[0]);
+      const dateString = new Date(availableDate).toISOString().split("T")[0];
+      setAvailableDate(dateString);
 
       if (return_date < departure_date) resetField("return_date");
+
+      if (departure_time) {
+        const dateTime = new Date(`${dateString} ${departure_time}`);
+        const arrivalTime = new Date(addHours(dateTime, 1)).toLocaleTimeString(
+          "en-US",
+          { hour: "2-digit", minute: "2-digit" }
+        );
+        setArrivalTime(arrivalTime);
+      }
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [departure_date]);
+  }, [departure_date, departure_time]);
 
   React.useEffect(() => {
     resetTimeOptions(travel_from);
@@ -388,10 +400,11 @@ const BookingForm = ({ tab }) => {
       {showTotal && (
         <section className="my-10">
           {/* <h3 className="font-medium">Ticket Price Summary</h3> */}
-          <div className="flex my-5">
-            <div className="text-center basis-1/4 rounded-lg bg-gray-200 shadow-sm py-8 ">
+          {/* TODO: Display return details on round trip */}
+          <div className="flex my-5 gap-[1px]">
+            <div className="text-center basis-1/4 rounded-lg bg-gray-200 shadow-sm py-8 border-r-2 border-gray-500 border-dashed ">
               <p className="text-sm">
-                {formatValue({ value: String(ticketCost) })} x{" "}
+                {formatValue({ value: String(ticketCost), prefix: "₦" })} x{" "}
                 {total_passengers}
               </p>
               <p className="md:text-2xl font-semibold tracking-wider">
@@ -404,21 +417,27 @@ const BookingForm = ({ tab }) => {
                 })}
               </p>
             </div>
-            <ul className=" basis-3/4 flex justify-between items-center bg-gray-200 shadow-sm rounded-lg py-8 px-10 border-l-2 border-gray-500 border-dashed">
+            <ul className=" basis-3/4 flex justify-between items-center text-center bg-gray-200 shadow-sm rounded-lg py-8 px-10 border-l-2 border-gray-500 border-dashed ">
               <li>
-                <p className="font-bold">{watch("departure_time")}</p>
-                <p className="text-[#989898] text-sm">{watch("travel_from")}</p>
+                <p className="font-bold">
+                  {watch("departure_time") ??
+                    formData.bookingDetails.departure_time}
+                </p>
+                <p className="text-blue-700 text-sm">{watch("travel_from")}</p>
               </li>
-              <li className="text-gray-500 inline-flex items-center">
-                ------
-                <span className="rounded-full bg-white border border-gray-500 w-10 h-10 inline-flex justify-center items-center">
-                  <BoatIcon />
-                </span>
-                ------
+              <li className="text-blue-700 ">
+                <p className="text-xs">1 hour</p>
+                <div className="inline-flex items-center">
+                  ------
+                  <span className="rounded-full bg-white border border-blue-700 w-10 h-10 inline-flex justify-center items-center">
+                    <BoatIcon />
+                  </span>
+                  ------
+                </div>
               </li>
               <li>
-                <p className="font-bold">Not Available</p>
-                <p className="text-sm text-[#989898]">{watch("travel_to")}</p>
+                <p className="font-bold">{arrivalTime}</p>
+                <p className="text-sm text-blue-700 ">{watch("travel_to")}</p>
               </li>
             </ul>
           </div>
