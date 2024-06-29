@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { Helmet } from "react-helmet-async";
 import Box from "@mui/material/Box";
@@ -14,13 +14,6 @@ import Payment from "@/components/Payment";
 const Booking = () => {
   // const { activeStep, onNextClick, onPrevClick } = useStepper();
   const { activeStep } = useStepper();
-
-  React.useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  }, [activeStep]);
 
   return (
     <>

@@ -22,6 +22,13 @@ const BookingContext = ({ children }) => {
   const ticketCost = 8800;
 
   React.useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [activeStep]);
+
+  React.useEffect(() => {
     if (confirmedTicket)
       localStorage.setItem("ticket", JSON.stringify(confirmedTicket));
   }, [confirmedTicket]);
