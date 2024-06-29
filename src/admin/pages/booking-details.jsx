@@ -38,7 +38,8 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+import { Button as ButtonUI } from "@/components/ui/button";
+import Button from "@/components/custom/Button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { formatValue } from "react-currency-input-field";
 import { capitalize } from "lodash";
@@ -46,115 +47,6 @@ import { cn, humanize } from "@/lib/utils";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { PaginationEllipsis } from "@/components/ui/pagination";
 import ReactPaginate from "react-paginate";
-
-const columns = [
-  {
-    accessorKey: "id",
-    header: "Booking ID",
-    cell: ({ row }) => (
-      <div className="uppercase">#{row.original.ticket_id}</div>
-    ),
-  },
-  {
-    accessorKey: "customer",
-    header: "Customer",
-    cell: ({ row }) => (
-      <div>
-        <p className="text-base font-medium capitalize">
-          {capitalize(`${row.original.first_name} ${row.original.surname}`)}
-        </p>
-        <p className="italic lowercase">{row.original.email}</p>
-      </div>
-    ),
-  },
-  {
-    accessorKey: "type",
-    header: "Type",
-    cell: ({ row }) => <div>{row.original.trip_type}</div>,
-  },
-  {
-    accessorKey: "date_time",
-    header: "Date & Time",
-    cell: ({ row }) => (
-      <div>{`${format(row.original.departure_date, "PP")} ${
-        row.original.departure_time
-      }`}</div>
-    ),
-  },
-  {
-    accessorKey: "medium",
-    header: <div className="text-center">Medium</div>,
-    cell: ({ row }) => (
-      <div className="text-center">{row.original?.medium}</div>
-    ),
-  },
-  {
-    accessorKey: "paid with",
-    header: "Payment Method",
-    cell: ({ row }) => (
-      <div className="text-center">{row.original?.paid_with}</div>
-    ),
-  },
-  {
-    accessorKey: "amount",
-    header: "Amount",
-    cell: ({ row }) => (
-      <div>
-        ₦
-        {formatValue({
-          value: String(row.getValue("amount")),
-        })}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "status",
-    header: <div className="text-center">Status</div>,
-    cell: ({ row }) => {
-      const {
-        original: { status = "Success" },
-      } = row;
-
-      return (
-        <div
-          className={cn(
-            "rounded-lg w-20 mx-auto py-1 text-[10px] text-center",
-            {
-              "text-green-500 bg-green-100": status === "Success",
-              "text-[#E78913] bg-[#F8DAB6]": status === "Pending",
-              "text-[#F00000] bg-[#FAB0B0]": status === "Canceled",
-            }
-          )}
-        >
-          {status}
-        </div>
-      );
-    },
-  },
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-        className="mr-4"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-];
 
 const BookingDetails = () => {
   const navigate = useNavigate();
@@ -168,6 +60,133 @@ const BookingDetails = () => {
     pageSize: 7,
   });
   const [extraRows, setExtraRows] = React.useState(0);
+
+  const columns = [
+    {
+      accessorKey: "id",
+      header: "ID",
+      cell: ({ row }) => (
+        <div className="uppercase">#{row.original.ticket_id}</div>
+      ),
+    },
+    {
+      accessorKey: "customer",
+      header: "Customer",
+      cell: ({ row }) => (
+        <div>
+          <p className="text-[15px] font-semibold capitalize">
+            {capitalize(`${row.original.first_name} ${row.original.surname}`)}
+          </p>
+          <p className="italic  lowercase">{row.original.email}</p>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "type",
+      header: "Type",
+      cell: ({ row }) => <div>{row.original.trip_type}</div>,
+    },
+    {
+      accessorKey: "departure",
+      header: "Departure",
+      cell: ({ row }) => <div>{row.original.travel_from}</div>,
+    },
+    {
+      accessorKey: "date_time",
+      header: "Date & Time",
+      cell: ({ row }) => (
+        <div>{`${format(row.original.departure_date, "PP")} - ${
+          row.original.departure_time
+        }`}</div>
+      ),
+    },
+    {
+      accessorKey: "medium",
+      header: <div className="text-center">Medium</div>,
+      cell: ({ row }) => (
+        <div className="text-center">{row.original?.medium}</div>
+      ),
+    },
+    {
+      accessorKey: "status",
+      header: <div className="text-center">Status</div>,
+      cell: ({ row }) => {
+        const {
+          original: { status = "Success" },
+        } = row;
+
+        return (
+          <div
+            className={cn(
+              "rounded-lg w-20 mx-auto py-1 text-[10px] text-center",
+              {
+                "text-green-500 bg-green-100": status === "Success",
+                "text-[#E78913] bg-[#F8DAB6]": status === "Pending",
+                "text-[#F00000] bg-[#FAB0B0]": status === "Canceled",
+              }
+            )}
+          >
+            {status}
+          </div>
+        );
+      },
+    },
+    // {
+    //   accessorKey: "paid with",
+    //   header: "Payment Method",
+    //   cell: ({ row }) => (
+    //     <div className="text-center">{row.original?.paid_with}</div>
+    //   ),
+    // },
+    {
+      accessorKey: "amount",
+      header: "Amount",
+      cell: ({ row }) => (
+        <div>
+          ₦
+          {formatValue({
+            value: String(row.getValue("amount")),
+          })}
+        </div>
+      ),
+    },
+    {
+      id: "action",
+      header: <div className="text-center">Action</div>,
+      cell: ({ row }) => (
+        <Button
+          onClick={() => navigate(row.original._id)}
+          className="px-2 h-8 !text-xs"
+          text="View"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+          className="mr-4"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+  ];
 
   const table = useReactTable({
     data: dataQuery,
@@ -206,18 +225,18 @@ const BookingDetails = () => {
   }, [pagination.pageIndex]);
 
   return (
-    <div>
+    <div className="">
       <div className="flex items-center gap-5 mb-5 ">
         <h1 className="text-base font-semibold">Booking Details</h1>
         <div className="rounded-lg border ml-auto">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="px-5">
+              <ButtonUI variant="ghost" className="px-5">
                 <span className="mr-1">
                   <FilterIcon />
                 </span>
                 Filter
-              </Button>
+              </ButtonUI>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               {table
@@ -271,9 +290,6 @@ const BookingDetails = () => {
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
-                    onClick={() => {
-                      navigate(row.original._id);
-                    }}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id} className="h-[77px]">
@@ -332,14 +348,14 @@ const Pagination = ({ props: { table } }) => {
     <ReactPaginate
       breakLabel={<PaginationEllipsis />}
       nextLabel={
-        <Button
+        <ButtonUI
           variant="ghost"
           size="sm"
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
           <CaretIcon />
-        </Button>
+        </ButtonUI>
       }
       onPageChange={(val) => {
         table.setPageIndex(val.selected);
@@ -349,7 +365,7 @@ const Pagination = ({ props: { table } }) => {
       pageRangeDisplayed={3}
       pageCount={pageCount}
       previousLabel={
-        <Button
+        <ButtonUI
           variant="ghost"
           size="sm"
           onClick={() => table.previousPage()}
@@ -358,7 +374,7 @@ const Pagination = ({ props: { table } }) => {
           <span className="rotate-180">
             <CaretIcon />
           </span>
-        </Button>
+        </ButtonUI>
       }
       renderOnZeroPageCount={null}
       className="flex gap-2 items-center text-xs font-normal [&_a]:inline-flex [&_a]:items-center [&_a]:justify-center [&_a]:min-w-7 [&_a]:h-8 [&_a]:rounded-lg *:text-center *:[&_.selected]:bg-blue-500  *:[&_.selected]:text-white [&_.disabled]:pointer-events-none "

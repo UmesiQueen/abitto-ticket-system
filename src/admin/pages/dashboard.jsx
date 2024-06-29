@@ -272,7 +272,7 @@ const columns = [
     header: "Customer",
     cell: ({ row }) => (
       <div>
-        <p className="text-base font-medium">{`${row.original.first_name} ${row.original.surname}`}</p>{" "}
+        <p className="text-[15px] font-semibold">{`${row.original.first_name} ${row.original.surname}`}</p>{" "}
         <p className="italic">{row.original.email}</p>
       </div>
     ),
@@ -283,28 +283,33 @@ const columns = [
     cell: ({ row }) => <div>{row.original.trip_type}</div>,
   },
   {
+    accessorKey: "departure",
+    header: "Departure",
+    cell: ({ row }) => <div>{row.original.travel_from}</div>,
+  },
+  {
     accessorKey: "date_time",
     header: "Date & Time",
     cell: ({ row }) => (
-      <div>{`${format(row.original.departure_date, "PP")} ${
+      <div>{`${format(row.original.departure_date, "PP")} - ${
         row.original.departure_time
       }`}</div>
     ),
   },
   {
     accessorKey: "medium",
-    header: "Booking Medium",
+    header: "Medium",
     cell: ({ row }) => (
       <div className="text-center">{row.original?.medium ?? "Offline"}</div>
     ),
   },
-  {
-    accessorKey: "paid with",
-    header: "Payment Method",
-    cell: ({ row }) => (
-      <div className="text-center">{row.original?.paid_with ?? "Cash"}</div>
-    ),
-  },
+  // {
+  //   accessorKey: "paid with",
+  //   header: "Payment Method",
+  //   cell: ({ row }) => (
+  //     <div className="text-center">{row.original?.paid_with ?? "Cash"}</div>
+  //   ),
+  // },
   {
     accessorKey: "amount",
     header: "Amount",
