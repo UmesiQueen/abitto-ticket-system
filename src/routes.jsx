@@ -13,7 +13,7 @@ import AdminLayout from "./admin/layout";
 import Dashboard from "./admin/pages/dashboard";
 import BookingDetails from "./admin/pages/booking-details";
 import Customers from "./admin/pages/customers";
-import Payments from "./admin/pages/payments";
+import JourneyList from "./admin/pages/journey-list";
 import Settings from "./admin/pages/settings";
 import Login from "./admin/auth/login";
 import { CustomerDetails } from "./admin/pages/booking-details";
@@ -43,7 +43,7 @@ export const router = createBrowserRouter(
           element={<CustomerDetails />}
         />
         <Route path="customers" element={<Customers />} />
-        <Route path="payments" element={<Payments />} />
+        <Route path="journey-list" element={<JourneyList />} />
         <Route path="settings" element={<Settings />} />
       </Route>
 

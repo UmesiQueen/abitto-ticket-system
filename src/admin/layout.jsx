@@ -7,6 +7,7 @@ import {
   CaretIcon,
   SearchIcon,
   LogoutIcon,
+  UserIcon,
 } from "@/assets/icons";
 import { Outlet, NavLink, Navigate, useNavigate } from "react-router-dom";
 import Badge from "@mui/material/Badge";
@@ -51,8 +52,12 @@ const ProtectedRoute = () => {
                   "/admin/booking-details",
                   <TicketIcon key="1" />,
                 ],
-                // ["Customer", "/admin/customers", <UserIcon key="1" />],
-                ["Payments", "/admin/payments", <InvoiceIcon key="1" />],
+                ["Customer", "/admin/customers", <UserIcon key="1" />],
+                [
+                  "Journey List",
+                  "/admin/journey-list",
+                  <InvoiceIcon key="1" />,
+                ],
                 ["Settings", "/admin/settings", <SettingsIcon key="1" />],
               ].map(([title, url, icon]) => (
                 <li key={title}>
