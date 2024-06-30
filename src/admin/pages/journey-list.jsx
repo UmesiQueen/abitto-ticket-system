@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 // import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import {
@@ -35,7 +36,10 @@ import { BookingCTX } from "@/contexts/BookingContext";
 
 const JourneyList = () => {
   return (
-    <div>
+    <>
+      <Helmet>
+        <title>Jounery List | Admin</title>
+      </Helmet>
       <h1 className=" text-lg font-semibold">Journey List</h1>
       <SearchForm />
       <div>
@@ -44,7 +48,7 @@ const JourneyList = () => {
           <JourneyTable />
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import {
   FerryBoatIcon,
   UserGroupIcon,
@@ -139,7 +140,10 @@ const Dashboard = () => {
   const dataFormatter = (number) =>
     Intl.NumberFormat("us").format(number).toString();
   return (
-    <div>
+    <>
+      <Helmet>
+        <title>Dashboard | Admin</title>
+      </Helmet>
       <h1 className="text-lg font-semibold">Dashboard Overview</h1>
       <div className="my-8 grid grid-cols-12 gap-5 w-full ">
         <div className="col-start-1 col-span-8 row-start-1 row-span-1 bg-white rounded-lg p-5 ">
@@ -253,7 +257,7 @@ const Dashboard = () => {
         </div>
       </div>
       <LatestBookingsTable />
-    </div>
+    </>
   );
 };
 

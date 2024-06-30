@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import { Helmet } from "react-helmet-async";
 import {
   FilterIcon,
   CloudIcon,
@@ -225,9 +226,12 @@ const BookingDetails = () => {
   }, [pagination.pageIndex]);
 
   return (
-    <div className="">
-      <div className="flex items-center gap-5 mb-5 ">
-        <h1 className="text-base font-semibold">Booking Details</h1>
+    <>
+      <Helmet>
+        <title>Booking Details | Admin</title>
+      </Helmet>
+      <div className="flex items-center gap-5 mb-8">
+        <h1 className="text-lg font-semibold">Booking Details</h1>
         <div className="rounded-lg border ml-auto">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -334,7 +338,7 @@ const BookingDetails = () => {
           <Pagination props={{ table }} />
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

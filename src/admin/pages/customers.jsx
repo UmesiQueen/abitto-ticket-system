@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import {
   FilterIcon,
   CloudIcon,
@@ -75,6 +76,9 @@ const users = [
 const Customers = () => {
   return (
     <>
+      <Helmet>
+        <title>Customers | Admin</title>
+      </Helmet>
       <div className="flex items-center gap-5 mb-5 ">
         <h1 className="text-base  font-semibold">Customers</h1>
         <div className="rounded-lg border px-4 p-2 cursor-pointer flex items-center gap-2 ml-auto">

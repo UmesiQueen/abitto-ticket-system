@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import { Cloud2Icon } from "@/assets/icons";
@@ -7,8 +8,11 @@ const Settings = () => {
   const [value, setValue] = React.useState("");
 
   return (
-    <div>
-      <h2 className=" font-semibold text-sm ">Payments history</h2>
+    <>
+      <Helmet>
+        <title>Settings | Admin</title>
+      </Helmet>
+      <h1 className="font-semibold text-lg ">Settings</h1>
       <div className="bg-white rounded-lg p-8 mb-5 mt-8 ">
         <div className="flex gap-16">
           <div className="basis-8/12 space-y-8">
@@ -102,7 +106,7 @@ const Settings = () => {
           Update
         </button>
       </div>
-    </div>
+    </>
   );
 };
 

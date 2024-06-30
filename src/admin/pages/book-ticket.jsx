@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import Modal from "@mui/material/Modal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -36,22 +37,27 @@ import { usePayment } from "@/hooks/usePayment";
 const BookTicket = () => {
   const { activeStep } = useStepper();
   return (
-    <div>
-      <h1 className="text-lg font-semibold">Salespoint Terminal</h1>
-      {activeStep === 0 ? (
-        <BookingDetails />
-      ) : activeStep === 1 ? (
-        <CustomerDetails />
-      ) : (
-        <Payment />
-      )}
-    </div>
+    <>
+      <Helmet>
+        <title>Book Ticket | Admin </title>
+      </Helmet>
+      <div>
+        <h1 className="text-lg font-semibold">Salespoint Terminal</h1>
+        {activeStep === 0 ? (
+          <TripDetails />
+        ) : activeStep === 1 ? (
+          <CustomerDetails />
+        ) : (
+          <Payment />
+        )}
+      </div>
+    </>
   );
 };
 
 export default BookTicket;
 
-const BookingDetails = () => {
+const TripDetails = () => {
   const { formData } = React.useContext(BookingCTX);
   const StyledTabsTrigger = ({ children, value, ...props }) => {
     return (
@@ -74,7 +80,7 @@ const BookingDetails = () => {
         <div className="flex justify-between">
           <hgroup>
             <h2 className="text-blue-500 text-base font-semibold">
-              Booking Details
+              Trip Details
             </h2>
             <p className="text-sm">Please fill in customers trip details</p>
           </hgroup>

@@ -8,6 +8,7 @@ import {
   SearchIcon,
   LogoutIcon,
   UserIcon,
+  BookIcon,
 } from "@/assets/icons";
 import { Outlet, NavLink, Navigate, useNavigate } from "react-router-dom";
 import Badge from "@mui/material/Badge";
@@ -22,7 +23,7 @@ const ProtectedRoute = () => {
   return (
     <>
       <Helmet>
-        <title>Abitto Ferry | Admin</title>
+        <title>Admin | Abitto Ferry</title>
       </Helmet>
       <div className="relative">
         {/* sidebar */}
@@ -42,17 +43,13 @@ const ProtectedRoute = () => {
                   "/admin/dashboard",
                   <DashboardSquareIcon key="1" />,
                 ],
-                [
-                  "Book a Ticket",
-                  "/admin/book-ticket",
-                  <DashboardSquareIcon key="1" />,
-                ],
+                ["Book a Ticket", "/admin/book-ticket", <TicketIcon key="1" />],
                 [
                   "Booking Details",
                   "/admin/booking-details",
-                  <TicketIcon key="1" />,
+                  <BookIcon key="1" />,
                 ],
-                ["Customer", "/admin/customers", <UserIcon key="1" />],
+                ["Customers", "/admin/customers", <UserIcon key="1" />],
                 [
                   "Journey List",
                   "/admin/journey-list",
