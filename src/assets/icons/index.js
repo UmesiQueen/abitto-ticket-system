@@ -37,6 +37,7 @@ import BoatPart2 from "./BoatPart2";
 import BoatPart1 from "./BoatPart1";
 import ShipIcon from "./Ship";
 import BookIcon from "./Book";
+import DeleteIcon from "./Trash";
 
 export {
   FacebookIcon,
@@ -78,4 +79,5 @@ export {
   BoatPart2,
   ShipIcon,
   BookIcon,
+  DeleteIcon,
 };
