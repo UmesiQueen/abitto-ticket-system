@@ -14,6 +14,12 @@ const BookingContext = ({ children }) => {
   const ticketStore = JSON.parse(localStorage.getItem("ticket")) ?? null;
   const [confirmedTicket, setConfirmedTicket] = React.useState(ticketStore);
   const [showModal, setShowModal] = React.useState(false);
+  const [tripSelected, setTripSelected] = React.useState({
+    destination: "",
+    arrival: "",
+    time: "",
+    date: "",
+  });
   const [seatSelected, setSeatSelected] = React.useState({
     departure: [],
     return: [],
@@ -79,6 +85,8 @@ const BookingContext = ({ children }) => {
     isChecked,
     setChecked,
     handleReset,
+    tripSelected,
+    setTripSelected,
   };
 
   return <BookingCTX.Provider value={ctxValue}>{children}</BookingCTX.Provider>;

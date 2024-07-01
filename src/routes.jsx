@@ -22,6 +22,7 @@ import TicketInvoice from "./components/TicketInvoice";
 import MainLayout from "./main/layout";
 import About from "./main/pages/about";
 import BookTicket from "./admin/pages/book-ticket";
+import { TripDetails } from "./admin/pages/journey-list";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -44,6 +45,7 @@ export const router = createBrowserRouter(
         />
         <Route path="customers" element={<Customers />} />
         <Route path="journey-list" element={<JourneyList />} />
+        <Route path="journey-list/:trip-code" element={<TripDetails />} />
         <Route path="settings" element={<Settings />} />
       </Route>
 
