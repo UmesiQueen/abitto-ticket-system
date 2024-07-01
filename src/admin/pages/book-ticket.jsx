@@ -450,7 +450,12 @@ const BookingForm = ({ tab }) => {
         </section>
       )}
 
-      <Button text="Proceed" type="submit" loading={loading} className="w-56" />
+      <Button
+        text="Proceed"
+        type="submit"
+        loading={loading}
+        className="w-full py-6"
+      />
     </form>
   );
 };

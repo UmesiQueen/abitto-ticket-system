@@ -87,7 +87,7 @@ const ProtectedRoute = () => {
               <input
                 type="text"
                 className="bg-transparent w-full focus:outline-none py-1"
-                placeholder="Search for id, destination, date, or status"
+                placeholder="Search by booking Id or name"
               />
             </div>
             <div className="rounded-full bg-[#F1F1F1] p-2 ml-auto">

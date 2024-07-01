@@ -9,7 +9,7 @@ export const bookingDetailsSchema = yup.object().shape({
       travel_from[0]
         ? schema.notOneOf(
             [yup.ref("travel_from")],
-            "Destination and departure cannot be the same."
+            "Departure and arrival cannot be the same."
           )
         : schema
     ),

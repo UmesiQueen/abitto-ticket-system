@@ -96,9 +96,10 @@ const BookingDetails = () => {
       accessorKey: "date_time",
       header: "Date & Time",
       cell: ({ row }) => (
-        <div>{`${format(row.original.departure_date, "PP")} - ${
-          row.original.departure_time
-        }`}</div>
+        <div className="space-y-1">
+          <p>{format(row.original.departure_date, "PP")}</p>
+          <p>{row.original.departure_time}</p>
+        </div>
       ),
     },
     {
@@ -396,11 +397,7 @@ export const CustomerDetails = () => {
   return (
     <div>
       <div className="flex gap-1 items-center mb-5 py-2">
-        <button
-          onClick={() => {
-            navigate(-1);
-          }}
-        >
+        <button onClick={() => navigate(-1)}>
           <CircleArrowLeftIcon />
         </button>
         <h1 className="text-base font-semibold">Booking Details</h1>
