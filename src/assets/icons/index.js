@@ -38,6 +38,8 @@ import BoatPart1 from "./BoatPart1";
 import ShipIcon from "./Ship";
 import BookIcon from "./Book";
 import DeleteIcon from "./Trash";
+import EditIcon from "./Edit";
+import PasswordIcon from "./Password";
 
 export {
   FacebookIcon,
@@ -80,4 +82,6 @@ export {
   ShipIcon,
   BookIcon,
   DeleteIcon,
+  PasswordIcon,
+  EditIcon,
 };
