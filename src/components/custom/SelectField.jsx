@@ -44,7 +44,7 @@ const SelectField = React.forwardRef((props, ref) => {
           value={options.includes(value) ? value : ""}
           onChange={(event) => {
             setValue(event.target.value);
-            onChange(event);
+            onChange(event); // react hook onChange fn
           }}
           displayEmpty
           renderValue={
