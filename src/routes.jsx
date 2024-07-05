@@ -24,6 +24,7 @@ import About from "./main/pages/about";
 import BookTicket from "./admin/pages/book-ticket";
 import { TripDetails } from "./admin/pages/journey-list";
 import Create from "./admin/pages/create";
+import ScheduleTrip from "./admin/pages/schedule-trip";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -39,7 +40,8 @@ export const router = createBrowserRouter(
       <Route path="admin" element={<AdminLayout />}>
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="create" element={<Create />} />
-        <Route path="book-ticket" element={<BookTicket />} />
+        <Route path="create/book-ticket" element={<BookTicket />} />
+        <Route path="create/schedule-trip" element={<ScheduleTrip />} />
         <Route path="booking-details" element={<BookingDetails />} />
         <Route
           path="booking-details/:bookingID"
