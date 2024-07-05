@@ -23,6 +23,7 @@ import MainLayout from "./main/layout";
 import About from "./main/pages/about";
 import BookTicket from "./admin/pages/book-ticket";
 import { TripDetails } from "./admin/pages/journey-list";
+import Create from "./admin/pages/create";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -37,6 +38,7 @@ export const router = createBrowserRouter(
       <Route path="admin" element={<Navigate to="dashboard" replace />} />
       <Route path="admin" element={<AdminLayout />}>
         <Route path="dashboard" element={<Dashboard />} />
+        <Route path="create" element={<Create />} />
         <Route path="book-ticket" element={<BookTicket />} />
         <Route path="booking-details" element={<BookingDetails />} />
         <Route

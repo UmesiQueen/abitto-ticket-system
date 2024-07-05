@@ -43,7 +43,7 @@ const ProtectedRoute = () => {
                   "/admin/dashboard",
                   <DashboardSquareIcon key="1" />,
                 ],
-                ["Book a Ticket", "/admin/book-ticket", <TicketIcon key="1" />],
+                ["Create", "/admin/create", <TicketIcon key="1" />],
                 [
                   "Booking Details",
                   "/admin/booking-details",

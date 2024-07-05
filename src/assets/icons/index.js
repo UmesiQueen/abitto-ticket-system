@@ -40,6 +40,7 @@ import BookIcon from "./Book";
 import DeleteIcon from "./Trash";
 import EditIcon from "./Edit";
 import PasswordIcon from "./Password";
+import MenuBoardIcon from "./MenuBoard";
 
 export {
   FacebookIcon,
@@ -84,4 +85,5 @@ export {
   DeleteIcon,
   PasswordIcon,
   EditIcon,
+  MenuBoardIcon,
 };
