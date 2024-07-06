@@ -9,7 +9,7 @@ const Create = () => {
   const [isChecked, setIsChecked] = React.useState();
   const navigate = useNavigate();
 
-  const handleChecked = (e) => {
+  const handleIsChecked = (e) => {
     const target = e.target.id;
     setIsChecked({ [target]: true });
   };
@@ -30,11 +30,11 @@ const Create = () => {
           <div className="flex gap-5 justify-between">
             <div
               data-checked={isChecked?.book_ticket}
-              className=" relative flex flex-col justify-between border-2 border-gray-500 data-[checked=true]:scale-105 data-[checked=true]:border-blue-500 rounded-lg p-5 grow w-72 min-h-44 shadow-sm"
+              className="relative flex flex-col justify-between  hover:bg-blue-50/40 border-2 border-gray-500 data-[checked=true]:scale-105 data-[checked=true]:text-blue-500 data-[checked=true]:border-blue-500 rounded-lg p-5 grow w-72 min-h-44 shadow-sm overflow-hidden transition-all duration-150 ease-in-out"
             >
               <div
                 id="book_ticket"
-                onClick={handleChecked}
+                onClick={handleIsChecked}
                 className="absolute z-1 w-full h-full top-0 left-0 right-0"
               />
               <div className="flex items-center gap-5 justify-between ">
@@ -53,11 +53,11 @@ const Create = () => {
             </div>
             <div
               data-checked={isChecked?.rent_boat}
-              className=" relative flex flex-col justify-between border-2 border-gray-500 data-[checked=true]:scale-105 data-[checked=true]:border-blue-500 rounded-lg p-5 grow w-72 min-h-44 shadow-sm overflow-hidden"
+              className="relative flex flex-col justify-between hover:bg-blue-50/40 border-2 border-gray-500 data-[checked=true]:scale-105 data-[checked=true]:text-blue-500 data-[checked=true]:border-blue-500 rounded-lg p-5 grow w-72 min-h-44 shadow-sm overflow-hidden transition-all duration-150 ease-in-out"
             >
               <div
                 id="rent_boat"
-                onClick={handleChecked}
+                onClick={handleIsChecked}
                 className="absolute z-1 w-full h-full top-0 left-0 right-0"
               />
               <div className="flex items-center gap-5 justify-between">
@@ -76,11 +76,11 @@ const Create = () => {
             </div>
             <div
               data-checked={isChecked?.schedule_trip}
-              className="relative flex flex-col justify-between border-2 border-gray-500 data-[checked=true]:scale-105 data-[checked=true]:border-blue-500 rounded-lg p-5 grow w-72 min-h-44 shadow-sm"
+              className="relative flex flex-col justify-between hover:bg-blue-50/40 border-2 border-gray-500 data-[checked=true]:scale-105 data-[checked=true]:text-blue-500 data-[checked=true]:border-blue-500 rounded-lg p-5 grow w-72 min-h-44 shadow-sm overflow-hidden transition-all duration-150 ease-in-out"
             >
               <div
                 id="schedule_trip"
-                onClick={handleChecked}
+                onClick={handleIsChecked}
                 className="absolute z-1 w-full h-full top-0 left-0 right-0"
               />
               <div className="flex items-center gap-5 justify-between">
