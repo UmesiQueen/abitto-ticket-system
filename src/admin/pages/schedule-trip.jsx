@@ -10,16 +10,18 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { CalendarIcon, ClockIcon } from "@/assets/icons";
 import SelectField from "@/components/custom/SelectField";
 import Button from "@/components/custom/Button";
-import { toast } from "sonner";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { scheduleTripSchema } from "@/lib/validators/scheduleTripSchema";
 import { NumericFormat } from "react-number-format";
 import { v4 as uuid } from "uuid";
+import { GlobalCTX } from "@/contexts/GlobalContext";
+import ScheduleConfirmationModal from "@/components/modals/schedule.confirmation";
 
 const ScheduleTrip = () => {
   const [dateOptions, setDateOptions] = React.useState([]);
   const { loading, setLoading } = React.useContext(BookingCTX);
+  const { mountPortalModal } = React.useContext(GlobalCTX);
 
   const {
     control,
@@ -65,8 +67,7 @@ const ScheduleTrip = () => {
     setLoading(true);
     setTimeout(() => {
       console.log(formValues, "formData");
-      toast.success("Trip successfully scheduled!");
-      handleReset();
+      mountPortalModal(<ScheduleConfirmationModal props={{ handleReset }} />);
       setLoading(false);
     }, 650);
   });

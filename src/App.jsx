@@ -4,6 +4,7 @@ import Loader from "@/components/animation/Loader";
 import { Toaster } from "sonner";
 import GlobalContext from "@/contexts/GlobalContext";
 import "./index.css";
+import ModalPortal from "./components/ModalPortal";
 
 const App = () => {
   const pathname = useLocation();
@@ -18,6 +19,7 @@ const App = () => {
         <Outlet />
         <Loader />
         <Toaster position="top-center" expand={true} richColors />
+        <ModalPortal />
       </div>
     </GlobalContext>
   );

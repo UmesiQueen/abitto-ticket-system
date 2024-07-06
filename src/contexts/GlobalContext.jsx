@@ -13,6 +13,22 @@ const GlobalContext = ({ children }) => {
   const [dataQuery, setDataQuery] = React.useState([]);
   const [isAuth, setAuth] = React.useState(adminStore);
   const [currentPageIndex, setCurrentPageIndex] = React.useState(0);
+  const [showModal, setShowModal] = React.useState(false);
+  const [modalContent, setModalContent] = React.useState();
+
+  const mountPortalModal = (modalContent) => {
+    if (!showModal) {
+      setShowModal(true);
+      setModalContent(modalContent);
+    }
+  };
+
+  const unMountPortalModal = () => {
+    if (showModal) {
+      setShowModal(false);
+      setModalContent();
+    }
+  };
 
   React.useEffect(() => {
     if (isAuth) localStorage.setItem("admin", JSON.stringify(isAuth));
@@ -51,6 +67,11 @@ const GlobalContext = ({ children }) => {
     setDataQuery,
     currentPageIndex,
     setCurrentPageIndex,
+    showModal,
+    modalContent,
+    setModalContent,
+    mountPortalModal,
+    unMountPortalModal,
   };
 
   return (
