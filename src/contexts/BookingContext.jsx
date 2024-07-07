@@ -25,6 +25,7 @@ const BookingContext = ({ children }) => {
     return: [],
   });
   const [isChecked, setChecked] = React.useState(false);
+  const [searchParams, setSearchParams] = React.useState({});
   const ticketCost = 8800;
 
   React.useEffect(() => {
@@ -87,6 +88,8 @@ const BookingContext = ({ children }) => {
     handleReset,
     tripSelected,
     setTripSelected,
+    searchParams,
+    setSearchParams,
   };
 
   return <BookingCTX.Provider value={ctxValue}>{children}</BookingCTX.Provider>;

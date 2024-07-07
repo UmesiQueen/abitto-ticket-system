@@ -22,7 +22,7 @@ import TicketInvoice from "./components/TicketInvoice";
 import MainLayout from "./main/layout";
 import About from "./main/pages/about";
 import BookTicket from "./admin/pages/book-ticket";
-import { TripDetails } from "./admin/pages/journey-list";
+import TripDetails from "./admin/pages/trip-details";
 import Create from "./admin/pages/create";
 import ScheduleTrip from "./admin/pages/schedule-trip";
 
