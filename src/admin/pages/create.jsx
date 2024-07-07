@@ -32,10 +32,10 @@ const Create = () => {
               data-checked={isChecked?.book_ticket}
               className="relative flex flex-col justify-between  hover:bg-blue-50/40 border-2 border-gray-500 data-[checked=true]:scale-105 data-[checked=true]:text-blue-500 data-[checked=true]:border-blue-500 rounded-lg p-5 grow w-72 min-h-44 shadow-sm overflow-hidden transition-all duration-150 ease-in-out"
             >
-              <div
+              <button
                 id="book_ticket"
                 onClick={handleIsChecked}
-                className="absolute z-1 w-full h-full top-0 left-0 right-0"
+                className="absolute z-1 w-full h-full top-0 left-0 right-0 rounded-lg"
               />
               <div className="flex items-center gap-5 justify-between ">
                 <div
@@ -45,6 +45,7 @@ const Create = () => {
                   <TicketIcon />
                 </div>
                 <Checkbox
+                  tabIndex={-1}
                   checked={isChecked?.book_ticket ? true : false}
                   className="rounded-full data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
                 />
@@ -55,10 +56,10 @@ const Create = () => {
               data-checked={isChecked?.rent_boat}
               className="relative flex flex-col justify-between hover:bg-blue-50/40 border-2 border-gray-500 data-[checked=true]:scale-105 data-[checked=true]:text-blue-500 data-[checked=true]:border-blue-500 rounded-lg p-5 grow w-72 min-h-44 shadow-sm overflow-hidden transition-all duration-150 ease-in-out"
             >
-              <div
+              <button
                 id="rent_boat"
                 onClick={handleIsChecked}
-                className="absolute z-1 w-full h-full top-0 left-0 right-0"
+                className="absolute z-1 w-full h-full top-0 left-0 right-0 rounded-lg"
               />
               <div className="flex items-center gap-5 justify-between">
                 <div
@@ -68,6 +69,7 @@ const Create = () => {
                   <ShipIcon />
                 </div>
                 <Checkbox
+                  tabIndex={-1}
                   checked={isChecked?.rent_boat ? true : false}
                   className="rounded-full data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
                 />
@@ -78,7 +80,7 @@ const Create = () => {
               data-checked={isChecked?.schedule_trip}
               className="relative flex flex-col justify-between hover:bg-blue-50/40 border-2 border-gray-500 data-[checked=true]:scale-105 data-[checked=true]:text-blue-500 data-[checked=true]:border-blue-500 rounded-lg p-5 grow w-72 min-h-44 shadow-sm overflow-hidden transition-all duration-150 ease-in-out"
             >
-              <div
+              <button
                 id="schedule_trip"
                 onClick={handleIsChecked}
                 className="absolute z-1 w-full h-full top-0 left-0 right-0"
@@ -91,6 +93,7 @@ const Create = () => {
                   <MenuBoardIcon />
                 </div>
                 <Checkbox
+                  tabIndex={-1}
                   checked={isChecked?.schedule_trip ? true : false}
                   className="rounded-full data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
                 />
