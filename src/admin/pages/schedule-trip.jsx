@@ -7,7 +7,7 @@ import DatePicker from "react-datepicker";
 import { format } from "date-fns";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { CalendarIcon, ClockIcon } from "@/assets/icons";
+import { CalendarIcon, ClockIcon, CircleArrowLeftIcon } from "@/assets/icons";
 import SelectField from "@/components/custom/SelectField";
 import Button from "@/components/custom/Button";
 import { Cross2Icon } from "@radix-ui/react-icons";
@@ -17,11 +17,14 @@ import { NumericFormat } from "react-number-format";
 import { v4 as uuid } from "uuid";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import ScheduleConfirmationModal from "@/components/modals/schedule.confirmation";
+import { Button as ButtonIcon } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const ScheduleTrip = () => {
   const [dateOptions, setDateOptions] = React.useState([]);
   const { loading, setLoading } = React.useContext(BookingCTX);
   const { mountPortalModal } = React.useContext(GlobalCTX);
+  const navigate = useNavigate();
 
   const {
     control,
@@ -113,7 +116,13 @@ const ScheduleTrip = () => {
         <title>Schedule Trip | Admin</title>
       </Helmet>
 
-      <h1 className="font-semibold mb-10">Schedule New Trip</h1>
+      <div className="flex gap-1 items-center mb-10 ">
+        <ButtonIcon size="icon" variant="ghost" onClick={() => navigate(-1)}>
+          <CircleArrowLeftIcon />
+        </ButtonIcon>
+        <h1 className="font-semibold text-lg">Schedule New Trip</h1>
+      </div>
+
       <form
         onSubmit={onSubmit}
         className="[&_input]:bg-white [&_input]:border-gray-500 space-y-8 bg-white rounded-lg p-10 mb-5 mt-8 [&_label]:font-medium "
@@ -281,7 +290,7 @@ const ScheduleTrip = () => {
           ""
         )}
         <Button
-          text="Continue"
+          text="Create new trip"
           type="submit"
           className="w-full !mt-12 py-6"
           loading={loading}
