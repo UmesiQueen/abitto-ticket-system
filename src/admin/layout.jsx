@@ -38,11 +38,6 @@ const ProtectedRoute = () => {
           <nav className="px-5">
             <ul>
               {[
-                [
-                  "Dashboard",
-                  "/admin/dashboard",
-                  <DashboardSquareIcon key="1" />,
-                ],
                 ["Create", "/admin/create", <TicketIcon key="1" />],
                 [
                   "Booking Details",
@@ -55,6 +50,7 @@ const ProtectedRoute = () => {
                   "/admin/journey-list",
                   <InvoiceIcon key="1" />,
                 ],
+                ["Report", "/admin/report", <DashboardSquareIcon key="1" />],
                 ["Settings", "/admin/settings", <SettingsIcon key="1" />],
               ].map(([title, url, icon]) => (
                 <li key={title}>

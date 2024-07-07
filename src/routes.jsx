@@ -10,7 +10,6 @@ import Home from "./main/pages";
 import Booking from "./main/pages/booking";
 import PageNotFound from "./main/pages/404";
 import AdminLayout from "./admin/layout";
-import Dashboard from "./admin/pages/dashboard";
 import BookingDetails from "./admin/pages/booking-details";
 import Customers from "./admin/pages/customers";
 import JourneyList from "./admin/pages/journey-list";
@@ -25,6 +24,7 @@ import BookTicket from "./admin/pages/book-ticket";
 import TripDetails from "./admin/pages/trip-details";
 import Create from "./admin/pages/create";
 import ScheduleTrip from "./admin/pages/schedule-trip";
+import Report from "./admin/pages/report";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -36,9 +36,8 @@ export const router = createBrowserRouter(
         <Route path="about" element={<About />} />
       </Route>
 
-      <Route path="admin" element={<Navigate to="dashboard" replace />} />
+      <Route path="admin" element={<Navigate to="create" replace />} />
       <Route path="admin" element={<AdminLayout />}>
-        <Route path="dashboard" element={<Dashboard />} />
         <Route path="create" element={<Create />} />
         <Route path="create/book-ticket" element={<BookTicket />} />
         <Route path="create/schedule-trip" element={<ScheduleTrip />} />
@@ -50,6 +49,7 @@ export const router = createBrowserRouter(
         <Route path="customers" element={<Customers />} />
         <Route path="journey-list" element={<JourneyList />} />
         <Route path="journey-list/:trip-code" element={<TripDetails />} />
+        <Route path="report" element={<Report />} />
         <Route path="settings" element={<Settings />} />
       </Route>
 

@@ -1,30 +1,8 @@
+import React from "react";
 import { Helmet } from "react-helmet-async";
-import {
-  FerryBoatIcon,
-  UserGroupIcon,
-  WalletIcon,
-  // TicketIcon,
-} from "@/assets/icons";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-// import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
+import { FerryBoatIcon, UserGroupIcon, WalletIcon } from "@/assets/icons";
 import { formatValue } from "react-currency-input-field";
 import { BarChart } from "@tremor/react";
-import {
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-import { format } from "date-fns";
-import React from "react";
-import { useNavigate } from "react-router-dom";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 
 const chartDataDemo = [
@@ -90,7 +68,7 @@ const chartDataDemo = [
   },
 ];
 
-const Dashboard = () => {
+const Report = () => {
   const { dataQuery } = React.useContext(GlobalCTX);
   const [total, setTotal] = React.useState({
     totalEarning: 0,
@@ -142,9 +120,9 @@ const Dashboard = () => {
   return (
     <>
       <Helmet>
-        <title>Dashboard | Admin</title>
+        <title>Report | Admin</title>
       </Helmet>
-      <h1 className="text-lg font-semibold">Dashboard Overview</h1>
+      <h1 className="text-lg font-semibold">Report Overview</h1>
       <div className="my-8 grid grid-cols-12 gap-5 w-full ">
         <div className="col-start-1 col-span-8 row-start-1 row-span-1 bg-white rounded-lg p-5 ">
           <ul className="border rounded-lg p-5 flex flex-wrap gap-5 justify-between items-center min-h-[100px] [&_li]:min-w-[25%]  [&_li:not(:first-of-type)]:pl-7 divide-x ">
@@ -190,19 +168,6 @@ const Dashboard = () => {
                 </p>
               </div>
             </li>
-            {/* <li className="flex items-center gap-3 w-56 ">
-              <div className="rounded-lg bg-blue-50 p-2">
-                <span className="text-blue-500">
-                  <TicketIcon />
-                </span>
-              </div>
-              <div>
-                <p className="text-xs text-[#7F7F7F] ">New Bookings</p>
-                <p className="text-base">
-                  <b>0</b>
-                </p>
-              </div>
-            </li> */}
           </ul>
         </div>
 
@@ -256,169 +221,8 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-      <LatestBookingsTable />
     </>
   );
 };
 
-export default Dashboard;
-
-const columns = [
-  {
-    accessorKey: "id",
-    header: "Booking ID",
-    cell: ({ row }) => (
-      <div className="uppercase">#{row.original.ticket_id}</div>
-    ),
-  },
-  {
-    accessorKey: "customer",
-    header: "Customer",
-    cell: ({ row }) => (
-      <div>
-        <p className="text-[15px] font-semibold">{`${row.original.first_name} ${row.original.surname}`}</p>{" "}
-        <p className="italic">{row.original.email}</p>
-      </div>
-    ),
-  },
-  {
-    accessorKey: "type",
-    header: "Type",
-    cell: ({ row }) => <div>{row.original.trip_type}</div>,
-  },
-  {
-    accessorKey: "departure",
-    header: "Departure",
-    cell: ({ row }) => <div>{row.original.travel_from}</div>,
-  },
-  {
-    accessorKey: "date_time",
-    header: "Date & Time",
-    cell: ({ row }) => (
-      <div>{`${format(row.original.departure_date, "PP")} - ${
-        row.original.departure_time
-      }`}</div>
-    ),
-  },
-  {
-    accessorKey: "medium",
-    header: "Medium",
-    cell: ({ row }) => (
-      <div className="text-center">{row.original?.medium ?? "Offline"}</div>
-    ),
-  },
-  // {
-  //   accessorKey: "paid with",
-  //   header: "Payment Method",
-  //   cell: ({ row }) => (
-  //     <div className="text-center">{row.original?.paid_with ?? "Cash"}</div>
-  //   ),
-  // },
-  {
-    accessorKey: "amount",
-    header: "Amount",
-    cell: ({ row }) => (
-      <div>
-        ₦
-        {formatValue({
-          value: String(row.getValue("amount")),
-        })}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "status",
-    header: <div className="text-center">Status</div>,
-    cell: ({ row }) => {
-      const {
-        original: { status = "Success" },
-      } = row;
-
-      return (
-        <div
-          className={cn(
-            "rounded-lg w-20 mx-auto py-1 text-[10px] text-center",
-            {
-              "text-green-500 bg-green-100": status === "Success",
-              "text-[#E78913] bg-[#F8DAB6]": status === "Pending",
-              "text-[#F00000] bg-[#FAB0B0]": status === "Canceled",
-            }
-          )}
-        >
-          {status}
-        </div>
-      );
-    },
-  },
-];
-
-const LatestBookingsTable = () => {
-  const { dataQuery } = React.useContext(GlobalCTX);
-  const navigate = useNavigate();
-
-  const table = useReactTable({
-    data: dataQuery.slice(0, 5),
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
-
-  return (
-    <div className="bg-white rounded-lg p-5 mb-5 ">
-      <div className="border rounded-lg ">
-        <div className=" mb-5 p-5 border-b">
-          <h3 className="font-semibold">Recent Booking</h3>
-        </div>
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  onClick={() => {
-                    navigate(`/admin/booking-details/${row.original._id}`);
-                  }}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-    </div>
-  );
-};
+export default Report;
