@@ -53,18 +53,16 @@ const editProfileSchema = yup.object().shape({
 });
 
 const passwordSchema = yup.object().shape({
-  currentPassword: yup
-    .string()
-    .required("Old password is required.")
-    .trim()
-    .lowercase(),
+  currentPassword: yup.string().required("Old password is required.").trim(),
   newPassword: yup
     .string()
     .required("New password is required.")
-    .min(2, "New Password must contain at least 2 character(s)")
-    .max(35, "New Password cannot contain more than 30 character(s)")
+    .matches(
+      /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
+      "Password must contain at least 8 characters, at least one letter and one number"
+    )
+    .max(25, "Password cannot contain more than 25 character(s)")
     .trim()
-    .lowercase()
     .when("currentPassword", ([currentPassword], field) =>
       currentPassword
         ? field.notOneOf(

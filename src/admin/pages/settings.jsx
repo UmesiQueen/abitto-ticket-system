@@ -16,6 +16,7 @@ import {
 } from "@/lib/validators/settingSchema";
 import DefaultProfile from "@/assets/images/default_profile.png";
 import { GlobalCTX } from "@/contexts/GlobalContext";
+import { BookingCTX } from "@/contexts/BookingContext";
 
 const Settings = () => {
   return (
@@ -223,6 +224,7 @@ const ProfilePicture = React.forwardRef((props, ref) => {
 });
 
 const ChangePassword = () => {
+  const { loading, setLoading } = React.useContext(BookingCTX);
   const {
     register,
     handleSubmit,
@@ -234,9 +236,14 @@ const ChangePassword = () => {
   });
 
   const onSubmit = handleSubmit((formData) => {
-    console.log(formData, "form data");
-    reset();
-    toast.info("Password reset successful!");
+    setLoading(true);
+
+    setTimeout(() => {
+      console.log(formData, "form data");
+      toast.info("Password reset successful!");
+      setLoading(false);
+      reset();
+    }, 650);
   });
 
   return (
@@ -248,8 +255,8 @@ const ChangePassword = () => {
       >
         <PasswordField
           {...register("currentPassword")}
-          label="Old Password"
-          placeholder="Enter old password"
+          label="Current Password"
+          placeholder="Enter current password"
           errors={errors}
         />
         <PasswordField
@@ -264,7 +271,12 @@ const ChangePassword = () => {
           placeholder="Re-enter new password"
           errors={errors}
         />
-        <Button className="w-32" type="submit" text="Update" />
+        <Button
+          className="w-32"
+          type="submit"
+          text="Update"
+          loading={loading}
+        />
       </form>
     </>
   );
