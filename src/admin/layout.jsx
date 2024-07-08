@@ -3,22 +3,38 @@ import {
   SettingsIcon,
   TicketIcon,
   InvoiceIcon,
-  NotificationIcon,
-  CaretIcon,
   SearchIcon,
   LogoutIcon,
   UserIcon,
   BookIcon,
 } from "@/assets/icons";
-import { Outlet, NavLink, Navigate, useNavigate } from "react-router-dom";
-import Badge from "@mui/material/Badge";
+import {
+  Outlet,
+  NavLink,
+  Navigate,
+  useNavigate,
+  Link,
+  useLocation,
+} from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import React from "react";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { Helmet } from "react-helmet-async";
+import DefaultProfile from "@/assets/images/default_profile.png";
 
 const ProtectedRoute = () => {
   const navigate = useNavigate();
+  const { isAuth } = React.useContext(GlobalCTX);
+  const { pathname } = useLocation();
+  const searchBarVisibility = [
+    "/admin/booking-details",
+    "/admin/customers",
+  ].includes(pathname);
+
+  const handleLogout = () => {
+    localStorage.removeItem("admin");
+    navigate("/login");
+  };
 
   return (
     <>
@@ -66,11 +82,8 @@ const ProtectedRoute = () => {
             </ul>
           </nav>
           <button
-            className=" px-10 py-5 mt-auto flex items-center gap-2  hover:bg-gray-900/80 "
-            onClick={() => {
-              localStorage.removeItem("admin");
-              navigate("/login");
-            }}
+            className=" px-10 py-5 mt-auto flex items-center gap-2 hover:bg-gray-900/80 "
+            onClick={handleLogout}
           >
             <LogoutIcon />
             <span>Logout</span>
@@ -78,25 +91,31 @@ const ProtectedRoute = () => {
         </aside>
         <main className="ml-60 bg-[#F7F7F7] min-h-screen ">
           <header className="h-16 w-full bg-white px-8 flex items-center gap-5">
-            <div className="h-10 w-80 bg-blue-50 p-3 border border-blue-500 rounded-lg font-normal text-xs font-poppins flex items-center gap-2">
-              <SearchIcon />
-              <input
-                type="text"
-                className="bg-transparent w-full focus:outline-none py-1"
-                placeholder="Search by booking Id or name"
-              />
+            {searchBarVisibility && (
+              <div className="h-10 w-80 bg-blue-50 p-3 border border-blue-500 rounded-lg font-normal text-xs font-poppins flex items-center gap-2">
+                <SearchIcon />
+                <input
+                  type="text"
+                  className="bg-transparent w-full focus:outline-none py-1"
+                  placeholder="Search by booking Id or name"
+                />
+              </div>
+            )}
+            <div className="ml-auto flex gap-3 text-right">
+              <div className=" leading-none self-end">
+                <p className="font-semibold">{isAuth.first_name}</p>
+                <p className="text-sm font-medium text-gray-500">
+                  {isAuth.account_type}
+                </p>
+              </div>
+              <Link to="/admin/settings">
+                <Avatar
+                  alt="profile"
+                  src={DefaultProfile}
+                  className="bg-gray-300"
+                />
+              </Link>
             </div>
-            <div className="rounded-full bg-[#F1F1F1] p-2 ml-auto">
-              <Badge color="error" overlap="circular" variant="dot">
-                <NotificationIcon />
-              </Badge>
-            </div>
-            <div className=" bg-[#5e548e] rounded-full">
-              <Avatar alt="profile" src="https://i.ibb.co/bKKvY14/Queen.png" />
-            </div>
-            <button className="text-black rotate-90 ">
-              <CaretIcon />
-            </button>
           </header>
           <section className="p-8">
             <Outlet />
