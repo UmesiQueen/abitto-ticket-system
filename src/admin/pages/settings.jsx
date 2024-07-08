@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-// import React from "react";
+import React from "react";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -14,6 +14,8 @@ import {
   editProfileSchema,
   passwordSchema,
 } from "@/lib/validators/settingSchema";
+import DefaultProfile from "@/assets/images/default_profile.png";
+import { GlobalCTX } from "@/contexts/GlobalContext";
 
 const Settings = () => {
   return (
@@ -82,13 +84,20 @@ const StyledTabsTrigger = ({ value, title, icon }) => {
 export default Settings;
 
 const EditProfile = () => {
+  const { isAuth } = React.useContext(GlobalCTX);
+
   const {
     handleSubmit,
     register,
-    formState: { errors },
+    formState: { errors, defaultValues },
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(editProfileSchema),
+    defaultValues: {
+      ...isAuth,
+      location: "Nigeria",
+      profile_picture: "",
+    },
   });
 
   const onSubmit = handleSubmit((formData) => {
@@ -102,7 +111,11 @@ const EditProfile = () => {
         onSubmit={onSubmit}
         className="[&_input]:bg-white [&_input]:border-gray-500 space-y-8"
       >
-        <ProfileImage />
+        <ProfilePicture
+          {...register("profile_picture")}
+          errors={errors}
+          defaultValue={defaultValues.profile_picture}
+        />
 
         <div className="flex gap-6">
           <InputField
@@ -135,9 +148,10 @@ const EditProfile = () => {
             {...register("gender")}
             label="Gender"
             placeholder="Select gender"
-            options={["Female", "Male"]}
+            options={["female", "male"]}
             className="bg-white !border-gray-500"
             errors={errors}
+            defaultValue={defaultValues.gender}
           />
         </div>
         <div className="flex gap-6">
@@ -165,49 +179,48 @@ const EditProfile = () => {
   );
 };
 
-const ProfileImage = () => {
-  const currentImageUrl = "https://i.ibb.co/bKKvY14/Queen.png";
-  // const [imgUrl, setImgUrl] = React.useState(currentImageUrl);
+// eslint-disable-next-line react/display-name
+const ProfilePicture = React.forwardRef((props, ref) => {
+  const { onChange, errors, defaultValue } = props;
+  const profile = defaultValue
+    ? URL.createObjectURL(defaultValue[0])
+    : DefaultProfile;
+  const [preview, setPreview] = React.useState(profile);
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    console.log(file, "result");
-
-    const reader = new FileReader();
-    reader.addEventListener("onload", () => {
-      const imageUrl = reader.result?.toString() || "";
-      console.log(imageUrl, "image url");
-      reader.readAsDataURL(file);
-    });
-    // setImgUrl(URL.createObjectURL(e.target.files[0]));
+  const handleImageUpload = (event) => {
+    const file = event?.target.files[0];
+    onChange(event);
+    setPreview(URL.createObjectURL(file));
   };
 
   return (
-    <>
-      <div className="bg-[#e3dff4] rounded-full overflow-hidden h-56 aspect-square mx-auto">
+    <div>
+      <div className="bg-gray-300 rounded-full overflow-hidden h-56 aspect-square mx-auto mb-8">
         <img
           alt="profile"
-          src={currentImageUrl}
+          src={preview}
           className=" w-full h-full object-cover"
         />
       </div>
-      <label
-        htmlFor="image_uploads"
-        className="text-base text-blue-500 font-medium flex gap-2 items-center w-fit mx-auto py-1 px-2 rounded-lg cursor-pointer hover:bg-blue-50"
-      >
+      <label className="text-base text-blue-500 font-medium flex gap-2 items-center w-fit mx-auto py-1 px-2 rounded-lg cursor-pointer hover:bg-blue-50">
         <Cloud2Icon /> Upload Profile Picture
+        <input
+          {...props}
+          ref={ref}
+          type="file"
+          className="hidden"
+          accept=".jpg, .jpeg, .png"
+          onChange={handleImageUpload}
+        />
       </label>
-      <input
-        type="file"
-        id="image_uploads"
-        name="image_uploads"
-        className="hidden"
-        accept=".jpg, .jpeg, .png"
-        onChange={handleImageUpload}
-      />
-    </>
+      {errors?.profile_picture && (
+        <p className="text-xs pt-2 text-red-700 font-medium text-center">
+          {errors?.profile_picture.message}
+        </p>
+      )}
+    </div>
   );
-};
+});
 
 const ChangePassword = () => {
   const {

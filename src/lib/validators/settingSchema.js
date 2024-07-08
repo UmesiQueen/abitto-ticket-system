@@ -1,16 +1,57 @@
 import * as yup from "yup";
 
+// const MAX_FILE_SIZE = 1024 * 1000 * 2; //2MB
+const validFileExtensions = {
+  image: ["jpg", "png", "jpeg", "svg", "webp"],
+};
+
+function isValidFileType(fileName, fileType) {
+  return (
+    fileName &&
+    validFileExtensions[fileType].indexOf(fileName.split(".").pop()) > -1
+  );
+}
+
 const editProfileSchema = yup.object().shape({
-  first_name: yup.string().required("This field is required."),
-  last_name: yup.string().required("This field is required."),
+  first_name: yup
+    .string()
+    .required("This field is required.")
+    .min(2, "First name must have a min of 2 characters.")
+    .trim(),
+  last_name: yup
+    .string()
+    .required("This field is required.")
+    .min(2, "Last name must have a min of 2 characters.")
+    .trim(),
   email: yup
     .string()
     .email("Invalid email.")
-    .required("This field is required."),
+    .required("This field is required.")
+    .trim()
+    .lowercase(),
   gender: yup.string().required("This field is required."),
-  location: yup.string().required("This field is required."),
-  city: yup.string().required("This field is required."),
+  location: yup
+    .string()
+    .required("This field is required.")
+    .min(2, "Location must have a min of 2 characters.")
+    .trim(),
+  city: yup
+    .string()
+    .required("This field is required.")
+    .min(2, "City must have a min of 2 characters.")
+    .trim(),
+  profile_picture: yup
+    .mixed()
+    .test("is-valid-type", "Not a valid image type", ([value]) => {
+      return value ? isValidFileType(value.name.toLowerCase(), "image") : true;
+    })
+    // .test("is-valid-size", "Max allowed size is 2MB", ([value]) => {
+    //   console.log(value.size > MAX_FILE_SIZE, "value size");
+    //   return value ? value.size > MAX_FILE_SIZE : true;
+    // })
+    .notRequired(),
 });
+
 const passwordSchema = yup.object().shape({
   currentPassword: yup
     .string()
