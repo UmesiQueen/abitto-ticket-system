@@ -22,55 +22,50 @@ import SelectField from "./custom/SelectField";
 
 const BookingDetails = () => {
   const [value, setValue] = React.useState("1");
-  const { activeStep } = useStepper();
 
   const handleChange = (_, newValue) => {
     setValue(newValue);
   };
 
   return (
-    <>
-      {activeStep === 0 && (
-        <TabContext value={value}>
-          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <StyledTabList
-              onChange={handleChange}
-              aria-label="booking ticket forms"
-            >
-              <Tab
-                label="One-Way Trip"
-                value="1"
-                sx={{
-                  background: "#FFFFFF99",
-                  textTransform: "capitalize",
-                  fontFamily: "Poppins, sans-serif",
-                }}
-              />
-              <Tab
-                label="Round Trip"
-                value="2"
-                sx={{
-                  background: "#FFFFFF99",
-                  textTransform: "capitalize",
-                  fontFamily: "Poppins, sans-serif",
-                }}
-              />
-            </StyledTabList>
-          </Box>
-          <div className="bg-white p-5 md:p-10 ">
-            <h3 className="text-blue-500 font-semibold text-base md:text-xl font-poppins ">
-              Booking Details
-            </h3>
-            <TabPanel value="1" sx={{ padding: "0" }}>
-              <BookingForm tab="One-Way Trip" />
-            </TabPanel>
-            <TabPanel value="2" sx={{ padding: "0" }}>
-              <BookingForm tab="Round Trip" />
-            </TabPanel>
-          </div>
-        </TabContext>
-      )}
-    </>
+    <TabContext value={value}>
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <StyledTabList
+          onChange={handleChange}
+          aria-label="booking ticket forms"
+        >
+          <Tab
+            label="One-Way Trip"
+            value="1"
+            sx={{
+              background: "#FFFFFF99",
+              textTransform: "capitalize",
+              fontFamily: "Poppins, sans-serif",
+            }}
+          />
+          <Tab
+            label="Round Trip"
+            value="2"
+            sx={{
+              background: "#FFFFFF99",
+              textTransform: "capitalize",
+              fontFamily: "Poppins, sans-serif",
+            }}
+          />
+        </StyledTabList>
+      </Box>
+      <div className="bg-white p-5 md:p-10 ">
+        <h3 className="text-blue-500 font-semibold text-base md:text-xl font-poppins ">
+          Booking Details
+        </h3>
+        <TabPanel value="1" sx={{ padding: "0" }}>
+          <BookingForm tab="One-Way Trip" />
+        </TabPanel>
+        <TabPanel value="2" sx={{ padding: "0" }}>
+          <BookingForm tab="Round Trip" />
+        </TabPanel>
+      </div>
+    </TabContext>
   );
 };
 
