@@ -6,14 +6,14 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import { CircleArrowLeftIcon } from "@/assets/icons";
-import { Button as IconButton } from "@/components/ui/button";
 import Button from "@/components/custom/Button";
 import { useStepper } from "@/hooks/useStepper";
-import { format } from "date-fns";
 import InputField from "./custom/InputField";
+import SeatSelection from "./SeatSelection";
 
 const PassengerDetails = () => {
+  const [showModal, setShowModal] = React.useState(false);
+  const [tab, setTab] = React.useState("departure");
   const { loading, setLoading } = React.useContext(GlobalCTX);
   const { setChecked, isChecked, formData, setFormData } =
     React.useContext(BookingCTX);
@@ -23,12 +23,15 @@ const PassengerDetails = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(passengerDetailsSchema),
     context: { adultPassengers: adults_number, isChecked },
-    defaultValues: formData.passengerDetails,
+    defaultValues: {
+      ...formData.passengerDetails,
+    },
   });
 
   const onSubmit = handleSubmit((formData_) => {
@@ -64,75 +67,23 @@ const PassengerDetails = () => {
     }
   });
 
-  return (
-    <>
-      <div className="bg-blue-500/70 max-w-[1000px] mx-auto mb-5 min-h-20 p-2 flex items-center ">
-        <ul className=" w-full [&_h4]:uppercase [&_h4]:text-[#BFBFBF] [&_h4]:text-xs [&_p]:text-white [&_p]:text-sm flex flex-wrap items-center gap-5 md:justify-around divide-x-2 h-full [&_li:not(:first-of-type)]:pl-5 *:space-y-1">
-          <li>
-            <h4>Trip type</h4>
-            <p>{formData.bookingDetails?.trip_type}</p>
-          </li>
-          <li>
-            <h4>Route</h4>
-            <p>
-              {formData.bookingDetails?.travel_from.includes("Calabar")
-                ? "Calabar"
-                : "Uyo"}{" "}
-              ==
-              {">"}{" "}
-              {formData.bookingDetails?.travel_to.includes("Calabar")
-                ? "Calabar"
-                : "Uyo"}
-            </p>
-          </li>
-          <li>
-            <h4> Departure Date & Time</h4>
-            <p>
-              {format(new Date(formData.bookingDetails?.departure_date), "PP")}{" "}
-              - {formData.bookingDetails?.departure_time}
-            </p>
-          </li>
-          {formData.bookingDetails?.trip_type === "Round Trip" && (
-            <li>
-              <h4> Return Date & Time</h4>
-              <p>
-                {format(new Date(formData.bookingDetails?.return_date), "PP")} -{" "}
-                {formData.bookingDetails?.return_time}
-              </p>
-            </li>
-          )}
-          <li>
-            <h4>Adult</h4>
-            <p>{formData.bookingDetails?.adults_number}</p>
-          </li>
-          <li>
-            <h4>Children</h4>
-            <p>{formData.bookingDetails?.children_number ?? 0}</p>
-          </li>
-        </ul>
-      </div>
+  const handleSeatSelection = (e) => {
+    setTab(e.target.name.split("_")[0]);
+    setShowModal(true);
+  };
 
-      <form
-        onSubmit={onSubmit}
-        className="bg-white max-w-[1000px] mx-auto p-3 pb-8 md:p-7"
-      >
-        <IconButton
-          variant="ghost"
-          type="button"
-          size="sm"
-          onClick={onPrevClick}
-          className="flex items-center gap-1 mb-2"
-        >
-          <span>
-            <CircleArrowLeftIcon />
-          </span>
-          <h3 className="font-medium text-sm md:text-base">Return</h3>
-        </IconButton>
-        <div className="space-y-8 gap-x-10 grid grid-col-2 px-3">
+  return (
+    <section className="bg-white p-10 my-8">
+      <hgroup>
+        <h2 className="text-blue-500 text-base font-semibold">
+          Customer Details
+        </h2>
+        <p className="text-sm">Please fill in passenger details</p>
+      </hgroup>
+      <form onSubmit={onSubmit}>
+        <div className="space-y-8 gap-x-10 grid grid-col-2 py-8">
           <div className="space-y-5">
-            <h3 className="text-blue-500 font-semibold  text-base md:text-xl ">
-              Passenger Details
-            </h3>
+            <h3 className="font-semibold text-base">Passenger Details</h3>
             <div className="flex gap-3 md:gap-5">
               <InputField
                 {...register("first_name")}
@@ -150,8 +101,6 @@ const PassengerDetails = () => {
                 maxLength={35}
                 errors={errors}
               />
-            </div>
-            <div className="flex flex-wrap md:flex-nowrap gap-5">
               <InputField
                 {...register("email")}
                 label="Email Address"
@@ -160,6 +109,8 @@ const PassengerDetails = () => {
                 maxLength={40}
                 errors={errors}
               />
+            </div>
+            <div className="grid grid-cols-3 gap-5">
               <InputField
                 {...register("phone_number")}
                 label="Phone Number"
@@ -167,14 +118,34 @@ const PassengerDetails = () => {
                 type="tel"
                 errors={errors}
               />
+              <InputField
+                {...register("departure_seat")}
+                label="Departure Seat"
+                placeholder="Select departure seat(s)"
+                type="text"
+                readOnly="readonly"
+                value={formData.seatDetails?.departure_seats ?? ""}
+                onClick={handleSeatSelection}
+              />
+              {formData.bookingDetails.trip_type === "Round Trip" && (
+                <InputField
+                  {...register("return_seat")}
+                  label="Return Seat"
+                  placeholder="Select return seat(s)"
+                  type="text"
+                  readOnly="readonly"
+                  value={formData.seatDetails?.return_seats ?? ""}
+                  onClick={handleSeatSelection}
+                />
+              )}
             </div>
           </div>
           {adults_number > 1 && (
             <div className="space-y-8 ">
-              <div className="rounded-lg flex gap-2 items-center p-3 bg-green-100 border border-green-500 text-xs md:text-sm font-semibold">
+              <div className="rounded-lg flex gap-2 items-center p-3 bg-blue-500/60 border-2 border-blue-500 text-xs md:text-sm font-semibold">
                 <Checkbox
                   id="checkbox"
-                  className="border-white rounded-full w-6 h-6"
+                  className="border-white border-2 rounded-full w-6 h-6"
                   checked={isChecked}
                   onCheckedChange={(state) => {
                     setChecked(state);
@@ -194,7 +165,7 @@ const PassengerDetails = () => {
                         className="space-y-5 flex-grow basis-[400px]"
                       >
                         <h4 className="font-medium text-sm ">
-                          Passenger Details {i + 2} (Adult)
+                          Passenger 0{i + 2} (Adult)
                         </h4>
                         <div className="flex gap-3 md:gap-5">
                           <InputField
@@ -240,15 +211,35 @@ const PassengerDetails = () => {
               )}
             </div>
           )}
-          <Button
-            text="Continue"
-            type="submit"
-            loading={loading}
-            className="col-start-1 w-40 "
-          />
+          <div className="flex gap-4">
+            <Button
+              text="Back"
+              variant="outline"
+              onClick={onPrevClick}
+              className="px-5"
+            />
+            <Button
+              text="Proceed"
+              type="submit"
+              loading={loading}
+              className="col-start-1 w-40 "
+            />
+          </div>
         </div>
+        {showModal && (
+          <SeatSelection
+            showModal={showModal}
+            closeModal={() => {
+              setShowModal(false);
+            }}
+            tab={tab}
+            onSubmit={(value) => {
+              setValue(`${tab}_seat`, value);
+            }}
+          />
+        )}
       </form>
-    </>
+    </section>
   );
 };
 
