@@ -14,19 +14,11 @@ export const bookingDetailsSchema = yup.object().shape({
         : schema
     ),
   departure_date: yup.string().required("Departure date is required."),
-  departure_time: yup.string().required("Departure time is required."),
   return_date: yup
     .string()
     .when("$roundTrip", (isRoundTrip, field) =>
       isRoundTrip[0]
         ? field.required("Return date is required.")
-        : field.notRequired()
-    ),
-  return_time: yup
-    .string()
-    .when("$roundTrip", (isRoundTrip, field) =>
-      isRoundTrip[0]
-        ? field.required("Return time is required.")
         : field.notRequired()
     ),
   adults_number: yup
