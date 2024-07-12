@@ -41,7 +41,7 @@ const ScheduleTrip = () => {
   });
 
   const onSubmit = handleSubmit((formData) => {
-    const { cost, date, ...otherData } = formData;
+    const { cost, date, time, ...otherData } = formData;
     const costString = formatCost(cost);
 
     const dateArray = date
@@ -54,14 +54,20 @@ const ScheduleTrip = () => {
           return {
             trip_code: trip_code.slice(0, 7),
             date: dateString,
+            time: format(time, "p"),
+            trip_status: "Upcoming",
+            boat_id: "1024924d3",
             ticket_cost: costString,
             ...otherData,
           };
         })
       : [
           {
-            trip: uuid().slice(0, 7),
-            date: format(formData.date, "PP"),
+            trip_code: uuid().slice(0, 7),
+            dates: [format(formData.date, "PP")],
+            time: format(time, "p"),
+            trip_status: "Upcoming",
+            boat_id: "1024924d3",
             ticket_cost: costString,
             ...otherData,
           },
@@ -69,8 +75,9 @@ const ScheduleTrip = () => {
 
     setLoading(true);
     setTimeout(() => {
-      console.log(formValues, "formData");
-      mountPortalModal(<ScheduleConfirmationModal props={{ handleReset }} />);
+      mountPortalModal(
+        <ScheduleConfirmationModal props={{ handleReset, formValues }} />
+      );
       setLoading(false);
     }, 650);
   });

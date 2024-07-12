@@ -4,19 +4,32 @@ import { Warning2 } from "iconsax-react";
 import Button from "@/components/custom/Button";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import ScheduleSuccessModal from "@/components/modals/schedule.success";
+import axios from "axios";
+import { toast } from "sonner";
 
-const ScheduleConfirmationModal = ({ props: { handleReset } }) => {
+const ScheduleConfirmationModal = ({ props: { handleReset, formValues } }) => {
   const { unMountPortalModal, setModalContent } = React.useContext(GlobalCTX);
   const [loading, setLoading] = React.useState(false);
 
   const makeScheduleRequest = () => {
     setLoading(true);
 
-    setTimeout(() => {
-      setModalContent(<ScheduleSuccessModal />);
-      setLoading(false);
-      handleReset();
-    }, 650);
+    axios
+      .post("https://abitto-api.onrender.com/api/ticket/create", formValues[0])
+      .then((res) => {
+        if (res.status == 200) {
+          setModalContent(<ScheduleSuccessModal />);
+          handleReset();
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        toast.error("Error occurred. Please try again.");
+        unMountPortalModal();
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
