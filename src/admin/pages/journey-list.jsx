@@ -32,6 +32,7 @@ import { GlobalCTX } from "@/contexts/GlobalContext";
 import SelectField from "@/components/custom/SelectField";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { Refresh } from "iconsax-react";
+import axios from "axios";
 
 const JourneyList = () => {
   return (
@@ -178,132 +179,10 @@ const SearchForm = () => {
   );
 };
 
-const journeyListDemo = [
-  {
-    trip_code: "19404d7",
-    departure: "Calabar Terminal",
-    arrival: "Uyo Terminal",
-    date: "Jul 5, 2024",
-    time: "10:30 AM",
-    booked: "N/A",
-    availableSeats: [],
-    status: "Upcoming",
-  },
-  {
-    trip_code: "903573d",
-    departure: "Calabar Terminal",
-    arrival: "Uyo Terminal",
-    date: "Jul 1, 2024",
-    time: "12:30 PM",
-    booked: "N/A",
-    availableSeats: [],
-    status: "Completed",
-  },
-  {
-    trip_code: "410042f0",
-    departure: "Uyo Terminal",
-    arrival: "Calabar Terminal",
-    date: "Jul 1, 2024",
-    time: "02:00 PM",
-    booked: "N/A",
-    availableSeats: [],
-    status: "Completed",
-  },
-  {
-    trip_code: "0083246s",
-    departure: "Uyo Terminal",
-    arrival: "Calabar Terminal",
-    date: "Jul 1, 2024",
-    time: "08:30 AM",
-    booked: "N/A",
-    availableSeats: [],
-    status: "Canceled",
-  },
-  {
-    trip_code: "84s9983",
-    departure: "Calabar Terminal",
-    arrival: "Uyo Terminal",
-    date: "Jun 30, 2024",
-    time: "12:00 PM",
-    booked: "N/A",
-    availableSeats: [],
-    status: "Completed",
-  },
-  {
-    trip_code: "739q03p",
-    departure: "Uyo Terminal",
-    arrival: "Calabar Terminal",
-    date: "Jun 30, 2024",
-    time: "01:30 PM",
-    booked: "N/A",
-    availableSeats: [],
-    status: "Completed",
-  },
-  {
-    trip_code: "984281e",
-    departure: "Uyo Terminal",
-    arrival: "Calabar Terminal",
-    date: "Jun 29, 2024",
-    time: "01:30 PM",
-    booked: "N/A",
-    availableSeats: [],
-    status: "Completed",
-  },
-  {
-    trip_code: "730010a",
-    departure: "Calabar Terminal",
-    arrival: "Uyo Terminal",
-    date: "Jun 29, 2024",
-    time: "12:00 PM",
-    booked: "N/A",
-    availableSeats: [],
-    status: "Completed",
-  },
-  {
-    trip_code: "49492a3",
-    departure: "Calabar Terminal",
-    arrival: "Uyo Terminal",
-    date: "Jun 29, 2024",
-    time: "09:00 AM",
-    booked: "N/A",
-    availableSeats: [],
-    status: "Completed",
-  },
-  {
-    trip_code: "4982820a",
-    departure: "Calabar Terminal",
-    arrival: "Uyo Terminal",
-    date: "Jun 28, 2024",
-    time: "09:00 AM",
-    booked: "N/A",
-    availableSeats: [],
-    status: "Completed",
-  },
-  {
-    trip_code: "4927492a",
-    departure: "Uyo Terminal",
-    arrival: "Calabar Terminal",
-    date: "Jun 28, 2024",
-    time: "11:00 AM",
-    booked: "N/A",
-    availableSeats: [],
-    status: "Completed",
-  },
-  {
-    trip_code: "842042q",
-    departure: "Uyo Terminal",
-    arrival: "Calabar Terminal",
-    date: "Jun 27, 2024",
-    time: "11:00 AM",
-    booked: "N/A",
-    availableSeats: [],
-    status: "Completed",
-  },
-];
-
 const JourneyTable = () => {
   const navigate = useNavigate();
   const { setCurrentPageIndex, currentPageIndex } = React.useContext(GlobalCTX);
+  const [journeyList, setJourneyList] = React.useState([]);
   const { setTripSelected, searchParams, setSearchParams } =
     React.useContext(BookingCTX);
   const [rowSelection, setRowSelection] = React.useState({});
@@ -311,6 +190,18 @@ const JourneyTable = () => {
     pageIndex: 0,
     pageSize: 7,
   });
+
+  React.useEffect(() => {
+    axios
+      .get("https://abitto-api.onrender.com/api/ticket/get")
+      .then((res) => {
+        if (res.status == 200) setJourneyList(res.data.tickets.reverse());
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, []);
+
   // set pageIndex on render only if previous location path includes current page path
   React.useEffect(() => {
     table.setPageIndex(currentPageIndex);
@@ -359,13 +250,15 @@ const JourneyTable = () => {
     {
       accessorKey: "passengers",
       header: <p className="text-center">Passengers</p>,
-      cell: ({ row }) => <p className="text-center">{row.original.booked}</p>,
+      cell: ({ row }) => (
+        <p className="text-center">{row.original?.booked ?? "00"}</p>
+      ),
     },
     {
       accessorKey: "status",
       header: <div className="text-center">Trip Status</div>,
       cell: ({ row }) => {
-        let status = row.original.status;
+        let status = row.original.trip_status;
         return (
           <div
             className={cn(
@@ -409,7 +302,7 @@ const JourneyTable = () => {
   ];
 
   const table = useReactTable({
-    data: journeyListDemo,
+    data: journeyList,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -417,7 +310,7 @@ const JourneyTable = () => {
     getFilteredRowModel: getFilteredRowModel(),
     onRowSelectionChange: setRowSelection,
     onPaginationChange: setPagination,
-    pageCount: Math.ceil(journeyListDemo.length / pagination.pageSize),
+    pageCount: Math.ceil(journeyList.length / pagination.pageSize),
     state: {
       rowSelection,
       pagination,
@@ -476,19 +369,15 @@ const JourneyTable = () => {
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} className="h-[65px]">
-                  {row.getVisibleCells().map((cell) => {
-                    return (
-                      <>
-                        <TableCell key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      </>
-                    );
-                  })}
+                <TableRow key={row.original.trip_code} className="h-[65px]">
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
                 </TableRow>
               ))
             ) : (
