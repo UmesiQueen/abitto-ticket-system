@@ -24,6 +24,14 @@ const BookingContext = ({ children }) => {
     departure: [],
     return: [],
   });
+  const [availableTrips, setAvailableTrips] = React.useState({
+    departure_trip: [],
+    return_trip: [],
+  });
+  const [selectedTrip, setSelectedTrip] = React.useState({
+    departure: {},
+    return: {},
+  });
   const [isChecked, setChecked] = React.useState(false);
   const [searchParams, setSearchParams] = React.useState({});
   const ticketCost = 8800;
@@ -90,6 +98,10 @@ const BookingContext = ({ children }) => {
     setTripSelected,
     searchParams,
     setSearchParams,
+    availableTrips,
+    setAvailableTrips,
+    selectedTrip,
+    setSelectedTrip,
   };
 
   return <BookingCTX.Provider value={ctxValue}>{children}</BookingCTX.Provider>;
