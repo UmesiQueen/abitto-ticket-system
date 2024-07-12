@@ -7,7 +7,6 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import { styled } from "@mui/material/styles";
 import { useForm, Controller } from "react-hook-form";
-import { v4 as uuid } from "uuid";
 import { yupResolver } from "@hookform/resolvers/yup";
 import DatePicker from "react-datepicker";
 import { format } from "date-fns";
@@ -15,13 +14,19 @@ import { cn } from "@/lib/utils";
 import { bookingDetailsSchema } from "@/lib/validators/bookingSchema";
 import { CalendarIcon } from "@/assets/icons";
 import { BookingCTX } from "@/contexts/BookingContext";
-import { GlobalCTX } from "@/contexts/GlobalContext";
 import Button from "@/components/custom/Button";
-import { useStepper } from "@/hooks/useStepper";
 import SelectField from "./custom/SelectField";
+import { useSearchTrip } from "@/hooks/useSearchTrip";
 
 const BookingDetails = () => {
-  const [value, setValue] = React.useState("1");
+  const { formData } = React.useContext(BookingCTX);
+  const defaultTabValue = Object.keys(formData.bookingDetails).length
+    ? formData.bookingDetails?.trip_type == "One-Way Trip"
+      ? "1"
+      : "2"
+    : "1";
+
+  const [value, setValue] = React.useState(defaultTabValue);
 
   const handleChange = (_, newValue) => {
     setValue(newValue);
@@ -29,7 +34,7 @@ const BookingDetails = () => {
 
   return (
     <TabContext value={value}>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+      <Box>
         <StyledTabList
           onChange={handleChange}
           aria-label="booking ticket forms"
@@ -70,13 +75,11 @@ const BookingDetails = () => {
 };
 
 export const BookingForm = ({ tab }) => {
-  const { loading, setLoading } = React.useContext(GlobalCTX);
   const { formData, setFormData } = React.useContext(BookingCTX);
   const [availableDate, setAvailableDate] = React.useState(
     new Date().toISOString().split("T")[0]
   );
-  const { onNextClick } = useStepper();
-  const ticket_id = uuid();
+  const { searchAvailableTrips } = useSearchTrip();
 
   const {
     register,
@@ -110,48 +113,37 @@ export const BookingForm = ({ tab }) => {
   }, [departure_date]);
 
   const onSubmit = (formData_) => {
-    const total_passengers =
-      Number(formData_.adults_number) + Number(formData_.children_number);
-    const {
-      travel_from,
-      travel_to,
-      departure_date,
-      adults_number,
-      children_number,
-      return_date,
-    } = formData_;
+    setFormData((prev) => ({
+      ...prev,
+      bookingDetails: {
+        ...prev.BookingDetails,
+        trip_type: tab,
+      },
+    }));
 
-    const formValues = {
-      trip_type: tab,
-      travel_from,
-      travel_to,
-      departure_date,
-      adults_number,
-      children_number,
-      total_passengers,
+    const reqData = {
+      departure: formData_.travel_from,
+      arrival: formData_.travel_to,
+      date: format(formData_.departure_date, "PP"),
       ...(tab === "Round Trip" && {
-        return_date,
+        return_date: format(formData_.return_date, "PP"),
       }),
     };
 
-    if (Object.keys(formData.bookingDetails).length) {
-      setFormData((prev) => ({
+    searchAvailableTrips(reqData);
+  };
+
+  const handleChange = (e) => {
+    const { value, name } = e.target;
+    setFormData((prev) => {
+      return {
         ...prev,
-        bookingDetails: formValues,
-      }));
-      onNextClick();
-    } else {
-      setLoading(true);
-      setTimeout(() => {
-        setFormData((prev) => ({
-          ...prev,
-          ticket_id: ticket_id.slice(0, 6),
-          bookingDetails: formValues,
-        }));
-        setLoading(false);
-        onNextClick();
-      }, 600);
-    }
+        bookingDetails: {
+          ...prev.bookingDetails,
+          [name]: value,
+        },
+      };
+    });
   };
 
   return (
@@ -164,6 +156,7 @@ export const BookingForm = ({ tab }) => {
           placeholder="Select Departure Terminal"
           options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
           errors={errors}
+          handlechange={handleChange}
         />
 
         <SelectField
@@ -173,6 +166,7 @@ export const BookingForm = ({ tab }) => {
           placeholder="Select Arrival Terminal"
           options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
           errors={errors}
+          handlechange={handleChange}
         />
 
         {/* Departure Date */}
@@ -196,7 +190,12 @@ export const BookingForm = ({ tab }) => {
                     toggleCalendarOnIconClick={true}
                     closeOnScroll
                     className="bg-blue-50 h-10 md:h-12 border border-blue-500 font-normal text-base w-full !px-4 !rounded-lg font-poppins mt-2 md:mt-3 text-left"
-                    onChange={(date) => field.onChange(date)}
+                    onChange={(date) => {
+                      field.onChange(date);
+                      handleChange({
+                        target: { name: "departure_date", value: date },
+                      });
+                    }}
                     selected={field.value}
                     customInput={
                       <button type="button">
@@ -235,7 +234,12 @@ export const BookingForm = ({ tab }) => {
                       toggleCalendarOnIconClick={true}
                       closeOnScroll
                       className="bg-blue-50 h-10 md:h-12 border border-blue-500 font-normal text-base w-full !px-4 !rounded-lg font-poppins mt-2 md:mt-3 text-left"
-                      onChange={(date) => field.onChange(date)}
+                      onChange={(date) => {
+                        field.onChange(date);
+                        handleChange({
+                          target: { name: "return_date", value: date },
+                        });
+                      }}
                       selected={field.value}
                       customInput={
                         <button type="button">
@@ -269,6 +273,7 @@ export const BookingForm = ({ tab }) => {
             placeholder="0"
             options={[1, 2, 3, 4, 5]}
             errors={errors}
+            handlechange={handleChange}
           />
           <SelectField
             {...register("children_number")}
@@ -277,16 +282,12 @@ export const BookingForm = ({ tab }) => {
             placeholder="0"
             options={["", 1, 2, 3, 4, 5]}
             errors={errors}
+            handlechange={handleChange}
           />
         </div>
       </div>
 
-      <Button
-        text="Continue"
-        type="submit"
-        loading={loading}
-        className="w-full py-5"
-      />
+      <Button text="Continue" type="submit" className="w-full h-12" />
     </form>
   );
 };
