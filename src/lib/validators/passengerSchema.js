@@ -9,7 +9,10 @@ export const passengerDetailsSchema = yup.object().shape({
     .string()
     .required("Surname is required.")
     .min(2, "Surname must have at least 2 characters."),
-  email: yup.string().email("Invalid email."),
+  email: yup
+    .string()
+    .email("Invalid email.")
+    .required("Email address is required."),
   phone_number: yup
     .string()
     .required("Phone number is required.")
@@ -53,7 +56,7 @@ export const passengerDetailsSchema = yup.object().shape({
       ["$adultPassengers", "$isChecked"],
       ([adultsNumber, isChecked], field) =>
         adultsNumber >= 2 && !isChecked
-          ? field.email("Invalid email.")
+          ? field.email("Invalid email.").required("Email address is required.")
           : field.notRequired()
     ),
   passenger2_phone_number: yup
@@ -96,7 +99,7 @@ export const passengerDetailsSchema = yup.object().shape({
       ["$adultPassengers", "$isChecked"],
       ([adultsNumber, isChecked], field) =>
         adultsNumber >= 3 && !isChecked
-          ? field.email("Invalid email.")
+          ? field.email("Invalid email.").required("Email address is required.")
           : field.notRequired()
     ),
   passenger3_phone_number: yup
@@ -139,7 +142,7 @@ export const passengerDetailsSchema = yup.object().shape({
       ["$adultPassengers", "$isChecked"],
       ([adultsNumber, isChecked], field) =>
         adultsNumber >= 4 && !isChecked
-          ? field.email("Invalid email.")
+          ? field.email("Invalid email.").required("Email address is required.")
           : field.notRequired()
     ),
   passenger4_phone_number: yup
@@ -182,7 +185,7 @@ export const passengerDetailsSchema = yup.object().shape({
       ["$adultPassengers", "$isChecked"],
       ([adultsNumber, isChecked], field) =>
         adultsNumber >= 5 && !isChecked
-          ? field.email("Invalid email.")
+          ? field.email("Invalid email.").required("Email address is required.")
           : field.notRequired()
     ),
   passenger5_phone_number: yup

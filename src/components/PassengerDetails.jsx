@@ -8,13 +8,12 @@ import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import Button from "@/components/custom/Button";
 import { useStepper } from "@/hooks/useStepper";
-import InputField from "./custom/InputField";
-import SeatSelection from "./SeatSelection";
+import InputField from "@/components/custom/InputField";
+import SeatSelection from "@/components/SeatSelection";
+import { format } from "date-fns";
 
 const PassengerDetails = () => {
-  const [showModal, setShowModal] = React.useState(false);
-  const [tab, setTab] = React.useState("departure");
-  const { loading, setLoading } = React.useContext(GlobalCTX);
+  const { loading, setLoading, mountPortalModal } = React.useContext(GlobalCTX);
   const { setChecked, isChecked, formData, setFormData } =
     React.useContext(BookingCTX);
   const { onPrevClick, onNextClick } = useStepper();
@@ -63,183 +62,215 @@ const PassengerDetails = () => {
         }));
         setLoading(false);
         onNextClick();
-      }, 600);
+      }, 650);
     }
   });
 
   const handleSeatSelection = (e) => {
-    setTab(e.target.name.split("_")[0]);
-    setShowModal(true);
+    const tab = e.target.name.split("_")[0];
+    mountPortalModal(<SeatSelection props={{ tab, setValue }} />);
   };
 
   return (
-    <section className="bg-white p-10 my-8">
-      <hgroup>
-        <h2 className="text-blue-500 text-base font-semibold">
-          Customer Details
-        </h2>
-        <p className="text-sm">Please fill in passenger details</p>
-      </hgroup>
-      <form onSubmit={onSubmit}>
-        <div className="space-y-8 gap-x-10 grid grid-col-2 py-8">
-          <div className="space-y-5">
-            <h3 className="font-semibold text-base">Passenger Details</h3>
-            <div className="flex gap-3 md:gap-5">
-              <InputField
-                {...register("first_name")}
-                label="First Name"
-                placeholder="Enter first name"
-                type="text"
-                maxLength={35}
-                errors={errors}
-              />
-              <InputField
-                {...register("surname")}
-                label="Surname"
-                placeholder="Enter surname"
-                type="text"
-                maxLength={35}
-                errors={errors}
-              />
-              <InputField
-                {...register("email")}
-                label="Email Address"
-                placeholder="Enter email address"
-                type="email"
-                maxLength={40}
-                errors={errors}
-              />
-            </div>
-            <div className="grid grid-cols-3 gap-5">
-              <InputField
-                {...register("phone_number")}
-                label="Phone Number"
-                placeholder="(+234) XXXX XXX XXX"
-                type="tel"
-                errors={errors}
-              />
-              <InputField
-                {...register("departure_seat")}
-                label="Departure Seat"
-                placeholder="Select departure seat(s)"
-                type="text"
-                readOnly="readonly"
-                value={formData.seatDetails?.departure_seats ?? ""}
-                onClick={handleSeatSelection}
-              />
-              {formData.bookingDetails.trip_type === "Round Trip" && (
+    <>
+      <div className="bg-blue-700 max-w-[1000px] mx-auto mb-5 min-h-20 p-5 md:p-2 flex items-center ">
+        <ul className="w-full [&_h4]:uppercase [&_h4]:text-gray-400 [&_h4]:text-xs [&_p]:text-white [&_p]:text-sm flex flex-wrap items-center gap-5 md:justify-around md:divide-x-2 h-full md:[&_li:not(:first-of-type)]:pl-5 *:space-y-1">
+          <li>
+            <h4>Trip type</h4>
+            <p>{formData.bookingDetails.trip_type}</p>
+          </li>
+          <li>
+            <h4>Route</h4>
+            <p>
+              {formData.bookingDetails.travel_from.includes("Calabar")
+                ? "Calabar"
+                : "Uyo"}{" "}
+              ==
+              {">"}{" "}
+              {formData.bookingDetails.travel_to.includes("Calabar")
+                ? "Calabar"
+                : "Uyo"}
+            </p>
+          </li>
+          <li>
+            <h4> Departure Date & Time</h4>
+            <p>
+              {format(new Date(formData.bookingDetails.departure_date), "PP")} -{" "}
+              {formData.bookingDetails.departure_time}
+            </p>
+          </li>
+          {formData.bookingDetails.trip_type === "Round Trip" && (
+            <li>
+              <h4> Return Date & Time</h4>
+              <p>
+                {format(new Date(formData.bookingDetails?.return_date), "PP")} -{" "}
+                {formData.bookingDetails?.return_time}
+              </p>
+            </li>
+          )}
+          <li>
+            <h4>Adult</h4>
+            <p>{formData.bookingDetails.adults_number}</p>
+          </li>
+          <li>
+            <h4>Children</h4>
+            <p>{formData.bookingDetails.children_number ?? 0}</p>
+          </li>
+        </ul>
+      </div>
+
+      <section className="bg-white p-5 md:p-10">
+        <hgroup>
+          <h2 className="text-blue-500 text-base font-semibold">
+            Customer Details
+          </h2>
+          <p className="text-sm">Please fill in passenger details</p>
+        </hgroup>
+        <form onSubmit={onSubmit}>
+          <div className="space-y-8 mt-8">
+            <div className="space-y-5">
+              <h4 className="font-medium text-sm">Passenger 01</h4>
+              <div className="grid gap-3 grid-cols-2 md:grid-cols-3">
                 <InputField
-                  {...register("return_seat")}
-                  label="Return Seat"
-                  placeholder="Select return seat(s)"
+                  {...register("first_name")}
+                  label="First Name"
+                  placeholder="Enter first name"
+                  type="text"
+                  maxLength={35}
+                  errors={errors}
+                />
+                <InputField
+                  {...register("surname")}
+                  label="Surname"
+                  placeholder="Enter surname"
+                  type="text"
+                  maxLength={35}
+                  errors={errors}
+                />
+                <InputField
+                  {...register("email")}
+                  label="Email Address"
+                  placeholder="Enter email address"
+                  type="email"
+                  maxLength={40}
+                  errors={errors}
+                />
+                <InputField
+                  {...register("phone_number")}
+                  label="Phone Number"
+                  placeholder="(+234) XXXX XXX XXX"
+                  type="tel"
+                  errors={errors}
+                />
+                <InputField
+                  {...register("departure_seat")}
+                  label="Departure Seat"
+                  placeholder="Select departure seat(s)"
                   type="text"
                   readOnly="readonly"
-                  value={formData.seatDetails?.return_seats ?? ""}
+                  value={formData.seatDetails?.departure_seats ?? ""}
                   onClick={handleSeatSelection}
                 />
-              )}
-            </div>
-          </div>
-          {adults_number > 1 && (
-            <div className="space-y-8 ">
-              <div className="rounded-lg flex gap-2 items-center p-3 bg-blue-500/60 border-2 border-blue-500 text-xs md:text-sm font-semibold">
-                <Checkbox
-                  id="checkbox"
-                  className="border-white border-2 rounded-full w-6 h-6"
-                  checked={isChecked}
-                  onCheckedChange={(state) => {
-                    setChecked(state);
-                  }}
-                />
-                <label htmlFor="checkbox">
-                  Use same Information as above for all adult passengers.
-                </label>
+                {formData.bookingDetails.trip_type === "Round Trip" && (
+                  <InputField
+                    {...register("return_seat")}
+                    label="Return Seat"
+                    placeholder="Select return seat(s)"
+                    type="text"
+                    readOnly="readonly"
+                    value={formData.seatDetails?.return_seats ?? ""}
+                    onClick={handleSeatSelection}
+                  />
+                )}
               </div>
-              {!isChecked && (
-                <div className="gap-8 flex flex-wrap">
-                  {Array.from({ length: adults_number - 1 }).map((_, i) => {
-                    const currentPassenger = `passenger${i + 2}`;
-                    return (
-                      <div
-                        key={i}
-                        className="space-y-5 flex-grow basis-[400px]"
-                      >
-                        <h4 className="font-medium text-sm ">
-                          Passenger 0{i + 2} (Adult)
-                        </h4>
-                        <div className="flex gap-3 md:gap-5">
-                          <InputField
-                            {...register(`${currentPassenger}_first_name`, {
-                              required: "This field is required..",
-                            })}
-                            label="First Name"
-                            placeholder="Enter first name"
-                            type="text"
-                            maxLength={35}
-                            errors={errors}
-                          />
-                          <InputField
-                            {...register(`${currentPassenger}_surname`)}
-                            label="Surname"
-                            placeholder="Enter surname"
-                            type="text"
-                            maxLength={35}
-                            errors={errors}
-                          />
-                        </div>
-                        <div className="flex flex-wrap md:flex-nowrap gap-5">
-                          <InputField
-                            {...register(`${currentPassenger}_email`)}
-                            label="Email Address"
-                            placeholder="Enter email address"
-                            type="email"
-                            maxLength={40}
-                            errors={errors}
-                          />
-                          <InputField
-                            {...register(`${currentPassenger}_phone_number`)}
-                            label="Phone Number"
-                            placeholder="(+234) XXXX XXX XXX"
-                            type="tel"
-                            errors={errors}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
             </div>
-          )}
-          <div className="flex gap-4">
-            <Button
-              text="Back"
-              variant="outline"
-              onClick={onPrevClick}
-              className="px-5"
-            />
-            <Button
-              text="Proceed"
-              type="submit"
-              loading={loading}
-              className="col-start-1 w-40 "
-            />
+            {adults_number > 1 && (
+              <div className="space-y-8">
+                <div className="rounded-lg flex gap-2 items-center p-3 bg-blue-700/90 border-2 border-black text-xs md:text-sm font-semibold">
+                  <Checkbox
+                    id="checkbox"
+                    className="border-white border-2 rounded-full w-6 h-6"
+                    checked={isChecked}
+                    onCheckedChange={(state) => {
+                      setChecked(state);
+                    }}
+                  />
+                  <label htmlFor="checkbox">
+                    Use same Information as above for all adult passengers.
+                  </label>
+                </div>
+                {!isChecked && (
+                  <div className="gap-8 flex flex-wrap">
+                    {Array.from({ length: adults_number - 1 }).map((_, i) => {
+                      const currentPassenger = `passenger${i + 2}`;
+                      return (
+                        <div
+                          key={i}
+                          className="space-y-5 flex-grow basis-[400px]"
+                        >
+                          <h4 className="font-medium text-sm">
+                            Passenger 0{i + 2} (Adult)
+                          </h4>
+                          <div className="grid gap-3 grid-cols-2">
+                            <InputField
+                              {...register(`${currentPassenger}_first_name`, {
+                                required: "This field is required.",
+                              })}
+                              label="First Name"
+                              placeholder="Enter first name"
+                              type="text"
+                              maxLength={35}
+                              errors={errors}
+                            />
+                            <InputField
+                              {...register(`${currentPassenger}_surname`)}
+                              label="Surname"
+                              placeholder="Enter surname"
+                              type="text"
+                              maxLength={35}
+                              errors={errors}
+                            />
+                            <InputField
+                              {...register(`${currentPassenger}_email`)}
+                              label="Email Address"
+                              placeholder="Enter email address"
+                              type="email"
+                              maxLength={40}
+                              errors={errors}
+                            />
+                            <InputField
+                              {...register(`${currentPassenger}_phone_number`)}
+                              label="Phone Number"
+                              placeholder="(+234) XXXX XXX XXX"
+                              type="tel"
+                              errors={errors}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+            <div className="flex gap-4">
+              <Button
+                text="Back"
+                variant="outline"
+                onClick={onPrevClick}
+                className="w-full md:w-40"
+              />
+              <Button
+                text="Continue"
+                type="submit"
+                loading={loading}
+                className="col-start-1 w-full md:w-40 "
+              />
+            </div>
           </div>
-        </div>
-        {showModal && (
-          <SeatSelection
-            showModal={showModal}
-            closeModal={() => {
-              setShowModal(false);
-            }}
-            tab={tab}
-            onSubmit={(value) => {
-              setValue(`${tab}_seat`, value);
-            }}
-          />
-        )}
-      </form>
-    </section>
+        </form>
+      </section>
+    </>
   );
 };
 
