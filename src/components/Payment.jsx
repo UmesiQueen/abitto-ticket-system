@@ -20,8 +20,8 @@ const Payment = () => {
   const { loading, formData } = React.useContext(BookingCTX);
   const { mountPortalModal } = React.useContext(GlobalCTX);
   const { onPrevClick } = useStepper();
-  // const { onlinePayment } = usePayment();
-  const { testOnlinePayment } = usePayment();
+  const { onlinePayment } = usePayment();
+  // const { testOnlinePayment } = usePayment();
   const total_ticket_cost =
     (Number(formData.bookingDetails.departure_ticket_cost) +
       Number(formData.bookingDetails?.return_ticket_cost ?? 0)) *
@@ -216,8 +216,8 @@ const Payment = () => {
 
       <div className="my-5 md:mt-8 md:mb-0 space-y-5">
         <Button
-          // onClick={onlinePayment}
-          onClick={testOnlinePayment}
+          onClick={onlinePayment}
+          id="paystack-btn"
           loading={loading}
           text={"Pay with paystack"}
           className="uppercase w-full md:py-6"
@@ -245,19 +245,19 @@ const PassengerDetails = () => {
         <ul className="mt-2 border-2 rounded-lg py-3 px-5 flex flex-wrap gap-y-3 gap-x-5 md:gap-x-12 [&_p:first-of-type]:text-xs  [&_p:first-of-type]:font-semibold  [&_p:last-of-type]:text-gray-500  [&_li]:space-y-1  ">
           <li>
             <p>First Name</p>
-            <p>{formData.passengerDetails.first_name}</p>
+            <p>{formData.passengerDetails.passenger1_first_name}</p>
           </li>
           <li>
             <p>Surname</p>
-            <p>{formData.passengerDetails.surname}</p>
+            <p>{formData.passengerDetails.passenger1_surname}</p>
           </li>
           <li>
             <p>Phone Number</p>
-            <p>{formData.passengerDetails.phone_number}</p>
+            <p>{formData.passengerDetails.passenger1_phone_number}</p>
           </li>
           <li>
             <p>Email Address</p>
-            <p>{formData.passengerDetails?.email}</p>
+            <p>{formData.passengerDetails?.passenger1_email}</p>
           </li>
         </ul>
       </div>
@@ -265,7 +265,7 @@ const PassengerDetails = () => {
       formData.passengerDetails?.passenger2_first_name ? (
         <>
           {Array.from({
-            length: formData.bookingDetails.total_passengers - 1,
+            length: formData.bookingDetails.adults_number - 1,
           }).map((_, i) => {
             const num = i + 2;
             return (

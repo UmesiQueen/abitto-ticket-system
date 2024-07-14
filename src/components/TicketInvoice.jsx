@@ -169,22 +169,20 @@ const TicketInvoice = () => {
                     <span className="text-xs text-gray-500 font-normal">
                       Full name:
                     </span>{" "}
-                    {`${currentUser.first_name} ${currentUser.surname}`}
+                    {`${currentUser.passenger1_first_name} ${currentUser.passenger1_surname}`}
                   </li>
                   <li>
                     <span className="text-xs text-gray-500 font-normal">
                       Phone:{" "}
                     </span>
-                    {currentUser.phone_number}
+                    {currentUser.passenger1_phone_number}
                   </li>
-                  {currentUser.email && (
-                    <li>
-                      <span className="text-xs text-gray-500 font-normal">
-                        Email:{" "}
-                      </span>
-                      {currentUser.email}
-                    </li>
-                  )}
+                  <li>
+                    <span className="text-xs text-gray-500 font-normal">
+                      Email:{" "}
+                    </span>
+                    {currentUser.passenger1_email}
+                  </li>
                 </ul>
                 {currentUser?.adults_number <= 1 ||
                 !currentUser?.passenger2_first_name ? (

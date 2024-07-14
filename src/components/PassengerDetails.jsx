@@ -37,33 +37,25 @@ const PassengerDetails = () => {
     const formValues = {
       ...(isChecked
         ? {
-            first_name: formData_.first_name,
-            surname: formData_.surname,
-            phone_number: formData_.phone_number,
-            email: formData_.email,
+            passenger1_first_name: formData_.passenger1_first_name,
+            passenger1_surname: formData_.passenger1_surname,
+            passenger1_phone_number: formData_.passenger1_phone_number,
+            passenger1_email: formData_.passenger1_email,
           }
         : {
             ...formData_,
           }),
     };
 
-    if (Object.keys(formData.passengerDetails).length) {
+    setLoading(true);
+    setTimeout(() => {
       setFormData((prev) => ({
         ...prev,
         passengerDetails: formValues,
       }));
+      setLoading(false);
       onNextClick();
-    } else {
-      setLoading(true);
-      setTimeout(() => {
-        setFormData((prev) => ({
-          ...prev,
-          passengerDetails: formValues,
-        }));
-        setLoading(false);
-        onNextClick();
-      }, 650);
-    }
+    }, 650);
   });
 
   const handleSeatSelection = (e) => {
@@ -145,7 +137,7 @@ const PassengerDetails = () => {
               <h4 className="font-medium text-sm">Passenger 01</h4>
               <div className="grid gap-3 grid-cols-2 md:grid-cols-3">
                 <InputField
-                  {...register("first_name")}
+                  {...register("passenger1_first_name")}
                   label="First Name"
                   placeholder="Enter first name"
                   type="text"
@@ -154,7 +146,7 @@ const PassengerDetails = () => {
                   handlechange={handleChange}
                 />
                 <InputField
-                  {...register("surname")}
+                  {...register("passenger1_surname")}
                   label="Surname"
                   placeholder="Enter surname"
                   type="text"
@@ -163,7 +155,7 @@ const PassengerDetails = () => {
                   handlechange={handleChange}
                 />
                 <InputField
-                  {...register("email")}
+                  {...register("passenger1_email")}
                   label="Email Address"
                   placeholder="Enter email address"
                   type="email"
@@ -172,7 +164,7 @@ const PassengerDetails = () => {
                   handlechange={handleChange}
                 />
                 <InputField
-                  {...register("phone_number")}
+                  {...register("passenger1_phone_number")}
                   label="Phone Number"
                   placeholder="(+234) XXXX XXX XXX"
                   type="tel"

@@ -1,25 +1,25 @@
 import * as yup from "yup";
 
 export const passengerDetailsSchema = yup.object().shape({
-  first_name: yup
+  passenger1_first_name: yup
     .string()
     .required("First name is required.")
     .min(2, "First name must have a min of 2 characters.")
     .trim()
     .lowercase(),
-  surname: yup
+  passenger1_surname: yup
     .string()
     .required("Surname is required.")
     .min(2, "Surname must have at least 2 characters.")
     .trim()
     .lowercase(),
-  email: yup
+  passenger1_email: yup
     .string()
     .email("Invalid email.")
     .required("Email address is required.")
     .trim()
     .lowercase(),
-  phone_number: yup
+  passenger1_phone_number: yup
     .string()
     .required("Phone number is required.")
     .matches(/^\+?\d+$/, "Invalid phone number.")

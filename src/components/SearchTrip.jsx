@@ -76,7 +76,7 @@ const SearchTrip = () => {
           total_passengers,
           departure_ticket_cost: selectedTrip.departure?.ticket_cost,
           departure_time: selectedTrip.departure.time,
-          trip_code: selectedTrip.departure.trip_code,
+          departure_trip_code: selectedTrip.departure.trip_code,
           ...(trip_type == "Round Trip" && {
             return_time: selectedTrip.return.time,
             return_ticket_cost: selectedTrip.return.ticket_cost,
