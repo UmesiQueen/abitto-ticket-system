@@ -22,9 +22,13 @@ const Payment = () => {
   const { onPrevClick } = useStepper();
   // const { onlinePayment } = usePayment();
   const { testOnlinePayment } = usePayment();
+  const total_ticket_cost =
+    (Number(formData.bookingDetails.departure_ticket_cost) +
+      Number(formData.bookingDetails?.return_ticket_cost ?? 0)) *
+    Number(formData.bookingDetails.total_passengers);
 
   return (
-    <div className="p-5 md:p-12 bg-white mx-auto flex flex-col gap-2">
+    <div className="p-5 md:p-12 !bg-white mx-auto flex flex-col gap-2">
       <div className="flex gap-5 justify-between items-center">
         <img
           alt="logo"
@@ -33,7 +37,9 @@ const Payment = () => {
           height={60}
           className="w-32 md:w-40"
         />
-        <p>Ticket ID: 443553</p>
+        <p className="text-sm md:text-base">
+          Ticket ID: {formData.bookingDetails.ticket_id}
+        </p>
       </div>
 
       <div className="flex flex-col md:flex-row md:items-center justify-between">
@@ -42,13 +48,13 @@ const Payment = () => {
         </h3>
         {/* total cost */}
         <div className="text-right">
-          <p className="text-xs font-bold text-gray-500 mb-1">
+          <p className="text-xs md:text-sm font-bold text-gray-500 mb-1">
             Ticket total(NGN)
           </p>
           <p className="nowrap font-semibold text-4xl md:text-5xl ">
             <span className="text-2xl">₦</span>
             {formatValue({
-              value: String(formData.bookingDetails.amount),
+              value: String(total_ticket_cost),
             })}
           </p>
         </div>
@@ -58,7 +64,7 @@ const Payment = () => {
         {/* Trip Details */}
         <div className="space-y-1">
           <hgroup>
-            <h4 className="font-semibold">Terminals</h4>
+            <h4 className="font-semibold text-sm">Terminals</h4>
             <p>
               {formData.bookingDetails.travel_from} -{" "}
               {formData.bookingDetails.travel_to}
@@ -94,15 +100,18 @@ const Payment = () => {
                 <ClockIcon />
                 <p>{formData.bookingDetails.departure_time}</p>
               </li>
-              <li>
+              <li className="tracking-wide ">
                 <ChairIcon />
-                <p>Seats: {`${formData.seatDetails.departure_seats}`}</p>
+                <p>
+                  Seats:{" "}
+                  {`${formData.seatDetails.departure_seats ?? "Not Selected"}`}
+                </p>
               </li>
             </ul>
           </div>
           {formData.bookingDetails.trip_type === "Round Trip" && (
             <div>
-              <h5 className="font-semibold mb-1">Return Details</h5>
+              <h5 className="font-semibold text-sm mb-1">Return Details</h5>
               <ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1 [&_li]:inline-flex [&_li]:items-center [&_li]:gap-1">
                 <li>
                   <CalendarIcon />
@@ -117,9 +126,12 @@ const Payment = () => {
                   <ClockIcon />
                   <p>{formData.bookingDetails?.return_time}</p>
                 </li>
-                <li>
+                <li className="tracking-wider">
                   <ChairIcon />
-                  <p>{`${formData.seatDetails?.return_seats}`}</p>
+                  <p>
+                    Seats:{" "}
+                    {`${formData.seatDetails?.return_seats ?? "Not Selected"}`}
+                  </p>
                 </li>
               </ul>
             </div>
@@ -127,14 +139,13 @@ const Payment = () => {
         </div>
 
         {/* customer details */}
-
         <button
           onClick={() => {
             mountPortalModal(<PassengerDetailsModal />);
           }}
           className="md:hidden text-blue-500 font-medium hover:text-blue-700"
         >
-          Click here to See All Passengers Details {">"}
+          Click here to see all Passengers Details {">"}
         </button>
         <div className="hidden md:block">
           <PassengerDetails />
@@ -154,14 +165,31 @@ const Payment = () => {
               <td className="text-xs md:text-sm text-[#444444]">
                 Ticket Price
               </td>
-              <td className="text-xs md:text-sm text-[#444444]">₦8,800</td>
+              <td className="text-xs md:text-sm text-[#444444]">
+                {formatValue({
+                  value: String(
+                    formData.bookingDetails.departure_ticket_cost ?? 0
+                  ),
+                  prefix: "₦",
+                })}
+                {formData.bookingDetails.trip_type === "Round Trip" && (
+                  <>
+                    {" + "}
+                    {formatValue({
+                      value: String(formData.bookingDetails.return_ticket_cost),
+                      prefix: "₦",
+                    })}
+                  </>
+                )}{" "}
+                x {formData.bookingDetails.total_passengers}
+              </td>
             </tr>
             <tr>
               <td className="font-medium text-base md:text-lg">Total</td>
               <td className="font-medium text-base md:text-lg">
                 ₦
                 {formatValue({
-                  value: String(0),
+                  value: String(total_ticket_cost),
                 })}
               </td>
             </tr>
@@ -229,7 +257,7 @@ const PassengerDetails = () => {
           </li>
           <li>
             <p>Email Address</p>
-            <p>{formData.passengerDetails?.email ?? "Not provided"}</p>
+            <p>{formData.passengerDetails?.email}</p>
           </li>
         </ul>
       </div>
@@ -269,8 +297,7 @@ const PassengerDetails = () => {
                   <li>
                     <p>Email Address</p>
                     <p>
-                      {formData.passengerDetails?.[`passenger${num}_email`] ??
-                        "Not provided"}
+                      {formData.passengerDetails?.[`passenger${num}_email`]}
                     </p>
                   </li>
                 </ul>

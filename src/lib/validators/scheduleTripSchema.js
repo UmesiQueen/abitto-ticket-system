@@ -14,7 +14,7 @@ export const scheduleTripSchema = yup.object().shape({
         : schema
     ),
   time: yup.string().required("Time field is required."),
-  cost: yup.string().required("Ticket cost field is required."),
+  cost: yup.string().required("Ticket cost field is required.").trim(),
   // .matches(/^\+?\d+$/, "Ticket cost must not include characters."),
   date: yup
     .string()

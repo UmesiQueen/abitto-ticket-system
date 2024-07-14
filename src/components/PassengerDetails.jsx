@@ -71,9 +71,22 @@ const PassengerDetails = () => {
     mountPortalModal(<SeatSelection props={{ tab, setValue }} />);
   };
 
+  const handleChange = (e) => {
+    const { value, name } = e.target;
+    setFormData((prev) => {
+      return {
+        ...prev,
+        passengerDetails: {
+          ...prev.passengerDetails,
+          [name]: value,
+        },
+      };
+    });
+  };
+
   return (
     <>
-      <div className="bg-blue-700 max-w-[1000px] mx-auto mb-5 min-h-20 p-5 md:p-2 flex items-center ">
+      <div className="bg-blue-700 mx-auto mb-5 min-h-20 p-5 md:p-2 flex items-center ">
         <ul className="w-full [&_h4]:uppercase [&_h4]:text-gray-400 [&_h4]:text-xs [&_p]:text-white [&_p]:text-sm flex flex-wrap items-center gap-5 md:justify-around md:divide-x-2 h-full md:[&_li:not(:first-of-type)]:pl-5 *:space-y-1">
           <li>
             <h4>Trip type</h4>
@@ -119,7 +132,7 @@ const PassengerDetails = () => {
         </ul>
       </div>
 
-      <section className="bg-white p-5 md:p-10">
+      <section className="bg-white p-5 pb-10 md:p-10">
         <hgroup>
           <h2 className="text-blue-500 text-base font-semibold">
             Customer Details
@@ -138,6 +151,7 @@ const PassengerDetails = () => {
                   type="text"
                   maxLength={35}
                   errors={errors}
+                  handlechange={handleChange}
                 />
                 <InputField
                   {...register("surname")}
@@ -146,6 +160,7 @@ const PassengerDetails = () => {
                   type="text"
                   maxLength={35}
                   errors={errors}
+                  handlechange={handleChange}
                 />
                 <InputField
                   {...register("email")}
@@ -154,6 +169,7 @@ const PassengerDetails = () => {
                   type="email"
                   maxLength={40}
                   errors={errors}
+                  handlechange={handleChange}
                 />
                 <InputField
                   {...register("phone_number")}
@@ -161,9 +177,11 @@ const PassengerDetails = () => {
                   placeholder="(+234) XXXX XXX XXX"
                   type="tel"
                   errors={errors}
+                  handlechange={handleChange}
                 />
+
                 <InputField
-                  {...register("departure_seat")}
+                  {...register("departure_seats")}
                   label="Departure Seat"
                   placeholder="Select departure seat(s)"
                   type="text"
@@ -173,7 +191,7 @@ const PassengerDetails = () => {
                 />
                 {formData.bookingDetails.trip_type === "Round Trip" && (
                   <InputField
-                    {...register("return_seat")}
+                    {...register("return_seats")}
                     label="Return Seat"
                     placeholder="Select return seat(s)"
                     type="text"
@@ -221,6 +239,7 @@ const PassengerDetails = () => {
                               type="text"
                               maxLength={35}
                               errors={errors}
+                              handlechange={handleChange}
                             />
                             <InputField
                               {...register(`${currentPassenger}_surname`)}
@@ -229,6 +248,7 @@ const PassengerDetails = () => {
                               type="text"
                               maxLength={35}
                               errors={errors}
+                              handlechange={handleChange}
                             />
                             <InputField
                               {...register(`${currentPassenger}_email`)}
@@ -237,6 +257,7 @@ const PassengerDetails = () => {
                               type="email"
                               maxLength={40}
                               errors={errors}
+                              handlechange={handleChange}
                             />
                             <InputField
                               {...register(`${currentPassenger}_phone_number`)}
@@ -244,6 +265,7 @@ const PassengerDetails = () => {
                               placeholder="(+234) XXXX XXX XXX"
                               type="tel"
                               errors={errors}
+                              handlechange={handleChange}
                             />
                           </div>
                         </div>

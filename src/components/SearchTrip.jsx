@@ -74,10 +74,13 @@ const SearchTrip = () => {
         bookingDetails: {
           ...prev.bookingDetails,
           total_passengers,
-          ticket_cost: totalCost,
+          departure_ticket_cost: selectedTrip.departure?.ticket_cost,
           departure_time: selectedTrip.departure.time,
+          trip_code: selectedTrip.departure.trip_code,
           ...(trip_type == "Round Trip" && {
             return_time: selectedTrip.return.time,
+            return_ticket_cost: selectedTrip.return.ticket_cost,
+            return_trip_code: selectedTrip.return.trip_code,
           }),
         },
       }));

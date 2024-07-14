@@ -44,7 +44,7 @@ const SeatSelection = ({ props: { tab, setValue } }) => {
 
     if (selectionExceeded) {
       unMountPortalModal();
-      setValue(`${tab}_seat`, seatSelected[tab]);
+      setValue(`${tab}_seats`, seatSelected[tab]);
       setFormData((prev) => ({ ...prev, seatDetails: formValues }));
     }
   };

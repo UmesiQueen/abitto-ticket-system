@@ -17,6 +17,7 @@ import { BookingCTX } from "@/contexts/BookingContext";
 import Button from "@/components/custom/Button";
 import SelectField from "./custom/SelectField";
 import { useSearchTrip } from "@/hooks/useSearchTrip";
+import { v4 as uuid } from "uuid";
 
 const BookingDetails = () => {
   const { formData } = React.useContext(BookingCTX);
@@ -59,7 +60,7 @@ const BookingDetails = () => {
           />
         </StyledTabList>
       </Box>
-      <div className="bg-white p-5 md:p-10 ">
+      <div className="bg-white p-5 pb-10 md:p-10 ">
         <h3 className="text-blue-500 font-semibold text-base md:text-xl font-poppins ">
           Booking Details
         </h3>
@@ -80,6 +81,7 @@ export const BookingForm = ({ tab }) => {
     new Date().toISOString().split("T")[0]
   );
   const { searchAvailableTrips } = useSearchTrip();
+  const id = uuid();
 
   const {
     register,
@@ -116,8 +118,9 @@ export const BookingForm = ({ tab }) => {
     setFormData((prev) => ({
       ...prev,
       bookingDetails: {
-        ...prev.BookingDetails,
+        ...formData_,
         trip_type: tab,
+        ticket_id: id.slice(0, 6),
       },
     }));
 
@@ -287,7 +290,7 @@ export const BookingForm = ({ tab }) => {
         </div>
       </div>
 
-      <Button text="Continue" type="submit" className="w-full h-12" />
+      <Button text="Continue" type="submit" className="w-full !h-12" />
     </form>
   );
 };

@@ -32,10 +32,6 @@ const GlobalContext = ({ children }) => {
 
   React.useEffect(() => {
     if (isAuth) localStorage.setItem("admin", JSON.stringify(isAuth));
-    // const BASE_URL = import.meta.env.DEV ?
-    //    import.meta.env.VITE_ABITTO_BASE_URL
-    //   : import.meta.env.ABITTO_BASE_URL;
-
     if (isAuth?.isAdmin) {
       axios
         .get("https://abitto-api.onrender.com/api/booking/getbooking")

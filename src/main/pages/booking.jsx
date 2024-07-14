@@ -6,10 +6,10 @@ import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import { useStepper } from "@/hooks/useStepper";
-import SeatSelection from "@/components/SeatSelection";
-import PassengerDetails from "@/components/PassengerDetailsForm";
-import BookingDetails from "@/components/BookingDetailsForm";
+import PassengerDetails from "@/components/PassengerDetails";
+import BookingDetails from "@/components/BookingDetails";
 import Payment from "@/components/Payment";
+import SearchTrip from "@/components/SearchTrip";
 
 const Booking = () => {
   // const { activeStep, onNextClick, onPrevClick } = useStepper();
@@ -20,26 +20,33 @@ const Booking = () => {
       <Helmet>
         <title>Booking | Abitto Ferry</title>
       </Helmet>
-      <div className="bg-hero-pattern min-h-screen w-screen bg-cover bg-no-repeat bg-center relative">
-        <div className="bg-black/40 w-full h-full absolute" />
-
-        <div className="px-2 md:px-0 py-32 mx-auto relative ">
+      <div>
+        <div className="px-2 py-32 mx-auto relative ">
           <MaterialUIStepper />
-          {activeStep === 0 ? (
-            <BookingDetails />
-          ) : activeStep === 1 ? (
-            <PassengerDetails />
-          ) : activeStep === 2 ? (
-            <SeatSelection />
-          ) : activeStep === 3 ? (
-            <Payment />
-          ) : (
-            ""
-          )}
+          <Box
+            sx={{
+              maxWidth: "1000px",
+              width: "100%",
+              marginX: "auto",
+            }}
+          >
+            {activeStep === 0 ? (
+              <BookingDetails />
+            ) : activeStep === 1 ? (
+              <SearchTrip />
+            ) : activeStep === 2 ? (
+              <PassengerDetails />
+            ) : activeStep === 3 ? (
+              <Payment />
+            ) : (
+              ""
+            )}
+          </Box>
+
           {/* <div className="flex gap-2 justify-center *:bg-blue-500 text-white mt-2 *:px-2">
-                <button onClick={onPrevClick}>Prev</button>
-                <button onClick={onNextClick}>Next</button>
-              </div> */}
+            <button onClick={onPrevClick}>Prev</button>
+            <button onClick={onNextClick}>Next</button>
+          </div> */}
         </div>
       </div>
     </>
@@ -52,8 +59,8 @@ const MaterialUIStepper = () => {
   const { activeStep } = useStepper();
   const steps = [
     "Booking Details",
+    "Available Trips",
     "Passenger Details",
-    "Seat Selection",
     "Payment",
   ];
 
@@ -69,19 +76,35 @@ const MaterialUIStepper = () => {
       <Stepper activeStep={activeStep} alternativeLabel>
         {steps.map((label) => {
           return (
-            <Step key={label}>
+            <Step
+              key={label}
+              sx={{
+                "& .MuiStepConnector-root .MuiStepConnector-line": {
+                  borderColor: "#243244",
+                  borderTopWidth: "2px",
+                },
+                "& .MuiSvgIcon-root.MuiStepIcon-root": {
+                  color: "#243244",
+                },
+                "& .MuiSvgIcon-root.MuiStepIcon-root.Mui-completed, & .MuiSvgIcon-root.MuiStepIcon-root.Mui-active":
+                  {
+                    color: "#3366CC",
+                  },
+              }}
+            >
               <StepLabel
                 sx={{
                   "& .MuiStepLabel-label": {
-                    color: "white",
-                    fontWeight: "500",
+                    fontWeight: 400,
                     fontFamily: "Poppins, sans-serif",
                   },
-                  "& .MuiStepLabel-label.Mui-active, & .MuiStepLabel-label.Mui-completed":
-                    {
-                      color: "rgba(250,250,250, 0.7) !important",
-                      fontWeight: 400,
-                    },
+                  "& .MuiStepLabel-label.Mui-active": {
+                    color: "#243244",
+                    fontWeight: "600",
+                  },
+                  "& .MuiStepLabel-label.Mui-completed": {
+                    color: "#ACACAC !important",
+                  },
                 }}
               >
                 {label}
