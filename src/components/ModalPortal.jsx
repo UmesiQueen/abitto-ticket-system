@@ -4,8 +4,7 @@ import Modal from "@mui/material/Modal";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 
 const ModalPortal = () => {
-  const { showModal, modalContent, unMountPortalModal } =
-    React.useContext(GlobalCTX);
+  const { showModal, modalContent } = React.useContext(GlobalCTX);
 
   return (
     <>
@@ -13,16 +12,15 @@ const ModalPortal = () => {
         createPortal(
           <Modal
             open={showModal}
-            onClose={unMountPortalModal}
             aria-labelledby="modal-portal"
             sx={{
-              backdropFilter: "blur(1px)",
-              zIndex: 1,
-              display: "flex",
-              justifyContent: "center",
+              overflow: "scroll",
             }}
+            className="no-scrollbar"
           >
-            <div className="h-fit mt-36">{modalContent}</div>
+            <div className=" my-36 flex justify-center mx-5">
+              {modalContent}
+            </div>
           </Modal>,
           document.body
         )}

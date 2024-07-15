@@ -19,7 +19,7 @@ const MainLayout = () => {
   return (
     <div className="relative">
       <Navbar />
-      <main>
+      <main className="h-full min-h-[calc(100vh-294px)]">
         <Outlet />
       </main>
       <Footer />
@@ -71,8 +71,8 @@ const Navbar = () => {
   return (
     <nav
       className={cn(
-        "fixed right-0 left-0 px-5 md:px-20 py-2 text-white flex items-center justify-between backdrop-blur-[1px] z-[3] transition duration-50 ease-in-out md:bg-[#111111]/90",
-        isOpen || scroll ? "bg-[#111111]/90" : ""
+        "fixed right-0 left-0 px-5 md:px-20 py-2 text-white flex items-center justify-between backdrop-blur-[1px] z-[3] transition duration-50 ease-in-out md:bg-[#111111]/80",
+        isOpen || scroll ? "bg-[#111111]/80" : ""
       )}
       ref={navRef}
     >
@@ -92,7 +92,7 @@ const Navbar = () => {
 
       <ul
         className={cn(
-          "top-[66.2px] md:top-0 right-0 left-0 md:relative flex flex-col md:flex-row *:uppercase *:font-normal gap-x-6 md:bg-transparent text-center *:py-2  bg-[#111111]/90 pb-2 md:pb-0  *:cursor-pointer",
+          "top-[66.2px] md:top-0 right-0 left-0 md:relative flex flex-col md:flex-row *:uppercase *:font-normal gap-x-6 md:bg-transparent text-center *:py-2  bg-[#111111]/80 pb-2 md:pb-0  *:cursor-pointer",
           !isOpen ? "hidden md:flex" : "absolute"
         )}
       >

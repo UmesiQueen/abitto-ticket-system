@@ -96,11 +96,14 @@
 
 html {
   box-sizing: border-box;
+  scrollbar-color: #1111115e #c2c2c2;
+  background-color: #f1f1f1;
 }
 
 body {
   padding: 0 !important;
   overflow: visible !important;
+  background-color: inherit !important;
 }
 
 .custom-shape-divider-bottom-1714584326 {
