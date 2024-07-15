@@ -33,7 +33,7 @@ const Navbar = () => {
   const [isOpen, setOpen] = React.useState(false);
   const [scroll, setScroll] = React.useState(false);
   const { contact, scrollToSection } = React.useContext(GlobalCTX);
-  const pathname = useLocation();
+  const { pathname } = useLocation();
   const navigate = useNavigate();
   const navRef = React.useRef();
 
@@ -71,8 +71,11 @@ const Navbar = () => {
   return (
     <nav
       className={cn(
-        "fixed right-0 left-0 px-5 md:px-20 py-2 text-white flex items-center justify-between backdrop-blur-[1px] z-[3] transition duration-50 ease-in-out md:bg-[#111111]/80",
-        isOpen || scroll ? "bg-[#111111]/80" : ""
+        "fixed right-0 left-0 px-5 md:px-20 py-2 text-white flex items-center justify-between backdrop-blur-[1px] z-[3] transition duration-50 ease-in-out bg-[#111111]/80",
+        {
+          "bg-transparent": String("/").includes(pathname),
+          "bg-[#111111]/80": isOpen || scroll,
+        }
       )}
       ref={navRef}
     >
