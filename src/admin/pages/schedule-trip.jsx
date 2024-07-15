@@ -14,16 +14,17 @@ import { Cross2Icon } from "@radix-ui/react-icons";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { scheduleTripSchema } from "@/lib/validators/scheduleTripSchema";
 import { NumericFormat } from "react-number-format";
-import { v4 as uuid } from "uuid";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import ScheduleConfirmationModal from "@/components/modals/schedule.confirmation";
 import { Button as ButtonIcon } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useScheduleTrip } from "@/hooks/useScheduleTrip";
+import ConfirmationModal from "@/components/modals/confirmation";
 
 const ScheduleTrip = () => {
   const [dateOptions, setDateOptions] = React.useState([]);
-  const { loading, setLoading } = React.useContext(BookingCTX);
+  const { loading } = React.useContext(BookingCTX);
   const { mountPortalModal } = React.useContext(GlobalCTX);
+  const { scheduleRequest } = useScheduleTrip();
   const navigate = useNavigate();
 
   const {
@@ -41,45 +42,34 @@ const ScheduleTrip = () => {
   });
 
   const onSubmit = handleSubmit((formData) => {
-    const { cost, date, time, ...otherData } = formData;
+    const { cost, date, time, departure, arrival } = formData;
     const costString = formatCost(cost);
 
     const dateArray = date
       ? [...new Set([format(date, "PP"), ...dateOptions])]
       : dateOptions;
 
-    const formValues = dateOptions.length
-      ? dateArray.map((dateString) => {
-          const trip_code = uuid();
-          return {
-            trip_code: trip_code.slice(0, 7),
-            date: dateString,
-            time: format(time, "p"),
-            trip_status: "Upcoming",
-            boat_id: "1024924d3",
-            ticket_cost: costString,
-            ...otherData,
-          };
-        })
-      : [
-          {
-            trip_code: uuid().slice(0, 7),
-            dates: [format(formData.date, "PP")],
-            time: format(time, "p"),
-            trip_status: "Upcoming",
-            boat_id: "1024924d3",
-            ticket_cost: costString,
-            ...otherData,
-          },
-        ];
+    const formValues = {
+      departure,
+      arrival,
+      dates: dateArray,
+      trip_status: "Upcoming",
+      time: format(time, "p"),
+      ticket_cost: costString,
+      boat_id: "1024924d3",
+    };
 
-    setLoading(true);
-    setTimeout(() => {
-      mountPortalModal(
-        <ScheduleConfirmationModal props={{ handleReset, formValues }} />
-      );
-      setLoading(false);
-    }, 650);
+    mountPortalModal(
+      <ConfirmationModal
+        props={{
+          header: "Are you sure you want to add this changes?",
+          handleRequest: () => {
+            scheduleRequest(handleReset, formValues);
+          },
+          severity: "warning",
+        }}
+      />
+    );
   });
 
   const formatCost = (cost) => {
@@ -270,7 +260,7 @@ const ScheduleTrip = () => {
           </div>
           <Button
             text="Add"
-            className="w-36 h-12 mt-8 mb-auto"
+            className="w-36 mt-8 mb-auto"
             onClick={handleAddDate}
           />
         </div>

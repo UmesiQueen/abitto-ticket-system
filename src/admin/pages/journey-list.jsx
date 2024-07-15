@@ -183,8 +183,7 @@ const JourneyTable = () => {
   const navigate = useNavigate();
   const { setCurrentPageIndex, currentPageIndex } = React.useContext(GlobalCTX);
   const [journeyList, setJourneyList] = React.useState([]);
-  const { setTripSelected, searchParams, setSearchParams } =
-    React.useContext(BookingCTX);
+  const { searchParams, setSearchParams } = React.useContext(BookingCTX);
   const [rowSelection, setRowSelection] = React.useState({});
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
@@ -248,10 +247,14 @@ const JourneyTable = () => {
       cell: ({ row }) => row.getValue("time"),
     },
     {
-      accessorKey: "passengers",
-      header: <p className="text-center">Passengers</p>,
+      accessorKey: "available",
+      header: <p className="text-center">Available Seats</p>,
       cell: ({ row }) => (
-        <p className="text-center">{row.original?.booked ?? "00"}</p>
+        <p className="text-center">
+          {row.original?.available_seats.length > 1
+            ? row.original?.available_seats.length
+            : "FULL"}
+        </p>
       ),
     },
     {
@@ -278,25 +281,24 @@ const JourneyTable = () => {
     {
       id: "action",
       header: <div className="text-center">Action</div>,
+      cell: ({ row }) => (
+        <Button
+          onClick={() => {
+            navigate(row.original.trip_code);
+          }}
+          className="px-3 h-8 !text-xs mx-auto"
+          text="View"
+        />
+      ),
+    },
+    // TODO: SORT TABLE BY ASC DATETIME ORDER
+    {
+      id: "dateTime",
+      header: "DateTime",
       cell: ({ row }) => {
-        const departureDate = addDays(row.original.date, 1);
-
-        return (
-          <Button
-            onClick={() => {
-              setTripSelected({
-                departure: row.original.departure,
-                arrival: row.original.arrival,
-                time: row.original.time,
-                date: departureDate.toISOString().split("T")[0],
-                status: row.original.status,
-              });
-              navigate(row.original.trip_code);
-            }}
-            className="px-3 h-8 !text-xs mx-auto"
-            text="View"
-          />
-        );
+        const dateTime = new Date(`${row.original.date} ${row.original.time}`);
+        console.log(dateTime);
+        return <p></p>;
       },
     },
   ];
@@ -314,6 +316,9 @@ const JourneyTable = () => {
     state: {
       rowSelection,
       pagination,
+      columnVisibility: {
+        dateTime: false,
+      },
     },
   });
 
@@ -413,7 +418,8 @@ const JourneyTable = () => {
               table.setPageIndex(val.selected);
               setCurrentPageIndex(val.selected);
             }}
-            initialPage={currentPageIndex}
+            initialPage={0}
+            // initialPage={currentPageIndex}
             pageRangeDisplayed={3}
             pageCount={table.getPageCount()}
             previousLabel={
