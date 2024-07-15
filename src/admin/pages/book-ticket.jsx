@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { format } from "date-fns";
-// import PropTypes from "prop-types";
 import { formatValue } from "react-currency-input-field";
 import { humanize } from "@/lib/utils";
 import {
@@ -116,7 +115,7 @@ const TripDetails = () => {
 const Payment = () => {
   const { formData, loading } = React.useContext(BookingCTX);
   const { onPrevClick } = useStepper();
-  const { testOfflinePayment } = usePayment();
+  const { OfflinePayment } = usePayment();
   const total_ticket_cost =
     (Number(formData.bookingDetails.departure_ticket_cost) +
       Number(formData.bookingDetails?.return_ticket_cost ?? 0)) *
@@ -141,7 +140,7 @@ const Payment = () => {
   });
 
   const onSubmit = handleSubmit((formData) => {
-    testOfflinePayment(formData);
+    OfflinePayment(formData);
   });
 
   return (

@@ -7,9 +7,9 @@ import { GlobalCTX } from "@/contexts/GlobalContext";
 import BookingSuccessModal from "@/components/modals/book.success";
 
 export const usePayment = () => {
-  const { formData, handleReset } = React.useContext(BookingCTX);
+  const { formData } = React.useContext(BookingCTX);
   const { mountPortalModal, isAuth, setLoading } = React.useContext(GlobalCTX);
-
+  const { bookingDetails, passengerDetails, seatDetails } = formData;
   const total_ticket_cost =
     (Number(formData.bookingDetails.departure_ticket_cost) +
       Number(formData.bookingDetails?.return_ticket_cost ?? 0)) *
@@ -27,13 +27,13 @@ export const usePayment = () => {
       lastname: formData.passengerDetails?.passenger1_surname,
       phone: formData.passengerDetails?.passenger1_phone_number,
       onSuccess(res) {
-        handleOnlineBooking({
+        handleOnlineRequest({
           status: "Success",
           trxRef: res.trxref,
         });
       },
       onCancel() {
-        handleOnlineBooking({
+        handleOnlineRequest({
           status: "Canceled",
           trxRef: "N/A",
         });
@@ -42,11 +42,11 @@ export const usePayment = () => {
     });
   };
 
-  const handleOnlineBooking = (props) => {
+  const handleOnlineRequest = (props) => {
     const requestData = {
-      ...formData.bookingDetails,
-      ...formData.passengerDetails,
-      ...formData.seatDetails,
+      ...bookingDetails,
+      ...passengerDetails,
+      ...seatDetails,
       ...props,
       medium: "Online",
       payment_method: "Paystack",
@@ -55,7 +55,8 @@ export const usePayment = () => {
     const isSuccess = props.status === "Success";
 
     if (isSuccess) setLoading(true);
-    // TODO: WHEN TICKET IS
+    // TODO: When ticket is already logged but user wishes to retry the transaction
+    // issue: ticket_id remains the same.
     axios
       .post(
         "https://abitto-api.onrender.com/api/booking/newbooking",
@@ -80,42 +81,20 @@ export const usePayment = () => {
       });
   };
 
-  const testOnlinePayment = () => {
-    const { bookingDetails, passengerDetails, seatDetails } = formData;
+  const OfflinePayment = (data) => {
+    setLoading(true);
     const requestData = {
       ...bookingDetails,
       ...passengerDetails,
       ...seatDetails,
       total_ticket_cost,
-      status: "Success",
-      payment_method: "Paystack",
-      medium: "Online",
-      booked_by: "Customer",
+      status: data.payment_status,
+      payment_method: data.payment_method,
+      medium: "Offline",
+      trxRef: data.transaction_ref,
+      booked_by: `${isAuth.first_name}/${isAuth.account_type}`,
     };
 
-    const paystack = new PaystackPop();
-
-    paystack.newTransaction({
-      key: "pk_test_5d5cd21c077f1395d701366d2880665b3e9fb0f5",
-      amount: total_ticket_cost * 100,
-      email: formData.passengerDetails?.passenger1_email,
-      firstname: formData.passengerDetails?.passenger1_first_name,
-      lastname: formData.passengerDetails?.passenger1_surname,
-      phone: formData.passengerDetails?.passenger1_phone_number,
-      onSuccess(res) {
-        testOnlineRequest({
-          ...requestData,
-          trxRef: res.trxref,
-        });
-      },
-      onCancel() {
-        toast.error("Transaction failed. Please try again.");
-      },
-    });
-  };
-
-  const testOnlineRequest = (requestData) => {
-    setLoading(true);
     axios
       .post(
         "https://abitto-api.onrender.com/api/booking/newbooking",
@@ -123,48 +102,17 @@ export const usePayment = () => {
       )
       .then((res) => {
         if (res.status == 200) {
-          console.log(res.data, "request");
           mountPortalModal(<BookingSuccessModal />);
         }
       })
       .catch((err) => {
-        toast.error("Booking not confirmed. Please contact us for more info");
-        console.error(err, "err occurred when making new post request");
+        toast.error("Booking not confirmed. Please try again.");
+        console.error(err, "Error occurred while making new booking request.");
       })
       .finally(() => {
         setLoading(false);
       });
   };
 
-  const testOfflinePayment = (data) => {
-    setLoading(true);
-    const { bookingDetails, passengerDetails, seatDetails } = formData;
-    const requestData = {
-      ...bookingDetails,
-      ...passengerDetails,
-      ...seatDetails,
-      total_ticket_cost,
-      payment_status: data.payment_status,
-      payment_method: data.payment_method,
-      booking_medium: "Offline",
-      trxRef: data.transaction_ref,
-      booked_by: `${isAuth.first_name} - ${isAuth.account_type}`,
-    };
-    console.log(requestData, "test offline booking");
-
-    const status = data.payment_status;
-    status === "Success"
-      ? mountPortalModal(<BookingSuccessModal />)
-      : setTimeout(() => {
-          status === "Pending"
-            ? toast.warning("Booking Pending.")
-            : status === "Canceled"
-            ? toast.error("Booking Canceled.")
-            : null;
-          handleReset();
-          setLoading(false);
-        }, 600);
-  };
-
-  return { onlinePayment, testOnlinePayment, testOfflinePayment };
+  return { onlinePayment, OfflinePayment };
 };
