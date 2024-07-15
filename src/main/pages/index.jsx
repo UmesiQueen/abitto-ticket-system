@@ -63,7 +63,11 @@ const Home = () => {
       </section>
 
       {/* About us  */}
-      <section className="px-5 py-20 md:px-20" id="about-us" ref={about}>
+      <section
+        className="px-5 py-20 md:px-20 bg-white"
+        id="about-us"
+        ref={about}
+      >
         <div className="flex flex-col md:flex-row justify-between md:gap-20 lg:gap-28">
           <div className="basis-2/6 mb-10 md:mb-0 self-center">
             <img
@@ -132,7 +136,7 @@ const Home = () => {
       </section>
 
       {/* Rental service */}
-      <section className=" px-5 pb-20 md:p-20">
+      <section className="bg-white px-5 pb-20 md:p-20">
         <hgroup className="text-center space-y-2">
           <h2 className="font-semibold text-xl md:text-2xl">
             Boat Rental Package
@@ -235,7 +239,11 @@ const Home = () => {
       </section>
 
       {/* Contact us  */}
-      <section className="py-20 px-5 md:px-20" ref={contact} id="contact-us">
+      <section
+        className="py-20 px-5 md:px-20 bg-white"
+        ref={contact}
+        id="contact-us"
+      >
         <h2 className="font-semibold text-xl md:text-2xl text-center mb-7">
           Contact Us
         </h2>
