@@ -5,7 +5,6 @@ import axios from "axios";
 import { Helmet } from "react-helmet-async";
 import { toast } from "sonner";
 import PropTypes from "prop-types";
-// import WaveSVG from "@/assets/wave";
 import { MapIcon, PhoneIcon, CaretIcon, BoatIcon } from "@/assets/icons";
 import {
   rentalBoat,
@@ -39,13 +38,23 @@ const Home = () => {
           <p className="font-semibold text-2xl md:text-[50px] text-white md:leading-[60px]  ">
             The Easiest & Safest way to travel within Nigeria & Africa
           </p>
-          <Button
-            text="Book a Ticket"
-            onClick={() => {
-              navigate("/booking");
-            }}
-            className="px-6"
-          />
+          <div className="flex gap-5">
+            <Button
+              text="Book a Ticket"
+              onClick={() => {
+                navigate("/booking");
+              }}
+              className="px-6"
+            />
+            {/* <Button
+              text="Rent a Boat"
+              onClick={() => {
+                navigate("/rental");
+              }}
+              variant="outline"
+              className="px-6 border-white !text-white hover:!text-blue-700"
+            /> */}
+          </div>
         </div>
         {/* <div className="hidden md:block z-[2]">
           <WaveSVG />
@@ -359,14 +368,15 @@ const ContactForm = () => {
       .post("https://abitto-api.onrender.com/api/email/contact", formData)
       .then((res) => {
         if (res.status === 200) {
-          setLoading(false);
           toast.success("Request sent successfully.");
           reset();
         }
       })
       .catch(() => {
-        setLoading(false);
         toast.error("Request failed. Please try again later.");
+      })
+      .finally(() => {
+        setLoading(false);
       });
   });
 
