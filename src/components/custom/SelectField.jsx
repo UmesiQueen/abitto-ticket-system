@@ -15,7 +15,7 @@ const SelectField = React.forwardRef((props, ref) => {
     onChange,
     defaultValue,
     className,
-    handlechange,
+    handlechange = () => {},
   } = props;
   const [value, setValue] = React.useState(defaultValue ?? "");
   const [open, setOpen] = React.useState(false);

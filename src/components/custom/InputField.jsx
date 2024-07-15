@@ -3,7 +3,14 @@
 import React from "react";
 
 const InputField = React.forwardRef((props, ref) => {
-  const { name, errors, label, className, onChange, handlechange } = props;
+  const {
+    name,
+    errors,
+    label,
+    className,
+    onChange,
+    handlechange = () => {},
+  } = props;
 
   return (
     <div className="flex flex-col w-full">
