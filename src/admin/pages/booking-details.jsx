@@ -43,7 +43,7 @@ import { Button as ButtonUI } from "@/components/ui/button";
 import Button from "@/components/custom/Button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { formatValue } from "react-currency-input-field";
-import { capitalize } from "lodash";
+import { capitalize, truncate } from "lodash";
 import { cn, humanize } from "@/lib/utils";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { PaginationEllipsis } from "@/components/ui/pagination";
@@ -67,7 +67,12 @@ const BookingDetails = () => {
       accessorKey: "id",
       header: "ID",
       cell: ({ row }) => (
-        <div className="uppercase">#{row.original.ticket_id}</div>
+        <div className="uppercase">
+          #
+          {truncate(row.original.ticket_id, {
+            length: 6,
+          })}
+        </div>
       ),
     },
     {
@@ -366,7 +371,7 @@ const Pagination = ({ props: { table } }) => {
         table.setPageIndex(val.selected);
         setCurrentPageIndex(val.selected);
       }}
-      initialPage={currentPageIndex}
+      initialPage={pageCount ? currentPageIndex : -1}
       pageRangeDisplayed={3}
       pageCount={pageCount}
       previousLabel={

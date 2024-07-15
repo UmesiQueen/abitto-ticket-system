@@ -92,8 +92,9 @@ const Report = () => {
       (booking) => booking.medium === "Online"
     ).length;
 
+    // TODO: REMOVE NULLISH COALESCING
     const totalPassengers = dataQuery
-      .map((booking) => booking.total_passengers)
+      .map((booking) => booking.total_passengers ?? 0)
       .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
     const tripDates = dataQuery

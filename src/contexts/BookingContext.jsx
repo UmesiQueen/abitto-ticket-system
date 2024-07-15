@@ -11,12 +11,6 @@ const BookingContext = ({ children }) => {
     seatDetails: {},
   });
   const [loading, setLoading] = React.useState(false);
-  const [tripSelected, setTripSelected] = React.useState({
-    destination: "",
-    arrival: "",
-    time: "",
-    date: "",
-  });
   const [seatSelected, setSeatSelected] = React.useState({
     departure: [],
     return: [],
@@ -31,6 +25,7 @@ const BookingContext = ({ children }) => {
   });
   const [isChecked, setChecked] = React.useState(false);
   const [searchParams, setSearchParams] = React.useState({});
+  const [tripDetails, setTripDetails] = React.useState();
 
   React.useEffect(() => {
     window.scrollTo({
@@ -68,6 +63,10 @@ const BookingContext = ({ children }) => {
       departure_trip: [],
       return_trip: [],
     });
+    setSelectedTrip({
+      departure: {},
+      return: {},
+    });
     setChecked(false);
   };
 
@@ -83,14 +82,14 @@ const BookingContext = ({ children }) => {
     isChecked,
     setChecked,
     handleReset,
-    tripSelected,
-    setTripSelected,
     searchParams,
     setSearchParams,
     availableTrips,
     setAvailableTrips,
     selectedTrip,
     setSelectedTrip,
+    tripDetails,
+    setTripDetails,
   };
 
   return <BookingCTX.Provider value={ctxValue}>{children}</BookingCTX.Provider>;
