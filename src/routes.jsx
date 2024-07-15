@@ -25,6 +25,9 @@ import TripDetails from "./admin/pages/trip-details";
 import Create from "./admin/pages/create";
 import ScheduleTrip from "./admin/pages/schedule-trip";
 import Report from "./admin/pages/report";
+import Rental from "./main/pages/rental";
+import { TicketLoader } from "./components/TicketInvoice";
+import { TripDetailsLoader } from "./admin/pages/trip-details";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -34,6 +37,7 @@ export const router = createBrowserRouter(
         <Route index element={<Home />} />
         <Route path="booking" element={<Booking />} />
         <Route path="about" element={<About />} />
+        <Route path="rental" element={<Rental />} />
       </Route>
 
       <Route path="admin" element={<Navigate to="create" replace />} />
@@ -48,12 +52,20 @@ export const router = createBrowserRouter(
         />
         <Route path="customers" element={<Customers />} />
         <Route path="journey-list" element={<JourneyList />} />
-        <Route path="journey-list/:trip-code" element={<TripDetails />} />
+        <Route
+          path="journey-list/:tripCode"
+          element={<TripDetails />}
+          loader={TripDetailsLoader}
+        />
         <Route path="report" element={<Report />} />
         <Route path="settings" element={<Settings />} />
       </Route>
 
-      <Route path="ticket-invoice/:bookingID" element={<TicketInvoice />} />
+      <Route
+        path="ticket-invoice/:bookingID"
+        element={<TicketInvoice />}
+        loader={TicketLoader}
+      />
       <Route path="login" element={<Login />} />
       <Route path="*" element={<PageNotFound />} />
     </Route>
