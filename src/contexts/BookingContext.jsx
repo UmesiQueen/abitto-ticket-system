@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { useLocation } from "react-router-dom";
 
 export const BookingCTX = React.createContext();
 
@@ -26,6 +27,12 @@ const BookingContext = ({ children }) => {
   const [isChecked, setChecked] = React.useState(false);
   const [searchParams, setSearchParams] = React.useState({});
   const [tripDetails, setTripDetails] = React.useState();
+  const [rentalData, setRentalData] = React.useState({});
+  const pathname = useLocation();
+
+  React.useEffect(() => {
+    handleReset();
+  }, [pathname]);
 
   React.useEffect(() => {
     window.scrollTo({
@@ -90,6 +97,8 @@ const BookingContext = ({ children }) => {
     setSelectedTrip,
     tripDetails,
     setTripDetails,
+    rentalData,
+    setRentalData,
   };
 
   return <BookingCTX.Provider value={ctxValue}>{children}</BookingCTX.Provider>;

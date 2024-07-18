@@ -25,9 +25,10 @@ import TripDetails from "./admin/pages/trip-details";
 import Create from "./admin/pages/create";
 import ScheduleTrip from "./admin/pages/schedule-trip";
 import Report from "./admin/pages/report";
-// import Rental from "./main/pages/rental";
+import Rental from "./main/pages/rental";
 import { TicketLoader } from "./components/TicketInvoice";
 import { TripDetailsLoader } from "./admin/pages/trip-details";
+import { JourneyListLoader } from "./admin/pages/journey-list";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -37,7 +38,7 @@ export const router = createBrowserRouter(
         <Route index element={<Home />} />
         <Route path="booking" element={<Booking />} />
         <Route path="about" element={<About />} />
-        {/* <Route path="rental" element={<Rental />} /> */}
+        <Route path="rental" element={<Rental />} />
       </Route>
 
       <Route path="admin" element={<Navigate to="create" replace />} />
@@ -51,7 +52,11 @@ export const router = createBrowserRouter(
           element={<CustomerDetails />}
         />
         <Route path="customers" element={<Customers />} />
-        <Route path="journey-list" element={<JourneyList />} />
+        <Route
+          path="journey-list"
+          element={<JourneyList />}
+          loader={JourneyListLoader}
+        />
         <Route
           path="journey-list/:tripCode"
           element={<TripDetails />}
