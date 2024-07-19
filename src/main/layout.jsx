@@ -135,6 +135,7 @@ const Footer = () => {
               alt="logo"
               width={176}
               height={60}
+              className="w-36 md:w-44"
             />
           </Link>
           <ul className="hidden md:flex gap-x-10 lg:gap-x-28 [&_a]:block [&_a]:mb-2 [&_a]:text-sm [&_a]:font-normal [&_h3]:font-medium [&_h3]:text-2xl [&_h3]:mb-5">

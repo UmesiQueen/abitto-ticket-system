@@ -185,7 +185,7 @@ const RentalForm = () => {
     resolver: yupResolver(rentalSchema),
     defaultValues: {
       ...rentalData,
-      ...(Object.keys(rentalData).length && {
+      ...(rentalData?.rental_time && {
         rental_time: dayjs(
           `${rentalData?.rental_date} ${rentalData?.rental_time}`
         ),
@@ -193,6 +193,8 @@ const RentalForm = () => {
     },
     context: { rentalType: rentalData.rentalType },
   });
+
+  console.log(defaultValues, "hello");
 
   const onSubmit = handleSubmit((formData) => {
     const total_cost = formData?.rental_duration
@@ -347,7 +349,7 @@ const RentalForm = () => {
                   </LocalizationProvider>
                 )}
               />
-              <div className="absolute right-4 bottom-4">
+              <div className="absolute right-4 bottom-3 md:bottom-4">
                 <ClockIcon />
               </div>
             </label>

@@ -101,7 +101,7 @@ const About = () => {
           </div>
         </section>
 
-        <section className="px-5 pb-20 md:p-20 bg-blue-50">
+        <section className="px-5 py-20 md:p-20 bg-blue-50">
           <div className="max-w-[1440px] mx-auto pt-5">
             <Tabs defaultValue="mission" className="md:flex *:grow *:w-full">
               <div>
@@ -167,12 +167,12 @@ const About = () => {
         {/* Meet the founder */}
         <section className="px-5 pb-20 md:p-20 bg-white">
           <div className="max-w-[1440px] mx-auto pt-5 md:flex gap-20 *:grow *:w-full">
-            <div className="text-center md:text-left">
+            <div className="text-center md:text-left mt-10 md:mt-0">
               <div className="flex items-center justify-center md:justify-start">
                 <span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 " />
                 <h3 className="uppercase font-semibold">Meet our founder</h3>
               </div>
-              <div className="pt-10 pb-6">
+              <div className="pt-5 md:pt-10 pb-6">
                 <p className="font-semibold text-2xl">Richard Akinaka</p>
                 <p>Founder Abitto Global services</p>
               </div>
@@ -225,18 +225,18 @@ const About = () => {
           <div className="w-full h-full bg-gradient-to-b from-white/0 from-50% to-blue-500/40 absolute z-[1]" />
           <div className="bg-black/80 w-full h-full absolute" />
           <div className=" w-full z-[1] text-center ">
-            <p className="font-semibold md:text-2xl">
+            <p className="font-semibold md:text-2xl mb-1">
               Begin Your Adventure with Abitto Today!
             </p>
             <p className="text-xs md:text-base">
               Experience Seamless and Enjoyable Water Travel
             </p>
             <Button
-              text="Book your Trip"
+              text="Book your trip"
               onClick={() => {
                 navigate("/booking");
               }}
-              className="px-5 mx-auto mt-8"
+              className="px-5 mx-auto mt-5"
             />
           </div>
         </section>
@@ -251,7 +251,7 @@ export default About;
 const StyledTabsTrigger = ({ value, title }) => (
   <TabsTrigger
     value={value}
-    className="self-start data-[state=active]:bg-transparent shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:h-10 data-[state=active]:after:w-3 data-[state=active]:after:bg-blue-500 data-[state=active]:after:-left-[.4rem] data-[state=active]:after:absolute  data-[state=active]:after:rounded-lg pl-5 justify-start "
+    className="self-start data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:h-10 data-[state=active]:after:w-3 data-[state=active]:after:bg-blue-500 data-[state=active]:after:-left-[.4rem] data-[state=active]:after:absolute  data-[state=active]:after:rounded-lg pl-5 justify-start "
   >
     {title}
   </TabsTrigger>
