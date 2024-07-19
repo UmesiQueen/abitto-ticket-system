@@ -18,7 +18,7 @@ import Button from "@/components/custom/Button";
 import { cn } from "@/lib/utils";
 
 const Home = () => {
-  const { about, contact } = React.useContext(GlobalCTX);
+  const { contact } = React.useContext(GlobalCTX);
   const navigate = useNavigate();
 
   return (
@@ -34,9 +34,9 @@ const Home = () => {
         <div className="bg-black/40 w-full h-full absolute z-[1] " />
 
         <FadeInBackgroundTransition />
-        <div className="px-20 z-[2] relative h-full">
-          <div className="max-w-[1440px] mx-auto  h-full flex items-center">
-            <div className="w-[400px] md:w-[600px] space-y-10">
+        <div className=" px-5 md:px-20 z-[2] relative h-full">
+          <div className="max-w-[1440px] mx-auto h-full flex items-center">
+            <div className="w-[400px] mx-auto md:mx-0 md:w-[600px] space-y-10">
               <p className="font-semibold text-center md:text-left text-[30px] md:text-[50px] text-white md:leading-[60px]  ">
                 Experience the Easiest & Safest Water Travel Across Nigeria &
                 Africa with Abitto
@@ -64,11 +64,7 @@ const Home = () => {
       </section>
 
       {/* About us  */}
-      <section
-        className="px-5 pb-20 md:px-20 bg-white"
-        id="about-us"
-        ref={about}
-      >
+      <section className="px-5 pb-20 md:px-20 bg-white" id="about-us">
         <div className="max-w-[1440px] mx-auto pt-5">
           <ul className="flex gap-10 justify-between md:justify-center p-5 pb-20 text-center font-semibold [&_p:last-of-type]:font-normal  text-xl [&_p:last-of-type]:text-xs items-center">
             <li className="hidden md:block">Invaluable Metrics</li>
@@ -85,7 +81,7 @@ const Home = () => {
               <p>Successful Ferry Trip</p>
             </li>
           </ul>
-          <div className="flex flex-col md:flex-row justify-between md:gap-20 lg:gap-28">
+          <div className=" text-center md:text-left flex flex-col md:flex-row justify-between md:gap-20 lg:gap-28">
             <div className="basis-2/6 mb-10 md:mb-0 md:self-center">
               <img
                 src="https://i.ibb.co/8BLhcJw/about.jpg"
@@ -96,7 +92,7 @@ const Home = () => {
               />
             </div>
             <div className="flex-1 space-y-5 lg:pr-44">
-              <div className="flex items-center">
+              <div className="flex items-center justify-center md:justify-start">
                 <span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 " />
                 <h3 className="uppercase font-medium">About us</h3>
               </div>
@@ -117,7 +113,7 @@ const Home = () => {
               <Link
                 target="_blank"
                 to="https://abittoglobal.com/?fbclid=PAZXh0bgNhZW0CMTEAAaaf2uWLgUdLwd18fE__CVzgHmX_XRFos7kxw4Ffa5sWyB58fZLwenzHvl8_aem_Af6umzSDXJvWgv1zoBRtzSSytwgTKLgfroif0Z8SpzdPUu-G5NWP8AMOlqscYrrjWJHGjX5_iSPUUMd4IcFzKNIs"
-                className="text-blue-500 hover:text-blue-700 transition duration-150 ease-in-out flex items-center gap-3 cursor-pointer"
+                className="text-blue-500 hover:text-blue-700 transition duration-150 ease-in-out flex items-center justify-center md:justify-start gap-3 cursor-pointer"
               >
                 <span className="underline font-medium">
                   Discover More About Us
