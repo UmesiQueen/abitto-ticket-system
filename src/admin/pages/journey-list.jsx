@@ -1,6 +1,6 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLoaderData } from "react-router-dom";
 import { addDays, format } from "date-fns";
 import {
   flexRender,
@@ -181,25 +181,14 @@ const SearchForm = () => {
 
 const JourneyTable = () => {
   const navigate = useNavigate();
+  const journeyList = useLoaderData();
   const { setCurrentPageIndex, currentPageIndex } = React.useContext(GlobalCTX);
-  const [journeyList, setJourneyList] = React.useState([]);
   const { searchParams, setSearchParams } = React.useContext(BookingCTX);
   const [rowSelection, setRowSelection] = React.useState({});
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 7,
   });
-
-  React.useEffect(() => {
-    axios
-      .get("https://abitto-api.onrender.com/api/ticket/get")
-      .then((res) => {
-        if (res.status == 200) setJourneyList(res.data.tickets.reverse());
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  }, []);
 
   // set pageIndex on render only if previous location path includes current page path
   React.useEffect(() => {
@@ -297,8 +286,7 @@ const JourneyTable = () => {
       header: "DateTime",
       cell: ({ row }) => {
         const dateTime = new Date(`${row.original.date} ${row.original.time}`);
-        console.log(dateTime);
-        return <p></p>;
+        return <p>{format(dateTime, "PPp")}</p>;
       },
     },
   ];
@@ -319,6 +307,14 @@ const JourneyTable = () => {
       columnVisibility: {
         dateTime: false,
       },
+    },
+    initialState: {
+      sorting: [
+        {
+          id: "dateTime",
+          asc: true, // sort by name in descending order by default
+        },
+      ],
     },
   });
 
@@ -441,4 +437,16 @@ const JourneyTable = () => {
       </div>
     </div>
   );
+};
+
+export const JourneyListLoader = async () => {
+  try {
+    const response = await axios.get(
+      "https://abitto-api.onrender.com/api/ticket/get"
+    );
+    return response.data.tickets;
+  } catch (error) {
+    console.error(error, "Error occurred while fetching journey list.");
+    return [];
+  }
 };
