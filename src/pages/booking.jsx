@@ -96,7 +96,7 @@ const BookingForm = ({ tab }) => {
     context: { roundTrip: tab === "Round Trip" ? true : false },
   });
 
-  const defaultTimeOptions = ["O2:30 PM", "O4:30 PM"];
+  const defaultTimeOptions = ["O8:30 AM", "1O:00 AM"];
 
   const { loading, setLoading } = React.useContext(GlobalCTX);
   const { setFormData } = React.useContext(BookingCTX);
@@ -114,8 +114,8 @@ const BookingForm = ({ tab }) => {
   }, [travel_from]);
 
   const resetTimeOptions = (travel_from) => {
-    const calabarTimeOptions = ["02:30 PM"];
-    const uyoTimeOptions = ["O4:30 PM"];
+    const calabarTimeOptions = ["08:30 AM"];
+    const uyoTimeOptions = ["10:00 AM"];
 
     if (travel_from) {
       travel_from === "Nwaniba Timber Beach, Uyo"
