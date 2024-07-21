@@ -5,6 +5,7 @@ import { useLocation } from "react-router-dom";
 export const BookingCTX = React.createContext();
 
 const BookingContext = ({ children }) => {
+  const [bookingQuery, setBookingQuery] = React.useState([]);
   const [activeStep, setActiveStep] = React.useState(0);
   const [formData, setFormData] = React.useState({
     bookingDetails: {},
@@ -77,7 +78,7 @@ const BookingContext = ({ children }) => {
     setChecked(false);
   };
 
-  const ctxValue = {
+  const ctxValues = {
     formData,
     setFormData,
     loading,
@@ -99,9 +100,13 @@ const BookingContext = ({ children }) => {
     setTripDetails,
     rentalData,
     setRentalData,
+    bookingQuery,
+    setBookingQuery,
   };
 
-  return <BookingCTX.Provider value={ctxValue}>{children}</BookingCTX.Provider>;
+  return (
+    <BookingCTX.Provider value={ctxValues}>{children}</BookingCTX.Provider>
+  );
 };
 
 BookingContext.propTypes = {

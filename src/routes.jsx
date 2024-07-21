@@ -29,6 +29,7 @@ import Rental from "./main/pages/rental";
 import { TicketLoader } from "./components/TicketInvoice";
 import { TripDetailsLoader } from "./admin/pages/trip-details";
 import { JourneyListLoader } from "./admin/pages/journey-list";
+import { DataQueryLoader } from "./admin/layout";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -42,7 +43,7 @@ export const router = createBrowserRouter(
       </Route>
 
       <Route path="admin" element={<Navigate to="create" replace />} />
-      <Route path="admin" element={<AdminLayout />}>
+      <Route path="admin" element={<AdminLayout />} loader={DataQueryLoader}>
         <Route path="create" element={<Create />} />
         <Route path="create/book-ticket" element={<BookTicket />} />
         <Route path="create/schedule-trip" element={<ScheduleTrip />} />

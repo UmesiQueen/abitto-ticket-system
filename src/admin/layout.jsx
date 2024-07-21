@@ -15,21 +15,31 @@ import {
   useNavigate,
   Link,
   useLocation,
+  useLoaderData,
 } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import React from "react";
 import { GlobalCTX } from "@/contexts/GlobalContext";
+import { BookingCTX } from "@/contexts/BookingContext";
 import { Helmet } from "react-helmet-async";
 import DefaultProfile from "@/assets/images/default_profile.png";
+import axios from "axios";
 
 const ProtectedRoute = () => {
   const navigate = useNavigate();
   const { isAuth } = React.useContext(GlobalCTX);
+  const { setBookingQuery } = React.useContext(BookingCTX);
   const { pathname } = useLocation();
+  const dataQuery = useLoaderData();
   const searchBarVisibility = [
     "/admin/booking-details",
     "/admin/customers",
   ].includes(pathname);
+
+  React.useEffect(() => {
+    setBookingQuery(dataQuery);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dataQuery]);
 
   const handleLogout = () => {
     localStorage.removeItem("admin");
@@ -132,3 +142,15 @@ const AdminLayout = () => {
 };
 
 export default AdminLayout;
+
+export const DataQueryLoader = async () => {
+  try {
+    const response = await axios.get(
+      "https://abitto-api.onrender.com/api/booking/querynew"
+    );
+    return response.data.bookings.reverse();
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
