@@ -24,6 +24,7 @@ import BookTicket from "./admin/pages/book-ticket";
 import TripDetails from "./admin/pages/trip-details";
 import Create from "./admin/pages/create";
 import ScheduleTrip from "./admin/pages/schedule-trip";
+import RentalAdmin from "./admin/pages/rental";
 import Report from "./admin/pages/report";
 import Rental from "./main/pages/rental";
 import { TicketLoader } from "./components/TicketInvoice";
@@ -47,6 +48,7 @@ export const router = createBrowserRouter(
         <Route path="create" element={<Create />} />
         <Route path="create/book-ticket" element={<BookTicket />} />
         <Route path="create/schedule-trip" element={<ScheduleTrip />} />
+        <Route path="create/rental" element={<RentalAdmin />} />
         <Route path="booking-details" element={<BookingDetails />} />
         <Route
           path="booking-details/:bookingID"

@@ -75,6 +75,7 @@ const BookingContext = ({ children }) => {
       departure: {},
       return: {},
     });
+    setRentalData({});
     setChecked(false);
   };
 

@@ -18,44 +18,50 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { rentalSchema } from "@/lib/validators/rentalSchema";
 import { useStepper } from "@/hooks/useStepper";
-import { toast } from "sonner";
+import { usePayment } from "@/hooks/usePayment";
 
 const Rental = () => {
   const { activeStep } = useStepper();
 
   return (
     <div className="py-32 px-5 ">
-      {activeStep == 0 ? (
-        <RentalSelection />
-      ) : activeStep == 1 ? (
-        <RentalForm />
-      ) : activeStep == 2 ? (
-        <RentalSummary />
-      ) : (
-        ""
-      )}
+      <section className="w-full max-w-[1000px] mx-auto ">
+        {activeStep == 0 ? (
+          <RentalSelection />
+        ) : activeStep == 1 ? (
+          <div className="p-5 pb-10 md:p-10 rounded-lg bg-white ">
+            <RentalForm />
+          </div>
+        ) : activeStep == 2 ? (
+          <div className="p-5 pb-10 md:p-10 rounded-lg bg-white ">
+            <RentalSummary />
+          </div>
+        ) : (
+          ""
+        )}
+      </section>
     </div>
   );
 };
 export default Rental;
 
-const RentalSelection = () => {
+export const RentalSelection = () => {
   const { setRentalData } = React.useContext(BookingCTX);
   const { onNextClick } = useStepper();
 
-  const handleClick = ({ amount, departure, arrival, rentalType }) => {
+  const handleClick = ({ rental_cost, departure, arrival, rent_type }) => {
     setRentalData((prev) => ({
       ...prev,
-      amount,
+      rental_cost,
       departure,
       arrival,
-      rentalType,
+      rent_type,
     }));
     onNextClick();
   };
 
   return (
-    <section className="w-full max-w-[1000px] mx-auto bg-[#f1f1f1]">
+    <>
       <hgroup className="text-center">
         <h1 className="font-semibold text-2xl">Boat Rental Package</h1>
         <p className="text-sm">
@@ -80,11 +86,11 @@ const RentalSelection = () => {
           {rentalPackages.map((item, index) => (
             <TabsContent key={index} value={item.type}>
               <div className="flex flex-col md:flex-row gap-10 *:flex-grow md:*:w-1/2 min-h-56 p-5 mt-5 rounded-lg">
-                <div className="relative rounded-lg overflow-hidden">
+                <div className="relative rounded-lg overflow-hidden h-56">
                   <img
                     src={BoatURL}
                     alt="boat image"
-                    className="object-cover max-h-56 w-full"
+                    className="object-cover h-56 w-full"
                   />
                   <div className=" bg-gradient-to-b from-white/0 from-30% to-black/60 absolute top-0 right-0 w-full h-full" />
                 </div>
@@ -93,7 +99,7 @@ const RentalSelection = () => {
                   <div className="inline-flex gap-5 font-medium ">
                     <p>
                       {formatValue({
-                        value: String(item.amount),
+                        value: String(item.rental_cost),
                         prefix: "₦",
                         decimalScale: 2,
                       })}
@@ -109,10 +115,10 @@ const RentalSelection = () => {
                     className="mt-8 md:mt-auto w-full md:w-48"
                     onClick={() => {
                       handleClick({
-                        amount: item.amount,
+                        rental_cost: item.rental_cost,
                         departure: item.departure,
                         arrival: item.arrival,
-                        rentalType: item.type,
+                        rent_type: item.type,
                       });
                     }}
                   />
@@ -122,7 +128,7 @@ const RentalSelection = () => {
           ))}
         </Tabs>
       </div>
-    </section>
+    </>
   );
 };
 
@@ -132,7 +138,7 @@ const rentalPackages = [
     title: "Rent Within Marina",
     capacity: "10-15",
     duration: "hour",
-    amount: 150000,
+    rental_cost: 150000,
     departure: "Marina, Calabar",
     arrival: "Marina, Calabar",
   },
@@ -141,7 +147,7 @@ const rentalPackages = [
     title: "Uyo to Calabar",
     capacity: "10-15",
     duration: "trip",
-    amount: 300000,
+    rental_cost: 300000,
     departure: "Nwaniba Timber Beach, Uyo",
     arrival: "Marina, Calabar",
   },
@@ -150,7 +156,7 @@ const rentalPackages = [
     title: "Calabar to Uyo",
     capacity: "10-15",
     duration: "trip",
-    amount: 300000,
+    rental_cost: 300000,
     departure: "Marina, Calabar",
     arrival: "Nwaniba Timber Beach, Uyo",
   },
@@ -172,9 +178,10 @@ StyledTabsTrigger.propTypes = {
   title: PropTypes.string,
 };
 
-const RentalForm = () => {
+export const RentalForm = () => {
   const { rentalData, setRentalData } = React.useContext(BookingCTX);
   const { onPrevClick, onNextClick } = useStepper();
+  const { rental_time, ...otherRentalData } = rentalData;
   const {
     register,
     control,
@@ -184,23 +191,23 @@ const RentalForm = () => {
     mode: "onChange",
     resolver: yupResolver(rentalSchema),
     defaultValues: {
-      ...rentalData,
+      ...otherRentalData,
       ...(rentalData?.rental_time && {
-        rental_time: dayjs(
-          `${rentalData?.rental_date} ${rentalData?.rental_time}`
+        [rental_time]: dayjs(
+          new Date(
+            `${format(rentalData.rental_date, "PPP")} ${rentalData.rental_time}`
+          )
         ),
       }),
     },
-    context: { rentalType: rentalData.rentalType },
+    context: { rentalType: rentalData.rent_type },
   });
-
-  console.log(defaultValues, "hello");
 
   const onSubmit = handleSubmit((formData) => {
     const total_cost = formData?.rental_duration
-      ? Number(rentalData.amount) *
+      ? Number(rentalData.rental_cost) *
         Number(formData.rental_duration.split(" ")[0])
-      : Number(rentalData.amount);
+      : Number(rentalData.rental_cost);
 
     const rental_time = format(
       addHours(new Date(formData.rental_time), 0),
@@ -226,7 +233,7 @@ const RentalForm = () => {
   };
 
   return (
-    <section className="w-full max-w-[1000px] mx-auto rounded-lg bg-white p-5 pb-10 md:p-10">
+    <>
       <hgroup className=" mb-10">
         <h2 className="text-base font-semibold">Rental Details</h2>
         <p className="text-sm">Please fill in your rental details</p>
@@ -360,7 +367,7 @@ const RentalForm = () => {
             )}
           </div>
 
-          {rentalData.rentalType == "within marina" && (
+          {rentalData.rent_type == "within marina" && (
             <SelectField
               {...register("rental_duration")}
               label="Rental Duration"
@@ -388,20 +395,14 @@ const RentalForm = () => {
           />
         </div>
       </form>
-    </section>
+    </>
   );
 };
 
 const RentalSummary = () => {
-  const { rentalData, setRentalData } = React.useContext(BookingCTX);
-  const { onPrevClick, handleReset } = useStepper();
-
-  const handlePayment = () => {
-    console.log(rentalData, "rental details");
-    toast.success("Successful!");
-    handleReset();
-    setRentalData({});
-  };
+  const { rentalData } = React.useContext(BookingCTX);
+  const { onPrevClick } = useStepper();
+  const { onlineRentalPayment } = usePayment();
 
   const getArrivalDateTime = () => {
     const dateTime = new Date(
@@ -413,7 +414,7 @@ const RentalSummary = () => {
   };
 
   return (
-    <section className="max-w-[1000px] rounded-lg bg-white mx-auto p-5 pb-10 md:p-10 flex flex-col md:flex-row-reverse md:divide-x-2 md:divide-x-reverse">
+    <div className="flex flex-col md:flex-row-reverse md:divide-x-2 md:divide-x-reverse">
       <div className="md:basis-5/12 md:pl-10 flex flex-col gap-6">
         <h3 className="text-blue-500 font-semibold text-base ">
           Rental Summary
@@ -445,7 +446,10 @@ const RentalSummary = () => {
               </p>
               <p>
                 <ClockIcon />
-                {rentalData?.rental_time} - {getArrivalDateTime()}
+                {rentalData?.rental_time}
+                {rentalData?.rental_duration
+                  ? ` - ${getArrivalDateTime()}`
+                  : ""}
               </p>
             </div>
             <div className="flex flex-wrap gap-x-4 gap-y-1 text-[#1E1E1E] text-xs md:text-sm font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
@@ -453,10 +457,12 @@ const RentalSummary = () => {
                 <UsersIcon />
                 {rentalData.passengers} passenger(s)
               </p>
-              <p>
-                <Boat2Icon />
-                {rentalData.rental_duration}
-              </p>
+              {rentalData?.rental_duration && (
+                <p>
+                  <Boat2Icon />
+                  {rentalData.rental_duration}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -490,10 +496,12 @@ const RentalSummary = () => {
             <p>Rental Time</p>
             <p>{rentalData?.rental_time}</p>
           </li>
-          <li>
-            <p>Rental duration</p>
-            <p>{rentalData?.rental_duration}</p>
-          </li>
+          {rentalData?.rental_duration && (
+            <li>
+              <p>Rental duration</p>
+              <p>{rentalData?.rental_duration}</p>
+            </li>
+          )}
         </ul>
 
         <div className="border-y-2 border-dashed py-2 mt-5 md:mt-0">
@@ -507,10 +515,11 @@ const RentalSummary = () => {
                 <td className="text-xs text-[#444444]">Rental Price</td>
                 <td className="text-xs text-[#444444]">
                   {formatValue({
-                    value: String(rentalData.amount),
+                    value: String(rentalData.rental_cost),
                     prefix: "₦",
-                  })}{" "}
-                  x {rentalData.rental_duration}
+                  })}
+                  {rentalData.rental_duration &&
+                    ` x ${rentalData.rental_duration}`}
                 </td>
               </tr>
               <tr>
@@ -560,10 +569,12 @@ const RentalSummary = () => {
               <p>Rental Time</p>
               <p>{rentalData?.rental_time}</p>
             </li>
-            <li>
-              <p>Rental duration</p>
-              <p>{rentalData?.rental_duration}</p>
-            </li>
+            {rentalData?.rental_duration && (
+              <li>
+                <p>Rental duration</p>
+                <p>{rentalData?.rental_duration}</p>
+              </li>
+            )}
           </ul>
         </div>
         <div className="flex flex-col-reverse md:flex-row gap-5 mt-10">
@@ -575,11 +586,11 @@ const RentalSummary = () => {
           />
           <Button
             text="Pay with Paystack"
-            onClick={handlePayment}
+            onClick={onlineRentalPayment}
             className=" w-full md:w-48"
           />
         </div>
       </div>
-    </section>
+    </div>
   );
 };

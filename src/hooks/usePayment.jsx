@@ -7,7 +7,7 @@ import { GlobalCTX } from "@/contexts/GlobalContext";
 import BookingSuccessModal from "@/components/modals/book.success";
 
 export const usePayment = () => {
-  const { formData } = React.useContext(BookingCTX);
+  const { formData, rentalData, handleReset } = React.useContext(BookingCTX);
   const { mountPortalModal, isAuth, setLoading } = React.useContext(GlobalCTX);
   const { bookingDetails, passengerDetails, seatDetails } = formData;
   const total_ticket_cost =
@@ -92,7 +92,7 @@ export const usePayment = () => {
       payment_method: data.payment_method,
       medium: "Offline",
       trxRef: data.transaction_ref,
-      booked_by: `${isAuth.first_name}/${isAuth.account_type}`,
+      booked_by: `${isAuth.first_name}-${isAuth.account_type}`,
     };
 
     axios
@@ -114,5 +114,97 @@ export const usePayment = () => {
       });
   };
 
-  return { onlinePayment, OfflinePayment };
+  const onlineRentalPayment = () => {
+    const paystack = new PaystackPop();
+
+    paystack.newTransaction({
+      // key: "pk_live_297c0c356506ae67d9de7d6a51967914d9af9567",
+      key: "pk_test_5d5cd21c077f1395d701366d2880665b3e9fb0f5",
+      amount: rentalData.total_cost * 100,
+      email: rentalData.email,
+      firstname: rentalData.first_name,
+      lastname: rentalData.surname,
+      phone: rentalData.phone_number,
+      onSuccess(res) {
+        handleOnlineRental({
+          payment_status: "Success",
+          trxRef: res.trxref,
+        });
+      },
+      onCancel() {
+        handleOnlineRental({
+          payment_status: "Canceled",
+          trxRef: "N/A",
+        });
+        toast.error("Transaction failed. Please try again.");
+      },
+    });
+  };
+
+  const handleOnlineRental = ({ payment_status, trxRef }) => {
+    setLoading(true);
+    const requestData = {
+      ...rentalData,
+      boat_id: "bt-54321",
+      rental_status: "Upcoming",
+      payment_method: "Paystack",
+      payment_medium: "Online",
+      paid_by: "Customer",
+      payment_status,
+      trxRef,
+    };
+
+    axios
+      .post("https://abitto-api.onrender.com/api/rent/createrent", requestData)
+      .then((res) => {
+        if (res.status == 200) {
+          // mountPortalModal(<BookingSuccessModal />);
+          toast.success("Successful");
+          handleReset();
+        }
+      })
+      .catch((err) => {
+        console.error(err, "Error rental");
+        toast.error("Error");
+      })
+      .finally(() => setLoading(false));
+  };
+
+  const offlineRentalPayment = (data) => {
+    const { payment_status, transaction_ref, payment_method } = data;
+
+    setLoading(true);
+    const requestData = {
+      ...rentalData,
+      boat_id: "bt-54321",
+      rental_status: "Upcoming",
+      payment_medium: "Offline",
+      paid_by: `${isAuth.first_name}-${isAuth.account_type}`,
+      payment_status,
+      payment_method,
+      trxRef: transaction_ref,
+    };
+
+    axios
+      .post("https://abitto-api.onrender.com/api/rent/createrent", requestData)
+      .then((res) => {
+        if (res.status == 200) {
+          // mountPortalModal(<BookingSuccessModal />);
+          toast.success("Successful");
+          handleReset();
+        }
+      })
+      .catch((err) => {
+        console.error(err, "Error rental");
+        toast.error("Error");
+      })
+      .finally(() => setLoading(false));
+  };
+
+  return {
+    onlinePayment,
+    OfflinePayment,
+    onlineRentalPayment,
+    offlineRentalPayment,
+  };
 };

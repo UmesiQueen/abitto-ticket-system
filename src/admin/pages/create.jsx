@@ -113,7 +113,7 @@ const Create = () => {
               const path = Object.keys(isChecked)[0];
               if (path == "book_ticket") navigate("book-ticket");
               if (path == "schedule_trip") navigate("schedule-trip");
-              if (path == "rent_boat") navigate("rent-boat");
+              if (path == "rent_boat") navigate("rental");
             }}
           />
         </div>
