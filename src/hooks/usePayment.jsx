@@ -5,16 +5,27 @@ import { BookingCTX } from "@/contexts/BookingContext";
 import { toast } from "sonner";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import BookingSuccessModal from "@/components/modals/book.success";
+import { v4 as uuid } from "uuid";
+import { sampleSize } from "lodash";
 
 export const usePayment = () => {
-  const { formData, rentalData, handleReset } = React.useContext(BookingCTX);
-  const { mountPortalModal, editProfile, setLoading } =
+  const { formData, rentalData, handleReset, selectedTrip } =
+    React.useContext(BookingCTX);
+  const { mountPortalModal, adminProfile, setLoading } =
     React.useContext(GlobalCTX);
-  const { bookingDetails, passengerDetails, seatDetails } = formData;
+  const { bookingDetails, passengerDetails, seatDetails, ticket_id } = formData;
   const total_ticket_cost =
     (Number(formData.bookingDetails.departure_ticket_cost) +
       Number(formData.bookingDetails?.return_ticket_cost ?? 0)) *
     Number(formData.bookingDetails.total_passengers);
+
+  const randomSeats = (type) => {
+    const availableSeats = selectedTrip[type]?.available_seats;
+    return sampleSize(availableSeats, formData.bookingDetails.total_passengers);
+  };
+  const departure_seats =
+    seatDetails?.departure_seats ?? randomSeats("departure");
+  const return_seats = seatDetails?.return_seats ?? randomSeats("return");
 
   const onlinePayment = () => {
     const paystack = new PaystackPop();
@@ -47,7 +58,9 @@ export const usePayment = () => {
     const requestData = {
       ...bookingDetails,
       ...passengerDetails,
-      ...seatDetails,
+      departure_seats,
+      ...(bookingDetails.trip_type == "Round Trip" && { return_seats }),
+      ticket_id: `${ticket_id}${uuid().slice(0, 2)}`,
       ...props,
       medium: "Online",
       payment_method: "Paystack",
@@ -70,6 +83,7 @@ export const usePayment = () => {
       })
       .catch((err) => {
         console.error(err);
+        // FIXME: FIX THIS LOGIC
         if (isSuccess) {
           document.getElementById("paystack_btn").disabled = true;
           toast.error(
@@ -82,18 +96,20 @@ export const usePayment = () => {
       });
   };
 
-  const OfflinePayment = (data) => {
+  const offlinePayment = (data) => {
     setLoading(true);
     const requestData = {
       ...bookingDetails,
       ...passengerDetails,
-      ...seatDetails,
+      departure_seats,
+      ...(bookingDetails.trip_type == "Round Trip" && { return_seats }),
+      ticket_id: `${ticket_id}${uuid().slice(0, 2)}`,
       total_ticket_cost,
       status: data.payment_status,
       payment_method: data.payment_method,
       medium: "Offline",
       trxRef: data.transaction_ref,
-      booked_by: `${editProfile.first_name}-${editProfile.account_type}`,
+      booked_by: `${adminProfile.first_name}(${adminProfile.account_type})`,
     };
 
     axios
@@ -165,7 +181,7 @@ export const usePayment = () => {
         }
       })
       .catch((err) => {
-        console.error(err, "Error rental");
+        console.error(err, "Error ");
         toast.error("Error");
       })
       .finally(() => setLoading(false));
@@ -180,7 +196,7 @@ export const usePayment = () => {
       boat_id: "bt-54321",
       rental_status: "Upcoming",
       payment_medium: "Offline",
-      paid_by: `${editProfile.first_name}-${editProfile.account_type}`,
+      paid_by: `${adminProfile.first_name}-${adminProfile.account_type}`,
       payment_status,
       payment_method,
       trxRef: transaction_ref,
@@ -204,7 +220,7 @@ export const usePayment = () => {
 
   return {
     onlinePayment,
-    OfflinePayment,
+    offlinePayment,
     onlineRentalPayment,
     offlineRentalPayment,
   };
