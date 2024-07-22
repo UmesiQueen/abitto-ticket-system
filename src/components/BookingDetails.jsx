@@ -81,7 +81,6 @@ export const BookingForm = ({ tab }) => {
     new Date().toISOString().split("T")[0]
   );
   const { searchAvailableTrips } = useSearchTrip();
-  const id = uuid();
 
   const {
     register,
@@ -120,8 +119,8 @@ export const BookingForm = ({ tab }) => {
       bookingDetails: {
         ...formData_,
         trip_type: tab,
-        ticket_id: id.slice(0, 6),
       },
+      ...(!prev?.ticket_id ? { ticket_id: uuid().slice(0, 6) } : ""),
     }));
 
     const reqData = {

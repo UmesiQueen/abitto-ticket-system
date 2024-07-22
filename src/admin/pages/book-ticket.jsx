@@ -115,7 +115,7 @@ const TripDetails = () => {
 const Payment = () => {
   const { formData, loading } = React.useContext(BookingCTX);
   const { onPrevClick } = useStepper();
-  const { OfflinePayment } = usePayment();
+  const { offlinePayment } = usePayment();
   const total_ticket_cost =
     (Number(formData.bookingDetails.departure_ticket_cost) +
       Number(formData.bookingDetails?.return_ticket_cost ?? 0)) *
@@ -140,7 +140,7 @@ const Payment = () => {
   });
 
   const onSubmit = handleSubmit((formData) => {
-    OfflinePayment(formData);
+    offlinePayment(formData);
   });
 
   return (
@@ -157,19 +157,19 @@ const Payment = () => {
           <ul className="mt-2 border-2 rounded-lg py-3 px-5 flex flex-wrap gap-y-3 gap-x-16 [&_p:first-of-type]:text-xs  [&_p:first-of-type]:font-semibold  [&_p:last-of-type]:text-gray-500  ">
             <li>
               <p>First Name</p>
-              <p>{formData.passengerDetails.first_name}</p>
+              <p>{formData.passengerDetails.passenger1_first_name}</p>
             </li>
             <li>
               <p>Surname</p>
-              <p>{formData.passengerDetails.surname}</p>
+              <p>{formData.passengerDetails.passenger1_surname}</p>
             </li>
             <li>
               <p>Phone Number</p>
-              <p>{formData.passengerDetails.phone_number}</p>
+              <p>{formData.passengerDetails.passenger1_phone_number}</p>
             </li>
             <li>
               <p>Email Address</p>
-              <p>{formData.passengerDetails?.email ?? "Not provided"}</p>
+              <p>{formData.passengerDetails.passenger1_email}</p>
             </li>
           </ul>
         </div>
@@ -213,8 +213,7 @@ const Payment = () => {
                     <li>
                       <p>Email Address</p>
                       <p>
-                        {formData.passengerDetails?.[`passenger${num}_email`] ??
-                          "Not provided"}
+                        {formData.passengerDetails[`passenger${num}_email`]}
                       </p>
                     </li>
                   </ul>
@@ -279,7 +278,7 @@ const Payment = () => {
           <p className="font-medium text-xs text-right">
             Booking ID: #
             <span className="uppercase font-bold tracking-wide">
-              {formData.bookingDetails.ticket_id}
+              {formData.ticket_id}
             </span>
           </p>
         </div>

@@ -37,9 +37,7 @@ const Payment = () => {
           height={60}
           className="w-32 md:w-40"
         />
-        <p className="text-sm md:text-base">
-          Ticket ID: {formData.bookingDetails.ticket_id}
-        </p>
+        <p className="text-sm md:text-base">Ticket ID: {formData.ticket_id}</p>
       </div>
 
       <div className="flex flex-col md:flex-row md:items-center justify-between">
@@ -155,21 +153,19 @@ const Payment = () => {
       <div className="border-y-2 border-dashed py-3 md:mt-5">
         <table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] ">
           <tbody>
-            <tr>
+            {/* <tr>
               <td className="text-xs md:text-sm text-[#444444]">
                 Ride Insurance
               </td>
               <td className="text-xs md:text-sm text-[#444444]">₦0</td>
-            </tr>
+            </tr> */}
             <tr>
               <td className="text-xs md:text-sm text-[#444444]">
                 Ticket Price
               </td>
               <td className="text-xs md:text-sm text-[#444444]">
                 {formatValue({
-                  value: String(
-                    formData.bookingDetails.departure_ticket_cost ?? 0
-                  ),
+                  value: String(formData.bookingDetails.departure_ticket_cost),
                   prefix: "₦",
                 })}
                 {formData.bookingDetails.trip_type === "Round Trip" && (

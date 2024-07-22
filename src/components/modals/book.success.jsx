@@ -25,10 +25,7 @@ const BookingSuccessModal = () => {
       <p className="font-normal text-xs text-[#454545] px-10 mb-5">
         Please check your email for important ticket details.
       </p>
-      <Link
-        target={"_blank"}
-        to={`/ticket-invoice/${formData.bookingDetails.ticket_id}`}
-      >
+      <Link target={"_blank"} to={`/ticket-invoice/${formData.ticket_id}`}>
         <Button
           text={"Print Ticket"}
           className="md:py-5 w-full mb-5"

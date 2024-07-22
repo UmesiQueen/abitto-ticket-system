@@ -13,6 +13,7 @@ import {
   PrinterIcon,
   Boat2Icon,
   CircleArrowLeftIcon,
+  CancelSquareIcon,
 } from "@/assets/icons";
 import {
   Table,
@@ -43,12 +44,12 @@ import { Button as ButtonUI } from "@/components/ui/button";
 import Button from "@/components/custom/Button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { formatValue } from "react-currency-input-field";
-import { capitalize, truncate } from "lodash";
+import { capitalize } from "lodash";
 import { cn, humanize } from "@/lib/utils";
-import { GlobalCTX } from "@/contexts/GlobalContext";
 import { PaginationEllipsis } from "@/components/ui/pagination";
 import ReactPaginate from "react-paginate";
 import { BookingCTX } from "@/contexts/BookingContext";
+import { GlobalCTX } from "@/contexts/GlobalContext";
 
 const BookingDetails = () => {
   const navigate = useNavigate();
@@ -68,12 +69,7 @@ const BookingDetails = () => {
       accessorKey: "id",
       header: "ID",
       cell: ({ row }) => (
-        <div className="uppercase">
-          #
-          {truncate(row.original.ticket_id, {
-            length: 6,
-          })}
-        </div>
+        <div className="uppercase">#{row.original.ticket_id}</div>
       ),
     },
     {
@@ -391,7 +387,8 @@ const Pagination = ({ props: { table } }) => {
 export const CustomerDetails = () => {
   const navigate = useNavigate();
   const { bookingID } = useParams();
-  const { bookingQuery } = React.useContext(GlobalCTX);
+  const { bookingQuery } = React.useContext(BookingCTX);
+  const { mountPortalModal } = React.useContext(GlobalCTX);
 
   const currentUser = bookingQuery.filter((data) => data._id === bookingID)[0];
 
@@ -430,18 +427,18 @@ export const CustomerDetails = () => {
                 </li>
                 <li>
                   <p className="text-xs text-[#7F7F7F]">Customer Name</p>
-                  <p className="text-base font-semibold">{`${currentUser?.first_name} ${currentUser?.surname}`}</p>
+                  <p className="text-base font-semibold capitalize">{`${currentUser?.passenger1_first_name} ${currentUser?.passenger1_last_name}`}</p>
                 </li>
                 <li>
                   <p className="text-xs text-[#7F7F7F]">Phone</p>
                   <p className="text-base font-semibold">
-                    {currentUser?.phone_number}
+                    {currentUser?.passenger1_phone_number}
                   </p>
                 </li>
                 <li>
                   <p className="text-xs text-[#7F7F7F]">Email</p>
                   <p className="text-base font-semibold">
-                    {currentUser?.email}
+                    {currentUser?.passenger1_email}
                   </p>
                 </li>
               </ul>
@@ -459,6 +456,20 @@ export const CustomerDetails = () => {
                     {currentUser?.total_passengers}
                   </p>
                 </li>
+                {currentUser?.passenger2_first_name && (
+                  <li className="self-center text-sm">
+                    <button
+                      className="text-blue-500 hover:text-blue-700 underline"
+                      onClick={() => {
+                        mountPortalModal(
+                          <CustomerDetailsModal props={{ currentUser }} />
+                        );
+                      }}
+                    >
+                      View other passenger details {">"}
+                    </button>
+                  </li>
+                )}
               </ul>
               <div className=" space-y-6 border-l-8 border-green-800 pl-3 -ml-5">
                 <ul className="*:flex *:flex-col *:gap-1 flex gap-10">
@@ -477,7 +488,7 @@ export const CustomerDetails = () => {
                   <li>
                     <p className="text-xs text-[#7F7F7F]">Seat No.</p>
                     <p className="text-base font-semibold">
-                      {humanize(currentUser?.seat_no)}
+                      {humanize(currentUser?.departure_seats)}
                     </p>
                   </li>
                 </ul>
@@ -514,7 +525,7 @@ export const CustomerDetails = () => {
                     <li>
                       <p className="text-xs text-[#7F7F7F]">Seat No.</p>
                       <p className="text-base font-semibold">
-                        {humanize(["N/A"])}
+                        {humanize(currentUser.return_seats)}
                       </p>
                     </li>
                   </ul>
@@ -544,7 +555,7 @@ export const CustomerDetails = () => {
                 <li>
                   <p className="text-xs text-[#7F7F7F]">Payment Method</p>
                   <p className="text-base font-semibold">
-                    {currentUser?.paid_with}
+                    {currentUser?.payment_method}
                   </p>
                 </li>
                 <li>
@@ -570,7 +581,7 @@ export const CustomerDetails = () => {
                     Transaction Reference
                   </p>
                   <p className="text-base font-semibold">
-                    {currentUser?.trxRef ?? "N/A"}
+                    {currentUser?.trxRef}
                   </p>
                 </li>
               </ul>
@@ -583,11 +594,13 @@ export const CustomerDetails = () => {
                 </li>
                 <li>
                   <p className="text-xs text-[#7F7F7F]">Booked By</p>
-                  {/* TODO:use form field booked_by  */}
-                  <p className="text-base font-semibold">Customer</p>
+                  <p className="text-base font-semibold">
+                    {currentUser?.booked_by}
+                  </p>
                 </li>
               </ul>
             </div>
+            {/* TODO: Update the booking details for trips that are not yet reached */}
             {/* <div className="flex px-5 mb-8">
               <button className="ml-auto  bg-blue-500 w-36 py-3 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white rounded-lg ">
                 Update
@@ -603,41 +616,77 @@ export const CustomerDetails = () => {
               <p className="text-[#8E98A8] text-sm inline-flex items-center gap-1">
                 Non-refundable <InformationCircleIcon />
               </p>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-1">Terminals</h4>
-              <p className="text-xs">
-                {currentUser?.travel_from} - {currentUser?.travel_to}
+              <p className="font-medium text-xs text-right">
+                Booking ID: #
+                <span className="uppercase">{currentUser?.ticket_id}</span>
               </p>
             </div>
+
             <div>
-              <h5 className="font-semibold mb-1">Departure Details</h5>
-              <div className="flex flex-wrap gap-x-4 gap-y-1 text-[#1E1E1E] text-xs font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
-                <p>
-                  <CalendarIcon />
-                  {format(currentUser?.departure_date, "PP")}
-                </p>
-                <p>
-                  <ClockIcon />
-                  {currentUser?.departure_time}
-                </p>
-                <p>
-                  <ChairIcon /> Seats: {humanize(currentUser?.seat_no)}
-                </p>
-                <p>
-                  <UsersIcon /> {currentUser?.total_passengers} passenger(s)
-                </p>
+              <h4 className="font-semibold mb-1">Terminals</h4>
+              <p className="text-xs mb-1">
+                <span className="font-semibold text-sm text-gray-500">
+                  From:
+                </span>{" "}
+                {currentUser?.travel_from}
+              </p>
+              <p className="text-xs mb-1">
+                <span className="font-semibold text-sm  text-gray-500">
+                  To:
+                </span>{" "}
+                {currentUser?.travel_to}
+              </p>
+
+              <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[#1E1E1E] text-xs font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
                 <p>
                   <Boat2Icon />
                   {currentUser?.trip_type}
                 </p>
+                <p>
+                  <UsersIcon /> {currentUser?.total_passengers} passenger(s)
+                </p>
               </div>
             </div>
-
-            <p className="font-medium text-xs">
-              Booking ID: #
-              <span className="uppercase">{currentUser?.ticket_id}</span>
-            </p>
+            <div className="flex flex-wrap gap-x-5 gap-y-3">
+              <div>
+                <h5 className="font-semibold text-sm mb-1">
+                  Departure Details
+                </h5>
+                <div className="flex flex-wrap gap-x-4 gap-y-1 text-[#1E1E1E] text-xs font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
+                  <p>
+                    <CalendarIcon />
+                    {format(currentUser?.departure_date, "PP")}
+                  </p>
+                  <p>
+                    <ClockIcon />
+                    {currentUser?.departure_time}
+                  </p>
+                  <p>
+                    <ChairIcon />
+                    {humanize(currentUser?.departure_seats)}
+                  </p>
+                </div>
+              </div>
+              {currentUser?.trip_type === "Round Trip" && (
+                <div>
+                  <h5 className="font-semibold text-sm mb-1">Return Details</h5>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-[#1E1E1E] text-xs font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
+                    <p>
+                      <CalendarIcon />
+                      {format(new Date(currentUser?.return_date), "PP")}
+                    </p>
+                    <p>
+                      <ClockIcon />
+                      {currentUser?.return_time}
+                    </p>
+                    <p>
+                      <ChairIcon />
+                      {humanize(currentUser?.return_seats)}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
             <div className="border-y-2 border-dashed py-2">
               <table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] ">
                 <tbody>
@@ -654,7 +703,7 @@ export const CustomerDetails = () => {
                     <td className="font-medium text-base">
                       ₦
                       {formatValue({
-                        value: String(currentUser?.amount),
+                        value: String(currentUser?.total_ticket_cost),
                       })}
                     </td>
                   </tr>
@@ -675,6 +724,84 @@ export const CustomerDetails = () => {
       ) : (
         <p className="ml-10">No Result</p>
       )}
+    </div>
+  );
+};
+
+const CustomerDetailsModal = ({ props: { currentUser } }) => {
+  const { unMountPortalModal } = React.useContext(GlobalCTX);
+
+  return (
+    <div className="bg-white rounded-lg p-10 pt-5 flex flex-col">
+      <ButtonUI
+        variant="ghost"
+        size="icon"
+        className="ml-auto"
+        onClick={unMountPortalModal}
+      >
+        <CancelSquareIcon />
+      </ButtonUI>
+      <div className="space-y-2">
+        <div id="Passenger01">
+          <h4 className="font-semibold text-sm">Passenger 01</h4>
+          <ul className="mt-2 border-2 rounded-lg py-3 px-5 flex flex-wrap gap-y-3 gap-x-5 md:gap-x-12 [&_p:first-of-type]:text-xs  [&_p:first-of-type]:font-semibold  [&_p:last-of-type]:text-gray-500  [&_li]:space-y-1  ">
+            <li>
+              <p>First Name</p>
+              <p className="capitalize">{currentUser.passenger1_first_name}</p>
+            </li>
+            <li>
+              <p>Surname</p>
+              <p className="capitalize">{currentUser.passenger1_last_name}</p>
+            </li>
+            <li>
+              <p>Phone Number</p>
+              <p>{currentUser.passenger1_phone_number}</p>
+            </li>
+            <li>
+              <p>Email Address</p>
+              <p>{currentUser?.passenger1_email}</p>
+            </li>
+          </ul>
+        </div>
+        {currentUser.adults_number > 1 && currentUser?.passenger2_first_name ? (
+          <>
+            {Array.from({
+              length: currentUser.adults_number - 1,
+            }).map((_, i) => {
+              const num = i + 2;
+              return (
+                <div id={`Passenger0${num}`} key={`Passenger0${num}`}>
+                  <h4 className="font-semibold text-sm">Passenger 0{num}</h4>
+                  <ul className="mt-2 border-2 rounded-lg py-3 px-5 flex flex-wrap gap-y-3 gap-x-5 md:gap-x-12 [&_p:first-of-type]:text-xs  [&_p:first-of-type]:font-semibold  [&_p:last-of-type]:text-gray-500 [&_li]:space-y-1">
+                    <li>
+                      <p>First Name</p>
+                      <p className="capitalize">
+                        {currentUser[`passenger${num}_first_name`]}
+                      </p>
+                    </li>
+                    <li>
+                      <p>Surname</p>
+                      <p className="capitalize">
+                        {currentUser[`passenger${num}_last_name`]}
+                      </p>
+                    </li>
+                    <li>
+                      <p>Phone Number</p>
+                      <p>{currentUser[`passenger${num}_phone_number`]}</p>
+                    </li>
+                    <li>
+                      <p>Email Address</p>
+                      <p>{currentUser?.[`passenger${num}_email`]}</p>
+                    </li>
+                  </ul>
+                </div>
+              );
+            })}
+          </>
+        ) : (
+          ""
+        )}
+      </div>
     </div>
   );
 };
