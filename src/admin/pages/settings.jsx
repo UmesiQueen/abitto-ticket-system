@@ -117,7 +117,7 @@ const EditProfile = () => {
         return res.data.url;
       })
       .catch((err) => {
-        console.error(err, "upload");
+        console.error(err, "Failed to upload profile picture to cloudinary");
         setLoading(false);
         return false;
       });
@@ -141,8 +141,7 @@ const EditProfile = () => {
           }));
           toast.success("Profile successfully updated.");
         })
-        .catch((err) => {
-          console.error(err, "Error ");
+        .catch(() => {
           toast.error("Error occurred while updating profile.");
         })
         .finally(() => {

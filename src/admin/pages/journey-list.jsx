@@ -28,7 +28,6 @@ import {
 import { Button as ButtonUI } from "@/components/ui/button";
 import Button from "@/components/custom/Button";
 import { CaretIcon, CalendarIcon } from "@/assets/icons";
-import { GlobalCTX } from "@/contexts/GlobalContext";
 import SelectField from "@/components/custom/SelectField";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { Refresh } from "iconsax-react";
@@ -182,8 +181,12 @@ const SearchForm = () => {
 const JourneyTable = () => {
   const navigate = useNavigate();
   const journeyList = useLoaderData();
-  const { setCurrentPageIndex, currentPageIndex } = React.useContext(GlobalCTX);
-  const { searchParams, setSearchParams } = React.useContext(BookingCTX);
+  const {
+    searchParams,
+    setSearchParams,
+    setCurrentPageIndex,
+    currentPageIndex,
+  } = React.useContext(BookingCTX);
   const [rowSelection, setRowSelection] = React.useState({});
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
@@ -439,6 +442,7 @@ const JourneyTable = () => {
   );
 };
 
+// Get: query all scheduled trips
 export const JourneyListLoader = async () => {
   try {
     const response = await axios.get(

@@ -23,6 +23,7 @@ import { GlobalCTX } from "@/contexts/GlobalContext";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { Helmet } from "react-helmet-async";
 import axios from "axios";
+import { toast } from "sonner";
 
 const ProtectedRoute = () => {
   const navigate = useNavigate();
@@ -149,8 +150,8 @@ export const DataQueryLoader = async () => {
       "https://abitto-api.onrender.com/api/booking/querynew"
     );
     return response.data.bookings.reverse();
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    toast.error("Could not retrieve booking details. Refresh page.");
     return [];
   }
 };
