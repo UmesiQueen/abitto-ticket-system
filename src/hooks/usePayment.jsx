@@ -8,7 +8,8 @@ import BookingSuccessModal from "@/components/modals/book.success";
 
 export const usePayment = () => {
   const { formData, rentalData, handleReset } = React.useContext(BookingCTX);
-  const { mountPortalModal, isAuth, setLoading } = React.useContext(GlobalCTX);
+  const { mountPortalModal, editProfile, setLoading } =
+    React.useContext(GlobalCTX);
   const { bookingDetails, passengerDetails, seatDetails } = formData;
   const total_ticket_cost =
     (Number(formData.bookingDetails.departure_ticket_cost) +
@@ -92,7 +93,7 @@ export const usePayment = () => {
       payment_method: data.payment_method,
       medium: "Offline",
       trxRef: data.transaction_ref,
-      booked_by: `${isAuth.first_name}-${isAuth.account_type}`,
+      booked_by: `${editProfile.first_name}-${editProfile.account_type}`,
     };
 
     axios
@@ -179,7 +180,7 @@ export const usePayment = () => {
       boat_id: "bt-54321",
       rental_status: "Upcoming",
       payment_medium: "Offline",
-      paid_by: `${isAuth.first_name}-${isAuth.account_type}`,
+      paid_by: `${editProfile.first_name}-${editProfile.account_type}`,
       payment_status,
       payment_method,
       trxRef: transaction_ref,

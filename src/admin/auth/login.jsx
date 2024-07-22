@@ -20,7 +20,7 @@ const schema = yup.object().shape({
 const Login = () => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const { setAuth } = React.useContext(GlobalCTX);
+  const { setAdminProfile } = React.useContext(GlobalCTX);
   const navigate = useNavigate();
 
   const {
@@ -31,37 +31,29 @@ const Login = () => {
 
   const onSubmit = handleSubmit((formData) => {
     setLoading(true);
-    // const API_BASE_URL = import.meta.env.DEV ?
-    //   import.meta.env.VITE_ABITTO_BASE_URL
-    //   : import.meta.env.ABITTO_BASE_URL;
-
     axios
       .post("https://abitto-api.onrender.com/api/user/login", formData)
       .then((res) => {
-        setLoading(false);
-        if (res.status === 200) {
-          const data = res.data.user;
-          setAuth({
-            account_type: data.account_type,
-            email: data.email,
-            first_name: data.first_name,
-            last_name: data.last_name,
-            profile_picture: data.profile_picture,
-            gender: data.gender,
-            city: data.city,
-            isAdmin: true,
+        if (res.status == 200) {
+          const { user, token } = res.data;
+          setAdminProfile({
+            account_type: user.account_type,
+            email: user.email,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            profile_picture: user.profile_picture,
+            gender: user.gender,
+            city: user.city,
           });
-          return navigate("/admin/dashboard");
+          localStorage.setItem("access token", JSON.stringify(token));
+          return navigate("/admin/create");
         }
       })
       .catch((err) => {
-        setLoading(false);
-        if (err.response.status === 400) {
-          return toast.error("Invalid email or password.");
-        }
+        toast.error(`${err.message}`);
         console.error(err);
-        return toast.error("Request failed. Please try again later.");
-      });
+      })
+      .finally(() => setLoading(false));
   });
 
   return (

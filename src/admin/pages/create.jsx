@@ -8,7 +8,7 @@ import { GlobalCTX } from "@/contexts/GlobalContext";
 
 const Create = () => {
   const [isChecked, setIsChecked] = React.useState();
-  const { isAuth } = React.useContext(GlobalCTX);
+  const { adminProfile } = React.useContext(GlobalCTX);
   const navigate = useNavigate();
 
   const handleIsChecked = (e) => {
@@ -24,7 +24,7 @@ const Create = () => {
       <div className="bg-white rounded-lg p-10">
         <hgroup className="text-center space-y-2">
           <h1 className="font-semibold text-2xl">
-            Welcome Back, {isAuth.first_name}
+            Welcome Back, {adminProfile?.first_name}
           </h1>
           <p className="text-sm text-gray-500">
             What are you doing today? Select an option to create a new activity.

@@ -17,6 +17,8 @@ import {
 import DefaultProfile from "@/assets/images/default_profile.png";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { BookingCTX } from "@/contexts/BookingContext";
+import axios from "axios";
+import { isValidUrl } from "@/lib/utils";
 
 const Settings = () => {
   return (
@@ -41,18 +43,12 @@ const Settings = () => {
               title="Change Password"
               icon={<PasswordIcon />}
             />
-            {/* <StyledTabsTrigger
-              value="schedule trip"
-              title="Schedule Trip"
-              icon={<EditIcon />}
-            /> */}
           </TabsList>
           <StyledTabsContent value="edit profile" content={<EditProfile />} />
           <StyledTabsContent
             value="change password"
             content={<ChangePassword />}
           />
-          {/* <StyledTabsContent value="schedule trip" content={<ScheduleTrip />} /> */}
         </Tabs>
       </div>
     </>
@@ -85,7 +81,8 @@ const StyledTabsTrigger = ({ value, title, icon }) => {
 export default Settings;
 
 const EditProfile = () => {
-  const { isAuth } = React.useContext(GlobalCTX);
+  const { adminProfile, setAdminProfile } = React.useContext(GlobalCTX);
+  const { loading, setLoading } = React.useContext(BookingCTX);
 
   const {
     handleSubmit,
@@ -95,16 +92,64 @@ const EditProfile = () => {
     mode: "onChange",
     resolver: yupResolver(editProfileSchema),
     defaultValues: {
-      ...isAuth,
+      ...adminProfile,
       location: "Nigeria",
-      profile_picture: "",
     },
   });
 
   const onSubmit = handleSubmit((formData) => {
-    console.log(formData, "form Data");
-    toast.success("Profile successfully updated.");
+    EditProfileRequest(formData);
   });
+
+  const EditProfileRequest = async (formData) => {
+    setLoading(true);
+    const file = formData.profile_picture[0];
+    const cloudinaryData = new FormData();
+    cloudinaryData.append("file", file);
+    cloudinaryData.append("upload_preset", "mettsotz");
+
+    const response = await axios
+      .post(
+        "https://api.cloudinary.com/v1_1/queen-dev/image/upload",
+        cloudinaryData
+      )
+      .then((res) => {
+        return res.data.url;
+      })
+      .catch((err) => {
+        console.error(err, "upload");
+        setLoading(false);
+        return false;
+      });
+
+    if (response) {
+      await axios
+        .post("https://abitto-api.onrender.com/api/user/editprofile", {
+          ...formData,
+          profile_picture: response,
+        })
+        .then((res) => {
+          const user = res.data.user;
+          setAdminProfile((prev) => ({
+            ...prev,
+            email: user.email,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            profile_picture: user.profile_picture,
+            gender: user.gender,
+            city: user.city,
+          }));
+          toast.success("Profile successfully updated.");
+        })
+        .catch((err) => {
+          console.error(err, "Error ");
+          toast.error("Error occurred while updating profile.");
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  };
 
   return (
     <>
@@ -174,7 +219,12 @@ const EditProfile = () => {
           />
         </div>
 
-        <Button type="submit" className="w-32 " text="Update" />
+        <Button
+          type="submit"
+          className="w-32 "
+          loading={loading}
+          text="Update"
+        />
       </form>
     </>
   );
@@ -183,9 +233,7 @@ const EditProfile = () => {
 // eslint-disable-next-line react/display-name
 const ProfilePicture = React.forwardRef((props, ref) => {
   const { onChange, errors, defaultValue } = props;
-  const profile = defaultValue
-    ? URL.createObjectURL(defaultValue[0])
-    : DefaultProfile;
+  const profile = isValidUrl(defaultValue) ? defaultValue : DefaultProfile;
   const [preview, setPreview] = React.useState(profile);
 
   const handleImageUpload = (event) => {
@@ -207,6 +255,7 @@ const ProfilePicture = React.forwardRef((props, ref) => {
         <Cloud2Icon /> Upload Profile Picture
         <input
           {...props}
+          defaultValue={""}
           ref={ref}
           type="file"
           className="hidden"

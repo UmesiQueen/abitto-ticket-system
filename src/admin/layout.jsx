@@ -22,12 +22,11 @@ import React from "react";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { Helmet } from "react-helmet-async";
-import DefaultProfile from "@/assets/images/default_profile.png";
 import axios from "axios";
 
 const ProtectedRoute = () => {
   const navigate = useNavigate();
-  const { isAuth } = React.useContext(GlobalCTX);
+  const { adminProfile } = React.useContext(GlobalCTX);
   const { setBookingQuery } = React.useContext(BookingCTX);
   const { pathname } = useLocation();
   const dataQuery = useLoaderData();
@@ -42,6 +41,7 @@ const ProtectedRoute = () => {
   }, [dataQuery]);
 
   const handleLogout = () => {
+    localStorage.removeItem("access token");
     localStorage.removeItem("admin");
     navigate("/login");
   };
@@ -113,15 +113,15 @@ const ProtectedRoute = () => {
             )}
             <div className="ml-auto flex gap-3 text-right">
               <div className=" leading-none self-end">
-                <p className="font-semibold">{isAuth.first_name}</p>
+                <p className="font-semibold">{adminProfile.first_name}</p>
                 <p className="text-sm font-medium text-gray-500">
-                  {isAuth.account_type}
+                  {adminProfile.account_type}
                 </p>
               </div>
               <Link to="/admin/settings">
                 <Avatar
-                  alt="profile"
-                  src={DefaultProfile}
+                  alt={adminProfile.first_name.substring(0, 1)}
+                  src={adminProfile.profile_picture}
                   className="bg-gray-300"
                 />
               </Link>
@@ -137,8 +137,8 @@ const ProtectedRoute = () => {
 };
 
 const AdminLayout = () => {
-  const { isAuth } = React.useContext(GlobalCTX);
-  return <>{isAuth?.isAdmin ? <ProtectedRoute /> : <Navigate to="/login" />}</>;
+  const isAuth = JSON.parse(localStorage.getItem("access token")) ?? "";
+  return <>{isAuth ? <ProtectedRoute /> : <Navigate to="/login" />}</>;
 };
 
 export default AdminLayout;

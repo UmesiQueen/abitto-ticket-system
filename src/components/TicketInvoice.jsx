@@ -1,12 +1,10 @@
 import React from "react";
-// import { cn } from "@/lib/utils";
 import axios from "axios";
 import { format } from "date-fns";
 import { formatValue } from "react-currency-input-field";
 import { Button } from "@/components/ui/button";
 import { Navigate, useNavigate, useLoaderData } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
-import { GlobalCTX } from "@/contexts/GlobalContext";
 import { Helmet } from "react-helmet-async";
 import {
   CaretIcon,
@@ -20,7 +18,7 @@ import {
 const TicketInvoice = () => {
   const navigate = useNavigate();
   const currentUser = useLoaderData();
-  const { isAuth } = React.useContext(GlobalCTX);
+  const isAuth = JSON.parse(localStorage.getItem("access token"));
   const componentRef = React.useRef();
 
   const handlePrint = useReactToPrint({
@@ -38,7 +36,7 @@ const TicketInvoice = () => {
       <div className="p-5  ">
         <div className=" w-full max-w-[1000px] flex flex-col mx-auto ">
           <div className="flex gap-2 mb-5 justify-end ">
-            {isAuth?.isAdmin ? (
+            {isAuth?.token ? (
               <Button
                 className=" bg-green-500 hover:bg-green-700 "
                 onClick={() => {
@@ -329,6 +327,7 @@ const TicketInvoice = () => {
 
 export default TicketInvoice;
 
+// Post: query booking detail by bookingId
 export const TicketLoader = async ({ params }) => {
   try {
     const response = await axios.post(
@@ -341,6 +340,5 @@ export const TicketLoader = async ({ params }) => {
   } catch (error) {
     console.error(error, "error");
     return null;
-    // throw new Error("Failed to post data");
   }
 };
