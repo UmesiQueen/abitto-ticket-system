@@ -48,10 +48,11 @@ import { cn, humanize } from "@/lib/utils";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { PaginationEllipsis } from "@/components/ui/pagination";
 import ReactPaginate from "react-paginate";
+import { BookingCTX } from "@/contexts/BookingContext";
 
 const BookingDetails = () => {
   const navigate = useNavigate();
-  const { dataQuery, currentPageIndex } = React.useContext(GlobalCTX);
+  const { bookingQuery, currentPageIndex } = React.useContext(BookingCTX);
   const [sorting, setSorting] = React.useState([]);
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({});
@@ -81,9 +82,11 @@ const BookingDetails = () => {
       cell: ({ row }) => (
         <div>
           <p className="text-[15px] font-semibold capitalize">
-            {capitalize(`${row.original.first_name} ${row.original.surname}`)}
+            {capitalize(
+              `${row.original.passenger1_first_name} ${row.original.passenger1_last_name}`
+            )}
           </p>
-          <p className="italic  lowercase">{row.original.email}</p>
+          <p className="italic  lowercase">{row.original.passenger1_email}</p>
         </div>
       ),
     },
@@ -119,7 +122,7 @@ const BookingDetails = () => {
       header: <div className="text-center">Status</div>,
       cell: ({ row }) => {
         const {
-          original: { status = "Success" },
+          original: { status = "Pending" },
         } = row;
 
         return (
@@ -138,13 +141,6 @@ const BookingDetails = () => {
         );
       },
     },
-    // {
-    //   accessorKey: "paid with",
-    //   header: "Payment Method",
-    //   cell: ({ row }) => (
-    //     <div className="text-center">{row.original?.paid_with}</div>
-    //   ),
-    // },
     {
       accessorKey: "amount",
       header: "Amount",
@@ -152,7 +148,7 @@ const BookingDetails = () => {
         <div>
           ₦
           {formatValue({
-            value: String(row.getValue("amount")),
+            value: String(row.original.total_ticket_cost ?? 0),
           })}
         </div>
       ),
@@ -196,7 +192,7 @@ const BookingDetails = () => {
   ];
 
   const table = useReactTable({
-    data: dataQuery,
+    data: bookingQuery,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -207,7 +203,7 @@ const BookingDetails = () => {
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     onPaginationChange: setPagination,
-    pageCount: Math.ceil(dataQuery.length / pagination.pageSize),
+    pageCount: Math.ceil(bookingQuery.length / pagination.pageSize),
     state: {
       sorting,
       columnFilters,
@@ -352,7 +348,7 @@ export default BookingDetails;
 
 const Pagination = ({ props: { table } }) => {
   const pageCount = table.getPageCount();
-  const { setCurrentPageIndex, currentPageIndex } = React.useContext(GlobalCTX);
+  const { setCurrentPageIndex } = React.useContext(BookingCTX);
 
   return (
     <ReactPaginate
@@ -371,7 +367,7 @@ const Pagination = ({ props: { table } }) => {
         table.setPageIndex(val.selected);
         setCurrentPageIndex(val.selected);
       }}
-      initialPage={pageCount ? currentPageIndex : -1}
+      initialPage={pageCount}
       pageRangeDisplayed={3}
       pageCount={pageCount}
       previousLabel={
@@ -395,9 +391,9 @@ const Pagination = ({ props: { table } }) => {
 export const CustomerDetails = () => {
   const navigate = useNavigate();
   const { bookingID } = useParams();
-  const { dataQuery } = React.useContext(GlobalCTX);
+  const { bookingQuery } = React.useContext(GlobalCTX);
 
-  const currentUser = dataQuery.filter((data) => data._id === bookingID)[0];
+  const currentUser = bookingQuery.filter((data) => data._id === bookingID)[0];
 
   return (
     <div>
