@@ -59,6 +59,7 @@ export const usePayment = () => {
       ...bookingDetails,
       ...passengerDetails,
       departure_seats,
+      total_ticket_cost,
       ...(bookingDetails.trip_type == "Round Trip" && { return_seats }),
       ticket_id: `${ticket_id}${uuid().slice(0, 2)}`,
       ...props,

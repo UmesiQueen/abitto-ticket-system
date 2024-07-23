@@ -62,7 +62,7 @@ const Home = () => {
                     navigate("/rental");
                   }}
                   variant="outline"
-                  className="w-40 border-white !text-white hover:!text-blue-700"
+                  className="w-40 border-white !text-white hover:!text-blue-700 hover:!bg-blue-100"
                 />
               </div>
             </div>
@@ -455,7 +455,7 @@ const TestimonialsCarousel = () => {
               className="snap-always snap-start min-w-[80%] md:min-w-[45%] data-[state=active]:min-w-[90%] data-[state=active]:md:min-w-[50%] min-h-[306px] p-5 md:p-8 bg-white rounded-lg flex flex-col gap-3 items-start transition-all duration-200 ease-in-out data-[state=active]:scale-y-[1.1]"
             >
               <span className="font-bold text-4xl">“</span>
-              <p className={cn("font-medium text-sm md:text-base w-[75%]")}>
+              <p className={cn("font-medium text-sm md:text-base w-[80%]")}>
                 {item.review}
               </p>
               <div className="flex items-center gap-3 mt-auto">

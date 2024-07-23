@@ -32,6 +32,7 @@ import SelectField from "@/components/custom/SelectField";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { Refresh } from "iconsax-react";
 import axios from "axios";
+import { GlobalCTX } from "@/contexts/GlobalContext";
 
 const JourneyList = () => {
   return (
@@ -187,13 +188,14 @@ const JourneyTable = () => {
     setCurrentPageIndex,
     currentPageIndex,
   } = React.useContext(BookingCTX);
+  const { setLoading } = React.useContext(GlobalCTX);
   const [rowSelection, setRowSelection] = React.useState({});
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 7,
   });
 
-  // set pageIndex on render only if previous location path includes current page path
+  //TODO: set pageIndex on render only if previous location path includes current page path
   React.useEffect(() => {
     table.setPageIndex(currentPageIndex);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -276,6 +278,7 @@ const JourneyTable = () => {
       cell: ({ row }) => (
         <Button
           onClick={() => {
+            setLoading(true);
             navigate(row.original.trip_code);
           }}
           className="px-3 h-8 !text-xs mx-auto"

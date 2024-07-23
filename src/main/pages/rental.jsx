@@ -430,7 +430,7 @@ const RentalSummary = () => {
           </p>
           <p>
             <span className="font-semibold text-sm md:text-base text-gray-500">
-              Arrival:
+              To:
             </span>{" "}
             {rentalData?.arrival}
           </p>
