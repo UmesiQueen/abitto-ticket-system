@@ -21,7 +21,7 @@ const About = () => {
       <div>
         {/* hero section */}
         <section
-          className=" h-[670px] lg:h-screen w-full flex items-center relative bg-cover lg:bg-center bg-right bg-no-repeat"
+          className="min-h-[670px] h-screen w-full flex items-center relative bg-cover lg:bg-center bg-right bg-no-repeat"
           style={{ backgroundImage: `url(${about})` }}
         >
           <div className="lg:hidden bg-black/40 w-full h-full absolute z-[1] " />
@@ -280,7 +280,7 @@ export default About;
 const StyledTabsTrigger = ({ value, title }) => (
   <TabsTrigger
     value={value}
-    className="self-start data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:h-10 data-[state=active]:after:w-3 data-[state=active]:after:bg-blue-500 data-[state=active]:after:-left-[.4rem] data-[state=active]:after:absolute  data-[state=active]:after:rounded-lg pl-5 justify-start "
+    className="md:text-lg self-start data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:h-10 data-[state=active]:after:w-3 data-[state=active]:after:bg-blue-500 data-[state=active]:after:-left-[.4rem] data-[state=active]:after:absolute  data-[state=active]:after:rounded-lg pl-5 justify-start "
   >
     {title}
   </TabsTrigger>
