@@ -13,9 +13,10 @@ import {
 } from "@/assets/icons";
 import { marinaMap, timberMap } from "@/assets/images";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import FadeInBackgroundTransition from "@/components/animation/FadeIn";
+// import FadeInBackgroundTransition from "@/components/animation/FadeIn";
 import Button from "@/components/custom/Button";
 import { cn } from "@/lib/utils";
+import HeroGIF from "@/assets/hero.gif";
 
 const Home = () => {
   const { contact } = React.useContext(GlobalCTX);
@@ -32,8 +33,8 @@ const Home = () => {
         className="min-h-[670px] h-screen w-full relative bg-blue-700"
       >
         <div className="bg-black/40 w-full h-full absolute z-[1] " />
-
-        <FadeInBackgroundTransition />
+        <img src={HeroGIF} alt="hero" className="w-full h-full absolute" />
+        {/* <FadeInBackgroundTransition /> */}
         <div className=" px-5 md:px-20 z-[2] relative h-full">
           <div className="max-w-[1440px] mx-auto h-full flex items-center">
             <div className="w-[400px] mx-auto md:mx-0 md:w-[600px] space-y-10">
@@ -358,43 +359,34 @@ const testimonials = [
     review:
       "Such a relaxing way to travel! I took the ferry with my family and we all loved it. A fantastic option for anyone looking to avoid the hassle of traffic and enjoy the journey.",
   },
-  {
-    id: 3,
-    name: "Mr. Willis Ikwdum",
-    imgUrl: "https://i.ibb.co/Tqv0zDR/Mr-kalu-Client.jpg",
-    review:
-      "Such a relaxing way to travel! I took the ferry with my family and we all loved it. A fantastic option for anyone looking to avoid the hassle of traffic and enjoy the journey.",
-  },
 ];
 
 const TestimonialsCarousel = () => {
   const [active, setActive] = React.useState(1);
   const carouselContainer = React.useRef();
 
-  // React.useEffect(() => {
-  //   const handleScroll = () => {
-  //     const scrollPosition = carouselContainer.current.scrollLeft;
-  //     Array.from({ length: testimonials.length }).map((_, index) => {
-  //       const id = index + 1;
-  //       const carouselItem = document.getElementById(`slide-item${id}`);
-  //       const nextOffset =
-  //         carouselItem.offsetLeft + carouselItem.offsetWidth + 32;
-  //       if (
-  //         scrollPosition > carouselItem.offsetLeft &&
-  //         scrollPosition <= nextOffset
-  //       ) {
-  //         return setActive(id);
-  //       }
-  //     });
-  //   };
+  // const handleScroll = () => {
+  //   const scrollPosition = carouselContainer.current.scrollLeft;
+  //   Array.from({ length: testimonials.length }).map((_, index) => {
+  //     const id = index + 1;
+  //     const carouselItem = document.getElementById(`slide-item${id}`);
+  //     const nextOffset =
+  //       carouselItem.offsetLeft + carouselItem.offsetWidth + 32;
+  //     if (
+  //       scrollPosition > carouselItem.offsetLeft &&
+  //       scrollPosition <= nextOffset
+  //     ) {
+  //       return setActive(id);
+  //     }
+  //   });
+  // };
 
+  // React.useEffect(() => {
   //   const divElement = carouselContainer.current;
   //   divElement.addEventListener("scroll", handleScroll);
 
   //   // Clean up the event listener on component unmount
-  //   return () => {
-  //     divElement.removeEventListener("scroll", handleScroll);
-  //   };
+  //   divElement.removeEventListener("scroll", handleScroll);
   // }, []);
 
   const handlePrev = () => {
@@ -433,7 +425,7 @@ const TestimonialsCarousel = () => {
 
   return (
     <section className="py-20 px-5 md:px-20 bg-blue-50 ">
-      <div className="max-w-[1440px] mx-auto space-y-8">
+      <div className="max-w-[1440px] mx-auto">
         <hgroup className="text-center space-y-2">
           <h2 className="font-semibold text-xl md:text-2xl">
             Travelers Testimonials
@@ -444,7 +436,7 @@ const TestimonialsCarousel = () => {
         </hgroup>
         <div
           ref={carouselContainer}
-          className="flex items-center gap-8 mx-auto h-[350px] overflow-auto no-scrollbar snap-x snap-mandatory transition-all duration-200 ease-in-out"
+          className="py-6 flex items-center gap-4 md:gap-8 mx-auto h-[400px] overflow-auto no-scrollbar snap-x snap-mandatory transition-all duration-200 ease-in-out"
         >
           {testimonials.map((item, index) => (
             <div
@@ -454,10 +446,10 @@ const TestimonialsCarousel = () => {
                 handleClick(item.id);
               }}
               data-state={active == index + 1 ? "active" : ""}
-              className="snap-always snap-start min-w-[500px] data-[state=active]:min-w-[600px] h-[306px] p-5 md:p-8 data-[state=active]:md:px-14 bg-white rounded-lg flex flex-col gap-3 items-start transition-all duration-200 ease-in-out data-[state=active]:scale-y-[1.1]"
+              className="snap-always snap-start min-w-[80%] md:min-w-[45%] data-[state=active]:min-w-[90%] data-[state=active]:md:min-w-[50%] min-h-[306px] p-5 md:p-8 bg-white rounded-lg flex flex-col gap-3 items-start transition-all duration-200 ease-in-out data-[state=active]:scale-y-[1.1]"
             >
               <span className="font-bold text-4xl">“</span>
-              <p className={cn("font-medium text-base w-[400px]")}>
+              <p className={cn("font-medium text-sm md:text-base w-[75%]")}>
                 {item.review}
               </p>
               <div className="flex items-center gap-3 mt-auto">

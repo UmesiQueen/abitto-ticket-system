@@ -173,22 +173,45 @@ const About = () => {
                 <h3 className="uppercase font-semibold">Meet our founder</h3>
               </div>
               <div className="pt-5 md:pt-10 pb-6">
-                <p className="font-semibold text-2xl">Richard Akinaka</p>
-                <p>Founder Abitto Global services</p>
+                <p className="font-semibold text-2xl mb-2">Richard Akinaka</p>
+                <p className=" font-medium">Founder Abitto Global services</p>
               </div>
-              <p>
-                Lorem ipsum dolor sit amet consectetur. Accumsan tristique
-                montes faucibus nisi bibendum et. Et dapibus adipiscing nunc
-                cursus ullamcorper est. In elit eu odio enim. Nunc eu adipiscing
-                tincidunt tortor urna lectus enim vitae morbi.
-              </p>
+              <div className="space-y-3 *:indent-3">
+                <p>
+                  Mr. Richard Akinaka is the Chairman and CEO of Abitto Global
+                  Services Limited. He is a highly skilled project manager with
+                  a wealth of experience in various fields, including oil and
+                  gas services, engineering, and water resources. Mr. Akinaka
+                  has successfully led projects involving construction, roads,
+                  drainage systems, and more.
+                </p>
+                <p>
+                  With a degree in policy and administrative studies from the
+                  University of Calabar, Nigeria, Mr. Akinaka brings strong
+                  leadership and management skills to Abitto. He has a proven
+                  track record of working well with professionals from different
+                  industries and managing complex projects.
+                </p>
+                <p>
+                  As one of the founders of Abitto Global Services, Mr. Akinaka
+                  leverages his extensive business knowledge and wide network of
+                  contacts to drive the {"company's"} success. His focus on
+                  Total Quality Management ensures that Abitto delivers
+                  top-notch services to its clients.
+                </p>
+                <p>
+                  His vision and leadership continue to drive Abitto Global
+                  Services to excel in innovative solutions across multiple
+                  industries.
+                </p>
+              </div>
             </div>
             <div className="mt-10 md:mt-0">
-              <div className="h-72 w-80 mx-auto overflow-hidden rounded-lg">
+              <div className=" w-full md:w-[500px] h-[500px] mx-auto overflow-hidden rounded-lg bg-slate-50">
                 <img
                   alt="founders image"
                   src="https://i.ibb.co/PN84KM8/abitto-founder.jpg"
-                  className="min-w-full"
+                  className=" w-full h-full object-cover object-top scale-[2.1] mt-[45%] ml-[10%] "
                 />
               </div>
             </div>
