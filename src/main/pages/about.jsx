@@ -11,6 +11,12 @@ const About = () => {
     <>
       <Helmet>
         <title>About Us | Abitto Ferry</title>
+        <link rel="canonical" href="https://www.abittoferry.com/booking" />
+        <meta property="og:title" content="Booking - Abitto Ferry" />
+        <meta
+          property="og:description"
+          content="Our easy-to-use booking platform ensures quick reservations, secure payments, and instant confirmations. Travel with confidence and comfort. Reserve your seat today..."
+        />
       </Helmet>
       <div>
         {/* hero section */}

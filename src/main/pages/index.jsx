@@ -26,6 +26,12 @@ const Home = () => {
     <>
       <Helmet>
         <title>Home | Abitto Ferry</title>
+        <link rel="canonical" href="https://www.abittoferry.com/" />
+        <meta property="og:title" content="Home - Abitto Ferry" />
+        <meta
+          property="og:description"
+          content="Experience the easiest and safest water travel with our well-maintained fleet, ensuring safety, comfort, and timely departures…"
+        />
       </Helmet>
       {/* Hero section */}
       <section
