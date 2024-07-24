@@ -225,7 +225,7 @@ const About = () => {
               </div>
             </div>
             <div className="mt-10 md:mt-0">
-              <div className=" w-fit md:w-[500px] h-[500px] mx-auto overflow-hidden rounded-lg bg-slate-500">
+              <div className=" w-fit md:w-[500px] max-h-[500px] mx-auto overflow-hidden rounded-lg bg-slate-500">
                 <img
                   alt="founders image"
                   src={FounderImg}
