@@ -1,3 +1,4 @@
+// import React from 'react'
 import React from "react";
 import axios from "axios";
 import { format } from "date-fns";
@@ -9,13 +10,13 @@ import { Helmet } from "react-helmet-async";
 import {
   CaretIcon,
   CalendarIcon,
-  ChairIcon,
   ClockIcon,
   Boat2Icon,
   UsersIcon,
 } from "@/assets/icons";
+import { Timelapse } from "@mui/icons-material";
 
-const TicketInvoice = () => {
+const RentalInvoice = () => {
   const navigate = useNavigate();
   const currentUser = useLoaderData();
   const isAuth = JSON.parse(localStorage.getItem("access token"));
@@ -31,7 +32,7 @@ const TicketInvoice = () => {
   return (
     <>
       <Helmet>
-        <title>Ticket Invoice | Abitto Ticket</title>
+        <title>Rental Invoice | Abitto Ticket</title>
       </Helmet>
       <div className="p-5  ">
         <div className=" w-full max-w-[1000px] flex flex-col mx-auto ">
@@ -73,22 +74,22 @@ const TicketInvoice = () => {
                 className="w-32 md:w-40"
               />
               <p className="text-xs md:text-base">
-                Ticket ID: {currentUser.ticket_id}
+                Rental ID: {currentUser.ticket_id}
               </p>
             </div>
 
             <div className="flex gap-5 justify-between items-center">
               <h1 className="uppercase font-bold mt-3 text-sm md:text-base text-blue-500">
-                Ticket Invoice
+                Rental Invoice
               </h1>
               <div className="text-right">
                 <p className="text-xs md:text-sm font-bold text-gray-500 mb-1">
-                  Ticket total(NGN)
+                  Rental total(NGN)
                 </p>
                 <p className="nowrap font-semibold text-4xl md:text-5xl ">
                   <span className="text-2xl">₦</span>
                   {formatValue({
-                    value: String(currentUser?.total_ticket_cost),
+                    value: String(currentUser?.total_cost),
                   })}
                 </p>
               </div>
@@ -100,129 +101,60 @@ const TicketInvoice = () => {
                 <hgroup>
                   <h4 className="font-semibold mb-1">Terminals</h4>
                   <p>
-                    {currentUser.travel_from} - {currentUser.travel_to}
+                    {currentUser.departure} - {currentUser.arrival}
                   </p>
                 </hgroup>
-                <ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
+                <ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1 capitalize">
                   <li>
                     <Boat2Icon />
-                    <p>{currentUser.trip_type}</p>
+                    <p>{currentUser.rent_type}</p>
                   </li>
                   <li>
                     <UsersIcon />
-                    <p>{currentUser.total_passengers} Passenger(s)</p>
+                    <p>{currentUser.passengers} Passenger(s)</p>
                   </li>
+                  <li>
+                    <CalendarIcon />
+                    <p>{format(new Date(currentUser.rental_date), "PP")}</p>
+                  </li>
+                  <li>
+                    <ClockIcon />
+                    <p>{currentUser.rental_time}</p>
+                  </li>
+                  {currentUser.rental_duration && (
+                    <li>
+                      <span className="text-[#ACACAC] scale-[.8]">
+                        <Timelapse />
+                      </span>
+                      <p>{`${currentUser.rental_duration}`}</p>
+                    </li>
+                  )}
                 </ul>
-              </div>
-
-              {/* time and return */}
-              <div className="flex flex-wrap gap-x-5 gap-y-3">
-                <div>
-                  <h5 className="font-semibold mb-1">Departure Details</h5>
-                  <ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
-                    <li>
-                      <CalendarIcon />
-                      <p>
-                        {format(new Date(currentUser.departure_date), "PP")}
-                      </p>
-                    </li>
-                    <li>
-                      <ClockIcon />
-                      <p>{currentUser.departure_time}</p>
-                    </li>
-                    <li>
-                      <ChairIcon />
-                      <p>Seats: {`${currentUser.departure_seats}`}</p>
-                    </li>
-                  </ul>
-                </div>
-                {currentUser.trip_type === "Round Trip" && (
-                  <div>
-                    <h5 className="font-semibold mb-1">Return Details</h5>
-                    <ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
-                      <li>
-                        <CalendarIcon />
-                        <p>
-                          {format(new Date(currentUser?.return_date), "PP")}
-                        </p>
-                      </li>
-                      <li>
-                        <ClockIcon />
-                        <p>{currentUser?.return_time}</p>
-                      </li>
-                      <li>
-                        <ChairIcon />
-                        <p>Seats: {`${currentUser?.return_seats}`}</p>
-                      </li>
-                    </ul>
-                  </div>
-                )}
               </div>
 
               {/* customer details */}
               <div className="space-y-1">
-                <h5 className="font-semibold ">Passenger Details (Adults)</h5>
+                {/* <h5 className="font-semibold ">Customer Details</h5> */}
                 <ul className="flex flex-wrap gap-x-4 gap-y-1 ">
                   <li>
                     <span className="text-xs text-gray-500 font-normal">
                       Full name:
                     </span>{" "}
-                    <span className="capitalize">{`${currentUser.passenger1_first_name} ${currentUser.passenger1_last_name}`}</span>
+                    <span className="capitalize">{`${currentUser.first_name} ${currentUser.surname}`}</span>
                   </li>
                   <li>
                     <span className="text-xs text-gray-500 font-normal">
                       Phone:{" "}
                     </span>
-                    {currentUser.passenger1_phone_number}
+                    {currentUser.phone_number}
                   </li>
                   <li>
                     <span className="text-xs text-gray-500 font-normal">
                       Email:{" "}
                     </span>
-                    {currentUser.passenger1_email}
+                    {currentUser.email}
                   </li>
                 </ul>
-                {currentUser?.adults_number > 1 &&
-                currentUser?.passenger2_first_name ? (
-                  <>
-                    {Array.from({
-                      length: currentUser.adults_number - 1,
-                    }).map((_, index) => {
-                      const num = index + 2;
-                      return (
-                        <ul
-                          key={num}
-                          className="flex flex-wrap gap-x-4 gap-y-1"
-                        >
-                          <li>
-                            <span className="text-xs text-gray-500 font-normal">
-                              Full name:
-                            </span>{" "}
-                            <span className="capitalize">
-                              {`${currentUser[`passenger${num}_first_name`]} ${
-                                currentUser[`passenger${num}_last_name`]
-                              }`}
-                            </span>
-                          </li>
-                          <li>
-                            <span className="text-xs text-gray-500 font-normal">
-                              Phone:{" "}
-                            </span>
-                            {`${currentUser[`passenger${num}_phone_number`]}`}
-                          </li>
-                          <li>
-                            <span className="text-xs text-gray-500 font-normal">
-                              Email:{" "}
-                            </span>
-                            {`${currentUser[`passenger${num}_email`]}`}
-                          </li>
-                        </ul>
-                      );
-                    })}
-                  </>
-                ) : (
-                  ""
-                )}{" "}
               </div>
 
               {/* payment info */}
@@ -233,7 +165,7 @@ const TicketInvoice = () => {
                     <p className="text-xs text-gray-500 font-normal">
                       Booking Medium:
                     </p>
-                    <p>{currentUser?.medium}</p>
+                    <p>{currentUser?.payment_medium}</p>
                   </li>
                   <li>
                     <p className="text-xs text-gray-500 font-normal">
@@ -245,7 +177,7 @@ const TicketInvoice = () => {
                     <p className="text-xs text-gray-500 font-normal">
                       Trx Ref:
                     </p>
-                    <p>{currentUser?.trxRef ?? "-"}</p>
+                    <p>{currentUser?.trxRef}</p>
                   </li>
                 </ul>
               </div>
@@ -266,27 +198,19 @@ const TicketInvoice = () => {
                     </td>
                     <td className="text-xs md:text-sm text-[#444444]">
                       {formatValue({
-                        value: String(currentUser?.departure_ticket_cost ?? 0),
+                        value: String(currentUser.rental_cost),
                         prefix: "₦",
                       })}
-                      {currentUser?.trip_type === "Round Trip" && (
-                        <>
-                          {" + "}
-                          {formatValue({
-                            value: String(currentUser?.return_ticket_cost ?? 0),
-                            prefix: "₦",
-                          })}{" "}
-                          x {currentUser.total_passengers}
-                        </>
-                      )}
+                      {currentUser.rental_duration &&
+                        ` x ${currentUser.rental_duration}`}
                     </td>
                   </tr>
                   <tr>
                     <td className="font-medium text-base md:text-lg">Total</td>
                     <td className="font-medium text-base md:text-lg">
-                      ₦
                       {formatValue({
-                        value: String(currentUser?.total_ticket_cost ?? 0),
+                        value: String(currentUser?.total_cost),
+                        prefix: "₦",
                       })}
                     </td>
                   </tr>
@@ -323,18 +247,17 @@ const TicketInvoice = () => {
   );
 };
 
-export default TicketInvoice;
+export default RentalInvoice;
 
-// Post: query booking detail by bookingId
-export const TicketLoader = async ({ params }) => {
+export const RentalInvoiceLoader = async ({ params }) => {
   try {
     const response = await axios.post(
-      "https://abitto-api.onrender.com/api/booking/querynew",
+      "https://abitto-api.onrender.com/api/rent/ticketId",
       {
-        ticket_id: params.bookingID,
+        ticket_id: params.rentalID,
       }
     );
-    return response.data.booking;
+    return response.data.rent;
   } catch (error) {
     console.error(error, "error");
     return null;

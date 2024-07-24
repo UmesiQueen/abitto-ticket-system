@@ -1,7 +1,10 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import PropTypes from "prop-types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BoatURL from "@/assets/images/boat1.jpg";
+import BoatURL2 from "@/assets/images/boat2.png";
+import BoatURL3 from "@/assets/images/boat3.png";
 import Button from "@/components/custom/Button";
 import { UsersIcon, CalendarIcon, Boat2Icon, ClockIcon } from "@/assets/icons";
 import { BookingCTX } from "@/contexts/BookingContext";
@@ -24,23 +27,28 @@ const Rental = () => {
   const { activeStep } = useStepper();
 
   return (
-    <div className="py-32 px-5 ">
-      <section className="w-full max-w-[1000px] mx-auto ">
-        {activeStep == 0 ? (
-          <RentalSelection />
-        ) : activeStep == 1 ? (
-          <div className="p-5 pb-10 md:p-10 rounded-lg bg-white ">
-            <RentalForm />
-          </div>
-        ) : activeStep == 2 ? (
-          <div className="p-5 pb-10 md:p-10 rounded-lg bg-white ">
-            <RentalSummary />
-          </div>
-        ) : (
-          ""
-        )}
-      </section>
-    </div>
+    <>
+      <Helmet>
+        <title>Rental Services | Abitto Ferry</title>
+      </Helmet>
+      <div className="py-32 px-5 ">
+        <section className="w-full max-w-[1000px] mx-auto ">
+          {activeStep == 0 ? (
+            <RentalSelection />
+          ) : activeStep == 1 ? (
+            <div className="p-5 pb-10 md:p-10 rounded-lg bg-white ">
+              <RentalForm />
+            </div>
+          ) : activeStep == 2 ? (
+            <div className="p-5 pb-10 md:p-10 rounded-lg bg-white ">
+              <RentalSummary />
+            </div>
+          ) : (
+            ""
+          )}
+        </section>
+      </div>
+    </>
   );
 };
 export default Rental;
@@ -59,7 +67,7 @@ export const RentalSelection = () => {
     }));
     onNextClick();
   };
-
+  React.useEffect(() => console.log(document.getElementById("hello")), []);
   return (
     <>
       <hgroup className="text-center">
@@ -88,13 +96,13 @@ export const RentalSelection = () => {
               <div className="flex flex-col md:flex-row gap-10 *:flex-grow md:*:w-1/2 min-h-56 p-5 mt-5 rounded-lg">
                 <div className="relative rounded-lg overflow-hidden h-56">
                   <img
-                    src={BoatURL}
+                    src={item.src}
                     alt="boat image"
                     className="object-cover h-56 w-full"
                   />
                   <div className=" bg-gradient-to-b from-white/0 from-30% to-black/60 absolute top-0 right-0 w-full h-full" />
                 </div>
-                <div className="flex flex-col gap-5 leading-none">
+                <div id="hello" className="flex flex-col gap-5 leading-none">
                   <h2 className="text-lg font-semibold">{item.title}</h2>
                   <div className="inline-flex gap-5 font-medium ">
                     <p>
@@ -111,6 +119,7 @@ export const RentalSelection = () => {
                     </p>
                   </div>
                   <Button
+                    id="select_btn"
                     text="Select package"
                     className="mt-8 md:mt-auto w-full md:w-48"
                     onClick={() => {
@@ -136,6 +145,7 @@ const rentalPackages = [
   {
     type: "within marina",
     title: "Rent Within Marina",
+    src: BoatURL,
     capacity: "10-15",
     duration: "hour",
     rental_cost: 150000,
@@ -145,6 +155,7 @@ const rentalPackages = [
   {
     type: "uyo to calabar",
     title: "Uyo to Calabar",
+    src: BoatURL2,
     capacity: "10-15",
     duration: "trip",
     rental_cost: 300000,
@@ -154,6 +165,7 @@ const rentalPackages = [
   {
     type: "calabar to uyo",
     title: "Calabar to Uyo",
+    src: BoatURL3,
     capacity: "10-15",
     duration: "trip",
     rental_cost: 300000,
@@ -585,6 +597,7 @@ const RentalSummary = () => {
             onClick={onPrevClick}
           />
           <Button
+            id="rental_payment_btn"
             text="Pay with Paystack"
             onClick={onlineRentalPayment}
             className=" w-full md:w-48"

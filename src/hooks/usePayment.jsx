@@ -7,10 +7,10 @@ import { GlobalCTX } from "@/contexts/GlobalContext";
 import BookingSuccessModal from "@/components/modals/book.success";
 import { v4 as uuid } from "uuid";
 import { sampleSize } from "lodash";
+import { RentalSuccessModal } from "@/components/modals/book.success";
 
 export const usePayment = () => {
-  const { formData, rentalData, handleReset, selectedTrip } =
-    React.useContext(BookingCTX);
+  const { formData, rentalData, selectedTrip } = React.useContext(BookingCTX);
   const { mountPortalModal, adminProfile, setLoading } =
     React.useContext(GlobalCTX);
   const { bookingDetails, passengerDetails, seatDetails, ticket_id } = formData;
@@ -70,20 +70,17 @@ export const usePayment = () => {
     const isSuccess = props.status === "Success";
 
     if (isSuccess) setLoading(true);
-    // TODO: When ticket is already logged but user wishes to retry the transaction
-    // issue: ticket_id remains the same.
     axios
       .post(
         "https://abitto-api.onrender.com/api/booking/newbooking",
         requestData
       )
       .then((res) => {
-        if (res.status === 200 && isSuccess) {
+        if (res.status == 200 && isSuccess)
           mountPortalModal(<BookingSuccessModal />);
-        }
       })
       .catch((err) => {
-        console.error(err);
+        console.error(err, "Error occurred while sending new booking request.");
         // FIXME: FIX THIS LOGIC
         if (isSuccess) {
           document.getElementById("paystack_btn").disabled = true;
@@ -119,13 +116,11 @@ export const usePayment = () => {
         requestData
       )
       .then((res) => {
-        if (res.status == 200) {
-          mountPortalModal(<BookingSuccessModal />);
-        }
+        if (res.status == 200) mountPortalModal(<BookingSuccessModal />);
       })
       .catch((err) => {
         toast.error("Booking not confirmed. Please try again.");
-        console.error(err, "Error occurred while making new booking request.");
+        console.error(err, "Error occurred while sending new booking request.");
       })
       .finally(() => {
         setLoading(false);
@@ -172,18 +167,24 @@ export const usePayment = () => {
       trxRef,
     };
 
+    const isSuccess = payment_status === "Success";
+
     axios
       .post("https://abitto-api.onrender.com/api/rent/createrent", requestData)
       .then((res) => {
-        if (res.status == 200) {
-          // mountPortalModal(<BookingSuccessModal />);
-          toast.success("Successful");
-          handleReset();
+        if (res.status == 200 && isSuccess) {
+          const ticket_id = res.data.rent.ticket_id;
+          mountPortalModal(<RentalSuccessModal id={ticket_id} />);
         }
       })
       .catch((err) => {
-        console.error(err, "Error ");
-        toast.error("Error");
+        console.error(err, "Error occurred while sending new rental request.");
+        if (isSuccess) {
+          document.getElementById("rental_payment_btn").disabled = true;
+          toast.error(
+            "Oops! Rental not confirmed. Please contact us to verify."
+          );
+        }
       })
       .finally(() => setLoading(false));
   };
@@ -206,11 +207,7 @@ export const usePayment = () => {
     axios
       .post("https://abitto-api.onrender.com/api/rent/createrent", requestData)
       .then((res) => {
-        if (res.status == 200) {
-          // mountPortalModal(<BookingSuccessModal />);
-          toast.success("Successful");
-          handleReset();
-        }
+        if (res.status == 200) mountPortalModal(<RentalSuccessModal />);
       })
       .catch((err) => {
         console.error(err, "Error rental");

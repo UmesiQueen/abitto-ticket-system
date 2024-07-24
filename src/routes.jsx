@@ -31,6 +31,8 @@ import { TicketLoader } from "./components/TicketInvoice";
 import { TripDetailsLoader } from "./admin/pages/trip-details";
 import { JourneyListLoader } from "./admin/pages/journey-list";
 import { DataQueryLoader } from "./admin/layout";
+import RentalInvoice from "./components/RentalInvoice";
+import { RentalInvoiceLoader } from "./components/RentalInvoice";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -65,7 +67,7 @@ export const router = createBrowserRouter(
           element={<TripDetails />}
           loader={TripDetailsLoader}
         />
-        <Route path="report" element={<Report />} />
+        <Route path="report" element={<Report />} loader={JourneyListLoader} />
         <Route path="settings" element={<Settings />} />
       </Route>
 
@@ -73,6 +75,11 @@ export const router = createBrowserRouter(
         path="ticket-invoice/:bookingID"
         element={<TicketInvoice />}
         loader={TicketLoader}
+      />
+      <Route
+        path="rental-invoice/:rentalID"
+        element={<RentalInvoice />}
+        loader={RentalInvoiceLoader}
       />
       <Route path="login" element={<Login />} />
       <Route path="*" element={<PageNotFound />} />
