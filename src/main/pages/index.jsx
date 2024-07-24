@@ -39,7 +39,11 @@ const Home = () => {
         className="min-h-[670px] h-screen w-full relative bg-blue-700"
       >
         <div className="bg-black/40 w-full h-full absolute z-[1] " />
-        <img src={HeroGIF} alt="hero" className="w-full h-full absolute" />
+        <img
+          src={HeroGIF}
+          alt="hero"
+          className="w-full h-full absolute object-cover"
+        />
         {/* <FadeInBackgroundTransition /> */}
         <div className=" px-5 md:px-20 z-[2] relative h-full">
           <div className="max-w-[1440px] mx-auto h-full flex items-center">
@@ -455,7 +459,11 @@ const TestimonialsCarousel = () => {
               className="snap-always snap-start min-w-[80%] md:min-w-[45%] data-[state=active]:min-w-[90%] data-[state=active]:md:min-w-[50%] min-h-[306px] p-5 md:p-8 bg-white rounded-lg flex flex-col gap-3 items-start transition-all duration-200 ease-in-out data-[state=active]:scale-y-[1.1]"
             >
               <span className="font-bold text-4xl">“</span>
-              <p className={cn("font-medium text-sm md:text-base w-[80%]")}>
+              <p
+                className={cn(
+                  "font-medium text-sm md:text-base w-full md:w-[80%]"
+                )}
+              >
                 {item.review}
               </p>
               <div className="flex items-center gap-3 mt-auto">

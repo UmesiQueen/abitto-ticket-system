@@ -2,6 +2,7 @@ import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import Button from "@/components/custom/Button";
 import { about, about2 } from "@/assets/images";
+import FounderImg from "@/assets/images/founder.jpg";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const About = () => {
@@ -21,7 +22,7 @@ const About = () => {
       <div>
         {/* hero section */}
         <section
-          className="min-h-[670px] h-screen w-full flex items-center relative bg-cover lg:bg-center bg-right bg-no-repeat"
+          className="min-h-[670px] h-screen w-full flex items-center relative bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${about})` }}
         >
           <div className="lg:hidden bg-black/40 w-full h-full absolute z-[1] " />
@@ -213,11 +214,11 @@ const About = () => {
               </div>
             </div>
             <div className="mt-10 md:mt-0">
-              <div className=" w-full md:w-[500px] h-[500px] mx-auto overflow-hidden rounded-lg bg-slate-50">
+              <div className=" w-fit md:w-[500px] h-[500px] mx-auto overflow-hidden rounded-lg bg-slate-500">
                 <img
                   alt="founders image"
-                  src="https://i.ibb.co/PN84KM8/abitto-founder.jpg"
-                  className=" w-full h-full object-cover object-top scale-[2.1] mt-[45%] ml-[10%] "
+                  src={FounderImg}
+                  className="w-full h-full object-contain md:object-cover object-center "
                 />
               </div>
             </div>

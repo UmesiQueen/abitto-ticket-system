@@ -14,6 +14,7 @@ import {
 } from "@/assets/icons/index";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import Button from "@/components/custom/Button";
+import LogoSVG from "@/assets/icons/abitto.svg";
 
 const MainLayout = () => {
   return (
@@ -71,7 +72,7 @@ const Navbar = () => {
   return (
     <nav
       className={cn(
-        "fixed right-0 left-0 px-5 md:px-20 py-2 text-white backdrop-blur-[1px] z-[3] transition duration-50 ease-in-out bg-[#111111]/80",
+        "fixed right-0 left-0 px-5 md:px-20 h-[67px] w-full text-white backdrop-blur-[1px] z-[3] bg-[#111111]/80",
         {
           "bg-transparent": ["/", "/about"].includes(pathname),
           "bg-[#111111]/80": isOpen || scroll,
@@ -79,11 +80,11 @@ const Navbar = () => {
       )}
       ref={navRef}
     >
-      <div className="max-w-[1440px] mx-auto flex items-center justify-between">
+      <div className="max-w-[1440px] mx-auto h-full flex items-center justify-between">
         <Link to="/" onClick={closeNavbar}>
           <img
             alt="logo"
-            src="https://i.ibb.co/17zsqj1/logo2.png"
+            src={LogoSVG}
             width={176}
             height={60}
             className="w-36 md:w-44"
@@ -94,22 +95,42 @@ const Navbar = () => {
         </div>
         <ul
           className={cn(
-            "top-[66.2px] md:top-0 right-0 left-0 md:relative flex flex-col md:flex-row *:uppercase *:font-normal gap-x-6 md:bg-transparent text-center *:py-2  bg-[#111111]/80 pb-2 md:pb-0  *:cursor-pointer",
-            !isOpen ? "hidden md:flex" : "absolute"
+            "top-[67px] md:top-0 right-0 left-0 absolute md:relative  overflow-hidden flex flex-col md:flex-row shadow-lg md:shadow-none *:md:uppercase *:font-normal gap-x-6 md:bg-transparent h-[178.4px] md:h-fit *:px-5 bg-white text-black md:text-white *:cursor-pointer transition-all duration-300 ease-in-out",
+            { "h-0 ": !isOpen }
           )}
         >
-          <li className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-blue-500 hover:font-medium md:hover:font-normal transition-all duration-75 ease-in-out text-sm md:text-base">
+          <li
+            data-state={pathname == "/about" ? "active" : ""}
+            className="hover:bg-gray-400/20 md:hover:bg-transparent md:hover:text-blue-500  data-[state=active]:font-medium *:border-t *:md:border-none *:md:py-0  *:py-3  *:block md:hover:font-normal transition-all duration-75 ease-in-out text-sm md:text-base"
+          >
             <Link to="/about" onClick={closeNavbar}>
-              about us
+              About Us
             </Link>
           </li>
           <li
             onClick={() => {
               handleNavItemClick(contact);
             }}
-            className="hover:bg-gray-500/40 md:hover:bg-transparent md:hover:text-blue-500 hover:font-medium md:hover:font-normal transition-all duration-75 ease-in-out text-sm md:text-base"
+            data-state={pathname == "/contact" ? "active" : ""}
+            className="hover:bg-gray-400/20 md:hover:bg-transparent md:hover:text-blue-500 data-[state=active]:font-medium  *:border-t *:md:border-none *:md:py-0  *:py-3   *:block md:hover:font-normal transition-all duration-75 ease-in-out text-sm md:text-base"
           >
-            Contact Us
+            <p>Contact Us</p>
+          </li>
+          <li
+            data-state={pathname == "/booking" ? "active" : ""}
+            className="md:hidden hover:bg-gray-400/20 md:hover:bg-transparent md:hover:text-blue-500  data-[state=active]:font-medium *:border-t *:md:border-none *:md:py-0  *:py-3  *:block md:hover:font-normal transition-all duration-75 ease-in-out text-sm md:text-base"
+          >
+            <Link to="/booking" onClick={closeNavbar}>
+              Book a Trip
+            </Link>
+          </li>
+          <li
+            data-state={pathname == "/rental" ? "active" : ""}
+            className="md:hidden hover:bg-gray-400/20 md:hover:bg-transparent md:hover:text-blue-500  data-[state=active]:font-medium *:border-t *:md:border-none *:md:py-0  *:py-3  *:block md:hover:font-normal transition-all duration-75 ease-in-out text-sm md:text-base"
+          >
+            <Link to="/rental" onClick={closeNavbar}>
+              Rent a Boat
+            </Link>
           </li>
         </ul>
         <Button
@@ -131,7 +152,7 @@ const Footer = () => {
         <div className=" md:flex justify-between gap-x-5 ">
           <Link to="/">
             <img
-              src="https://i.ibb.co/17zsqj1/logo2.png"
+              src={LogoSVG}
               alt="logo"
               width={176}
               height={60}
