@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 import { Link } from "react-router-dom";
 import { BookingCTX } from "@/contexts/BookingContext";
@@ -5,8 +6,8 @@ import { GlobalCTX } from "@/contexts/GlobalContext";
 import Button from "@/components/custom/Button";
 import checkGIF from "@/assets/check.gif";
 
-const BookingSuccessModal = () => {
-  const { formData, handleReset } = React.useContext(BookingCTX);
+const BookingSuccessModal = ({ id }) => {
+  const { handleReset } = React.useContext(BookingCTX);
   const { unMountPortalModal } = React.useContext(GlobalCTX);
 
   const reset = () => {
@@ -25,7 +26,7 @@ const BookingSuccessModal = () => {
       <p className="font-normal text-xs text-[#454545] px-10 mb-5">
         Please check your email for important ticket details.
       </p>
-      <Link target={"_blank"} to={`/ticket-invoice/${formData.ticket_id}`}>
+      <Link target={"_blank"} to={`/ticket-invoice/${id}`}>
         <Button
           text={"Print Ticket"}
           className="md:py-5 w-full mb-5"
@@ -42,7 +43,8 @@ const BookingSuccessModal = () => {
   );
 };
 
-// eslint-disable-next-line react/prop-types
+export default BookingSuccessModal;
+
 export const RentalSuccessModal = ({ id }) => {
   const { handleReset } = React.useContext(BookingCTX);
   const { unMountPortalModal } = React.useContext(GlobalCTX);
@@ -79,5 +81,3 @@ export const RentalSuccessModal = ({ id }) => {
     </div>
   );
 };
-
-export default BookingSuccessModal;

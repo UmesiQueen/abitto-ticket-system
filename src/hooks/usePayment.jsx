@@ -76,8 +76,10 @@ export const usePayment = () => {
         requestData
       )
       .then((res) => {
-        if (res.status == 200 && isSuccess)
-          mountPortalModal(<BookingSuccessModal />);
+        if (res.status == 200 && isSuccess) {
+          const ticket_id = res.data.booking.ticket_id;
+          mountPortalModal(<BookingSuccessModal id={ticket_id} />);
+        }
       })
       .catch((err) => {
         console.error(err, "Error occurred while sending new booking request.");
@@ -116,7 +118,10 @@ export const usePayment = () => {
         requestData
       )
       .then((res) => {
-        if (res.status == 200) mountPortalModal(<BookingSuccessModal />);
+        if (res.status == 200) {
+          const ticket_id = res.data.booking.ticket_id;
+          mountPortalModal(<BookingSuccessModal id={ticket_id} />);
+        }
       })
       .catch((err) => {
         toast.error("Booking not confirmed. Please try again.");
@@ -198,7 +203,7 @@ export const usePayment = () => {
       boat_id: "bt-54321",
       rental_status: "Upcoming",
       payment_medium: "Offline",
-      paid_by: `${adminProfile.first_name}-${adminProfile.account_type}`,
+      paid_by: `${adminProfile.first_name}(${adminProfile.account_type})`,
       payment_status,
       payment_method,
       trxRef: transaction_ref,
@@ -207,7 +212,10 @@ export const usePayment = () => {
     axios
       .post("https://abitto-api.onrender.com/api/rent/createrent", requestData)
       .then((res) => {
-        if (res.status == 200) mountPortalModal(<RentalSuccessModal />);
+        if (res.status == 200) {
+          const ticket_id = res.data.rent.ticket_id;
+          mountPortalModal(<RentalSuccessModal id={ticket_id} />);
+        }
       })
       .catch((err) => {
         console.error(err, "Error rental");
