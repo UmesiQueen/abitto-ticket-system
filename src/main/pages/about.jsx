@@ -135,34 +135,45 @@ const About = () => {
               <div className="p-5 px-8 rounded-lg bg-white mt-5 md:mt-0">
                 <TabsContent value={"mission"}>
                   <div className="rounded-lg min-h-72 space-y-4">
-                    <h3>Mission Statement</h3>
+                    <h3 className="font-semibold">Mission Statement</h3>
                     <p className="border-t-2 pt-4 border-black">
-                      Lorem ipsum dolor sit amet consectetur. Accumsan tristique
-                      montes faucibus nisi bibendum et. Et dapibus adipiscing
-                      nunc cursus ullamcorper est. In elit eu odio enim. Nunc eu
-                      adipiscing tincidunt tortor urna lectus enim vitae morbi.
+                      Our mission is to deliver superior services that exceed
+                      our clients’ needs, provide growth opportunities for our
+                      employees, and enhance profitability.
                     </p>
                   </div>
                 </TabsContent>
                 <TabsContent value={"vision"}>
                   <div className="rounded-lg min-h-72 space-y-4">
-                    <h3>Vision Statement</h3>
-                    <p className="border-t-2 pt-4 border-black">
-                      Lorem ipsum dolor sit amet consectetur. Accumsan tristique
-                      montes faucibus nisi bibendum et. Et dapibus adipiscing
-                      nunc cursus ullamcorper est. In elit eu odio enim. Nunc eu
-                      adipiscing tincidunt tortor urna lectus enim vitae morbi.
-                    </p>
+                    <h3 className="font-semibold">Vision Statement</h3>
+                    <div className="border-t-2 pt-4 border-black space-y-5">
+                      <p>
+                        <strong>Integrity –</strong>We conduct business
+                        responsibly and honestly.
+                      </p>
+                      <p>
+                        <strong>Safety –</strong>We provide safe workplaces and
+                        require safe work practices.
+                      </p>
+                      <p>
+                        <strong> People –</strong>We create an environment where
+                        teamwork and talents thrive.
+                      </p>
+                      <p>
+                        <strong>Performance – </strong>We strive for excellence
+                        and deliver on commitments.
+                      </p>
+                    </div>
                   </div>
                 </TabsContent>
                 <TabsContent value={"history"}>
                   <div className="rounded-lg min-h-72 space-y-4">
-                    <h3>Our History</h3>
+                    <h3 className="font-semibold">Our History</h3>
                     <p className="border-t-2 pt-4 border-black">
-                      Lorem ipsum dolor sit amet consectetur. Accumsan tristique
-                      montes faucibus nisi bibendum et. Et dapibus adipiscing
-                      nunc cursus ullamcorper est. In elit eu odio enim. Nunc eu
-                      adipiscing tincidunt tortor urna lectus enim vitae morbi.
+                      Founded in 2011, Abitto Global Services has grown to
+                      become a leader in the quality service delivery. We deploy
+                      cutting-edge technologies and expertise that guarantees
+                      client satisfaction.
                     </p>
                   </div>
                 </TabsContent>
@@ -173,7 +184,7 @@ const About = () => {
 
         {/* Meet the founder */}
         <section className="px-5 pb-20 md:p-20 bg-white">
-          <div className="max-w-[1440px] mx-auto pt-5 md:flex gap-20 *:grow *:w-full">
+          <div className="max-w-[1440px] mx-auto pt-5 md:flex gap-20 *:w-full">
             <div className="text-center md:text-left mt-10 md:mt-0">
               <div className="flex items-center justify-center md:justify-start">
                 <span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 " />
