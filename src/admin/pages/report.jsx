@@ -3,7 +3,8 @@ import { Helmet } from "react-helmet-async";
 import { FerryBoatIcon, UserGroupIcon, WalletIcon } from "@/assets/icons";
 import { formatValue } from "react-currency-input-field";
 import { BarChart } from "@tremor/react";
-import { GlobalCTX } from "@/contexts/GlobalContext";
+import { BookingCTX } from "@/contexts/BookingContext";
+import { useLoaderData } from "react-router-dom";
 
 const chartDataDemo = [
   {
@@ -69,9 +70,10 @@ const chartDataDemo = [
 ];
 
 const Report = () => {
-  const { dataQuery } = React.useContext(GlobalCTX);
+  const journeyList = useLoaderData();
+  const { bookingQuery } = React.useContext(BookingCTX);
   const [total, setTotal] = React.useState({
-    totalEarning: 0,
+    totalEarnings: 0,
     totalOffline: 0,
     totalOnline: 0,
     totalPassengers: 0,
@@ -79,33 +81,26 @@ const Report = () => {
   });
 
   React.useEffect(() => {
-    const totalEarnings = dataQuery
+    const totalEarnings = bookingQuery
       .filter((booking) => booking.status === "Success")
-      .map((booking) => booking.amount)
+      .map((booking) => Number(booking?.total_ticket_cost ?? 0))
       .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
-    const totalOffline = dataQuery.filter(
+    const totalOffline = bookingQuery.filter(
       (booking) => booking.medium === "Offline"
     ).length;
 
-    const totalOnline = dataQuery.filter(
+    const totalOnline = bookingQuery.filter(
       (booking) => booking.medium === "Online"
     ).length;
 
-    // TODO: REMOVE NULLISH COALESCING
-    const totalPassengers = dataQuery
-      .map((booking) => booking.total_passengers ?? 0)
+    const totalPassengers = bookingQuery
+      .map((booking) => booking.total_passengers)
       .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
-    const tripDates = dataQuery
-      // .filter((booking) => booking.status === "Success")
-      .map((booking) => {
-        const date = new Date(booking.departure_date)
-          .toISOString()
-          .split("T")[0];
-        return date;
-      });
-    const totalTrips = new Set(tripDates).size;
+    const totalTrips = journeyList.filter(
+      (trip) => trip.trip_status === "Completed"
+    ).length;
 
     setTotal({
       totalEarnings,
@@ -114,7 +109,7 @@ const Report = () => {
       totalPassengers,
       totalTrips,
     });
-  }, [dataQuery]);
+  }, [bookingQuery, journeyList]);
 
   const dataFormatter = (number) =>
     Intl.NumberFormat("us").format(number).toString();
@@ -136,8 +131,9 @@ const Report = () => {
                 <p className="text-base">
                   <strong>
                     {formatValue({
-                      value: String(total.totalEarnings),
+                      value: String(total.totalEarnings ?? 0),
                       prefix: "₦",
+                      decimalScale: 2,
                     })}
                   </strong>
                 </p>
@@ -161,7 +157,7 @@ const Report = () => {
                 <FerryBoatIcon />
               </div>
               <div>
-                <p className="text-xs text-[#7F7F7F] ">Total Trips</p>
+                <p className="text-xs text-[#7F7F7F] ">Completed Trips</p>
                 <p className="text-base">
                   <strong>
                     {formatValue({ value: String(total.totalTrips) })}
@@ -206,7 +202,9 @@ const Report = () => {
               <div className="arc" />
               <div className="w-fit absolute top-24 left-1/2 right-1/2 -translate-x-1/2 space-y-3">
                 <p className="text-center flex flex-col">
-                  <b className=" text-3xl font-semibold">{dataQuery.length}</b>
+                  <b className=" text-3xl font-semibold">
+                    {bookingQuery.length}
+                  </b>
                   <span className="text-[#7F7F7F] text-base">
                     Total Bookings
                   </span>
