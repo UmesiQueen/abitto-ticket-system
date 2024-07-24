@@ -33,6 +33,8 @@ import { JourneyListLoader } from "./admin/pages/journey-list";
 import { DataQueryLoader } from "./admin/layout";
 import RentalInvoice from "./components/RentalInvoice";
 import { RentalInvoiceLoader } from "./components/RentalInvoice";
+import { CustomerLoader } from "./admin/pages/customers";
+import CustomerHistory from "./admin/pages/customer-history";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -56,7 +58,12 @@ export const router = createBrowserRouter(
           path="booking-details/:bookingID"
           element={<CustomerDetails />}
         />
-        <Route path="customers" element={<Customers />} />
+        <Route
+          path="customers"
+          element={<Customers />}
+          loader={CustomerLoader}
+        />
+        <Route path="customers/:customerID" element={<CustomerHistory />} />
         <Route
           path="journey-list"
           element={<JourneyList />}
