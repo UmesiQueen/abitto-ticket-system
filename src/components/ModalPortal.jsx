@@ -18,7 +18,7 @@ const ModalPortal = () => {
             }}
             className="no-scrollbar"
           >
-            <div className=" my-36 flex justify-center mx-5">
+            <div className=" my-20 flex justify-center mx-5">
               {modalContent}
             </div>
           </Modal>,
