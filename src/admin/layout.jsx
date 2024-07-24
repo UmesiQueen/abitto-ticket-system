@@ -147,7 +147,7 @@ export default AdminLayout;
 export const DataQueryLoader = async () => {
   try {
     const response = await axios.get(
-      "https://abitto-api.onrender.com/api/booking/querynew"
+      "https://abitto-api.onrender.com/api/booking/queryall"
     );
     return response.data.bookings.reverse();
   } catch (err) {

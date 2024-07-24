@@ -124,14 +124,14 @@ const SearchForm = () => {
           {...register("departure")}
           label="Departure"
           placeholder="Select Departure Terminal"
-          options={["Calabar Terminal", "Uyo Terminal"]}
+          options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
           errors={errors}
         />
         <SelectField
           {...register("arrival")}
           label="Arrival"
           placeholder="Select Arrival Terminal"
-          options={["Calabar Terminal", "Uyo Terminal"]}
+          options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
           errors={errors}
         />
         <div className="flex flex-col w-full">

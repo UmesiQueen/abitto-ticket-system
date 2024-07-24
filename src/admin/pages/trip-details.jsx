@@ -286,7 +286,7 @@ const TripDetailsTable = () => {
       header: <div className="text-center">Action</div>,
       cell: ({ row }) => (
         <Button
-          onClick={() => navigate(row.original._id)}
+          onClick={() => navigate(`/admin/booking-details/${row.original._id}`)}
           className="px-2 h-8 !text-xs"
           text="View"
         />
