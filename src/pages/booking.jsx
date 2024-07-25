@@ -146,7 +146,7 @@ const BookingForm = ({ tab }) => {
         trip_type: tab,
         total_passengers,
         amount:
-          Number(total_passengers) * (tab === "One-Way Trip" ? 9500 : 19000),
+          Number(total_passengers) * (tab === "One-Way Trip" ? 8800 : 17600),
         ...formData,
       });
       setLoading(false);
