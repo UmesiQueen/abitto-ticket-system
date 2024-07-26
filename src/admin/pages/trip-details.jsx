@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import { useNavigate, useLoaderData } from "react-router-dom";
+import { useNavigate, useLoaderData, Navigate } from "react-router-dom";
 import { format } from "date-fns";
 import { formatValue } from "react-currency-input-field";
 import { capitalize, truncate } from "lodash";
@@ -76,6 +76,8 @@ const TripDetails = () => {
       />
     );
   };
+
+  if (!selectedTrip?.trip_code) return <Navigate to="/admin/pageNotFound" />;
 
   return (
     <>

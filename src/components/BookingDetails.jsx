@@ -62,7 +62,7 @@ const BookingDetails = () => {
       </Box>
       <div className="bg-white p-5 pb-10 md:p-10 ">
         <h3 className="text-blue-500 font-semibold text-base md:text-xl font-poppins ">
-          Booking Details
+          Trip Details
         </h3>
         <TabPanel value="1" sx={{ padding: "0" }}>
           <BookingForm tab="One-Way Trip" />

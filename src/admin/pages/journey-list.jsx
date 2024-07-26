@@ -1,6 +1,6 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import { useNavigate, useLoaderData } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { addDays, format } from "date-fns";
 import {
   flexRender,
@@ -32,7 +32,8 @@ import SelectField from "@/components/custom/SelectField";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { Refresh } from "iconsax-react";
 import axios from "axios";
-import { GlobalCTX } from "@/contexts/GlobalContext";
+// import { GlobalCTX } from "@/contexts/GlobalContext";
+import { toast } from "sonner";
 
 const JourneyList = () => {
   return (
@@ -181,19 +182,33 @@ const SearchForm = () => {
 
 const JourneyTable = () => {
   const navigate = useNavigate();
-  const journeyList = useLoaderData();
+  // const journeyList = useLoaderData();
   const {
     searchParams,
     setSearchParams,
     setCurrentPageIndex,
     currentPageIndex,
   } = React.useContext(BookingCTX);
-  const { setLoading } = React.useContext(GlobalCTX);
   const [rowSelection, setRowSelection] = React.useState({});
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 7,
   });
+  const [journeyList, setJourneyList] = React.useState([]);
+
+  React.useEffect(() => {
+    axios
+      .get("https://abitto-api.onrender.com/api/ticket/get")
+      .then((res) => {
+        setJourneyList(res.data.tickets);
+      })
+      .catch((error) => {
+        console.error(error, "Error occurred while fetching journey list.");
+        toast.error(
+          "Error occurred while fetching journey list. Refresh page."
+        );
+      });
+  }, []);
 
   //TODO: set pageIndex on render only if previous location path includes current page path
   React.useEffect(() => {
@@ -278,7 +293,6 @@ const JourneyTable = () => {
       cell: ({ row }) => (
         <Button
           onClick={() => {
-            setLoading(true);
             navigate(row.original.trip_code);
           }}
           className="px-3 h-8 !text-xs mx-auto"
@@ -446,14 +460,14 @@ const JourneyTable = () => {
 };
 
 // Get: query all scheduled trips
-export const JourneyListLoader = async () => {
-  try {
-    const response = await axios.get(
-      "https://abitto-api.onrender.com/api/ticket/get"
-    );
-    return response.data.tickets;
-  } catch (error) {
-    console.error(error, "Error occurred while fetching journey list.");
-    return [];
-  }
-};
+// export const JourneyListLoader = async () => {
+//   try {
+//     const response = await axios.get(
+//       "https://abitto-api.onrender.com/api/ticket/get"
+//     );
+//     return response.data.tickets;
+//   } catch (error) {
+//     console.error(error, "Error occurred while fetching journey list.");
+//     return [];
+//   }
+// };

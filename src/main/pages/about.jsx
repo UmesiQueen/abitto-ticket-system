@@ -136,32 +136,43 @@ const About = () => {
                 <TabsContent value={"mission"}>
                   <div className="rounded-lg min-h-72 space-y-4">
                     <h3 className="font-semibold">Mission Statement</h3>
-                    <p className="border-t-2 pt-4 border-black">
-                      Our mission is to deliver superior services that exceed
-                      our clients’ needs, provide growth opportunities for our
-                      employees, and enhance profitability.
-                    </p>
+                    <div className="border-t-2 pt-4 text-sm md:text-base border-black space-y-1">
+                      <p>
+                        Abitto Ferry strives to deliver secure, dependable, and
+                        efficient ferry transportation services that link
+                        communities and enrich travel experiences.
+                      </p>
+                      <p>
+                        We are dedicated to exceptional customer service,
+                        environmental responsibility, and ongoing innovation.
+                      </p>
+                      <p>
+                        Our goal is to make every journey comfortable,
+                        convenient, punctual, and enjoyable for all our
+                        passengers.
+                      </p>
+                    </div>
                   </div>
                 </TabsContent>
                 <TabsContent value={"vision"}>
                   <div className="rounded-lg min-h-72 space-y-4">
                     <h3 className="font-semibold">Vision Statement</h3>
-                    <div className="border-t-2 pt-4 border-black space-y-5">
+                    <div className="border-t-2 pt-4 text-sm md:text-base border-black space-y-1">
                       <p>
-                        <strong>Integrity –</strong>We conduct business
-                        responsibly and honestly.
+                        Our vision is to offer a superior transportation
+                        alternative by establishing seamless connections between
+                        all riverine states across the nation, positioning
+                        ourselves as the foremost ferry transportation company
+                        known for exceptional service, innovative solutions, and
+                        a strong commitment to sustainability.
                       </p>
                       <p>
-                        <strong>Safety –</strong>We provide safe workplaces and
-                        require safe work practices.
-                      </p>
-                      <p>
-                        <strong> People –</strong>We create an environment where
-                        teamwork and talents thrive.
-                      </p>
-                      <p>
-                        <strong>Performance – </strong>We strive for excellence
-                        and deliver on commitments.
+                        We aim to link more communities, minimize our
+                        environmental impact, and set new benchmarks in the
+                        maritime industry. By prioritizing safety, customer
+                        satisfaction, and technological advancements, we aspire
+                        to revolutionize sea travel and create enduring positive
+                        impacts on the regions we serve.
                       </p>
                     </div>
                   </div>
@@ -169,11 +180,24 @@ const About = () => {
                 <TabsContent value={"history"}>
                   <div className="rounded-lg min-h-72 space-y-4">
                     <h3 className="font-semibold">Our History</h3>
-                    <p className="border-t-2 pt-4 border-black">
-                      Founded in 2011, Abitto Global Services has grown to
-                      become a leader in the quality service delivery. We deploy
-                      cutting-edge technologies and expertise that guarantees
-                      client satisfaction.
+                    <p className="border-t-2 pt-4 text-sm md:text-base border-black space-y-1">
+                      <p>
+                        Abitto ferry is a ferry transportation service offered
+                        by Abitto global Services Limited.
+                      </p>
+                      <p>
+                        She began operations on 1st june 2024, with her first
+                        trip from calabar, cross river state to Ufak effiong,
+                        Akwa ibom state a route she still operates on. Visit
+                        <a
+                          href="www.abittoglobal.com"
+                          target="_blank"
+                          className="text-blue-500 hover:text-blue-700 px-1 "
+                        >
+                          www.abittoglobal.com
+                        </a>
+                        to know more about us.
+                      </p>
                     </p>
                   </div>
                 </TabsContent>

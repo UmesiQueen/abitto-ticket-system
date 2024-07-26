@@ -7,6 +7,7 @@ import {
   LogoutIcon,
   UserIcon,
   BookIcon,
+  ShipIcon,
 } from "@/assets/icons";
 import {
   Outlet,
@@ -24,6 +25,7 @@ import { BookingCTX } from "@/contexts/BookingContext";
 import { Helmet } from "react-helmet-async";
 import axios from "axios";
 import { toast } from "sonner";
+import Loader from "@/components/animation/Loader";
 
 const ProtectedRoute = () => {
   const navigate = useNavigate();
@@ -71,6 +73,11 @@ const ProtectedRoute = () => {
                   "/admin/booking-details",
                   <BookIcon key="1" />,
                 ],
+                [
+                  "Rental Details",
+                  "/admin/rental-details",
+                  <ShipIcon key="1" />,
+                ],
                 ["Customers", "/admin/customers", <UserIcon key="1" />],
                 [
                   "Journey List",
@@ -100,7 +107,7 @@ const ProtectedRoute = () => {
             <span>Logout</span>
           </button>
         </aside>
-        <main className="ml-60 bg-[#F7F7F7] min-h-screen ">
+        <main className="ml-60 bg-[#F7F7F7] ">
           <header className="h-16 w-full bg-white px-8 flex items-center gap-5">
             {searchBarVisibility && (
               <div className="h-10 w-80 bg-blue-50 p-3 border border-blue-500 rounded-lg font-normal text-xs font-poppins flex items-center gap-2">
@@ -128,8 +135,11 @@ const ProtectedRoute = () => {
               </Link>
             </div>
           </header>
-          <section className="p-8">
-            <Outlet />
+          <section className="relative min-h-[calc(100vh-64px)]">
+            <div className="p-8">
+              <Outlet />
+            </div>
+            <Loader />
           </section>
         </main>
       </div>
