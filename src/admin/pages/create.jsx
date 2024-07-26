@@ -54,7 +54,7 @@ const Create = () => {
                   className="rounded-full data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
                 />
               </div>
-              <h2 className="font-medium text-lg">Book a Ticket</h2>
+              <h2 className="font-medium text-lg">Book a Trip</h2>
             </div>
             <div
               data-checked={isChecked?.rent_boat}

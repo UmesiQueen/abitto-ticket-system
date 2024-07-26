@@ -364,10 +364,10 @@ const testimonials = [
   },
   {
     id: 2,
-    name: "Mr. Willis Ikwdum",
+    name: "Mr. Willis",
     imgUrl: "https://i.ibb.co/Tqv0zDR/Mr-kalu-Client.jpg",
     review:
-      "Such a relaxing way to travel! I took the ferry with my family and we all loved it. A fantastic option for anyone looking to avoid the hassle of traffic and enjoy the journey.",
+      "Such a relaxing way to travel! I took the ferry and absolutely loved it. A fantastic option for anyone looking to avoid the hassle of traffic and enjoy the journey.",
   },
 ];
 

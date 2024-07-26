@@ -58,7 +58,7 @@ export default Booking;
 const MaterialUIStepper = () => {
   const { activeStep } = useStepper();
   const steps = [
-    "Booking Details",
+    "Trip Details",
     "Available Trips",
     "Passenger Details",
     "Payment",

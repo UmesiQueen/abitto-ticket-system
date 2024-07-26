@@ -44,7 +44,7 @@ import { Button as ButtonUI } from "@/components/ui/button";
 import Button from "@/components/custom/Button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { formatValue } from "react-currency-input-field";
-import { capitalize } from "lodash";
+import { capitalize, truncate } from "lodash";
 import { cn, humanize } from "@/lib/utils";
 import { PaginationEllipsis } from "@/components/ui/pagination";
 import ReactPaginate from "react-paginate";
@@ -78,11 +78,16 @@ const BookingDetails = () => {
       cell: ({ row }) => (
         <div>
           <p className="text-[15px] font-semibold capitalize">
-            {capitalize(
-              `${row.original.passenger1_first_name} ${row.original.passenger1_last_name}`
+            {truncate(
+              capitalize(
+                `${row.original.passenger1_first_name} ${row.original.passenger1_last_name}`
+              ),
+              { length: 25 }
             )}
           </p>
-          <p className="italic  lowercase">{row.original.passenger1_email}</p>
+          <p className="italic  lowercase">
+            {truncate(row.original.passenger1_email, { length: 25 })}
+          </p>
         </div>
       ),
     },
@@ -390,7 +395,7 @@ export const CustomerDetails = () => {
   const { bookingQuery } = React.useContext(BookingCTX);
   const { mountPortalModal } = React.useContext(GlobalCTX);
 
-  const currentUser = bookingQuery.filter((data) => data._id === bookingID)[0];
+  const currentUser = bookingQuery.find((data) => data._id === bookingID)[0];
 
   return (
     <div>
