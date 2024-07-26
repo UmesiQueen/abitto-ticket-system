@@ -1,15 +1,23 @@
 import React from "react";
+import { useLocation } from "react-router-dom";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import "./styles.css";
+import { cn } from "@/lib/utils";
 
 const Loader = () => {
   const { loading } = React.useContext(GlobalCTX);
+  const { pathname } = useLocation();
 
   return (
     <>
       {loading && (
-        <div className=" w-full h-full fixed top-0 z-[999] bg-black/60 backdrop-blur-[2px]  flex items-center justify-center">
-          <div className=" w-20 rounded-xl h-20 bg-[#E9EBF8CC] flex items-center justify-center">
+        <div
+          className={cn(
+            "w-full h-full top-0 z-[999] bg-black/20 backdrop-blur-[1px]  flex items-center justify-center",
+            pathname.includes("/admin") ? "absolute" : "fixed"
+          )}
+        >
+          <div className="w-20 rounded-xl h-20 bg-[#E9EBF8CC] flex items-center justify-center">
             <svg
               width="58"
               height="50"

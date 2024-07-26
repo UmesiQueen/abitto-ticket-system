@@ -1,6 +1,5 @@
 import React from "react";
 import { useLocation, Outlet } from "react-router-dom";
-import Loader from "@/components/animation/Loader";
 import { Toaster } from "sonner";
 import GlobalContext from "@/contexts/GlobalContext";
 import "./index.css";
@@ -17,7 +16,6 @@ const App = () => {
     <GlobalContext>
       <div className="font-poppins overflow-hidden">
         <Outlet />
-        <Loader />
         <Toaster position="top-center" expand={true} richColors />
         <ModalPortal />
       </div>

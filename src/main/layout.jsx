@@ -15,16 +15,20 @@ import {
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import Button from "@/components/custom/Button";
 import LogoSVG from "@/assets/icons/abitto.svg";
+import Loader from "@/components/animation/Loader";
 
 const MainLayout = () => {
   return (
-    <div className="relative">
-      <Navbar />
-      <main className="h-full min-h-[calc(100vh-294px)]">
-        <Outlet />
-      </main>
-      <Footer />
-    </div>
+    <>
+      <div className="relative">
+        <Navbar />
+        <main className="h-full min-h-[calc(100vh-294px)]">
+          <Outlet />
+        </main>
+        <Footer />
+      </div>
+      <Loader />
+    </>
   );
 };
 
