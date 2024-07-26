@@ -29,12 +29,14 @@ import Report from "./admin/pages/report";
 import Rental from "./main/pages/rental";
 import { TicketLoader } from "./components/TicketInvoice";
 import { TripDetailsLoader } from "./admin/pages/trip-details";
-import { JourneyListLoader } from "./admin/pages/journey-list";
+// import { JourneyListLoader } from "./admin/pages/journey-list";
 import { DataQueryLoader } from "./admin/layout";
 import RentalInvoice from "./components/RentalInvoice";
 import { RentalInvoiceLoader } from "./components/RentalInvoice";
-import { CustomerLoader } from "./admin/pages/customers";
+// import { CustomerLoader } from "./admin/pages/customers";
 import CustomerHistory from "./admin/pages/customer-history";
+import RentalDetails from "./admin/pages/rental-details";
+import PageNotFoundAdmin from "./admin/pages/page-not-found";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -58,24 +60,30 @@ export const router = createBrowserRouter(
           path="booking-details/:bookingID"
           element={<CustomerDetails />}
         />
+        <Route path="rental-details" element={<RentalDetails />} />
         <Route
           path="customers"
           element={<Customers />}
-          loader={CustomerLoader}
+          // loader={CustomerLoader}
         />
         <Route path="customers/:customerID" element={<CustomerHistory />} />
         <Route
           path="journey-list"
           element={<JourneyList />}
-          loader={JourneyListLoader}
+          // loader={JourneyListLoader}
         />
         <Route
           path="journey-list/:tripCode"
           element={<TripDetails />}
           loader={TripDetailsLoader}
         />
-        <Route path="report" element={<Report />} loader={JourneyListLoader} />
+        <Route
+          path="report"
+          element={<Report />}
+          // loader={JourneyListLoader}
+        />
         <Route path="settings" element={<Settings />} />
+        <Route path="pageNotFound" element={<PageNotFoundAdmin />} />
       </Route>
 
       <Route
