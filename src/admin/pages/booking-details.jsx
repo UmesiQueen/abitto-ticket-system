@@ -395,7 +395,7 @@ export const CustomerDetails = () => {
   const { bookingQuery } = React.useContext(BookingCTX);
   const { mountPortalModal } = React.useContext(GlobalCTX);
 
-  const currentUser = bookingQuery.find((data) => data._id === bookingID)[0];
+  const currentUser = bookingQuery.find((data) => data._id === bookingID);
 
   return (
     <div>

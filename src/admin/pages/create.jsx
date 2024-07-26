@@ -30,7 +30,7 @@ const Create = () => {
             What are you doing today? Select an option to create a new activity.
           </p>
         </hgroup>
-        <div className="my-20 px-20 space-y-20">
+        <div className="my-20 space-y-20 max-w-[1040px] mx-auto">
           <div className="flex gap-5 justify-between">
             <div
               data-checked={isChecked?.book_ticket}
