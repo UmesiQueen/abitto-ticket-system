@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   flexRender,
   getCoreRowModel,
@@ -27,13 +27,13 @@ import ReactPaginate from "react-paginate";
 import axios from "axios";
 import { formatValue } from "react-currency-input-field";
 import { v4 as uuid } from "uuid";
-// import { BookingCTX } from "@/contexts/BookingContext";
+import { BookingCTX } from "@/contexts/BookingContext";
+import { toast } from "sonner";
 
 const Customers = () => {
-  const customers = useLoaderData();
   const navigate = useNavigate();
   const { setCurrentPageIndex, currentPageIndex } = React.useContext(GlobalCTX);
-  // const { setCustomersData } = React.useContext(BookingCTX);
+  const { customersData, setCustomersData } = React.useContext(BookingCTX);
   const [sorting, setSorting] = React.useState([]);
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({});
@@ -43,32 +43,45 @@ const Customers = () => {
     pageSize: 7,
   });
 
-  const customersData_ = Object.entries(customers).map(([email, data]) => {
-    const {
-      details: { first_name, last_name, phone_number },
-      bookings,
-    } = data;
+  React.useEffect(() => {
+    axios
+      .get("https://abitto-api.onrender.com/api/booking/customerdetails")
+      .then((res) => {
+        if (res.status == 200) {
+          const response = res.data.customerDetails;
+          const customersData_ = Object.entries(response).map(
+            ([email, data]) => {
+              const {
+                details: { first_name, last_name, phone_number },
+                bookings,
+              } = data;
 
-    const total_spent = bookings
-      .map((booking) => Number(booking.totalTicketCost ?? 0))
-      .reduce((a, c) => a + c, 0);
+              const total_spent = bookings
+                .map((booking) => Number(booking.totalTicketCost ?? 0))
+                .reduce((a, c) => a + c, 0);
 
-    return {
-      _id: `CUS_${uuid().slice(0, 10)}`,
-      email,
-      first_name,
-      last_name,
-      phone_number,
-      total_spent,
-      total_trips: bookings.length,
-      bookings,
-    };
-  });
-
-  // React.useEffect(() => {
-  //   setCustomersData(customersData_);
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [customers]);
+              return {
+                _id: `CUS_${uuid().slice(0, 10)}`,
+                email,
+                first_name,
+                last_name,
+                phone_number,
+                total_spent,
+                total_trips: bookings.length,
+                bookings,
+              };
+            }
+          );
+          setCustomersData(customersData_);
+        }
+      })
+      .catch((err) => {
+        console.error(err, "Error occurred while fetching customers data.");
+        toast.error(
+          "Error occurred while fetching customers data. Refresh page."
+        );
+      });
+  }, []);
 
   const columns = [
     {
@@ -125,7 +138,7 @@ const Customers = () => {
   ];
 
   const table = useReactTable({
-    data: customersData_,
+    data: customersData,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -136,7 +149,7 @@ const Customers = () => {
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     onPaginationChange: setPagination,
-    pageCount: Math.ceil(customersData_.length / pagination.pageSize),
+    pageCount: Math.ceil(customersData.length / pagination.pageSize),
     state: {
       sorting,
       columnFilters,
@@ -251,14 +264,14 @@ const Customers = () => {
 
 export default Customers;
 
-export const CustomerLoader = async () => {
-  try {
-    const response = await axios.get(
-      "https://abitto-api.onrender.com/api/booking/customerdetails"
-    );
-    return response.data.customerDetails;
-  } catch (error) {
-    console.error(error, "Error occurred while fetching journey list.");
-    return [];
-  }
-};
+// export const CustomerLoader = async () => {
+//   try {
+//     const response = await axios.get(
+//       "https://abitto-api.onrender.com/api/booking/customerdetails"
+//     );
+//     return response.data.customerDetails;
+//   } catch (error) {
+//     console.error(error, "Error occurred while fetching customers data.");
+//     return [];
+//   }
+// };

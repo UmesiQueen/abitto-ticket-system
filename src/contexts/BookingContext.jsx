@@ -6,7 +6,7 @@ export const BookingCTX = React.createContext();
 
 const BookingContext = ({ children }) => {
   const [bookingQuery, setBookingQuery] = React.useState([]);
-  const [currentPageIndex, setCurrentPageIndex] = React.useState(-1);
+  const [currentPageIndex, setCurrentPageIndex] = React.useState(1);
   const [activeStep, setActiveStep] = React.useState(0);
   const [formData, setFormData] = React.useState({
     bookingDetails: {},
@@ -31,6 +31,7 @@ const BookingContext = ({ children }) => {
   const [tripDetails, setTripDetails] = React.useState();
   const [rentalData, setRentalData] = React.useState({});
   const pathname = useLocation();
+  const [customersData, setCustomersData] = React.useState([]);
 
   React.useEffect(() => {
     handleReset();
@@ -106,6 +107,8 @@ const BookingContext = ({ children }) => {
     setBookingQuery,
     currentPageIndex,
     setCurrentPageIndex,
+    customersData,
+    setCustomersData,
   };
 
   return (
