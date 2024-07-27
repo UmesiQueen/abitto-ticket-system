@@ -25,7 +25,7 @@ const Home = () => {
         <div className="bg-black/40 w-full h-full absolute z-[1] " />
 
         <FadeInBackgroundTransition />
-        <p className="bungee-regular text-nowrap uppercase absolute bottom-[8%] text-xs md:text-base border-y border-double py-2 left-0 right-0 w-full z-[3] backdrop-blur-sm px-2 shadow-lg bg-gradient-to-r from-blue-600 via-green-500 to-white">
+        <p className="bungee-regular text-nowrap uppercase absolute bottom-[15%] text-xs md:text-base border-y border-double py-2 left-0 right-0 w-full z-[3] backdrop-blur-sm px-2 shadow-lg bg-gradient-to-r from-blue-600 via-green-500 to-white">
           <Marquee pauseOnHover={true}>
             Because of the increase in fuel price, there will be a little
             adjustment in our ferry price from{" "}
