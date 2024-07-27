@@ -7,6 +7,7 @@ import { GlobalCTX } from "@/hooks/GlobalContext";
 import axios from "axios";
 import FadeInBackgroundTransition from "@/components/animation/FadeIn";
 import { Helmet } from "react-helmet-async";
+import Marquee from "react-fast-marquee";
 
 const Home = () => {
   const { about, contact } = React.useContext(GlobalCTX);
@@ -19,11 +20,23 @@ const Home = () => {
       {/* Hero section */}
       <section
         id="home"
-        className=" h-screen w-full flex items-center relative "
+        className="min-h-screen h-[600px] w-full flex items-center relative "
       >
         <div className="bg-black/40 w-full h-full absolute z-[1] " />
 
         <FadeInBackgroundTransition />
+        <p className="bungee-regular text-nowrap uppercase absolute bottom-[8%] text-xs md:text-base border-y border-double py-2 left-0 right-0 w-full z-[3] backdrop-blur-sm px-2 shadow-lg bg-gradient-to-r from-blue-600 via-green-500 to-white">
+          <Marquee pauseOnHover={true}>
+            Because of the increase in fuel price, there will be a little
+            adjustment in our ferry price from{" "}
+            <span className=" line-through px-1 ">8500</span> to
+            <strong className="px-1"> 9500</strong> beginning from
+            <strong className="px-1">august 1st,2014.</strong>
+            <span className="pl-1 pr-20">
+              We look forward to welcoming you on board.
+            </span>
+          </Marquee>
+        </p>
 
         <div className="w-[300px] md:w-[440px] pl-5 md:pl-20 space-y-10 z-[2] pt-[78px]">
           <p className="font-semibold text-2xl md:text-[40px] text-white md:leading-10">
@@ -36,7 +49,7 @@ const Home = () => {
         <div className="hidden md:block z-[2]">
           <WaveSVG />
         </div>
-        <div className="md:hidden bg-blue-50 h-5 w-full absolute z-[2] bottom-0 left-0 right-0 rounded-t-xl " />
+        <div className="md:hidden bg-blue-50 h-5 w-full absolute z-[2] -bottom-3 md:bottom-0 left-0 right-0 rounded-t-xl " />
       </section>
 
       {/* About us  */}
