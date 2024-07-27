@@ -110,7 +110,7 @@ const Report = () => {
         <title>Report | Admin</title>
       </Helmet>
       <h1 className="text-lg font-semibold">Report Overview</h1>
-      <div className="my-8 grid grid-cols-12  gap-5 w-full ">
+      <div className="my-8 grid grid-cols-12 gap-5 w-full">
         <div className="col-start-1 col-span-8 row-span-1 bg-white rounded-lg p-5 ">
           <ul className="border rounded-lg p-5 flex flex-wrap *:grow  gap-5 justify-between items-center min-h-[100px] [&_li]:min-w-[25%]  [&_li:not(:first-of-type)]:pl-7 divide-x ">
             <li className="item flex items-center gap-3">
@@ -165,11 +165,11 @@ const Report = () => {
           </div>
         </div>
 
-        <div className="row-span-3 row-start-1 col-start-9 col-span-4 bg-white rounded-lg  p-5">
+        <div className="row-span-3 row-start-1 col-start-9 col-span-4 bg-white rounded-lg p-5">
           <div className="rounded-lg border p-5 space-y-5 mx-auto">
-            <div className="max-w-[450px] mx-auto relative">
-              <h3 className="font-semibold mb-1">Booking Overview</h3>
-              <div className="w-fit aspect-video mx-auto">
+            <h3 className="font-semibold mb-1">Booking Overview</h3>
+            <div className="max-w-[450px] mx-auto relative flex flex-col justify-center">
+              <div className="w-fit mx-auto">
                 <PieChart
                   series={[
                     {
@@ -185,23 +185,24 @@ const Report = () => {
                           color: "#85AD33",
                         },
                       ],
-                      innerRadius: 100,
-                      outerRadius: 150,
+                      innerRadius: 75,
+                      outerRadius: 105,
                       paddingAngle: 0,
                       cornerRadius: 0,
                       startAngle: -90,
                       endAngle: 90,
-                      cx: 160,
-                      cy: 145,
+                      cx: 104,
+                      cy: 100,
                     },
                   ]}
-                  width={330}
+                  width={216}
                   height={200}
                   slotProps={{
                     legend: { hidden: true },
                   }}
                 />
               </div>
+
               <div className="w-full absolute top-28 space-y-3">
                 <p className="text-center flex flex-col">
                   <strong className=" text-3xl font-semibold">
@@ -234,107 +235,103 @@ const Report = () => {
           />
         </div>
 
-        <div className="row-start-6 row-span-3 col-span-full rounded-lg h-96 pt-3">
-          <h3 className="font-semibold">Rentals Overview</h3>
-          <div className="my-8 grid grid-cols-12 gap-5 grid-rows-2 w-full">
-            <div className="col-start-7 col-span-6 row-start-1 row-span-1 bg-white rounded-lg p-5 ">
-              <ul className="border rounded-lg p-5 flex flex-wrap gap-5 justify-between *:grow items-center min-h-[100px] [&_li]:min-w-[25%]  [&_li:not(:first-of-type)]:pl-7 divide-x ">
-                <li className="item flex items-center gap-3">
-                  <div className="rounded-lg bg-blue-50 p-2">
-                    <WalletIcon />
-                  </div>
-                  <div>
-                    <p className="text-xs text-[#7F7F7F] ">
-                      Total Rental Earnings
-                    </p>
-                    <p className="text-base">
-                      <strong>
-                        {formatValue({
-                          value: String(total.totalRentalEarnings ?? 0),
-                          prefix: "₦",
-                          decimalScale: 2,
-                        })}
-                      </strong>
-                    </p>
-                  </div>
-                </li>
-                <li className="item flex items-center gap-3 ">
-                  <div className="rounded-lg bg-blue-50 p-2">
-                    <UserGroupIcon />
-                  </div>
-                  <div>
-                    <p className="text-xs text-[#7F7F7F] ">Total Rentals</p>
-                    <p className="text-base">
-                      <strong>{total.totalRentals}</strong>
-                    </p>
-                  </div>
-                </li>
-              </ul>
-            </div>
-
-            <div className="col-start-7 col-span-6 row-start-2 row-span-1 bg-white rounded-lg p-5 ">
-              <ul className="border rounded-lg p-5 flex flex-wrap gap-5 justify-between *:grow items-center min-h-[100px] [&_li]:min-w-[25%]  [&_li:not(:first-of-type)]:pl-7 divide-x ">
-                <li className="item flex items-center gap-3">
-                  <div className="rounded-lg bg-blue-50 p-2">
-                    <WalletIcon />
-                  </div>
-                  <div>
-                    <p className="text-xs text-[#7F7F7F] ">Completed Rentals</p>
-                    <p className="text-base">
-                      <strong>{total.completedRentals}</strong>
-                    </p>
-                  </div>
-                </li>
-                <li className="item flex items-center gap-3 ">
-                  <div className="rounded-lg bg-blue-50 p-2">
-                    <UserGroupIcon />
-                  </div>
-                  <div>
-                    <p className="text-xs text-[#7F7F7F] ">Upcoming Rentals</p>
-                    <p className="text-base">
-                      <strong>{total.upcomingRentals}</strong>
-                    </p>
-                  </div>
-                </li>
-              </ul>
-            </div>
-
-            <div className="col-start-1 col-span-6 row-span-2 bg-white rounded-lg p-5">
-              <div className="border rounded-lg p-2 h-full">
-                <div className="max-w-[450px] h-full mx-auto">
-                  <PieChart
-                    series={[
-                      {
-                        data: [
-                          {
-                            label: "Within Marina",
-                            value: total.totalRentalWithin,
-                            color: "#3366CC",
-                          },
-                          {
-                            label: "Uyo to Calabar",
-                            value: total.totalRentalCalabar,
-                            color: "#85AD33",
-                          },
-                          {
-                            label: "Calabar to Uyo",
-                            value: total.totalRentalUyo,
-                            color: "#152b56",
-                          },
-                        ],
-                        innerRadius: 35,
-                        outerRadius: 110,
-                        paddingAngle: 3,
-                        cornerRadius: 5,
-                        startAngle: -190,
-                        endAngle: 40,
-                        cx: 150,
-                        cy: 115,
-                      },
-                    ]}
-                  />
-                </div>
+        <div className="col-start-7 col-span-6 row-start-6 row-span-1 bg-white rounded-lg p-5 ">
+          <ul className="border rounded-lg p-5 flex flex-wrap gap-5 justify-between *:grow items-center min-h-[100px] [&_li]:min-w-[25%]  [&_li:not(:first-of-type)]:pl-7 divide-x ">
+            <li className="item flex items-center gap-3">
+              <div className="rounded-lg bg-blue-50 p-2">
+                <WalletIcon />
               </div>
+              <div>
+                <p className="text-xs text-[#7F7F7F] ">Total Rental Earnings</p>
+                <p className="text-base">
+                  <strong>
+                    {formatValue({
+                      value: String(total.totalRentalEarnings ?? 0),
+                      prefix: "₦",
+                      decimalScale: 2,
+                    })}
+                  </strong>
+                </p>
+              </div>
+            </li>
+            <li className="item flex items-center gap-3 ">
+              <div className="rounded-lg bg-blue-50 p-2">
+                <UserGroupIcon />
+              </div>
+              <div>
+                <p className="text-xs text-[#7F7F7F] ">Total Rentals</p>
+                <p className="text-base">
+                  <strong>{total.totalRentals}</strong>
+                </p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div className="col-start-7 col-span-6 row-start-7 row-span-1 bg-white rounded-lg p-5 ">
+          <ul className="border rounded-lg p-5 flex flex-wrap gap-5 justify-between *:grow items-center min-h-[100px] [&_li]:min-w-[25%]  [&_li:not(:first-of-type)]:pl-7 divide-x ">
+            <li className="item flex items-center gap-3">
+              <div className="rounded-lg bg-blue-50 p-2">
+                <WalletIcon />
+              </div>
+              <div>
+                <p className="text-xs text-[#7F7F7F] ">Completed Rentals</p>
+                <p className="text-base">
+                  <strong>{total.completedRentals}</strong>
+                </p>
+              </div>
+            </li>
+            <li className="item flex items-center gap-3 ">
+              <div className="rounded-lg bg-blue-50 p-2">
+                <UserGroupIcon />
+              </div>
+              <div>
+                <p className="text-xs text-[#7F7F7F] ">Upcoming Rentals</p>
+                <p className="text-base">
+                  <strong>{total.upcomingRentals}</strong>
+                </p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div className="col-start-1 col-span-6  row-start-6 row-span-2 bg-white rounded-lg p-5">
+          <div className="border rounded-lg p-5 pb-0 h-full">
+            <h3 className="font-semibold mb-1">Rental Overview</h3>
+            <div className="max-w-[450px] h-full mx-auto">
+              <PieChart
+                series={[
+                  {
+                    data: [
+                      {
+                        label: "Within Marina",
+                        value: total.totalRentalWithin,
+                        color: "#3366CC",
+                      },
+                      {
+                        label: "Uyo to Calabar",
+                        value: total.totalRentalCalabar,
+                        color: "#85AD33",
+                      },
+                      {
+                        label: "Calabar to Uyo",
+                        value: total.totalRentalUyo,
+                        color: "#152b56",
+                      },
+                    ],
+                    innerRadius: 35,
+                    outerRadius: 105,
+                    paddingAngle: 3,
+                    cornerRadius: 5,
+                    startAngle: -190,
+                    endAngle: 40,
+                    cx: 150,
+                    cy: 100,
+                  },
+                ]}
+                width={450}
+                height={210}
+              />
             </div>
           </div>
         </div>
@@ -367,7 +364,7 @@ const PaymentStatusPieChart = ({ props: { success, pending, canceled } }) => {
 
   return (
     <div className="border rounded-lg">
-      <div className="flex items-center max-w-[450px]  mx-auto">
+      <div className="flex items-center max-w-[450px] font-poppins mx-auto">
         <PieChart
           series={[
             {
@@ -380,6 +377,10 @@ const PaymentStatusPieChart = ({ props: { success, pending, canceled } }) => {
             [`& .${pieArcLabelClasses.root}`]: {
               fill: "white",
               fontSize: 14,
+            },
+            "& .MuiChartsLegend-series text": {
+              fontFamily:
+                "Poppins, Roboto, Helvetica, Arial, sans-serif !important",
             },
           }}
           {...sizing}
@@ -429,6 +430,7 @@ const processData = (data, filter) => {
         );
         return itemDate >= lastYear;
       }
+      case "all":
       default:
         return true;
     }
@@ -464,7 +466,7 @@ const processData = (data, filter) => {
 
 const CustomizedBarChart = ({ props: { data } }) => {
   const [summary, setSummary] = React.useState([]);
-  const [filter, setFilter] = React.useState("1year");
+  const [filter, setFilter] = React.useState("all");
   const [salesRevenue, setSalesRevenue] = React.useState(0);
 
   React.useEffect(() => {
@@ -493,7 +495,7 @@ const CustomizedBarChart = ({ props: { data } }) => {
           </span>
         </hgroup>
         <Select
-          defaultValue="1year"
+          defaultValue="all"
           select
           value={filter}
           onValueChange={(value) => {
@@ -505,10 +507,10 @@ const CustomizedBarChart = ({ props: { data } }) => {
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value="1year">Last 1 year </SelectItem>
+              <SelectItem value="all">All Time</SelectItem>
               <SelectItem value="7days">Last 7 Days</SelectItem>
               <SelectItem value="1month">Last 1 Month</SelectItem>
-              {/* <SelectItem value="1year">Last 1 Year</SelectItem> */}
+              <SelectItem value="1year">Last 1 Year</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>

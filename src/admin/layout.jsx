@@ -26,11 +26,13 @@ import { Helmet } from "react-helmet-async";
 import axios from "axios";
 import { toast } from "sonner";
 import Loader from "@/components/animation/Loader";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const ProtectedRoute = () => {
   const navigate = useNavigate();
   const { adminProfile } = React.useContext(GlobalCTX);
-  const { setBookingQuery } = React.useContext(BookingCTX);
+  const { setBookingQuery, searchValue, setSearchValue } =
+    React.useContext(BookingCTX);
   const { pathname } = useLocation();
   const dataQuery = useLoaderData();
   const searchBarVisibility = [
@@ -49,6 +51,12 @@ const ProtectedRoute = () => {
     navigate("/login");
   };
 
+  const handleChange = (event) => {
+    setSearchValue(event.target.value);
+  };
+
+  const matches = useMediaQuery("(min-width:1240px)");
+
   return (
     <>
       <Helmet>
@@ -56,7 +64,7 @@ const ProtectedRoute = () => {
       </Helmet>
       <div className="relative">
         {/* sidebar */}
-        <aside className=" h-screen w-60 bg-black text-white flex flex-col gap-10 fixed">
+        <aside className=" h-screen w-40 md:w-60 bg-black text-white flex flex-col gap-10 fixed">
           <img
             alt="logo"
             src="https://i.ibb.co/17zsqj1/logo2.png"
@@ -64,7 +72,7 @@ const ProtectedRoute = () => {
             height={60}
             className="px-5"
           />
-          <nav className="px-5">
+          <nav className="px-5 mx-auto">
             <ul>
               {[
                 ["Create", "/admin/create", <TicketIcon key="1" />],
@@ -90,10 +98,10 @@ const ProtectedRoute = () => {
                 <li key={title}>
                   <NavLink
                     to={url}
-                    className="[&.active]:bg-blue-500 px-5 py-3 rounded-xl hover:bg-gray-700/90 mb-2 transition-all  ease-in-out cursor-pointer flex items-center gap-2"
+                    className="[&.active]:bg-blue-500 px-5 py-3 rounded-xl hover:bg-gray-700/90 mb-2 transition-all  ease-in-out cursor-pointer flex items-center gap-2 [&>.title]:hidden  w-fit md:w-full md:[&>.title]:block"
                   >
                     <span className="text-[#f1f1f1]">{icon}</span>
-                    <span className="font-medium text-sm ">{title}</span>
+                    <span className="title font-medium text-sm ">{title}</span>
                   </NavLink>
                 </li>
               ))}
@@ -107,12 +115,14 @@ const ProtectedRoute = () => {
             <span>Logout</span>
           </button>
         </aside>
-        <main className="ml-60 bg-[#F7F7F7] ">
+        <main className="ml-40 md:ml-60  bg-[#F7F7F7] ">
           <header className="h-16 w-full bg-white px-8 flex items-center gap-5">
             {searchBarVisibility && (
               <div className="h-10 w-80 bg-blue-50 p-3 border border-blue-500 rounded-lg font-normal text-xs font-poppins flex items-center gap-2">
                 <SearchIcon />
                 <input
+                  onChange={handleChange}
+                  value={searchValue}
                   type="text"
                   className="bg-transparent w-full focus:outline-none py-1"
                   placeholder="Search by booking Id or name"
@@ -137,7 +147,11 @@ const ProtectedRoute = () => {
           </header>
           <section className="relative min-h-[calc(100vh-64px)]">
             <div className="p-8">
-              <Outlet />
+              {matches ? (
+                <Outlet />
+              ) : (
+                <p>Switch to desktop or reduce screen zoom to 100% to view</p>
+              )}
             </div>
             <Loader />
           </section>
