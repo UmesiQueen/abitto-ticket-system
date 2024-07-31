@@ -1,8 +1,8 @@
 import {
-  createBrowserRouter,
-  createRoutesFromElements,
-  Route,
-  Navigate,
+	createBrowserRouter,
+	createRoutesFromElements,
+	Route,
+	Navigate,
 } from "react-router-dom";
 
 import App from "./App";
@@ -19,13 +19,13 @@ import Settings from "./admin/pages/settings";
 import Login from "./admin/auth/login";
 import { CustomerDetails } from "./admin/pages/bookingDetails";
 import TicketDocument from "./components/custom/TicketSummary.doc";
-// import Notice from "./pages/notice";
+import Notice from "./pages/notice";
 
 export const router = createBrowserRouter(
-  createRoutesFromElements(
-    <Route path="/">
-      {/* <Route index element={<Notice />} /> */}
-      <Route element={<App />}>
+	createRoutesFromElements(
+		<Route path="/">
+			<Route index element={<Notice />} />
+			{/* <Route element={<App />}>
         <Route index element={<Home />} />
         <Route path="booking" element={<Booking />} />
         <Route path="ticket-summary" element={<TicketSummary />} />
@@ -45,8 +45,8 @@ export const router = createBrowserRouter(
       </Route>
 
       <Route path="ticket-summary/:bookingID" element={<TicketDocument />} />
-      <Route path="login" element={<Login />} />
-      <Route path="*" element={<PageNotFound />} />
-    </Route>
-  )
+      <Route path="login" element={<Login />} /> */}
+			<Route path="*" element={<PageNotFound />} />
+		</Route>
+	)
 );
