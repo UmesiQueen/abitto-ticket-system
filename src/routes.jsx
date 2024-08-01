@@ -19,33 +19,33 @@ import Settings from "./admin/pages/settings";
 import Login from "./admin/auth/login";
 import { CustomerDetails } from "./admin/pages/bookingDetails";
 import TicketDocument from "./components/custom/TicketSummary.doc";
-import Notice from "./pages/notice";
+// import Notice from "./pages/notice";
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
 		<Route path="/">
-			<Route index element={<Notice />} />
-			{/* <Route element={<App />}>
-        <Route index element={<Home />} />
-        <Route path="booking" element={<Booking />} />
-        <Route path="ticket-summary" element={<TicketSummary />} />
-      </Route>
+			{/* <Route index element={<Notice />} /> */}
+			<Route element={<App />}>
+				<Route index element={<Home />} />
+				<Route path="booking" element={<Booking />} />
+				<Route path="ticket-summary" element={<TicketSummary />} />
+			</Route>
 
-      <Route path="admin" element={<Navigate to="dashboard" replace />} />
-      <Route path="admin" element={<AdminLayout />}>
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="booking-details" element={<BookingDetails />} />
-        <Route
-          path="booking-details/:bookingID"
-          element={<CustomerDetails />}
-        />
-        <Route path="customers" element={<Customers />} />
-        <Route path="payments" element={<Payments />} />
-        <Route path="settings" element={<Settings />} />
-      </Route>
+			<Route path="admin" element={<Navigate to="dashboard" replace />} />
+			<Route path="admin" element={<AdminLayout />}>
+				<Route path="dashboard" element={<Dashboard />} />
+				<Route path="booking-details" element={<BookingDetails />} />
+				<Route
+					path="booking-details/:bookingID"
+					element={<CustomerDetails />}
+				/>
+				<Route path="customers" element={<Customers />} />
+				<Route path="payments" element={<Payments />} />
+				<Route path="settings" element={<Settings />} />
+			</Route>
 
-      <Route path="ticket-summary/:bookingID" element={<TicketDocument />} />
-      <Route path="login" element={<Login />} /> */}
+			<Route path="ticket-summary/:bookingID" element={<TicketDocument />} />
+			<Route path="login" element={<Login />} />
 			<Route path="*" element={<PageNotFound />} />
 		</Route>
 	)
