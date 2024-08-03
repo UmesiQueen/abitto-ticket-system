@@ -85,7 +85,7 @@ const SearchForm = () => {
 		React.useContext(BookingCTX);
 
 	const {
-		register,
+		// register,
 		handleSubmit,
 		formState: { errors },
 		control,
@@ -120,7 +120,7 @@ const SearchForm = () => {
 			className="flex gap-5 justify-between bg-white rounded-lg my-8 p-6"
 		>
 			<div className="flex gap-5 w-full ">
-				<SelectField
+				{/* <SelectField
 					{...register("departure")}
 					label="Departure"
 					placeholder="Select Departure Terminal"
@@ -133,7 +133,7 @@ const SearchForm = () => {
 					placeholder="Select Arrival Terminal"
 					options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
 					errors={errors}
-				/>
+				/> */}
 				<div className="flex flex-col w-full">
 					<label className="text-xs md:text-sm !w-full flex flex-col ">
 						Choose Date
@@ -182,7 +182,7 @@ const SearchForm = () => {
 const JourneyTable = () => {
 	const navigate = useNavigate();
 	// const journeyList = useLoaderData();
-	const { setLoading } = React.useContext(GlobalCTX);
+	const { setLoading, adminProfile } = React.useContext(GlobalCTX);
 	const {
 		searchParams,
 		setSearchParams,
@@ -201,7 +201,10 @@ const JourneyTable = () => {
 			axios
 				.get("https://abitto-api.onrender.com/api/ticket/get")
 				.then((res) => {
-					setJourneyList(res.data.tickets);
+					const sortedList = res.data.tickets.filter((list) =>
+						list.departure.includes(adminProfile.city)
+					);
+					setJourneyList(sortedList);
 				})
 				.catch((error) => {
 					console.error(error, "Error occurred while fetching journey list.");
@@ -264,7 +267,7 @@ const JourneyTable = () => {
 		// 	cell: ({ row }) => (
 		// 		<p className="text-center">
 		// 			{row.original?.available_seats.length > 1
-		// 				? row.original?.available_seats.length
+		// 				/? row.original?.available_seats.length
 		// 				: "FULL"}
 		// 		</p>
 		// 	),
@@ -292,7 +295,7 @@ const JourneyTable = () => {
 		},
 		{
 			accessorKey: "ticket_cost",
-			header: "Ticket Cost",
+			header: <div className="text-center">Ticket Cost</div>,
 			cell: ({ row }) => (
 				<p className="text-center">₦{row.getValue("ticket_cost")}</p>
 			),

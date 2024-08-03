@@ -137,7 +137,7 @@ const Login = () => {
           </div> */}
 
 					<Button
-						className="rounded-lg"
+						className="rounded-lg mt-2"
 						text="Sign in"
 						type="submit"
 						loading={loading}

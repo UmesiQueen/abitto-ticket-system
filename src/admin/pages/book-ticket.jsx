@@ -28,6 +28,7 @@ import { useNavigate } from "react-router-dom";
 import { BookingForm } from "@/components/BookingDetails";
 import SearchTrip from "@/components/SearchTrip";
 import PassengerDetails from "@/components/PassengerDetails";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const BookTicket = () => {
 	const { activeStep } = useStepper();
@@ -128,15 +129,20 @@ const Payment = () => {
 			.string()
 			.required("This field is required")
 			.min(4, "Trx ref must have at least 4 characters."),
+		check_in: yup.boolean().notRequired(),
 	});
 
 	const {
 		register,
 		handleSubmit,
+		setValue,
 		formState: { errors },
 	} = useForm({
 		mode: "onChange",
 		resolver: yupResolver(paymentSchema),
+		defaultValues: {
+			check_in: false,
+		},
 	});
 
 	const onSubmit = handleSubmit((formData) => {
@@ -224,7 +230,7 @@ const Payment = () => {
 				) : (
 					""
 				)}
-				<div className="mt-20 py-8 h-36  grid grid-cols-3 gap-5">
+				<div className="mt-20 py-8 h-36  grid grid-cols-2 gap-5">
 					<SelectField
 						{...register("payment_method")}
 						label="Payment Method"
@@ -251,8 +257,23 @@ const Payment = () => {
 						autoComplete="off"
 						errors={errors}
 					/>
+					<div>
+						<p className="text-sm mb-3">Check-in passenger</p>
+						<label
+							htmlFor="check-in"
+							className="text-sm flex items-center gap-2 w-full h-12 p-3 rounded-lg bg-blue-50 cursor-pointer hover:bg-blue-100 font-medium"
+						>
+							<Checkbox
+								{...register("check_in")}
+								id="check-in"
+								onCheckedChange={(value) => setValue("check_in", value)}
+							/>
+							Check-In
+						</label>
+					</div>
 				</div>
-				<div className="flex gap-5 mt-auto">
+
+				<div className="flex gap-5 mt-36">
 					<Button
 						onClick={onPrevClick}
 						variant="outline"

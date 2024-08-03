@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import { Button as ButtonIcon } from "@/components/ui/button";
 import Logo from "@/assets/logo.svg";
-import { format } from "date-fns";
+import { addDays, format } from "date-fns";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { CaretIcon, CircleArrowLeftIcon } from "@/assets/icons";
@@ -110,10 +110,13 @@ const CheckInTable = () => {
 	React.useEffect(() => {
 		if (bookingQuery.length) {
 			const result = bookingQuery.filter((booking) => {
-				const bookedDate = new Date(booking?.departure_date)
+				const bookedDate = new Date(
+					addDays(new Date(booking?.departure_date), 1)
+				)
 					.toISOString()
 					.split("T")[0];
 				const currentDate = new Date().toISOString().split("T")[0];
+				console.log(currentDate, bookedDate);
 				const isCurrentDate = bookedDate == currentDate;
 				const isSuccess = booking?.payment_status == "Success";
 				return isCurrentDate && isSuccess;

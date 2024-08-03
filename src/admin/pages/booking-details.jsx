@@ -1,8 +1,6 @@
 /* eslint-disable react/prop-types */
 import { Helmet } from "react-helmet-async";
 import {
-	FilterIcon,
-	CloudIcon,
 	CaretIcon,
 	TickIcon,
 	InformationCircleIcon,
@@ -34,12 +32,6 @@ import {
 	getSortedRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import {
-	DropdownMenu,
-	DropdownMenuCheckboxItem,
-	DropdownMenuContent,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Button as ButtonUI } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { formatValue } from "react-currency-input-field";
@@ -49,7 +41,6 @@ import { PaginationEllipsis } from "@/components/ui/pagination";
 import ReactPaginate from "react-paginate";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import Button from "@/components/custom/Button";
 
 const BookingDetails = () => {
 	const navigate = useNavigate();
@@ -239,7 +230,7 @@ const BookingDetails = () => {
 			</Helmet>
 			<div className="flex items-center gap-5 mb-8">
 				<h1 className="text-lg font-semibold">Booking Details</h1>
-				<div className="rounded-lg border ml-auto">
+				{/* <div className="rounded-lg border ml-auto">
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<ButtonUI variant="ghost" className="px-5">
@@ -272,7 +263,7 @@ const BookingDetails = () => {
 				</div>
 				<div className="rounded-lg cursor-pointer bg-blue-500 p-2">
 					<CloudIcon />
-				</div>
+				</div> */}
 			</div>
 			<div className="bg-white rounded-lg px-4 py-2">
 				<Table>
@@ -430,7 +421,7 @@ export const CustomerDetails = () => {
 								</p>
 							</div>
 							{/* FIXME: ADMIN SHOULDN'T BE ABLE TO SEE THIS BUTTONS */}
-							<div className="ml-auto flex gap-2">
+							{/* <div className="ml-auto flex gap-2">
 								<Button
 									text="Re-schedule Trip"
 									variant="outline"
@@ -447,7 +438,7 @@ export const CustomerDetails = () => {
 								>
 									Cancel
 								</ButtonUI>
-							</div>
+							</div> */}
 						</div>
 
 						<div className="p-5 pb-20 space-y-6">

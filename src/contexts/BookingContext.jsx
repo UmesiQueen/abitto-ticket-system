@@ -30,7 +30,7 @@ const BookingContext = ({ children }) => {
 	const [searchParams, setSearchParams] = React.useState({});
 	const [tripDetails, setTripDetails] = React.useState();
 	const [rentalData, setRentalData] = React.useState({});
-	const pathname = useLocation();
+	const { pathname } = useLocation();
 	const [customersData, setCustomersData] = React.useState([]);
 	const [filtering, setFiltering] = React.useState();
 

@@ -189,6 +189,7 @@ const SearchForm = () => {
 			<Button
 				text="Search"
 				// type="submit"
+				disabled={true}
 				loading={loading}
 				className="w-40 py-6  md:mt-7 "
 			/>

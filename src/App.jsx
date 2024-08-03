@@ -21,7 +21,7 @@ const App = () => {
 					expand={true}
 					richColors
 					toastOptions={{
-						className: "p-2",
+						className: "p-3",
 					}}
 				/>
 				<ModalPortal />

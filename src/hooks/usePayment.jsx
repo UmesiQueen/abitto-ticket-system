@@ -24,15 +24,13 @@ export const usePayment = () => {
 		const availableSeats = selectedTrip[type]?.available_seats;
 		return sampleSize(availableSeats, formData.bookingDetails.total_passengers);
 	};
-	const departure_seats =
-		seatDetails?.departure_seats ?? randomSeats("departure");
-	const return_seats = seatDetails?.return_seats ?? randomSeats("return");
 
 	const onlinePayment = () => {
 		const paystack = new PaystackPop();
 
 		paystack.newTransaction({
-			// key: "pk_live_297c0c356506ae67d9de7d6a51967914d9af9567",
+			// key: "pk_live_297c0c356506ae67d9de7d6a51967914d9af9567", // all-in
+			// key: "pk_live_b25d12c8f8e8a5b151d6015b71ae2e99d1e4e243", // abitto
 			key: "pk_test_5d5cd21c077f1395d701366d2880665b3e9fb0f5",
 			amount: total_ticket_cost * 100,
 			email: formData.passengerDetails?.passenger1_email,
@@ -52,18 +50,28 @@ export const usePayment = () => {
 					trxRef: "N/A",
 					trip_status: "Canceled",
 				});
-				toast.error("Transaction failed. Please try again.");
+				toast.error("Payment Declined", {
+					description: "Transaction failed. Please try again.",
+				});
 			},
 		});
 	};
 
 	const handleOnlineRequest = (props) => {
+		const isSuccess = props.payment_status == "Success";
+
 		const requestData = {
 			...bookingDetails,
 			...passengerDetails,
-			departure_seats,
+			departure_seats: isSuccess
+				? seatDetails?.departure_seats ?? randomSeats("departure")
+				: [],
 			total_ticket_cost,
-			...(bookingDetails.trip_type == "Round Trip" && { return_seats }),
+			...(bookingDetails.trip_type == "Round Trip" && {
+				return_seats: isSuccess
+					? seatDetails?.return_seats ?? randomSeats("return")
+					: [],
+			}),
 			ticket_id: `${ticket_id}${uuid().slice(0, 2)}`,
 			...props,
 			medium: "Online",
@@ -71,7 +79,6 @@ export const usePayment = () => {
 			booked_by: "Customer",
 			check_in: false,
 		};
-		const isSuccess = props.status === "Success";
 
 		if (isSuccess) setLoading(true);
 
@@ -81,19 +88,23 @@ export const usePayment = () => {
 				requestData
 			)
 			.then((res) => {
-				// FIXME: THIS DOES NOT SHOW ON SECOND TRAIL
-				if (res.status == 200 && isSuccess) {
+				if ((res.status == 200) & isSuccess) {
 					const ticket_id = res.data.booking.ticket_id;
 					mountPortalModal(<BookingSuccessModal id={ticket_id} />);
 				}
 			})
 			.catch((err) => {
-				console.error(err, "Error occurred while sending new booking request.");
-				// FIXME: FIX THIS LOGIC
 				if (isSuccess) {
 					document.getElementById("paystack_btn").disabled = true;
+					document.getElementById("payment_next_btn").innerHTML = "Continue";
 					toast.error(
-						"Oops! Booking not confirmed. Please contact us to verify."
+						err?.code == "ERR_NETWORK"
+							? "Please check your internet connection."
+							: "Bad Request.",
+						{
+							description:
+								"Oops! Booking not confirmed. Please contact us to verify.",
+						}
 					);
 				}
 			})
@@ -107,8 +118,14 @@ export const usePayment = () => {
 		const requestData = {
 			...bookingDetails,
 			...passengerDetails,
-			departure_seats,
-			...(bookingDetails.trip_type == "Round Trip" && { return_seats }),
+			departure_seats:
+				seatDetails?.departure_seats ??
+				randomSeats("departure", data.payment_status),
+			...(bookingDetails.trip_type == "Round Trip" && {
+				return_seats:
+					seatDetails?.return_seats ??
+					randomSeats("return", data.payment_status),
+			}),
 			ticket_id: `${ticket_id}${uuid().slice(0, 2)}`,
 			total_ticket_cost,
 			payment_status: data.payment_status,
@@ -116,7 +133,7 @@ export const usePayment = () => {
 			medium: "Offline",
 			trxRef: data.transaction_ref,
 			booked_by: `${adminProfile.first_name}(${adminProfile.account_type})`,
-			check_in: false,
+			check_in: data.check_in,
 			trip_status: "Upcoming",
 		};
 
@@ -144,8 +161,9 @@ export const usePayment = () => {
 		const paystack = new PaystackPop();
 
 		paystack.newTransaction({
-			// key: "pk_live_297c0c356506ae67d9de7d6a51967914d9af9567",
-			key: "pk_test_5d5cd21c077f1395d701366d2880665b3e9fb0f5",
+			// key: "pk_live_b25d12c8f8e8a5b151d6015b71ae2e99d1e4e243", //abitto
+			// key: "pk_live_297c0c356506ae67d9de7d6a51967914d9af9567", // all-in
+			key: "pk_test_5d5cd21c077f1395d701366d2880665b3e9fb0f5", // queen
 			amount: rentalData.total_cost * 100,
 			email: rentalData.email,
 			firstname: rentalData.first_name,
@@ -195,8 +213,15 @@ export const usePayment = () => {
 				console.error(err, "Error occurred while sending new rental request.");
 				if (isSuccess) {
 					document.getElementById("rental_payment_btn").disabled = true;
+					document.getElementById("rental_next_btn").innerHTML = "Continue";
 					toast.error(
-						"Oops! Rental not confirmed. Please contact us to verify."
+						err?.code == "ERR_NETWORK"
+							? "Please check your internet connection."
+							: "Bad Request.",
+						{
+							description:
+								"Oops! Rental not confirmed. Please contact us to verify.",
+						}
 					);
 				}
 			})

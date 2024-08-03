@@ -53,6 +53,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { useReactToPrint } from "react-to-print";
+import { humanize } from "@/lib/utils";
 
 const TripDetails = () => {
 	const { mountPortalModal, setLoading, adminProfile } =
@@ -67,7 +68,7 @@ const TripDetails = () => {
 
 	React.useEffect(() => {
 		setLoading(false);
-		if (selectedTrip) setTripDetails(selectedTrip);
+		if (selectedTrip.length) setTripDetails(selectedTrip);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedTrip]);
 
@@ -96,7 +97,7 @@ const TripDetails = () => {
 
 	const handlePrint = useReactToPrint({
 		content: () => componentRef.current,
-		documentTitle: `Abitto Ticket - ${selectedTrip.trip_code}`,
+		documentTitle: `Abitto Ticket - ${selectedTrip?.trip_code}`,
 		onAfterPrint: () => setIsPrinting(false),
 	});
 
@@ -218,7 +219,7 @@ const TripDetails = () => {
 						})}
 					/>
 				</div>
-				<TripDetailsTable />
+				<TripDetailsTable props={{ isPrinting }} />
 			</section>
 		</>
 	);
@@ -226,7 +227,7 @@ const TripDetails = () => {
 
 export default TripDetails;
 
-const TripDetailsTable = () => {
+const TripDetailsTable = ({ props: { isPrinting } }) => {
 	const navigate = useNavigate();
 	const { bookingQuery, tripDetails, setCurrentPageIndex, currentPageIndex } =
 		React.useContext(BookingCTX);
@@ -287,34 +288,15 @@ const TripDetailsTable = () => {
 			cell: ({ row }) => <div>{row.original.passenger1_phone_number}</div>,
 		},
 		{
-			accessorKey: "type",
-			header: "Type",
-			cell: ({ row }) => <div>{row.original.trip_type}</div>,
-		},
-		{
-			accessorKey: "medium",
-			header: <div className="text-center">Medium</div>,
-			cell: ({ row }) => (
-				<div className="text-center">{row.original?.medium}</div>
-			),
+			accessorKey: "seat_no",
+			header: "Seat_No",
+			cell: ({ row }) => humanize(row.original?.departure_seats),
 		},
 		{
 			accessorKey: "passenger",
 			header: <div className="text-center">Passengers</div>,
 			cell: ({ row }) => (
 				<div className="text-center">{row.original.total_passengers}</div>
-			),
-		},
-		{
-			accessorKey: "amount",
-			header: "Amount",
-			cell: ({ row }) => (
-				<div>
-					₦
-					{formatValue({
-						value: String(row.original.total_ticket_cost ?? 0),
-					})}
-				</div>
 			),
 		},
 	];
@@ -345,6 +327,13 @@ const TripDetailsTable = () => {
 		table.setPageIndex(currentPageIndex);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	const getTotalBooked = () => {
+		if (currentDataQuery.length)
+			currentDataQuery
+				.map((booking) => booking.total_passengers)
+				.reduce((a, c) => a + c, 0);
+	};
 
 	return (
 		<>
@@ -377,7 +366,7 @@ const TripDetailsTable = () => {
 										onDoubleClick={(event) => {
 											if (event.target.tagName !== "BUTTON")
 												navigate(
-													`/${adminProfile.account_type}/booking-details/${row.original._id}`
+													`/backend/${adminProfile.account_type}/booking-details/${row.original._id}`
 												);
 										}}
 										data-state={row.getIsSelected() && "selected"}
@@ -406,46 +395,47 @@ const TripDetailsTable = () => {
 					</TableBody>
 				</Table>
 				{/* Pagination */}
-				<div className="flex items-center gap-8  p-4">
-					<div className="font-medium text-sm">
-						{table.getFilteredSelectedRowModel().rows.length} of{" "}
-						{table.getFilteredRowModel().rows.length} row(s) selected.
-					</div>
-					<ReactPaginate
-						breakLabel={<PaginationEllipsis />}
-						nextLabel={
-							<IconButton
-								variant="ghost"
-								size="sm"
-								onClick={() => table.nextPage()}
-								disabled={!table.getCanNextPage()}
-							>
-								<CaretIcon />
-							</IconButton>
-						}
-						onPageChange={(val) => {
-							table.setPageIndex(val.selected);
-							setCurrentPageIndex(val.selected);
-						}}
-						initialPage={currentPageIndex}
-						pageRangeDisplayed={3}
-						pageCount={table.getPageCount()}
-						previousLabel={
-							<IconButton
-								variant="ghost"
-								size="sm"
-								onClick={() => table.previousPage()}
-								disabled={!table.getCanPreviousPage()}
-							>
-								<span className="rotate-180">
+				{!isPrinting && (
+					<div className="flex items-center gap-8  p-4">
+						<div className="font-medium text-sm">
+							{table.getFilteredRowModel().rows.length} total booked.
+						</div>
+						<ReactPaginate
+							breakLabel={<PaginationEllipsis />}
+							nextLabel={
+								<IconButton
+									variant="ghost"
+									size="sm"
+									onClick={() => table.nextPage()}
+									disabled={!table.getCanNextPage()}
+								>
 									<CaretIcon />
-								</span>
-							</IconButton>
-						}
-						renderOnZeroPageCount={null}
-						className="flex gap-2 items-center text-xs font-normal [&_a]:inline-flex [&_a]:items-center [&_a]:justify-center [&_a]:min-w-7 [&_a]:h-8 [&_a]:rounded-lg *:text-center *:[&_.selected]:bg-blue-500  *:[&_.selected]:text-white [&_.disabled]:pointer-events-none "
-					/>
-				</div>
+								</IconButton>
+							}
+							onPageChange={(val) => {
+								table.setPageIndex(val.selected);
+								setCurrentPageIndex(val.selected);
+							}}
+							initialPage={currentPageIndex}
+							pageRangeDisplayed={3}
+							pageCount={table.getPageCount()}
+							previousLabel={
+								<IconButton
+									variant="ghost"
+									size="sm"
+									onClick={() => table.previousPage()}
+									disabled={!table.getCanPreviousPage()}
+								>
+									<span className="rotate-180">
+										<CaretIcon />
+									</span>
+								</IconButton>
+							}
+							renderOnZeroPageCount={null}
+							className="flex gap-2 items-center text-xs font-normal [&_a]:inline-flex [&_a]:items-center [&_a]:justify-center [&_a]:min-w-7 [&_a]:h-8 [&_a]:rounded-lg *:text-center *:[&_.selected]:bg-blue-500  *:[&_.selected]:text-white [&_.disabled]:pointer-events-none "
+						/>
+					</div>
+				)}
 			</div>
 		</>
 	);
