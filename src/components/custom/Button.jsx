@@ -10,9 +10,11 @@ const Button = ({
   type = "button",
   onClick,
   variant = "default",
+  ...props
 }) => {
   return (
     <button
+      {...props}
       disabled={disabled}
       type={type}
       onClick={onClick}
