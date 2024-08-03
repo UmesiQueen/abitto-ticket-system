@@ -3,8 +3,9 @@ import { Helmet } from "react-helmet-async";
 import { Checkbox } from "@/components/ui/checkbox";
 import Button from "@/components/custom/Button";
 import { useNavigate } from "react-router-dom";
-import { MenuBoardIcon, ShipIcon, TicketIcon } from "@/assets/icons";
+import { ShipIcon, TicketIcon } from "@/assets/icons";
 import { GlobalCTX } from "@/contexts/GlobalContext";
+import { CheckSquareIcon } from "lucide-react";
 
 const Create = () => {
   const [isChecked, setIsChecked] = React.useState();
@@ -81,28 +82,28 @@ const Create = () => {
               <h2 className="font-medium text-lg">Rent a Boat</h2>
             </div>
             <div
-              data-checked={isChecked?.schedule_trip}
+              data-checked={isChecked?.check_in}
               className="relative flex flex-col justify-between hover:bg-blue-50/40 border-2 border-gray-500 data-[checked=true]:scale-105 data-[checked=true]:text-blue-500 data-[checked=true]:border-blue-500 rounded-lg p-5 grow w-72 min-h-44 shadow-sm overflow-hidden transition-all duration-150 ease-in-out"
             >
               <button
-                id="schedule_trip"
+                id="check_in"
                 onClick={handleIsChecked}
                 className="absolute z-1 w-full h-full top-0 left-0 right-0"
               />
               <div className="flex items-center gap-5 justify-between">
                 <div
-                  data-checked={isChecked?.schedule_trip}
+                  data-checked={isChecked?.check_in}
                   className="p-3 bg-gray-200 rounded-full data-[checked=true]:text-blue-500 "
                 >
-                  <MenuBoardIcon />
+                  <CheckSquareIcon />
                 </div>
                 <Checkbox
                   tabIndex={-1}
-                  checked={isChecked?.schedule_trip ? true : false}
+                  checked={isChecked?.check_in ? true : false}
                   className="rounded-full data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
                 />
               </div>
-              <h2 className="font-medium text-lg">Schedule a Trip</h2>
+              <h2 className="font-medium text-lg">Check in</h2>
             </div>
           </div>
           <Button
@@ -112,7 +113,7 @@ const Create = () => {
             onClick={() => {
               const path = Object.keys(isChecked)[0];
               if (path == "book_ticket") navigate("book-ticket");
-              if (path == "schedule_trip") navigate("schedule-trip");
+              if (path == "check_in") navigate("check-in");
               if (path == "rent_boat") navigate("rental");
             }}
           />

@@ -109,7 +109,7 @@ const Report = () => {
       <Helmet>
         <title>Report | Admin</title>
       </Helmet>
-      <h1 className="text-lg font-semibold">Report Overview</h1>
+      <h1 className="text-lg font-semibold">Dashboard Overview</h1>
       <div className="my-8 grid grid-cols-12 gap-5 w-full">
         <div className="col-start-1 col-span-8 row-span-1 bg-white rounded-lg p-5 ">
           <ul className="border rounded-lg p-5 flex flex-wrap *:grow  gap-5 justify-between items-center min-h-[100px] [&_li]:min-w-[25%]  [&_li:not(:first-of-type)]:pl-7 divide-x ">
@@ -297,8 +297,8 @@ const Report = () => {
 
         <div className="col-start-1 col-span-6  row-start-6 row-span-2 bg-white rounded-lg p-5">
           <div className="border rounded-lg p-5 pb-0 h-full">
-            <h3 className="font-semibold mb-1">Rental Overview</h3>
-            <div className="max-w-[450px] h-full mx-auto">
+            <h3 className="font-semibold">Rental Overview</h3>
+            <div className="max-w-[450px] h-full mx-auto -mt-1">
               <PieChart
                 series={[
                   {
@@ -329,7 +329,7 @@ const Report = () => {
                     cy: 100,
                   },
                 ]}
-                width={450}
+                width={400}
                 height={210}
               />
             </div>

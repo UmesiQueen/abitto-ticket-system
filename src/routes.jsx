@@ -1,8 +1,8 @@
 import {
-  createBrowserRouter,
-  createRoutesFromElements,
-  Route,
-  Navigate,
+	createBrowserRouter,
+	createRoutesFromElements,
+	Route,
+	Navigate,
 } from "react-router-dom";
 
 import App from "./App";
@@ -34,70 +34,70 @@ import { DataQueryLoader } from "./admin/layout";
 import RentalInvoice from "./components/RentalInvoice";
 import { RentalInvoiceLoader } from "./components/RentalInvoice";
 // import { CustomerLoader } from "./admin/pages/customers";
-import CustomerHistory from "./admin/pages/customer-history";
+// import CustomerHistory from "./admin/pages/customer-history";
 import RentalDetails from "./admin/pages/rental-details";
 import PageNotFoundAdmin from "./admin/pages/page-not-found";
+import CheckIn from "./admin/pages/check-in";
+// import Reschedule from "./admin/pages/reschedule";
 
 export const router = createBrowserRouter(
-  createRoutesFromElements(
-    <Route path="/" element={<App />}>
-      {/* <Route index element={<Notice/>} /> */}
-      <Route element={<MainLayout />}>
-        <Route index element={<Home />} />
-        <Route path="booking" element={<Booking />} />
-        <Route path="about" element={<About />} />
-        <Route path="rental" element={<Rental />} />
-      </Route>
+	createRoutesFromElements(
+		<Route path="/" element={<App />}>
+			{/* <Route index element={<Notice/>} /> */}
+			<Route element={<MainLayout />}>
+				<Route index element={<Home />} />
+				<Route path="booking" element={<Booking />} />
+				<Route path="about" element={<About />} />
+				<Route path="rental" element={<Rental />} />
+			</Route>
 
-      <Route path="admin" element={<Navigate to="create" replace />} />
-      <Route path="admin" element={<AdminLayout />} loader={DataQueryLoader}>
-        <Route path="create" element={<Create />} />
-        <Route path="create/book-ticket" element={<BookTicket />} />
-        <Route path="create/schedule-trip" element={<ScheduleTrip />} />
-        <Route path="create/rental" element={<RentalAdmin />} />
-        <Route path="booking-details" element={<BookingDetails />} />
-        <Route
-          path="booking-details/:bookingID"
-          element={<CustomerDetails />}
-        />
-        <Route path="rental-details" element={<RentalDetails />} />
-        <Route
-          path="customers"
-          element={<Customers />}
-          // loader={CustomerLoader}
-        />
-        <Route path="customers/:customerID" element={<CustomerHistory />} />
-        <Route
-          path="journey-list"
-          element={<JourneyList />}
-          // loader={JourneyListLoader}
-        />
-        <Route
-          path="journey-list/:tripCode"
-          element={<TripDetails />}
-          loader={TripDetailsLoader}
-        />
-        <Route
-          path="report"
-          element={<Report />}
-          // loader={JourneyListLoader}
-        />
-        <Route path="settings" element={<Settings />} />
-        <Route path="pageNotFound" element={<PageNotFoundAdmin />} />
-      </Route>
+			<Route
+				path="/backend"
+				element={<Navigate to="/backend/login" replace />}
+			/>
+			<Route path="/backend" element={<AdminLayout />} loader={DataQueryLoader}>
+				<Route path="/backend/:accountType">
+					<Route path="dashboard" element={<Report />} />
+					<Route path="create" element={<Create />} />
+					<Route path="create/book-ticket" element={<BookTicket />} />
+					<Route path="create/check-in" element={<CheckIn />} />
+					<Route path="create/rental" element={<RentalAdmin />} />
+					<Route path="booking-details" element={<BookingDetails />} />
+					<Route
+						path="booking-details/:bookingID"
+						element={<CustomerDetails />}
+					/>
+					{/* <Route
+						path="booking-details/:bookingID/reschedule"
+						element={<Reschedule />}
+					/> */}
+					<Route path="rental-details" element={<RentalDetails />} />
+					<Route path="journey-list" element={<JourneyList />} />
+					<Route
+						path="journey-list/:tripCode"
+						element={<TripDetails />}
+						loader={TripDetailsLoader}
+					/>
+					<Route path="schedule-trip" element={<ScheduleTrip />} />
+					<Route path="customers" element={<Customers />} />
+					{/* <Route path="customers/:customerID" element={<CustomerHistory />} /> */}
+					<Route path="settings" element={<Settings />} />
+				</Route>
+				<Route path="pageNotFound" element={<PageNotFoundAdmin />} />
+			</Route>
 
-      <Route
-        path="ticket-invoice/:bookingID"
-        element={<TicketInvoice />}
-        loader={TicketLoader}
-      />
-      <Route
-        path="rental-invoice/:rentalID"
-        element={<RentalInvoice />}
-        loader={RentalInvoiceLoader}
-      />
-      <Route path="login" element={<Login />} />
-      <Route path="*" element={<PageNotFound />} />
-    </Route>
-  )
+			<Route
+				path="ticket-invoice/:bookingID"
+				element={<TicketInvoice />}
+				loader={TicketLoader}
+			/>
+			<Route
+				path="rental-invoice/:rentalID"
+				element={<RentalInvoice />}
+				loader={RentalInvoiceLoader}
+			/>
+			<Route path="/backend/login" element={<Login />} />
+			<Route path="*" element={<PageNotFound />} />
+		</Route>
+	)
 );
