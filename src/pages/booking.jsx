@@ -115,7 +115,7 @@ const BookingForm = ({ tab }) => {
 
   const resetTimeOptions = (travel_from) => {
     const calabarTimeOptions = ["11:00 AM"];
-    const uyoTimeOptions = ["11:00 AM", "02:30 PM"];
+    const uyoTimeOptions = ["02:30 PM"];
 
     if (travel_from) {
       travel_from === "Nwaniba Timber Beach, Uyo"
