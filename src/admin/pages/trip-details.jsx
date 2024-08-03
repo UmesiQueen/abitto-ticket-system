@@ -68,7 +68,7 @@ const TripDetails = () => {
 
 	React.useEffect(() => {
 		setLoading(false);
-		if (selectedTrip.length) setTripDetails(selectedTrip);
+		if (selectedTrip) setTripDetails(selectedTrip);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedTrip]);
 
