@@ -6,46 +6,97 @@ import {
 } from "react-router-dom";
 
 import App from "./App";
-import Home from "./pages";
-import Booking from "./pages/booking";
-import PageNotFound from "./pages/pageNotFound";
-import TicketSummary from "./pages/ticketSummary";
+import Home from "./main/pages";
+import Booking from "./main/pages/booking";
+import PageNotFound from "./main/pages/404";
 import AdminLayout from "./admin/layout";
-import Dashboard from "./admin/pages/dashboard";
-import BookingDetails from "./admin/pages/bookingDetails";
+import BookingDetails from "./admin/pages/booking-details";
 import Customers from "./admin/pages/customers";
-import Payments from "./admin/pages/payments";
+import JourneyList from "./admin/pages/journey-list";
 import Settings from "./admin/pages/settings";
 import Login from "./admin/auth/login";
-import { CustomerDetails } from "./admin/pages/bookingDetails";
-import TicketDocument from "./components/custom/TicketSummary.doc";
+import { CustomerDetails } from "./admin/pages/booking-details";
+import TicketInvoice from "./components/TicketInvoice";
 // import Notice from "./pages/notice";
+import MainLayout from "./main/layout";
+import About from "./main/pages/about";
+import BookTicket from "./admin/pages/book-ticket";
+import TripDetails from "./admin/pages/trip-details";
+import Create from "./admin/pages/create";
+import ScheduleTrip from "./admin/pages/schedule-trip";
+import RentalAdmin from "./admin/pages/rental";
+import Report from "./admin/pages/report";
+import Rental from "./main/pages/rental";
+import { TicketLoader } from "./components/TicketInvoice";
+import { TripDetailsLoader } from "./admin/pages/trip-details";
+// import { JourneyListLoader } from "./admin/pages/journey-list";
+import { DataQueryLoader } from "./admin/layout";
+import RentalInvoice from "./components/RentalInvoice";
+import { RentalInvoiceLoader } from "./components/RentalInvoice";
+// import { CustomerLoader } from "./admin/pages/customers";
+// import CustomerHistory from "./admin/pages/customer-history";
+import RentalDetails from "./admin/pages/rental-details";
+import PageNotFoundAdmin from "./admin/pages/page-not-found";
+import CheckIn from "./admin/pages/check-in";
+// import Reschedule from "./admin/pages/reschedule";
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
-		<Route path="/">
-			{/* <Route index element={<Notice />} /> */}
-			<Route element={<App />}>
+		<Route path="/" element={<App />}>
+			{/* <Route index element={<Notice/>} /> */}
+			<Route element={<MainLayout />}>
 				<Route index element={<Home />} />
 				<Route path="booking" element={<Booking />} />
-				<Route path="ticket-summary" element={<TicketSummary />} />
+				<Route path="about" element={<About />} />
+				<Route path="rental" element={<Rental />} />
 			</Route>
 
-			<Route path="admin" element={<Navigate to="dashboard" replace />} />
-			<Route path="admin" element={<AdminLayout />}>
-				<Route path="dashboard" element={<Dashboard />} />
-				<Route path="booking-details" element={<BookingDetails />} />
-				<Route
-					path="booking-details/:bookingID"
-					element={<CustomerDetails />}
-				/>
-				<Route path="customers" element={<Customers />} />
-				<Route path="payments" element={<Payments />} />
-				<Route path="settings" element={<Settings />} />
+			<Route
+				path="/backend"
+				element={<Navigate to="/backend/login" replace />}
+			/>
+			<Route path="/backend" element={<AdminLayout />} loader={DataQueryLoader}>
+				<Route path="/backend/:accountType">
+					<Route path="dashboard" element={<Report />} />
+					<Route path="create" element={<Create />} />
+					<Route path="create/book-ticket" element={<BookTicket />} />
+					<Route path="create/check-in" element={<CheckIn />} />
+					<Route path="create/rental" element={<RentalAdmin />} />
+					<Route path="booking-details" element={<BookingDetails />} />
+					<Route
+						path="booking-details/:bookingID"
+						element={<CustomerDetails />}
+					/>
+					{/* <Route
+						path="booking-details/:bookingID/reschedule"
+						element={<Reschedule />}
+					/> */}
+					<Route path="rental-details" element={<RentalDetails />} />
+					<Route path="journey-list" element={<JourneyList />} />
+					<Route
+						path="journey-list/:tripCode"
+						element={<TripDetails />}
+						loader={TripDetailsLoader}
+					/>
+					<Route path="schedule-trip" element={<ScheduleTrip />} />
+					<Route path="customers" element={<Customers />} />
+					{/* <Route path="customers/:customerID" element={<CustomerHistory />} /> */}
+					<Route path="settings" element={<Settings />} />
+				</Route>
+				<Route path="pageNotFound" element={<PageNotFoundAdmin />} />
 			</Route>
 
-			<Route path="ticket-summary/:bookingID" element={<TicketDocument />} />
-			<Route path="login" element={<Login />} />
+			<Route
+				path="ticket-invoice/:bookingID"
+				element={<TicketInvoice />}
+				loader={TicketLoader}
+			/>
+			<Route
+				path="rental-invoice/:rentalID"
+				element={<RentalInvoice />}
+				loader={RentalInvoiceLoader}
+			/>
+			<Route path="/backend/login" element={<Login />} />
 			<Route path="*" element={<PageNotFound />} />
 		</Route>
 	)

@@ -33,6 +33,15 @@ import PrinterIcon from "./Printer";
 import Boat2Icon from "./Boat2";
 import Cloud2Icon from "./Cloud2";
 import CircleArrowLeftIcon from "./CircleArrowLeft";
+import BoatPart2 from "./BoatPart2";
+import BoatPart1 from "./BoatPart1";
+import ShipIcon from "./Ship";
+import BookIcon from "./Book";
+import DeleteIcon from "./Trash";
+import EditIcon from "./Edit";
+import PasswordIcon from "./Password";
+import MenuBoardIcon from "./MenuBoard";
+import ArrowIcon from "./Arrow";
 
 export {
   FacebookIcon,
@@ -70,4 +79,13 @@ export {
   Boat2Icon,
   Cloud2Icon,
   CircleArrowLeftIcon,
+  BoatPart1,
+  BoatPart2,
+  ShipIcon,
+  BookIcon,
+  DeleteIcon,
+  PasswordIcon,
+  EditIcon,
+  MenuBoardIcon,
+  ArrowIcon,
 };

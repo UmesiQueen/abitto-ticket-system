@@ -1,12 +1,15 @@
 import "./styles.css";
 import React from "react";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
+import { hero, hero2, hero3 } from "@/assets/images";
 
-const images = [
-  "https://i.ibb.co/s2PKJm4/hero.jpg",
-  "https://i.ibb.co/S5HbzhB/hero-2.png",
-  "https://i.ibb.co/LQZhSyy/hero-3.png",
-];
+// const images = [
+//   "https://i.ibb.co/s2PKJm4/hero.jpg",
+//   "https://i.ibb.co/S5HbzhB/hero-2.png",
+//   "https://i.ibb.co/LQZhSyy/hero-3.png",
+// ];
+
+const images = [hero, hero2, hero3];
 const backgroundColor = ["#172554", "#f2ebd8", "#4b2d25"];
 
 export default function FadeInBackgroundTransition() {
