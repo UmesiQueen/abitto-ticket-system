@@ -20,7 +20,6 @@ export const useUpdate = () => {
 		axios
 			.patch("https://abitto-api.onrender.com/api/booking/update", formValues)
 			.then((res) => {
-				console.log(res);
 				if (res.status == 200)
 					setModalContent(
 						<SuccessModal

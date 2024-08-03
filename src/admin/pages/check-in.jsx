@@ -116,7 +116,6 @@ const CheckInTable = () => {
 					.toISOString()
 					.split("T")[0];
 				const currentDate = new Date().toISOString().split("T")[0];
-				console.log(currentDate, bookedDate);
 				const isCurrentDate = bookedDate == currentDate;
 				const isSuccess = booking?.payment_status == "Success";
 				return isCurrentDate && isSuccess;
