@@ -30,8 +30,8 @@ export const usePayment = () => {
 
 		paystack.newTransaction({
 			// key: "pk_live_297c0c356506ae67d9de7d6a51967914d9af9567", // all-in
-			// key: "pk_live_b25d12c8f8e8a5b151d6015b71ae2e99d1e4e243", // abitto
-			key: "pk_test_5d5cd21c077f1395d701366d2880665b3e9fb0f5",
+			key: "pk_live_b25d12c8f8e8a5b151d6015b71ae2e99d1e4e243", // abitto
+			// key: "pk_test_5d5cd21c077f1395d701366d2880665b3e9fb0f5",
 			amount: total_ticket_cost * 100,
 			email: formData.passengerDetails?.passenger1_email,
 			firstname: formData.passengerDetails?.passenger1_first_name,
@@ -161,9 +161,9 @@ export const usePayment = () => {
 		const paystack = new PaystackPop();
 
 		paystack.newTransaction({
-			// key: "pk_live_b25d12c8f8e8a5b151d6015b71ae2e99d1e4e243", //abitto
+			key: "pk_live_b25d12c8f8e8a5b151d6015b71ae2e99d1e4e243", //abitto
 			// key: "pk_live_297c0c356506ae67d9de7d6a51967914d9af9567", // all-in
-			key: "pk_test_5d5cd21c077f1395d701366d2880665b3e9fb0f5", // queen
+			// key: "pk_test_5d5cd21c077f1395d701366d2880665b3e9fb0f5", // queen
 			amount: rentalData.total_cost * 100,
 			email: rentalData.email,
 			firstname: rentalData.first_name,
