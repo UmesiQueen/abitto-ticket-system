@@ -196,7 +196,7 @@ const Payment = () => {
 			<div className="mt-8 space-y-1 text-xs md:text-sm ">
 				<p>
 					<span className="uppercase">Notice: </span>
-					Abitto Ferry check-in counters open <b>1 hours</b> before departure.
+					Abitto Ferry check-in counters open <b>1 hour</b> before departure.
 				</p>
 				<p>
 					Ensure to arrive early to your Terminal as boarding starts{" "}
