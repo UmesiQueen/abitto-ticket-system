@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import {
@@ -8,8 +7,7 @@ import {
 	useLocation,
 } from "react-router-dom";
 import { format } from "date-fns";
-import { formatValue } from "react-currency-input-field";
-import { capitalize, truncate } from "lodash";
+import { capitalize } from "lodash";
 import {
 	flexRender,
 	getCoreRowModel,
@@ -26,17 +24,10 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { PaginationEllipsis } from "@/components/ui/pagination";
-import ReactPaginate from "react-paginate";
 import { Button as IconButton } from "@/components/ui/button";
 import Button from "@/components/custom/Button";
 import { cn } from "@/lib/utils";
-import {
-	DeleteIcon,
-	PrinterIcon,
-	CircleArrowLeftIcon,
-	CaretIcon,
-} from "@/assets/icons";
+import { DeleteIcon, PrinterIcon, CircleArrowLeftIcon } from "@/assets/icons";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { BookingCTX } from "@/contexts/BookingContext";
 import Logo from "@/assets/logo.svg";
@@ -44,27 +35,42 @@ import RescheduleEditModal from "@/components/modals/reschedule.edit";
 import ConfirmationModal from "@/components/modals/confirmation";
 import { useScheduleTrip } from "@/hooks/useScheduleTrip";
 import axios from "axios";
-import {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
 import { useReactToPrint } from "react-to-print";
 import { humanize } from "@/lib/utils";
 
 const TripDetails = () => {
 	const { mountPortalModal, setLoading, adminProfile } =
 		React.useContext(GlobalCTX);
-	const { tripDetails, setTripDetails } = React.useContext(BookingCTX);
+	const { tripDetails, setTripDetails, bookingQuery } =
+		React.useContext(BookingCTX);
 	const navigate = useNavigate();
 	const selectedTrip = useLoaderData();
 	const { cancelRequest } = useScheduleTrip();
 	const [isPrinting, setIsPrinting] = React.useState(false);
 	const componentRef = React.useRef(null);
 	const { pathname } = useLocation();
+	const [sorting, setSorting] = React.useState([]);
+	const [columnFilters, setColumnFilters] = React.useState([]);
+	const [columnVisibility, setColumnVisibility] = React.useState({});
+	const [rowSelection, setRowSelection] = React.useState({});
+	const [pagination, setPagination] = React.useState({
+		pageIndex: 0,
+		pageSize: 29,
+	});
+	const [currentDataQuery, setCurrentDataQuery] = React.useState([]);
+
+	React.useEffect(() => {
+		if (tripDetails) {
+			const sortedQuery = bookingQuery.filter(
+				(booking) =>
+					booking.departure_trip_code == tripDetails.trip_code &&
+					booking.payment_status == "Success" &&
+					booking.check_in
+			);
+			setCurrentDataQuery(sortedQuery);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [tripDetails]);
 
 	React.useEffect(() => {
 		setLoading(false);
@@ -72,11 +78,81 @@ const TripDetails = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedTrip]);
 
-	// const getTotalBooked = () => {
-	// 	let totalSeats = 29;
-	// 	const totalBooked = totalSeats - selectedTrip?.available_seats.length;
-	// 	return totalBooked;
-	// };
+	const columns = [
+		{
+			accessorKey: "sn",
+			header: <p className="font-bold">SN</p>,
+			cell: ({ row }) => <div className="font-bold">{Number(row.id) + 1}</div>,
+		},
+		{
+			accessorKey: "id",
+			header: "Ticket ID",
+			cell: ({ row }) => (
+				<div className="uppercase">#{row.original.ticket_id}</div>
+			),
+		},
+		{
+			accessorKey: "customer",
+			header: "Customer",
+			cell: ({ row }) => (
+				<div>
+					<p className="text-[15px] font-semibold capitalize">
+						{capitalize(
+							`${row.original.passenger1_first_name} ${row.original.passenger1_last_name}`
+						)}
+					</p>
+					<p className="italic  lowercase">{row.original.passenger1_email}</p>
+				</div>
+			),
+		},
+		{
+			accessorKey: "phone_number",
+			header: "Phone Number",
+			cell: ({ row }) => <div>{row.original.passenger1_phone_number}</div>,
+		},
+		{
+			accessorKey: "seat_no",
+			header: "Seat_No",
+			cell: ({ row }) => humanize(row.original?.departure_seats),
+		},
+		{
+			accessorKey: "passenger",
+			header: <div className="text-center">Passengers</div>,
+			cell: ({ row }) => (
+				<div className="text-center">{row.original.total_passengers}</div>
+			),
+		},
+	];
+
+	const table = useReactTable({
+		data: currentDataQuery,
+		columns,
+		onSortingChange: setSorting,
+		onColumnFiltersChange: setColumnFilters,
+		getCoreRowModel: getCoreRowModel(),
+		getPaginationRowModel: getPaginationRowModel(),
+		getSortedRowModel: getSortedRowModel(),
+		getFilteredRowModel: getFilteredRowModel(),
+		onColumnVisibilityChange: setColumnVisibility,
+		onRowSelectionChange: setRowSelection,
+		onPaginationChange: setPagination,
+		pageCount: Math.ceil(currentDataQuery.length / pagination.pageSize),
+		state: {
+			sorting,
+			columnFilters,
+			columnVisibility,
+			rowSelection,
+			pagination,
+		},
+	});
+
+	const getTotalPassengers = () => {
+		if (currentDataQuery.length)
+			return currentDataQuery
+				.map((booking) => booking.total_passengers)
+				.reduce((a, c) => a + c, 0);
+		return 0;
+	};
 
 	const handleCancel = () => {
 		mountPortalModal(
@@ -166,10 +242,10 @@ const TripDetails = () => {
 									{selectedTrip?.trip_status}
 								</span>
 							</p>
-							{/* <p>
-								<strong>Total Booked:</strong>
-								{getTotalBooked()}
-							</p> */}
+							<p>
+								<strong>Total Passengers:</strong>
+								{getTotalPassengers()}
+							</p>
 						</li>
 						<li
 							className={cn(
@@ -219,227 +295,70 @@ const TripDetails = () => {
 						})}
 					/>
 				</div>
-				<TripDetailsTable props={{ isPrinting }} />
+				<div className="bg-white rounded-b-lg px-4 py-2">
+					<Table>
+						<TableHeader>
+							{table.getHeaderGroups().map((headerGroup) => (
+								<TableRow key={headerGroup.id}>
+									{headerGroup.headers.map((header) => {
+										return (
+											<TableHead key={header.id}>
+												{header.isPlaceholder
+													? null
+													: flexRender(
+															header.column.columnDef.header,
+															header.getContext()
+													  )}
+											</TableHead>
+										);
+									})}
+								</TableRow>
+							))}
+						</TableHeader>
+						<TableBody>
+							{table.getRowModel().rows?.length ? (
+								<>
+									{table.getRowModel().rows.map((row) => (
+										<TableRow
+											key={row.id}
+											onDoubleClick={(event) => {
+												if (event.target.tagName !== "BUTTON")
+													navigate(
+														`/backend/${adminProfile.account_type}/booking-details/${row.original._id}`
+													);
+											}}
+											data-state={row.getIsSelected() && "selected"}
+										>
+											{row.getVisibleCells().map((cell) => (
+												<TableCell key={cell.id} className="h-[77px]">
+													{flexRender(
+														cell.column.columnDef.cell,
+														cell.getContext()
+													)}
+												</TableCell>
+											))}
+										</TableRow>
+									))}
+								</>
+							) : (
+								<TableRow>
+									<TableCell
+										colSpan={columns.length}
+										className="h-24 text-center"
+									>
+										No results.
+									</TableCell>
+								</TableRow>
+							)}
+						</TableBody>
+					</Table>
+				</div>
 			</section>
 		</>
 	);
 };
 
 export default TripDetails;
-
-const TripDetailsTable = ({ props: { isPrinting } }) => {
-	const navigate = useNavigate();
-	const { bookingQuery, tripDetails, setCurrentPageIndex, currentPageIndex } =
-		React.useContext(BookingCTX);
-	const { adminProfile } = React.useContext(GlobalCTX);
-	const [sorting, setSorting] = React.useState([]);
-	const [columnFilters, setColumnFilters] = React.useState([]);
-	const [columnVisibility, setColumnVisibility] = React.useState({});
-	const [rowSelection, setRowSelection] = React.useState({});
-	const [pagination, setPagination] = React.useState({
-		pageIndex: 0,
-		pageSize: 7,
-	});
-	const [currentDataQuery, setCurrentDataQuery] = React.useState([]);
-
-	React.useEffect(() => {
-		if (tripDetails) {
-			const sortedQuery = bookingQuery.filter(
-				(booking) =>
-					booking.departure_trip_code == tripDetails.trip_code &&
-					booking.payment_status == "Success" &&
-					booking.check_in
-			);
-			setCurrentDataQuery(sortedQuery);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [tripDetails]);
-
-	const columns = [
-		{
-			accessorKey: "sn",
-			header: <p className="font-bold">SN</p>,
-			cell: ({ row }) => <div className="font-bold">{Number(row.id) + 1}</div>,
-		},
-		{
-			accessorKey: "id",
-			header: "Ticket ID",
-			cell: ({ row }) => (
-				<div className="uppercase">#{row.original.ticket_id}</div>
-			),
-		},
-		{
-			accessorKey: "customer",
-			header: "Customer",
-			cell: ({ row }) => (
-				<div>
-					<p className="text-[15px] font-semibold capitalize">
-						{capitalize(
-							`${row.original.passenger1_first_name} ${row.original.passenger1_last_name}`
-						)}
-					</p>
-					<p className="italic  lowercase">{row.original.passenger1_email}</p>
-				</div>
-			),
-		},
-		{
-			accessorKey: "phone_number",
-			header: "Phone Number",
-			cell: ({ row }) => <div>{row.original.passenger1_phone_number}</div>,
-		},
-		{
-			accessorKey: "seat_no",
-			header: "Seat_No",
-			cell: ({ row }) => humanize(row.original?.departure_seats),
-		},
-		{
-			accessorKey: "passenger",
-			header: <div className="text-center">Passengers</div>,
-			cell: ({ row }) => (
-				<div className="text-center">{row.original.total_passengers}</div>
-			),
-		},
-	];
-
-	const table = useReactTable({
-		data: currentDataQuery,
-		columns,
-		onSortingChange: setSorting,
-		onColumnFiltersChange: setColumnFilters,
-		getCoreRowModel: getCoreRowModel(),
-		getPaginationRowModel: getPaginationRowModel(),
-		getSortedRowModel: getSortedRowModel(),
-		getFilteredRowModel: getFilteredRowModel(),
-		onColumnVisibilityChange: setColumnVisibility,
-		onRowSelectionChange: setRowSelection,
-		onPaginationChange: setPagination,
-		pageCount: Math.ceil(currentDataQuery.length / pagination.pageSize),
-		state: {
-			sorting,
-			columnFilters,
-			columnVisibility,
-			rowSelection,
-			pagination,
-		},
-	});
-
-	React.useEffect(() => {
-		table.setPageIndex(currentPageIndex);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	const getTotalBooked = () => {
-		if (currentDataQuery.length)
-			currentDataQuery
-				.map((booking) => booking.total_passengers)
-				.reduce((a, c) => a + c, 0);
-	};
-
-	return (
-		<>
-			<div className="bg-white rounded-b-lg px-4 py-2">
-				<Table>
-					<TableHeader>
-						{table.getHeaderGroups().map((headerGroup) => (
-							<TableRow key={headerGroup.id}>
-								{headerGroup.headers.map((header) => {
-									return (
-										<TableHead key={header.id}>
-											{header.isPlaceholder
-												? null
-												: flexRender(
-														header.column.columnDef.header,
-														header.getContext()
-												  )}
-										</TableHead>
-									);
-								})}
-							</TableRow>
-						))}
-					</TableHeader>
-					<TableBody>
-						{table.getRowModel().rows?.length ? (
-							<>
-								{table.getRowModel().rows.map((row) => (
-									<TableRow
-										key={row.id}
-										onDoubleClick={(event) => {
-											if (event.target.tagName !== "BUTTON")
-												navigate(
-													`/backend/${adminProfile.account_type}/booking-details/${row.original._id}`
-												);
-										}}
-										data-state={row.getIsSelected() && "selected"}
-									>
-										{row.getVisibleCells().map((cell) => (
-											<TableCell key={cell.id} className="h-[77px]">
-												{flexRender(
-													cell.column.columnDef.cell,
-													cell.getContext()
-												)}
-											</TableCell>
-										))}
-									</TableRow>
-								))}
-							</>
-						) : (
-							<TableRow>
-								<TableCell
-									colSpan={columns.length}
-									className="h-24 text-center"
-								>
-									No results.
-								</TableCell>
-							</TableRow>
-						)}
-					</TableBody>
-				</Table>
-				{/* Pagination */}
-				{!isPrinting && (
-					<div className="flex items-center gap-8  p-4">
-						<div className="font-medium text-sm">
-							{table.getFilteredRowModel().rows.length} total booked.
-						</div>
-						<ReactPaginate
-							breakLabel={<PaginationEllipsis />}
-							nextLabel={
-								<IconButton
-									variant="ghost"
-									size="sm"
-									onClick={() => table.nextPage()}
-									disabled={!table.getCanNextPage()}
-								>
-									<CaretIcon />
-								</IconButton>
-							}
-							onPageChange={(val) => {
-								table.setPageIndex(val.selected);
-								setCurrentPageIndex(val.selected);
-							}}
-							initialPage={currentPageIndex}
-							pageRangeDisplayed={3}
-							pageCount={table.getPageCount()}
-							previousLabel={
-								<IconButton
-									variant="ghost"
-									size="sm"
-									onClick={() => table.previousPage()}
-									disabled={!table.getCanPreviousPage()}
-								>
-									<span className="rotate-180">
-										<CaretIcon />
-									</span>
-								</IconButton>
-							}
-							renderOnZeroPageCount={null}
-							className="flex gap-2 items-center text-xs font-normal [&_a]:inline-flex [&_a]:items-center [&_a]:justify-center [&_a]:min-w-7 [&_a]:h-8 [&_a]:rounded-lg *:text-center *:[&_.selected]:bg-blue-500  *:[&_.selected]:text-white [&_.disabled]:pointer-events-none "
-						/>
-					</div>
-				)}
-			</div>
-		</>
-	);
-};
 
 //  Post: query trip detail by trip_code
 export const TripDetailsLoader = async ({ params }) => {
