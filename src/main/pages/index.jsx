@@ -18,6 +18,12 @@ import Button from "@/components/custom/Button";
 import { cn } from "@/lib/utils";
 import HeroGIF from "@/assets/hero.gif";
 import CountUp from "react-countup";
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const Home = () => {
 	const { contact } = React.useContext(GlobalCTX);
@@ -282,6 +288,105 @@ const Home = () => {
 						<div className="flex-1 md:bg-blue-50 rounded-lg p-0 md:p-5 w-full self-start lg:self-stretch">
 							<ContactForm />
 						</div>
+					</div>
+				</div>
+			</section>
+
+			{/* faq */}
+			<section className="py-20 px-5 md:px-20 bg-white">
+				<div className="max-w-[1440px] mx-auto">
+					<h2 className="font-semibold text-xl md:text-2xl text-center">
+						Frequently Asked Questions (FAQs)
+					</h2>
+					<div className="my-10">
+						<Accordion type="single" collapsible className="w-full space-y-5">
+							<AccordionItem
+								value="item-1"
+								className="data-[state=open]:border-2 data-[state=open]:border-t-0 data-[state=open]:border-[#666666] shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
+							>
+								<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
+									How do I book a ticket with Abitto Ferry?
+								</AccordionTrigger>
+								<AccordionContent className="text-sm md:text-base p-5 md:p-10">
+									Visit our website at{" "}
+									<a
+										href="http://www.abittoferry.com/booking"
+										className="text-blue-500 hover:text-blue-700 font-bold"
+									>
+										www.abittoferry.com
+									</a>
+									. From the homepage, click on 'Book a Ticket,' choose your
+									trip type (One-Way or Round Trip), fill in your details, and
+									follow the prompts to complete your booking.
+								</AccordionContent>
+							</AccordionItem>
+							<AccordionItem
+								value="item-2"
+								className="data-[state=open]:border-2 data-[state=open]:border-t-0 data-[state=open]:border-[#666666] shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
+							>
+								<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
+									What payment methods are accepted?
+								</AccordionTrigger>
+								<AccordionContent className="text-sm md:text-base p-5 md:p-10">
+									We accept various payment methods, including credit/debit
+									cards, Paystack, and other secure online payment options.
+									Simply choose your preferred payment method during the booking
+									process.
+								</AccordionContent>
+							</AccordionItem>
+							<AccordionItem
+								value="item-3"
+								className="data-[state=open]:border-2 data-[state=open]:border-t-0 data-[state=open]:border-[#666666] shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
+							>
+								<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
+									Can I reschedule my trip?
+								</AccordionTrigger>
+								<AccordionContent className="text-sm md:text-base p-5 md:p-10">
+									Yes, trips can be rescheduled. Please contact our customer
+									support team at least 24 hours before your departure time to
+									make any changes to your booking.
+								</AccordionContent>
+							</AccordionItem>
+							<AccordionItem
+								value="item-4"
+								className="data-[state=open]:border-2 data-[state=open]:border-t-0 data-[state=open]:border-[#666666] shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
+							>
+								<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
+									How do I check in for my trip?
+								</AccordionTrigger>
+								<AccordionContent className="text-sm md:text-base p-5 md:p-10">
+									Check-in is done at the terminal before departure. Please
+									arrive at the terminal at least 30 minutes before your
+									scheduled departure time to complete the check-in process.
+								</AccordionContent>
+							</AccordionItem>
+							<AccordionItem
+								value="item-6"
+								className="data-[state=open]:border-2 data-[state=open]:border-t-0 data-[state=open]:border-[#666666] shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
+							>
+								<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
+									What happens if I encounter issues with my payment?
+								</AccordionTrigger>
+								<AccordionContent className="text-sm md:text-base p-5 md:p-10">
+									If you experience any issues with your payment, please contact
+									our customer support team for immediate assistance. We’re here
+									to ensure your booking process is smooth and hassle-free.
+								</AccordionContent>
+							</AccordionItem>
+							<AccordionItem
+								value="item-5"
+								className="data-[state=open]:border-2 data-[state=open]:border-t-0 data-[state=open]:border-[#666666] shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
+							>
+								<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
+									What if my preferred departure time is sold out?
+								</AccordionTrigger>
+								<AccordionContent className="text-sm md:text-base p-5 md:p-10">
+									If your preferred departure time is sold out, you can select
+									another available time. We recommend booking in advance to
+									secure your desired time slot.
+								</AccordionContent>
+							</AccordionItem>
+						</Accordion>
 					</div>
 				</div>
 			</section>
