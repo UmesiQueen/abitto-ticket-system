@@ -229,30 +229,23 @@ const About = () => {
 							<div className="space-y-3 *:indent-3">
 								<p>
 									Mr. Richard Akinaka is the Chairman and CEO of Abitto Global
-									Services Limited. He is a highly skilled project manager with
-									a wealth of experience in various fields, including oil and
-									gas services, engineering, and water resources. Mr. Akinaka
-									has successfully led projects involving construction, roads,
-									drainage systems, and more.
+									Services Limited. A skilled project manager with extensive
+									experience in oil and gas services, engineering, and water
+									resources, he has successfully led various construction
+									projects.
 								</p>
 								<p>
 									With a degree in policy and administrative studies from the
 									University of Calabar, Nigeria, Mr. Akinaka brings strong
-									leadership and management skills to Abitto. He has a proven
-									track record of working well with professionals from different
-									industries and managing complex projects.
+									leadership and management skills to Abitto. As one of the
+									founders, he leverages his business acumen and network to
+									drive the company's success, focusing on Total Quality
+									Management to deliver top-notch services.
 								</p>
 								<p>
-									As one of the founders of Abitto Global Services, Mr. Akinaka
-									leverages his extensive business knowledge and wide network of
-									contacts to drive the {"company's"} success. His focus on
-									Total Quality Management ensures that Abitto delivers
-									top-notch services to its clients.
-								</p>
-								<p>
-									His vision and leadership continue to drive Abitto Global
-									Services to excel in innovative solutions across multiple
-									industries.
+									His vision and leadership continue to propel Abitto Global
+									Services forward in providing innovative solutions across
+									multiple industries.
 								</p>
 							</div>
 						</div>
