@@ -1,6 +1,6 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { addDays, format } from "date-fns";
 import {
 	flexRender,
@@ -83,11 +83,12 @@ const searchSchema = yup
 const SearchForm = () => {
 	const { loading, setLoading, setSearchParams, searchParams } =
 		React.useContext(BookingCTX);
+	const { accountType } = useParams();
 
 	const {
-		// register,
+		register,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isSubmitted },
 		control,
 		reset,
 	} = useForm({
@@ -120,20 +121,26 @@ const SearchForm = () => {
 			className="flex gap-5 justify-between bg-white rounded-lg my-8 p-6"
 		>
 			<div className="flex gap-5 w-full ">
-				{/* <SelectField
-					{...register("departure")}
-					label="Departure"
-					placeholder="Select Departure Terminal"
-					options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
-					errors={errors}
-				/>
-				<SelectField
-					{...register("arrival")}
-					label="Arrival"
-					placeholder="Select Arrival Terminal"
-					options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
-					errors={errors}
-				/> */}
+				{["super-admin", "dev"].includes(accountType) && (
+					<>
+						<SelectField
+							{...register("departure")}
+							label="Departure"
+							placeholder="Select Departure Terminal"
+							options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
+							errors={errors}
+							formState={isSubmitted}
+						/>
+						<SelectField
+							{...register("arrival")}
+							label="Arrival"
+							placeholder="Select Arrival Terminal"
+							options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
+							errors={errors}
+							formState={isSubmitted}
+						/>
+					</>
+				)}
 				<div className="flex flex-col w-full">
 					<label className="text-xs md:text-sm !w-full flex flex-col ">
 						Choose Date
@@ -173,7 +180,7 @@ const SearchForm = () => {
 				text="Search"
 				type="submit"
 				loading={loading}
-				className="w-40 py-6  md:mt-7 "
+				className="w-44 py-6  md:mt-7 "
 			/>
 		</form>
 	);

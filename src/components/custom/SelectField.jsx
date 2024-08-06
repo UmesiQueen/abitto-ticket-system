@@ -16,9 +16,14 @@ const SelectField = React.forwardRef((props, ref) => {
 		defaultValue,
 		className,
 		handlechange = () => {},
+		formState = false,
 	} = props;
 	const [value, setValue] = React.useState(defaultValue ?? "");
 	const [open, setOpen] = React.useState(false);
+
+	React.useEffect(() => {
+		if (!formState) setValue("");
+	}, [formState]);
 
 	React.useEffect(() => {
 		window.addEventListener("scroll", handleClose);

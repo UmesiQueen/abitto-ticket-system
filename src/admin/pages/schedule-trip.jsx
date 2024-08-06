@@ -29,7 +29,7 @@ const ScheduleTrip = () => {
 		resetField,
 		watch,
 		reset,
-		formState: { errors },
+		formState: { errors, isSubmitted },
 	} = useForm({
 		mode: "onSubmit",
 		resolver: yupResolver(scheduleTripSchema),
@@ -122,6 +122,7 @@ const ScheduleTrip = () => {
 						options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
 						className="bg-white !border-gray-500"
 						errors={errors}
+						formState={isSubmitted}
 					/>
 					<SelectField
 						{...register("arrival")}
@@ -130,6 +131,7 @@ const ScheduleTrip = () => {
 						options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
 						className="bg-white !border-gray-500"
 						errors={errors}
+						formState={isSubmitted}
 					/>
 				</div>
 				<div className="flex gap-6">
