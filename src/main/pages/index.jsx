@@ -17,6 +17,7 @@ import { GlobalCTX } from "@/contexts/GlobalContext";
 import Button from "@/components/custom/Button";
 import { cn } from "@/lib/utils";
 import HeroGIF from "@/assets/hero.gif";
+import CountUp from "react-countup";
 
 const Home = () => {
 	const { contact } = React.useContext(GlobalCTX);
@@ -80,15 +81,22 @@ const Home = () => {
 					<ul className="flex gap-10 justify-between md:justify-center p-5 pb-20 text-center font-semibold [&_p:last-of-type]:font-normal  text-xl [&_p:last-of-type]:text-xs items-center">
 						<li className="hidden md:block">Invaluable Metrics</li>
 						<li>
-							<p>2M +</p>
+							<p>
+								<CountUp end={1000} enableScrollSpy />
+								k+
+							</p>
 							<p>Happy Clients</p>
 						</li>
 						<li>
-							<p>10 +</p>
+							<p>
+								<CountUp end={10} start={100} enableScrollSpy />+
+							</p>
 							<p>Years in business</p>
 						</li>
 						<li>
-							<p>200 +</p>
+							<p>
+								<CountUp end={200} enableScrollSpy />+
+							</p>
 							<p>Successful Ferry Trip</p>
 						</li>
 					</ul>
@@ -147,7 +155,7 @@ const Home = () => {
 						<iframe
 							width="560"
 							height="560"
-							src="https://www.youtube.com/embed/oKqH4VeBtD4?autoplay=1&mute=1&loop=1&playlist=oKqH4VeBtD4"
+							src="https://www.youtube.com/embed/oKqH4VeBtD4?autoplay=1&mute=1&loop=1&playlist=oKqH4VeBtD4&rel=0"
 							title="At Abitto, Your Safety is our priority"
 							frameBorder="0"
 							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
