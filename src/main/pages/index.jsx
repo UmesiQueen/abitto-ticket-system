@@ -24,6 +24,7 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from "@/components/ui/accordion";
+import SuccessModal from "@/components/modals/success";
 
 const Home = () => {
 	const { contact } = React.useContext(GlobalCTX);
@@ -404,6 +405,7 @@ const ContactForm = () => {
 		reset,
 	} = useForm();
 	const [loading, setLoading] = React.useState(false);
+	const { mountPortalModal } = React.useContext(GlobalCTX);
 
 	const onSubmit = handleSubmit((formData) => {
 		setLoading(true);
@@ -411,8 +413,13 @@ const ContactForm = () => {
 			.post("https://abitto-api.onrender.com/api/email/contact", formData)
 			.then((res) => {
 				if (res.status == 200) {
-					toast.success("Request sent successfully.");
-					reset();
+					mountPortalModal(
+						<SuccessModal
+							header="Request sent successfully."
+							text="Thank you. We have received your message and we will contact you shortly."
+							onclick={reset}
+						/>
+					);
 				}
 			})
 			.catch(() => {
