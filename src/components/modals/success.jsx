@@ -4,7 +4,7 @@ import Button from "@/components/custom/Button";
 import checkGIF from "@/assets/check.gif";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 
-const SuccessModal = ({ header, text }) => {
+const SuccessModal = ({ header, text, onclick = () => {} }) => {
 	const { unMountPortalModal } = React.useContext(GlobalCTX);
 	return (
 		<div className="w-96 px-5 pt-16 pb-10 rounded-lg bg-white flex flex-col items-center">
@@ -18,7 +18,7 @@ const SuccessModal = ({ header, text }) => {
 				className="w-full"
 				onClick={() => {
 					unMountPortalModal();
-					// location.reload();
+					onclick();
 				}}
 			/>
 		</div>
