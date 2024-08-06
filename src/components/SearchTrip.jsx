@@ -58,11 +58,16 @@ const SearchTrip = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedTrip]);
 
-	const handleCheck = (name, state, tripDetails) => {
-		setSelectedTrip((prev) => ({
-			...prev,
-			[name]: state ? tripDetails : {},
-		}));
+	const handleCheck = (name, state, tripDetails, seatExceeded) => {
+		if (!seatExceeded)
+			setSelectedTrip((prev) => ({
+				...prev,
+				[name]: state ? tripDetails : {},
+			}));
+		else
+			toast.error(
+				"There are no available seats for the number of passengers you have selected."
+			);
 	};
 
 	const handleSubmit = () => {
@@ -101,9 +106,7 @@ const SearchTrip = () => {
 		<section className="space-y-10 px-3 md:px-0">
 			<div className="flex flex-col-reverse md:flex-row gap-5 justify-between md:items-center">
 				<hgroup>
-					<h2 className="font-semibold text-sm md:text-lg">
-						Select Departure Trip
-					</h2>
+					<h2 className="font-semibold md:text-lg">Select Departure Trip</h2>
 					<p className="text-sm">Choose an option to continue</p>
 				</hgroup>
 				<div className=" self-end text-xs text-gray-500 bg-gray-200 h-12 p-1 flex gap-2 rounded-lg *:inline-flex *:items-center *:px-2 [&>*.active]:border-blue-500 [&>*.active]:border-2 [&>*.active]:font-semibold [&>*.active]:text-blue-500 *:rounded-lg">
@@ -118,19 +121,46 @@ const SearchTrip = () => {
 			<div className="space-y-3">
 				{availableTrips?.departure_trip.length ? (
 					availableTrips.departure_trip.map((item) => {
+						const isAvailableSeatsExceeded =
+							total_passengers > item.available_seats.length;
 						const isActive =
 							selectedTrip?.departure?.trip_code === item.trip_code;
 						return (
 							<div
+								role="button"
+								tabIndex={isAvailableSeatsExceeded ? "-1" : "0"}
 								key={item.trip_code}
-								data-state={isActive ? "active" : ""}
+								data-state={
+									isActive
+										? "active"
+										: isAvailableSeatsExceeded
+										? "disabled"
+										: ""
+								}
+								aria-disabled={isAvailableSeatsExceeded}
 								onClick={() => {
-									handleCheck("departure", !isActive, item);
+									handleCheck(
+										"departure",
+										!isActive,
+										item,
+										isAvailableSeatsExceeded
+									);
 								}}
-								className="grid overflow-hidden grid-cols-3 md:grid-cols-7 rounded-lg border border-gray-400 md:border-none divide-y divide-solid md:divide-y-0  min-h-32 *:bg-white [&>*]:data-[state=active]:bg-blue-50 data-[state=active]:shadow-lg *:py-2 transition-all duration-150 ease-in-out"
+								onKeyDown={(event) => {
+									event.preventDefault();
+									if (event.key === "Enter" || event.key === " ") {
+										handleCheck(
+											"departure",
+											!isActive,
+											item,
+											isAvailableSeatsExceeded
+										);
+									}
+								}}
+								className="grid overflow-hidden grid-cols-3 md:grid-cols-7 rounded-lg border border-gray-400 md:border-none divide-y divide-solid md:divide-y-0  min-h-32 *:bg-white [&>*]:data-[state=active]:bg-blue-50 data-[state=active]:shadow-lg *:py-2 transition-all duration-150 ease-in-out  [&>*]:data-[state=disabled]:bg-red-100 [&>*]:data-[state=disabled]:border-red-700 "
 							>
 								<ul className="px-5 md:px-8 col-span-3 md:col-span-4 flex-grow flex gap-3 justify-between items-center rounded-t-lg md:rounded-lg">
-									<li className="space-y-1 basis-2/5">
+									<li className="space-y-1 basis-2/5 text-left">
 										<p className="font-bold">{item.time}</p>
 										<p className="text-gray-500 text-sm">
 											{item.departure.includes("Uyo")
@@ -140,6 +170,7 @@ const SearchTrip = () => {
 										<p className="text-gray-500 text-sm">{item.date}</p>
 									</li>
 									<li className="text-gray-500 space-y-1 text-center basis-1/5">
+										{/* TODO: MAKE THIS DYNAMIC */}
 										<p className="text-xs">1 hour</p>
 										<div className="hidden md:inline-flex items-center">
 											---
@@ -177,7 +208,20 @@ const SearchTrip = () => {
 								</div>
 								<div className="px-6 col-span-2 md:col-span-1 col-start-1 flex flex-col justify-center rounded-bl-lg  md:rounded-lg items-center md:border-l-2 border-gray-400">
 									<p className="text-sm">Status</p>
-									<p className="font-semibold uppercase">Available</p>
+									<div className="text-center">
+										{isAvailableSeatsExceeded ? (
+											<>
+												<p className="font-semibold uppercase text-red-700">
+													FULL
+												</p>
+												<p className="text-sm">
+													{item.available_seats.length} available seat(s)
+												</p>
+											</>
+										) : (
+											<p className="font-semibold uppercase">AVAILABLE</p>
+										)}
+									</div>
 								</div>
 								<div className="px-6 row-start-2 md:row-row-start-1 row-span-2 md:row-span-1 col-start-3 md:col-start-7 rounded-br-lg md:rounded-lg flex items-center justify-center border-l md:border-l-2  border-gray-400">
 									<Checkbox
@@ -190,7 +234,7 @@ const SearchTrip = () => {
 						);
 					})
 				) : (
-					<div className="flex flex-col justify-center items-center min-h-40">
+					<div className="flex flex-col justify-center items-center min-h-40 text-center text-lg">
 						<p>There are no available departure trips for this date.</p>
 					</div>
 				)}
@@ -199,24 +243,51 @@ const SearchTrip = () => {
 			{trip_type == "Round Trip" && (
 				<div className="space-y-3">
 					<hgroup className="mb-5">
-						<h2 className="font-semibold text-lg">Select Return Time</h2>
+						<h2 className="font-semibold md:text-lg">Select Return Time</h2>
 						<p className="text-sm">Choose an option to continue</p>
 					</hgroup>
 					{availableTrips?.return_trip.length ? (
 						availableTrips.return_trip.map((item) => {
+							const isAvailableSeatsExceeded =
+								total_passengers > item.available_seats.length;
 							const isActive =
 								selectedTrip?.return?.trip_code === item.trip_code;
 							return (
 								<div
+									role="button"
+									tabIndex={isAvailableSeatsExceeded ? "-1" : "0"}
 									key={item.trip_code}
-									data-state={isActive ? "active" : ""}
+									data-state={
+										isActive
+											? "active"
+											: isAvailableSeatsExceeded
+											? "disabled"
+											: ""
+									}
+									aria-disabled={isAvailableSeatsExceeded}
 									onClick={() => {
-										handleCheck("return", !isActive, item);
+										handleCheck(
+											"return",
+											!isActive,
+											item,
+											isAvailableSeatsExceeded
+										);
 									}}
-									className="grid overflow-hidden grid-cols-3 md:grid-cols-7 rounded-lg border border-gray-400 md:border-none divide-y divide-solid md:divide-y-0  min-h-32 *:bg-white [&>*]:data-[state=active]:bg-blue-50 data-[state=active]:shadow-lg *:py-2 transition-all duration-150 ease-in-out"
+									onKeyDown={(event) => {
+										event.preventDefault();
+										if (event.key === "Enter" || event.key === " ") {
+											handleCheck(
+												"return",
+												!isActive,
+												item,
+												isAvailableSeatsExceeded
+											);
+										}
+									}}
+									className="grid overflow-hidden grid-cols-3 md:grid-cols-7 rounded-lg border border-gray-400 md:border-none divide-y divide-solid md:divide-y-0  min-h-32 *:bg-white [&>*]:data-[state=active]:bg-blue-50 data-[state=active]:shadow-lg *:py-2 transition-all duration-150 ease-in-out  [&>*]:data-[state=disabled]:bg-red-100 [&>*]:data-[state=disabled]:border-red-700 "
 								>
 									<ul className="px-5 md:px-8 col-span-3 md:col-span-4 flex-grow flex gap-3 justify-between items-center rounded-t-lg md:rounded-lg">
-										<li className="space-y-1 basis-2/5">
+										<li className="space-y-1 basis-2/5 text-left">
 											<p className="font-bold">{item.time}</p>
 											<p className="text-gray-500 text-sm">
 												{item.departure.includes("Uyo")
@@ -263,7 +334,20 @@ const SearchTrip = () => {
 									</div>
 									<div className="px-6 col-span-2 md:col-span-1 col-start-1 flex flex-col justify-center rounded-bl-lg  md:rounded-lg items-center md:border-l-2 border-gray-400">
 										<p className="text-sm">Status</p>
-										<p className="font-semibold uppercase">Available</p>
+										<div className="text-center">
+											{isAvailableSeatsExceeded ? (
+												<>
+													<p className="font-semibold uppercase text-red-700">
+														FULL
+													</p>
+													<p className="text-sm">
+														{item.available_seats.length} available seat(s)
+													</p>
+												</>
+											) : (
+												<p className="font-semibold uppercase">AVAILABLE</p>
+											)}
+										</div>
 									</div>
 									<div className="px-6 row-start-2 md:row-row-start-1 row-span-2 md:row-span-1 col-start-3 md:col-start-7 rounded-br-lg md:rounded-lg flex items-center justify-center border-l md:border-l-2  border-gray-400">
 										<Checkbox
@@ -276,7 +360,7 @@ const SearchTrip = () => {
 							);
 						})
 					) : (
-						<div className="flex flex-col justify-center items-center gap-3 min-h-40">
+						<div className="flex flex-col justify-center items-center gap-3 min-h-40 text-center text-lg">
 							<p>There are no available return trips for this date.</p>
 						</div>
 					)}
