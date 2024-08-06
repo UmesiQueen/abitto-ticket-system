@@ -147,7 +147,7 @@ const Home = () => {
 						<iframe
 							width="560"
 							height="560"
-							src="https://www.youtube.com/embed/oKqH4VeBtD4?si=S_XWOUBpzK6LS_WN"
+							src="https://www.youtube.com/embed/oKqH4VeBtD4?autoplay=1&mute=1&loop=1&playlist=oKqH4VeBtD4"
 							title="At Abitto, Your Safety is our priority"
 							frameBorder="0"
 							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -155,9 +155,6 @@ const Home = () => {
 							allowFullScreen
 							className="w-full aspect-video h-full lg:h-[560px] "
 						/>
-						{/* <p className="self-start text-sm font-medium text-gray-500 mt-4">
-              Safety instructions for Abitto ferry services.
-            </p> */}
 					</div>
 				</div>
 			</section>
@@ -300,7 +297,7 @@ const ContactForm = () => {
 		axios
 			.post("https://abitto-api.onrender.com/api/email/contact", formData)
 			.then((res) => {
-				if (res.status === 200) {
+				if (res.status == 200) {
 					toast.success("Request sent successfully.");
 					reset();
 				}

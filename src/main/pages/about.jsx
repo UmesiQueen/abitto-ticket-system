@@ -270,7 +270,7 @@ const About = () => {
 							<iframe
 								width="560"
 								height="315"
-								src="https://www.youtube.com/embed/heNz8-wIxws?si=vqxZXBcPMusCAHqi"
+								src="https://www.youtube.com/embed/heNz8-wIxws?autoplay=1&mute=1&loop=1&playlist=heNz8-wIxws"
 								title="Abitto products"
 								frameBorder="0"
 								allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
