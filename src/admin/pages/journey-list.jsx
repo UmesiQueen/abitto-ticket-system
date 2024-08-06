@@ -201,10 +201,17 @@ const JourneyTable = () => {
 			axios
 				.get("https://abitto-api.onrender.com/api/ticket/get")
 				.then((res) => {
-					const sortedList = res.data.tickets.filter((list) =>
-						list.departure.includes(adminProfile.city)
-					);
-					setJourneyList(sortedList);
+					if (res.status == 200) {
+						const terminals = adminProfile.terminal.map((location) =>
+							location.split(",")[1].trim().toLowerCase()
+						);
+						// Filter records based on the terminal
+						const sortedJourneyList = res.data.tickets.filter((list) => {
+							const city = list.departure.split(",")[1].trim().toLowerCase();
+							return terminals.includes(city);
+						});
+						setJourneyList(sortedJourneyList);
+					}
 				})
 				.catch((error) => {
 					console.error(error, "Error occurred while fetching journey list.");
@@ -306,7 +313,7 @@ const JourneyTable = () => {
 			header: "DateTime",
 			accessorFn: (row) => {
 				const dateTime = new Date(`${row.date} ${row.time}`);
-				return format(dateTime, "PPp");
+				return format(dateTime, "Pp");
 			},
 		},
 	];
@@ -332,7 +339,7 @@ const JourneyTable = () => {
 			sorting: [
 				{
 					id: "dateTime",
-					asc: true, // sort by name in descending order by default
+					desc: true, // sort by name in descending order by default
 				},
 			],
 		},

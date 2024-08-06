@@ -34,7 +34,7 @@ import { TimeField } from "@mui/x-date-pickers/TimeField";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { Refresh } from "iconsax-react";
 import axios from "axios";
-// import { GlobalCTX } from "@/contexts/GlobalContext";
+import { GlobalCTX } from "@/contexts/GlobalContext";
 import { toast } from "sonner";
 import { capitalize, truncate } from "lodash";
 import { formatValue } from "react-currency-input-field";
@@ -200,6 +200,7 @@ const SearchForm = () => {
 const RentalTable = () => {
 	// const navigate = useNavigate();
 	// const rentalData = useLoaderData();
+	const { adminProfile } = React.useContext(GlobalCTX);
 	const {
 		searchParams,
 		setSearchParams,
@@ -217,7 +218,17 @@ const RentalTable = () => {
 		axios
 			.get("https://abitto-api.onrender.com/api/rent/getAllRents")
 			.then((res) => {
-				setRentalData(res.data.rents);
+				if (res.status == 200) {
+					const terminals = adminProfile.terminal.map((location) =>
+						location.split(",")[1].trim().toLowerCase()
+					);
+					// Filter records based on the terminal
+					const sortedRentals = res.data.rents.filter((rentals) => {
+						const city = rentals.travel_from.split(",")[1].trim().toLowerCase();
+						return terminals.includes(city);
+					});
+					setRentalData(sortedRentals);
+				}
 			})
 			.catch((error) => {
 				console.error(error, "Error occurred while fetching rental data.");

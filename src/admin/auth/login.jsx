@@ -47,11 +47,7 @@ const Login = () => {
 						terminal: user.terminal,
 					});
 					localStorage.setItem("access token", JSON.stringify(token));
-					const navigateTo =
-						user.account_type == "admin"
-							? "/backend/admin/dashboard"
-							: "/backend/salesperson/create";
-					return navigate(navigateTo);
+					return navigate(navigateTo(user.account_type));
 				}
 			})
 			.catch((err) => {
@@ -60,6 +56,21 @@ const Login = () => {
 			})
 			.finally(() => setLoading(false));
 	});
+
+	const navigateTo = (account_type) => {
+		switch (account_type) {
+			case "super-admin":
+				return "/backend/super-admin/dashboard";
+			case "admin":
+				return "/backend/admin/dashboard";
+			case "salesperson":
+				return "/backend/salesperson/create";
+			case "dev":
+				return "/backend/dev/dashboard";
+			default:
+				return "/backend/login";
+		}
+	};
 
 	return (
 		<div className="bg-[#F7F7F7] min-h-screen flex justify-center items-center font-poppins p-5">

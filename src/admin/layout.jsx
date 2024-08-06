@@ -39,21 +39,23 @@ const ProtectedRoute = () => {
 	const { pathname } = useLocation();
 	const dataQuery = useLoaderData();
 	const accountType = adminProfile.account_type;
-	// const terminals = adminProfile.terminal;
 	const searchBarVisibility = [
 		`/backend/${accountType}/booking-details`,
 		`/backend/${accountType}/rental-details`,
-		`/backend/salesperson/create/check-in`,
-		"/backend/admin/customers",
+		`/backend/${accountType}/create/check-in`,
+		`/backend/${accountType}/customers`,
 	].includes(pathname);
 
 	React.useEffect(() => {
-		// FIXME: sort by terminal and not city
-		const sortedQuery = dataQuery.filter((booking) =>
-			booking.travel_from.includes(adminProfile.city)
+		const terminals = adminProfile.terminal.map((location) =>
+			location.split(",")[1].trim().toLowerCase()
 		);
+		// Filter records based on the terminal
+		const sortedQuery = dataQuery.filter((booking) => {
+			const city = booking.travel_from.split(",")[1].trim().toLowerCase();
+			return terminals.includes(city);
+		});
 		setBookingQuery(sortedQuery);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dataQuery]);
 
 	React.useEffect(() => {
@@ -63,47 +65,52 @@ const ProtectedRoute = () => {
 
 	const menuItems = [
 		[
-			"Create",
-			`/backend/salesperson/create`,
-			<TicketIcon key="1" />,
-			["salesperson"],
+			"Dashboard",
+			`/backend/${accountType}/dashboard`,
+			<DashboardSquareIcon key="1" />,
+			["admin", "super-admin", "dev"],
 		],
 		[
-			"Dashboard",
-			`/backend/admin/dashboard`,
-			<DashboardSquareIcon key="1" />,
-			["admin"],
+			"Create",
+			`/backend/${accountType}/create`,
+			<TicketIcon key="1" />,
+			["salesperson", "dev"],
 		],
 		[
 			"Schedule Trip",
-			`/backend/admin/schedule-trip`,
+			`/backend/${accountType}/schedule-trip`,
 			<MenuBoardIcon key="1" />,
-			["admin"],
+			["super-admin", "dev"],
 		],
 		[
 			"Journey List",
 			`/backend/${accountType}/journey-list`,
 			<InvoiceIcon key="1" />,
-			["admin", "salesperson"],
+			["admin", "super-admin", "salesperson", "dev"],
 		],
 		[
 			"Booking Details",
 			`/backend/${accountType}/booking-details`,
 			<BookIcon key="1" />,
-			["admin", "salesperson"],
+			["admin", "super-admin", "salesperson", "dev"],
 		],
 		[
 			"Rental Details",
 			`/backend/${accountType}/rental-details`,
 			<ShipIcon key="1" />,
-			["admin", "salesperson"],
+			["admin", "super-admin", "salesperson", "dev"],
 		],
-		["Customers", `/backend/admin/customers`, <UserIcon key="1" />, ["admin"]],
+		[
+			"Customers",
+			`/backend/${accountType}/customers`,
+			<UserIcon key="1" />,
+			["admin", "super-admin", "dev"],
+		],
 		[
 			"Settings",
 			`/backend/${accountType}/settings`,
 			<SettingsIcon key="1" />,
-			["admin", "salesperson"],
+			["admin", "super-admin", "dev"],
 		],
 	];
 
@@ -185,13 +192,21 @@ const ProtectedRoute = () => {
 									{adminProfile.account_type} - {adminProfile.city}
 								</p>
 							</div>
-							<Link to={`/${accountType}/settings`}>
+							{accountType == "salesperson" ? (
 								<Avatar
 									alt={adminProfile.first_name.substring(0, 1)}
 									src={adminProfile.profile_picture}
 									className="bg-gray-300"
 								/>
-							</Link>
+							) : (
+								<Link to={`/backend/${accountType}/settings`}>
+									<Avatar
+										alt={adminProfile.first_name.substring(0, 1)}
+										src={adminProfile.profile_picture}
+										className="bg-gray-300"
+									/>
+								</Link>
+							)}
 						</div>
 					</header>
 					<section className="relative min-h-[calc(100vh-64px)]">
