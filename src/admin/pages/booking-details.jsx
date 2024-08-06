@@ -59,9 +59,12 @@ const BookingDetails = () => {
 	});
 	// const [extraRows, setExtraRows] = React.useState(0);
 
-	React.useEffect(() => {}, [filtering]);
-
 	const columns = [
+		// {
+		// 	accessorKey: "sn",
+		// 	header: <p className="font-bold">SN</p>,
+		// 	cell: ({ row }) => <div className="font-bold">{Number(row.id) + 1}</div>,
+		// },
 		{
 			accessorKey: "ticket_id",
 			header: "ID",
@@ -94,16 +97,19 @@ const BookingDetails = () => {
 					</p>
 				</div>
 			),
+			enableGlobalFilter: false,
 		},
 		{
 			accessorKey: "type",
 			header: "Type",
 			cell: ({ row }) => <div>{row.original.trip_type}</div>,
+			enableGlobalFilter: false,
 		},
 		{
 			accessorKey: "departure",
 			header: "Departure",
 			cell: ({ row }) => <div>{row.original.travel_from}</div>,
+			enableGlobalFilter: false,
 		},
 		{
 			accessorKey: "date_time",
@@ -114,6 +120,7 @@ const BookingDetails = () => {
 					<p>{row.original.departure_time}</p>
 				</div>
 			),
+			enableGlobalFilter: false,
 		},
 		{
 			accessorKey: "medium",
@@ -146,6 +153,7 @@ const BookingDetails = () => {
 					</div>
 				);
 			},
+			enableGlobalFilter: false,
 		},
 		{
 			accessorKey: "amount",
@@ -158,6 +166,7 @@ const BookingDetails = () => {
 					})}
 				</div>
 			),
+			enableGlobalFilter: false,
 		},
 
 		{
@@ -475,9 +484,15 @@ export const CustomerDetails = () => {
 								</li>
 
 								<li>
-									<p className="text-xs text-[#7F7F7F]">No. Passenger</p>
+									<p className="text-xs text-[#7F7F7F]">No. of Adult</p>
 									<p className="text-base font-semibold">
-										{currentUser?.total_passengers}
+										{currentUser?.adults_number}
+									</p>
+								</li>
+								<li>
+									<p className="text-xs text-[#7F7F7F]">No. of Children</p>
+									<p className="text-base font-semibold">
+										{currentUser?.children_number ?? 0}
 									</p>
 								</li>
 								{currentUser?.passenger2_first_name && (
@@ -512,7 +527,9 @@ export const CustomerDetails = () => {
 									<li>
 										<p className="text-xs text-[#7F7F7F]">Seat No.</p>
 										<p className="text-base font-semibold">
-											{humanize(currentUser?.departure_seats)}
+											{currentUser?.departure_seats.length
+												? humanize(currentUser?.departure_seats)
+												: "N/A"}
 										</p>
 									</li>
 								</ul>
@@ -549,7 +566,9 @@ export const CustomerDetails = () => {
 										<li>
 											<p className="text-xs text-[#7F7F7F]">Seat No.</p>
 											<p className="text-base font-semibold">
-												{humanize(currentUser.return_seats)}
+												{currentUser?.return_seats.length
+													? humanize(currentUser?.return_seats)
+													: "N/A"}
 											</p>
 										</li>
 									</ul>
@@ -703,7 +722,9 @@ export const CustomerDetails = () => {
 									</p>
 									<p>
 										<ChairIcon />
-										{humanize(currentUser?.departure_seats)}
+										{currentUser?.departure_seats.length
+											? humanize(currentUser?.departure_seats)
+											: "N/A"}
 									</p>
 								</div>
 							</div>
@@ -721,7 +742,9 @@ export const CustomerDetails = () => {
 										</p>
 										<p>
 											<ChairIcon />
-											{humanize(currentUser?.return_seats)}
+											{currentUser?.return_seats.length
+												? humanize(currentUser?.return_seats)
+												: "N/A"}
 										</p>
 									</div>
 								</div>
@@ -730,13 +753,32 @@ export const CustomerDetails = () => {
 						<div className="border-y-2 border-dashed py-2">
 							<table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] ">
 								<tbody>
-									<tr>
+									{/* <tr>
 										<td className="text-xs text-[#444444]">Ride Insurance</td>
 										<td className="text-xs text-[#444444]">₦0</td>
-									</tr>
+									</tr> */}
 									<tr>
 										<td className="text-xs text-[#444444]">Ticket Price</td>
-										<td className="text-xs text-[#444444]">₦8,800</td>
+										<td className="text-xs text-[#444444]">
+											<span className="block text-sm">
+												{formatValue({
+													value: String(currentUser.departure_ticket_cost ?? 0),
+													prefix: "₦",
+												})}
+												{currentUser.trip_type === "Round Trip" && (
+													<>
+														{" + "}
+														{formatValue({
+															value: String(
+																currentUser.return_ticket_cost ?? 0
+															),
+															prefix: "₦",
+														})}
+													</>
+												)}{" "}
+												x {currentUser.total_passengers}
+											</span>
+										</td>
 									</tr>
 									<tr>
 										<td className="font-medium text-base">Total</td>

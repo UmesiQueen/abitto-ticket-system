@@ -44,7 +44,7 @@ const Report = () => {
 
 	React.useEffect(() => {
 		const totalEarnings = bookingQuery
-			.filter((booking) => booking.status === "Success")
+			.filter((booking) => booking.payment_status === "Success")
 			.map((booking) => Number(booking?.total_ticket_cost ?? 0))
 			.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
@@ -61,15 +61,15 @@ const Report = () => {
 			.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
 		const totalSuccess = bookingQuery.filter(
-			(booking) => booking.status == "Success"
+			(booking) => booking.payment_status == "Success"
 		).length;
 
 		const totalPending = bookingQuery.filter(
-			(booking) => booking.status == "Pending"
+			(booking) => booking.payment_status == "Pending"
 		).length;
 
 		const totalCanceled = bookingQuery.filter(
-			(booking) => booking.status == "Canceled"
+			(booking) => booking.payment_status == "Canceled"
 		).length;
 
 		axios
