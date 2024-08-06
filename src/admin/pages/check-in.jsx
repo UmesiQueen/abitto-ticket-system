@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button as ButtonIcon } from "@/components/ui/button";
 import Logo from "@/assets/logo.svg";
-import { addDays, format } from "date-fns";
+import { format } from "date-fns";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { CaretIcon, CircleArrowLeftIcon } from "@/assets/icons";
@@ -26,13 +26,13 @@ import {
 } from "@tanstack/react-table";
 import { Button as ButtonUI } from "@/components/ui/button";
 import Button from "@/components/custom/Button";
-import { formatValue } from "react-currency-input-field";
+// import { formatValue } from "react-currency-input-field";
 import { PaginationEllipsis } from "@/components/ui/pagination";
 import ReactPaginate from "react-paginate";
 import { truncate, capitalize } from "lodash";
 import ConfirmationModal from "@/components/modals/confirmation";
 import { useUpdate } from "@/hooks/useUpdate";
-import { cn } from "@/lib/utils";
+// import { cn } from "@/lib/utils";
 import humanizeList from "humanize-list";
 
 const CheckIn = () => {
@@ -243,7 +243,7 @@ const CheckInTable = () => {
 	});
 
 	React.useEffect(() => {
-		table.setPageIndex(currentPageIndex);
+		table.setPageIndex(currentPageIndex.checkIn);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -339,9 +339,12 @@ const CheckInTable = () => {
 						}
 						onPageChange={(val) => {
 							table.setPageIndex(val.selected);
-							setCurrentPageIndex(val.selected);
+							setCurrentPageIndex((prev) => ({
+								...prev,
+								checkIn: val.selected,
+							}));
 						}}
-						initialPage={table.getPageCount()}
+						initialPage={currentPageIndex.checkIn}
 						pageRangeDisplayed={3}
 						pageCount={table.getPageCount()}
 						previousLabel={

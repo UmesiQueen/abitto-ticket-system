@@ -6,7 +6,13 @@ export const BookingCTX = React.createContext();
 
 const BookingContext = ({ children }) => {
 	const [bookingQuery, setBookingQuery] = React.useState([]);
-	const [currentPageIndex, setCurrentPageIndex] = React.useState(1);
+	const [currentPageIndex, setCurrentPageIndex] = React.useState({
+		rentals: 0,
+		customers: 0,
+		booking: 0,
+		checkIn: 0,
+		journeyList: 0,
+	});
 	const [activeStep, setActiveStep] = React.useState(0);
 	const [formData, setFormData] = React.useState({
 		bookingDetails: {},

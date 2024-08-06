@@ -219,7 +219,7 @@ const BookingDetails = () => {
 	});
 
 	React.useEffect(() => {
-		table.setPageIndex(currentPageIndex);
+		table.setPageIndex(currentPageIndex.booking);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -357,7 +357,8 @@ export default BookingDetails;
 
 const Pagination = ({ props: { table } }) => {
 	const pageCount = table.getPageCount();
-	const { setCurrentPageIndex } = React.useContext(BookingCTX);
+	const { setCurrentPageIndex, currentPageIndex } =
+		React.useContext(BookingCTX);
 
 	return (
 		<ReactPaginate
@@ -374,9 +375,12 @@ const Pagination = ({ props: { table } }) => {
 			}
 			onPageChange={(val) => {
 				table.setPageIndex(val.selected);
-				setCurrentPageIndex(val.selected);
+				setCurrentPageIndex((prev) => ({
+					...prev,
+					booking: val.selected,
+				}));
 			}}
-			initialPage={pageCount}
+			initialPage={currentPageIndex.booking}
 			pageRangeDisplayed={3}
 			pageCount={pageCount}
 			previousLabel={

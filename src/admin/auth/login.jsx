@@ -6,8 +6,8 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { toast } from "sonner";
+import baseurl from "@/api/instance";
 
 const schema = yup.object().shape({
 	email: yup
@@ -31,8 +31,8 @@ const Login = () => {
 
 	const onSubmit = handleSubmit((formData) => {
 		setLoading(true);
-		axios
-			.post("https://abitto-api.onrender.com/api/user/login", formData)
+		baseurl
+			.post("/user/login", formData)
 			.then((res) => {
 				if (res.status == 200) {
 					const { user, token } = res.data;

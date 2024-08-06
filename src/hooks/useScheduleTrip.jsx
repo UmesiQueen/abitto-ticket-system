@@ -1,6 +1,6 @@
 import React from "react";
 import { useRevalidator } from "react-router-dom";
-import axios from "axios";
+import baseurl from "@/api/instance";
 import { toast } from "sonner";
 import SuccessModal from "@/components/modals/success";
 import { BookingCTX } from "@/contexts/BookingContext";
@@ -14,8 +14,8 @@ export const useScheduleTrip = () => {
 	const scheduleRequest = (handleReset, formValues) => {
 		setLoading(true);
 
-		axios
-			.post("https://abitto-api.onrender.com/api/ticket/create", formValues)
+		baseurl
+			.post("/ticket/create", formValues)
 			.then((res) => {
 				if (res.status == 200) {
 					setModalContent(
@@ -39,8 +39,8 @@ export const useScheduleTrip = () => {
 
 	const rescheduleRequest = (formValues) => {
 		setLoading(true);
-		axios
-			.post("https://abitto-api.onrender.com/api/ticket/update", formValues)
+		baseurl
+			.post("/ticket/update", formValues)
 			.then((res) => {
 				if (res.status == 200) {
 					setModalContent(
@@ -64,11 +64,10 @@ export const useScheduleTrip = () => {
 
 	const cancelRequest = (formValues) => {
 		setLoading(true);
-		axios
-			.post("https://abitto-api.onrender.com/api/ticket/update", formValues)
+		baseurl
+			.post("/ticket/update", formValues)
 			.then((res) => {
 				if (res.status == 200) {
-					console.log(res.data, "cancelation");
 					setModalContent(
 						<SuccessModal
 							header="Cancelation Successful"

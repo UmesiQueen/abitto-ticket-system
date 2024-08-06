@@ -2,7 +2,7 @@ import React from "react";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { toast } from "sonner";
-import axios from "axios";
+import baseurl from "@/api/instance";
 import { useStepper } from "@/hooks/useStepper";
 
 export const useSearchTrip = () => {
@@ -12,8 +12,8 @@ export const useSearchTrip = () => {
 
 	const searchAvailableTrips = (reqData) => {
 		setLoading(true);
-		axios
-			.post("https://abitto-api.onrender.com/api/ticket/query", reqData)
+		baseurl
+			.post("/ticket/query", reqData)
 			.then((res) => {
 				onNextClick();
 				setAvailableTrips(res.data);

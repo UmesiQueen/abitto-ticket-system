@@ -1,6 +1,6 @@
 import React from "react";
 import PaystackPop from "@paystack/inline-js";
-import axios from "axios";
+import baseurl from "@/api/instance";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { toast } from "sonner";
 import { GlobalCTX } from "@/contexts/GlobalContext";
@@ -30,26 +30,27 @@ export const usePayment = () => {
 
 		paystack.newTransaction({
 			// key: "pk_live_297c0c356506ae67d9de7d6a51967914d9af9567", // all-in
-			key: "pk_live_b25d12c8f8e8a5b151d6015b71ae2e99d1e4e243", // abitto
-			// key: "pk_test_5d5cd21c077f1395d701366d2880665b3e9fb0f5",
+			// key: "pk_live_b25d12c8f8e8a5b151d6015b71ae2e99d1e4e243", // abitto
+			key: "pk_test_5d5cd21c077f1395d701366d2880665b3e9fb0f5",
 			amount: total_ticket_cost * 100,
 			email: formData.passengerDetails?.passenger1_email,
 			firstname: formData.passengerDetails?.passenger1_first_name,
 			lastname: formData.passengerDetails?.passenger1_surname,
 			phone: formData.passengerDetails?.passenger1_phone_number,
 			onSuccess(res) {
-				handleOnlineRequest({
-					payment_status: "Success",
-					trxRef: res.trxref,
-					trip_status: "Upcoming",
-				});
+				console.log(res, "paystack");
+				// handleOnlineRequest({
+				// 	payment_status: "Success",
+				// 	trxRef: res.trxref,
+				// 	trip_status: "Upcoming",
+				// });
 			},
 			onCancel() {
-				handleOnlineRequest({
-					payment_status: "Canceled",
-					trxRef: "N/A",
-					trip_status: "Canceled",
-				});
+				// handleOnlineRequest({
+				// 	payment_status: "Canceled",
+				// 	trxRef: "N/A",
+				// 	trip_status: "Canceled",
+				// });
 				toast.error("Payment Declined", {
 					description: "Transaction failed. Please try again.",
 				});
@@ -82,11 +83,8 @@ export const usePayment = () => {
 
 		if (isSuccess) setLoading(true);
 
-		axios
-			.post(
-				"https://abitto-api.onrender.com/api/booking/newbooking",
-				requestData
-			)
+		baseurl
+			.post("/booking/newbooking", requestData)
 			.then((res) => {
 				if ((res.status == 200) & isSuccess) {
 					const ticket_id = res.data.booking.ticket_id;
@@ -137,11 +135,8 @@ export const usePayment = () => {
 			trip_status: "Upcoming",
 		};
 
-		axios
-			.post(
-				"https://abitto-api.onrender.com/api/booking/newbooking",
-				requestData
-			)
+		baseurl
+			.post("/booking/newbooking", requestData)
 			.then((res) => {
 				if (res.status == 200) {
 					const ticket_id = res.data.booking.ticket_id;
@@ -161,9 +156,9 @@ export const usePayment = () => {
 		const paystack = new PaystackPop();
 
 		paystack.newTransaction({
-			key: "pk_live_b25d12c8f8e8a5b151d6015b71ae2e99d1e4e243", //abitto
+			// key: "pk_live_b25d12c8f8e8a5b151d6015b71ae2e99d1e4e243", //abitto
 			// key: "pk_live_297c0c356506ae67d9de7d6a51967914d9af9567", // all-in
-			// key: "pk_test_5d5cd21c077f1395d701366d2880665b3e9fb0f5", // queen
+			key: "pk_test_5d5cd21c077f1395d701366d2880665b3e9fb0f5", // queen
 			amount: rentalData.total_cost * 100,
 			email: rentalData.email,
 			firstname: rentalData.first_name,
@@ -201,8 +196,8 @@ export const usePayment = () => {
 
 		const isSuccess = payment_status === "Success";
 
-		axios
-			.post("https://abitto-api.onrender.com/api/rent/createrent", requestData)
+		baseurl
+			.post("/rent/createrent", requestData)
 			.then((res) => {
 				if (res.status == 200 && isSuccess) {
 					const ticket_id = res.data.rent.ticket_id;
@@ -244,8 +239,8 @@ export const usePayment = () => {
 			trxRef: transaction_ref,
 		};
 
-		axios
-			.post("https://abitto-api.onrender.com/api/rent/createrent", requestData)
+		baseurl
+			.post("/rent/createrent", requestData)
 			.then((res) => {
 				if (res.status == 200) {
 					const ticket_id = res.data.rent.ticket_id;

@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import axios from "axios";
+import baseurl from "@/api/instance";
 import { Helmet } from "react-helmet-async";
 import { toast } from "sonner";
 import {
@@ -409,8 +409,8 @@ const ContactForm = () => {
 
 	const onSubmit = handleSubmit((formData) => {
 		setLoading(true);
-		axios
-			.post("https://abitto-api.onrender.com/api/email/contact", formData)
+		baseurl
+			.post("/email/contact", formData)
 			.then((res) => {
 				if (res.status == 200) {
 					mountPortalModal(

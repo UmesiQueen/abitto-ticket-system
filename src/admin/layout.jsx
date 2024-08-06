@@ -25,10 +25,10 @@ import React from "react";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { Helmet } from "react-helmet-async";
-import axios from "axios";
 import { toast } from "sonner";
 import Loader from "@/components/animation/Loader";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import baseurl from "@/api/instance";
 
 const ProtectedRoute = () => {
 	const navigate = useNavigate();
@@ -56,6 +56,7 @@ const ProtectedRoute = () => {
 			return terminals.includes(city);
 		});
 		setBookingQuery(sortedQuery);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dataQuery]);
 
 	React.useEffect(() => {
@@ -79,7 +80,9 @@ const ProtectedRoute = () => {
 		[
 			"Schedule Trip",
 			`/backend/${accountType}/schedule-trip`,
-			<MenuBoardIcon key="1" />,
+			<div key="1" className="scale-[.85] -ml-1">
+				<MenuBoardIcon />
+			</div>,
 			["super-admin", "dev"],
 		],
 		[
@@ -110,7 +113,7 @@ const ProtectedRoute = () => {
 			"Settings",
 			`/backend/${accountType}/settings`,
 			<SettingsIcon key="1" />,
-			["admin", "super-admin", "dev"],
+			["admin", "super-admin", "salesperson", "dev"],
 		],
 	];
 
@@ -239,9 +242,7 @@ export default AdminLayout;
 
 export const DataQueryLoader = async () => {
 	try {
-		const response = await axios.get(
-			"https://abitto-api.onrender.com/api/booking/queryall"
-		);
+		const response = await baseurl.get("/booking/queryall");
 		return response.data.bookings.reverse();
 	} catch (err) {
 		toast.error("Could not retrieve booking details. Refresh page.");

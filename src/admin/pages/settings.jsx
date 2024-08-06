@@ -18,6 +18,7 @@ import DefaultProfile from "@/assets/images/default_profile.png";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { BookingCTX } from "@/contexts/BookingContext";
 import axios from "axios";
+import baseurl from "@/api/instance";
 import { isValidUrl } from "@/lib/utils";
 
 const Settings = () => {
@@ -123,8 +124,8 @@ const EditProfile = () => {
 			});
 
 		if (response) {
-			await axios
-				.post("https://abitto-api.onrender.com/api/user/editprofile", {
+			await base
+				.post("/user/editprofile", {
 					...formData,
 					profile_picture: response,
 				})
@@ -293,11 +294,8 @@ const ChangePassword = () => {
 			email: adminProfile.email,
 		};
 
-		axios
-			.post(
-				"https://abitto-api.onrender.com/api/user/changepassword",
-				formValues
-			)
+		baseurl
+			.post("/user/changepassword", formValues)
 			.then((res) => {
 				toast.success(res.data.message);
 				reset();

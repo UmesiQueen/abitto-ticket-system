@@ -5,11 +5,9 @@ import { FerryBoatIcon, UserGroupIcon, WalletIcon } from "@/assets/icons";
 import { formatValue } from "react-currency-input-field";
 import { BarChart } from "@tremor/react";
 import { BookingCTX } from "@/contexts/BookingContext";
-// import { useLoaderData } from "react-router-dom";
-import axios from "axios";
+import baseurl from "@/api/instance";
 import { toast } from "sonner";
 import { PieChart, pieArcLabelClasses } from "@mui/x-charts/PieChart";
-// import { format } from "date-fns";
 import {
 	Select,
 	SelectContent,
@@ -72,8 +70,8 @@ const Report = () => {
 			(booking) => booking.payment_status == "Canceled"
 		).length;
 
-		axios
-			.get("https://abitto-api.onrender.com/api/booking/getmonthly")
+		baseurl
+			.get("/booking/getmonthly")
 			.then((res) => {
 				const totals = res.data;
 				setTotal({

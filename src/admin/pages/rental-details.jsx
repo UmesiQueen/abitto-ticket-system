@@ -33,7 +33,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { TimeField } from "@mui/x-date-pickers/TimeField";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { Refresh } from "iconsax-react";
-import axios from "axios";
+import baseurl from "@/api/instance";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { toast } from "sonner";
 import { capitalize, truncate } from "lodash";
@@ -215,8 +215,8 @@ const RentalTable = () => {
 	const [rentalData, setRentalData] = React.useState([]);
 
 	React.useEffect(() => {
-		axios
-			.get("https://abitto-api.onrender.com/api/rent/getAllRents")
+		baseurl
+			.get("/rent/getAllRents")
 			.then((res) => {
 				if (res.status == 200) {
 					const terminals = adminProfile.terminal.map((location) =>
@@ -234,11 +234,11 @@ const RentalTable = () => {
 				console.error(error, "Error occurred while fetching rental data.");
 				toast.error("Error occurred while fetching rental data. Refresh page.");
 			});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	//TODO: set pageIndex on render only if previous location path includes current page path
 	React.useEffect(() => {
-		table.setPageIndex(currentPageIndex);
+		table.setPageIndex(currentPageIndex.rentals);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -373,6 +373,11 @@ const RentalTable = () => {
 		},
 	});
 
+	React.useEffect(() => {
+		table.setPageIndex(currentPageIndex.rentals);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
 	return (
 		<div>
 			{Object.keys(searchParams).length ? (
@@ -469,10 +474,12 @@ const RentalTable = () => {
 						}
 						onPageChange={(val) => {
 							table.setPageIndex(val.selected);
-							setCurrentPageIndex(val.selected);
+							(prev) => ({
+								...prev,
+								rentals: val.selected,
+							});
 						}}
-						initialPage={0}
-						// initialPage={currentPageIndex}
+						initialPage={currentPageIndex.rentals}
 						pageRangeDisplayed={3}
 						pageCount={table.getPageCount()}
 						previousLabel={

@@ -1,5 +1,5 @@
 import React from "react";
-import axios from "axios";
+import baseurl from "@/api/instance";
 import { toast } from "sonner";
 import SuccessModal from "@/components/modals/success";
 import { BookingCTX } from "@/contexts/BookingContext";
@@ -17,8 +17,8 @@ export const useUpdate = () => {
 			ticket_id,
 		};
 
-		axios
-			.patch("https://abitto-api.onrender.com/api/booking/update", formValues)
+		baseurl
+			.patch("/booking/update", formValues)
 			.then((res) => {
 				if (res.status == 200)
 					setModalContent(

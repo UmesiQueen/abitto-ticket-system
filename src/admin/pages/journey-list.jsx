@@ -31,7 +31,7 @@ import { CaretIcon, CalendarIcon } from "@/assets/icons";
 import SelectField from "@/components/custom/SelectField";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { Refresh } from "iconsax-react";
-import axios from "axios";
+import baseurl from "@/api/instance";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { toast } from "sonner";
 
@@ -205,8 +205,8 @@ const JourneyTable = () => {
 
 	React.useEffect(() => {
 		setLoading(true),
-			axios
-				.get("https://abitto-api.onrender.com/api/ticket/get")
+			baseurl
+				.get("/ticket/get")
 				.then((res) => {
 					if (res.status == 200) {
 						const terminals = adminProfile.terminal.map((location) =>
@@ -230,9 +230,8 @@ const JourneyTable = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	//TODO: set pageIndex on render only if previous location path includes current page path
 	React.useEffect(() => {
-		table.setPageIndex(currentPageIndex);
+		table.setPageIndex(currentPageIndex.journeyList);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -452,10 +451,12 @@ const JourneyTable = () => {
 						}
 						onPageChange={(val) => {
 							table.setPageIndex(val.selected);
-							setCurrentPageIndex(val.selected);
+							setCurrentPageIndex((prev) => ({
+								...prev,
+								journeyList: val.selected,
+							}));
 						}}
-						initialPage={0}
-						// initialPage={currentPageIndex}
+						initialPage={currentPageIndex.journeyList}
 						pageRangeDisplayed={3}
 						pageCount={table.getPageCount()}
 						previousLabel={
@@ -478,16 +479,3 @@ const JourneyTable = () => {
 		</div>
 	);
 };
-
-// Get: query all scheduled trips
-// export const JourneyListLoader = async () => {
-//   try {
-//     const response = await axios.get(
-//       "https://abitto-api.onrender.com/api/ticket/get"
-//     );
-//     return response.data.tickets;
-//   } catch (error) {
-//     console.error(error, "Error occurred while fetching journey list.");
-//     return [];
-//   }
-// };

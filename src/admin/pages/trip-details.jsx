@@ -34,7 +34,7 @@ import Logo from "@/assets/logo.svg";
 import RescheduleEditModal from "@/components/modals/reschedule.edit";
 import ConfirmationModal from "@/components/modals/confirmation";
 import { useScheduleTrip } from "@/hooks/useScheduleTrip";
-import axios from "axios";
+import baseurl from "@/api/instance";
 import { useReactToPrint } from "react-to-print";
 import { humanize } from "@/lib/utils";
 import { formatValue } from "react-currency-input-field";
@@ -375,10 +375,9 @@ export default TripDetails;
 //  Post: query trip detail by trip_code
 export const TripDetailsLoader = async ({ params }) => {
 	try {
-		const response = await axios.post(
-			"https://abitto-api.onrender.com/api/ticket/tripcode",
-			{ trip_code: params.tripCode }
-		);
+		const response = await baseurl.post("/ticket/tripcode", {
+			trip_code: params.tripCode,
+		});
 		return response.data.ticket;
 	} catch (err) {
 		console.error(err, "Error occurred while retrieving trip details");

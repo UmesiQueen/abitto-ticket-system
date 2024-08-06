@@ -1,5 +1,5 @@
 import React from "react";
-import axios from "axios";
+import baseurl from "@/api/instance";
 import { format } from "date-fns";
 import { formatValue } from "react-currency-input-field";
 import { Button } from "@/components/ui/button";
@@ -328,12 +328,9 @@ export default TicketInvoice;
 // Post: query booking detail by bookingId
 export const TicketLoader = async ({ params }) => {
 	try {
-		const response = await axios.post(
-			"https://abitto-api.onrender.com/api/booking/querynew",
-			{
-				ticket_id: params.bookingID,
-			}
-		);
+		const response = await baseurl.post("/booking/querynew", {
+			ticket_id: params.bookingID,
+		});
 		return response.data.booking;
 	} catch (error) {
 		console.error(error, "error");
