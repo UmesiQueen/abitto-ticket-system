@@ -231,11 +231,6 @@ const JourneyTable = () => {
 	}, []);
 
 	React.useEffect(() => {
-		table.setPageIndex(currentPageIndex.journeyList);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	React.useEffect(() => {
 		if (searchParams) {
 			table.getColumn("departure").setFilterValue(searchParams?.departure);
 			table.getColumn("arrival").setFilterValue(searchParams?.arrival);
@@ -456,7 +451,7 @@ const JourneyTable = () => {
 								journeyList: val.selected,
 							}));
 						}}
-						initialPage={currentPageIndex.journeyList}
+						initialPage={0}
 						pageRangeDisplayed={3}
 						pageCount={table.getPageCount()}
 						previousLabel={

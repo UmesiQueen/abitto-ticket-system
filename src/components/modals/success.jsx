@@ -12,7 +12,7 @@ const SuccessModal = ({ header, text, onclick = () => {} }) => {
 				<img src={checkGIF} alt="checkIcon" width={200} height={100} />
 			</div>
 			<h2 className="font-semibold text-lg mb-3">{header}</h2>
-			<p className="text-gray-500 mb-10">{text}</p>
+			<p className="text-gray-500 mb-10 text-center">{text}</p>
 			<Button
 				text="Continue"
 				className="w-full"
