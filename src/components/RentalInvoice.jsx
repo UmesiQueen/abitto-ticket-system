@@ -1,6 +1,6 @@
 // import React from 'react'
 import React from "react";
-import baseurl from "@/api/instance";
+import baseurl from "@/api";
 import { format } from "date-fns";
 import { formatValue } from "react-currency-input-field";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ import {
 	UsersIcon,
 } from "@/assets/icons";
 import { Timelapse } from "@mui/icons-material";
+import { toast } from "sonner";
 
 const RentalInvoice = () => {
 	const navigate = useNavigate();
@@ -256,7 +257,12 @@ export const RentalInvoiceLoader = async ({ params }) => {
 		});
 		return response.data.rent;
 	} catch (error) {
-		console.error(error, "error");
+		if (
+			!error.code === "ERR_NETWORK" ||
+			!error.code === "ERR_INTERNET_DISCONNECTED" ||
+			!error.code === "ECONNABORTED"
+		)
+			toast.error("Error occurred while retrieving this rental invoice.");
 		return null;
 	}
 };

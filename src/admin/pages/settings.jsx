@@ -18,7 +18,7 @@ import DefaultProfile from "@/assets/images/default_profile.png";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { BookingCTX } from "@/contexts/BookingContext";
 import axios from "axios";
-import baseurl from "@/api/instance";
+import baseurl from "@/api";
 import { isValidUrl } from "@/lib/utils";
 
 const Settings = () => {
@@ -117,14 +117,14 @@ const EditProfile = () => {
 			.then((res) => {
 				return res.data.url;
 			})
-			.catch((err) => {
-				console.error(err, "Failed to upload profile picture to cloudinary");
+			.catch(() => {
+				toast.error("Failed to upload profile picture to cloudinary");
 				setLoading(false);
 				return false;
 			});
 
 		if (response) {
-			await base
+			await baseurl
 				.post("/user/editprofile", {
 					...formData,
 					profile_picture: response,
@@ -142,8 +142,13 @@ const EditProfile = () => {
 					}));
 					toast.success("Profile successfully updated.");
 				})
-				.catch(() => {
-					toast.error("Error occurred while updating profile.");
+				.catch((error) => {
+					if (
+						!error.code === "ERR_NETWORK" ||
+						!error.code === "ERR_INTERNET_DISCONNECTED" ||
+						!error.code === "ECONNABORTED"
+					)
+						toast.error("Error occurred while updating profile.");
 				})
 				.finally(() => {
 					setLoading(false);
@@ -300,13 +305,15 @@ const ChangePassword = () => {
 				toast.success(res.data.message);
 				reset();
 			})
-			.catch((err) => {
-				console.error(err, "Error occurred while changing password.");
-				if (err.code == "ERR_NETWORK")
-					return toast.error("Please check your internet connection.");
-				if (err.code == "ERR_BAD_REQUEST")
-					return toast.error("Old password is incorrect.");
-				return toast.error("Error occurred while changing password.Try again.");
+			.catch((error) => {
+				if (error.code === "ERR_BAD_REQUEST")
+					toast.error("Old password is incorrect.");
+				if (
+					!error.code === "ERR_NETWORK" ||
+					!error.code === "ERR_INTERNET_DISCONNECTED" ||
+					!error.code === "ECONNABORTED"
+				)
+					toast.error("Error occurred while changing password.Try again.");
 			})
 			.finally(() => {
 				setLoading(false);

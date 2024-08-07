@@ -23,7 +23,7 @@ import { capitalize } from "lodash";
 // import { GlobalCTX } from "@/contexts/GlobalContext";
 import { PaginationEllipsis } from "@/components/ui/pagination";
 import ReactPaginate from "react-paginate";
-import baseurl from "@/api/instance";
+import baseurl from "@/api";
 import { formatValue } from "react-currency-input-field";
 import { v4 as uuid } from "uuid";
 import { BookingCTX } from "@/contexts/BookingContext";
@@ -82,11 +82,15 @@ const Customers = () => {
 					setCustomersData(customersData_);
 				}
 			})
-			.catch((err) => {
-				console.error(err, "Error occurred while fetching customers data.");
-				toast.error(
-					"Error occurred while fetching customers data. Refresh page."
-				);
+			.catch((error) => {
+				if (
+					!error.code === "ERR_NETWORK" ||
+					!error.code === "ERR_INTERNET_DISCONNECTED" ||
+					!error.code === "ECONNABORTED"
+				)
+					toast.error(
+						"Error occurred while fetching customers data. Refresh page."
+					);
 			});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);

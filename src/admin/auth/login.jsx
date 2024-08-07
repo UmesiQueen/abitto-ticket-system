@@ -7,7 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import baseurl from "@/api/instance";
+import baseurl from "@/api";
 
 const schema = yup.object().shape({
 	email: yup
@@ -50,9 +50,13 @@ const Login = () => {
 					return navigate(navigateTo(user.account_type));
 				}
 			})
-			.catch((err) => {
-				toast.error(`${err.message}`);
-				console.error(err);
+			.catch((error) => {
+				if (
+					!error.code === "ERR_NETWORK" ||
+					!error.code === "ERR_INTERNET_DISCONNECTED" ||
+					!error.code === "ECONNABORTED"
+				)
+					toast.error(`${error.message}`);
 			})
 			.finally(() => setLoading(false));
 	});

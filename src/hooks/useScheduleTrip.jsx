@@ -1,6 +1,6 @@
 import React from "react";
 import { useRevalidator } from "react-router-dom";
-import baseurl from "@/api/instance";
+import baseurl from "@/api";
 import { toast } from "sonner";
 import SuccessModal from "@/components/modals/success";
 import { BookingCTX } from "@/contexts/BookingContext";
@@ -27,9 +27,13 @@ export const useScheduleTrip = () => {
 					handleReset();
 				}
 			})
-			.catch((err) => {
-				console.error(err, "Error occurred while scheduling trip.");
-				toast.error("Failed to create new trip. Please try again.");
+			.catch((error) => {
+				if (
+					!error.code === "ERR_NETWORK" ||
+					!error.code === "ERR_INTERNET_DISCONNECTED" ||
+					!error.code === "ECONNABORTED"
+				)
+					toast.error("Failed to create new trip. Please try again.");
 				unMountPortalModal();
 			})
 			.finally(() => {
@@ -52,9 +56,13 @@ export const useScheduleTrip = () => {
 					);
 				}
 			})
-			.catch((err) => {
-				console.error(err, "Error occurred while rescheduling trip.");
-				toast.error("Failed to reschedule trip. Please try again.");
+			.catch((error) => {
+				if (
+					!error.code === "ERR_NETWORK" ||
+					!error.code === "ERR_INTERNET_DISCONNECTED" ||
+					!error.code === "ECONNABORTED"
+				)
+					toast.error("Failed to reschedule trip. Please try again.");
 				unMountPortalModal();
 			})
 			.finally(() => {
@@ -77,9 +85,13 @@ export const useScheduleTrip = () => {
 					);
 				}
 			})
-			.catch((err) => {
-				console.error(err, "Error occurred while cancelling trip.");
-				toast.error("Failed to cancel trip. Please try again.");
+			.catch((error) => {
+				if (
+					!error.code === "ERR_NETWORK" ||
+					!error.code === "ERR_INTERNET_DISCONNECTED" ||
+					!error.code === "ECONNABORTED"
+				)
+					toast.error("Failed to cancel trip. Please try again.");
 				unMountPortalModal();
 			})
 			.finally(() => {

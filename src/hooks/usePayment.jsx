@@ -1,6 +1,6 @@
 import React from "react";
 import PaystackPop from "@paystack/inline-js";
-import baseurl from "@/api/instance";
+import baseurl from "@/api";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { toast } from "sonner";
 import { GlobalCTX } from "@/contexts/GlobalContext";
@@ -30,27 +30,26 @@ export const usePayment = () => {
 
 		paystack.newTransaction({
 			// key: "pk_live_297c0c356506ae67d9de7d6a51967914d9af9567", // all-in
-			// key: "pk_live_b25d12c8f8e8a5b151d6015b71ae2e99d1e4e243", // abitto
-			key: "pk_test_5d5cd21c077f1395d701366d2880665b3e9fb0f5",
+			key: "pk_live_b25d12c8f8e8a5b151d6015b71ae2e99d1e4e243", // abitto
+			// key: "pk_test_5d5cd21c077f1395d701366d2880665b3e9fb0f5",
 			amount: total_ticket_cost * 100,
 			email: formData.passengerDetails?.passenger1_email,
 			firstname: formData.passengerDetails?.passenger1_first_name,
 			lastname: formData.passengerDetails?.passenger1_surname,
 			phone: formData.passengerDetails?.passenger1_phone_number,
 			onSuccess(res) {
-				console.log(res, "paystack");
-				// handleOnlineRequest({
-				// 	payment_status: "Success",
-				// 	trxRef: res.trxref,
-				// 	trip_status: "Upcoming",
-				// });
+				handleOnlineRequest({
+					payment_status: "Success",
+					trxRef: res.trxref,
+					trip_status: "Upcoming",
+				});
 			},
 			onCancel() {
-				// handleOnlineRequest({
-				// 	payment_status: "Canceled",
-				// 	trxRef: "N/A",
-				// 	trip_status: "Canceled",
-				// });
+				handleOnlineRequest({
+					payment_status: "Canceled",
+					trxRef: "N/A",
+					trip_status: "Canceled",
+				});
 				toast.error("Payment Declined", {
 					description: "Transaction failed. Please try again.",
 				});
@@ -91,18 +90,12 @@ export const usePayment = () => {
 					mountPortalModal(<BookingSuccessModal id={ticket_id} />);
 				}
 			})
-			.catch((err) => {
+			.catch(() => {
 				if (isSuccess) {
 					document.getElementById("paystack_btn").disabled = true;
 					document.getElementById("payment_next_btn").innerHTML = "Continue";
 					toast.error(
-						err?.code == "ERR_NETWORK"
-							? "Please check your internet connection."
-							: "Bad Request.",
-						{
-							description:
-								"Oops! Booking not confirmed. Please contact us to verify.",
-						}
+						"Oops! Booking not confirmed. Please contact us to verify."
 					);
 				}
 			})
@@ -143,9 +136,13 @@ export const usePayment = () => {
 					mountPortalModal(<BookingSuccessModal id={ticket_id} />);
 				}
 			})
-			.catch((err) => {
-				toast.error("Booking not confirmed. Please try again.");
-				console.error(err, "Error occurred while sending new booking request.");
+			.catch((error) => {
+				if (
+					!error.code === "ERR_NETWORK" ||
+					!error.code === "ERR_INTERNET_DISCONNECTED" ||
+					!error.code === "ECONNABORTED"
+				)
+					toast.error("Booking not confirmed. Please try again.");
 			})
 			.finally(() => {
 				setLoading(false);
@@ -156,9 +153,9 @@ export const usePayment = () => {
 		const paystack = new PaystackPop();
 
 		paystack.newTransaction({
-			// key: "pk_live_b25d12c8f8e8a5b151d6015b71ae2e99d1e4e243", //abitto
+			key: "pk_live_b25d12c8f8e8a5b151d6015b71ae2e99d1e4e243", //abitto
 			// key: "pk_live_297c0c356506ae67d9de7d6a51967914d9af9567", // all-in
-			key: "pk_test_5d5cd21c077f1395d701366d2880665b3e9fb0f5", // queen
+			// key: "pk_test_5d5cd21c077f1395d701366d2880665b3e9fb0f5", // queen
 			amount: rentalData.total_cost * 100,
 			email: rentalData.email,
 			firstname: rentalData.first_name,
@@ -204,19 +201,12 @@ export const usePayment = () => {
 					mountPortalModal(<RentalSuccessModal id={ticket_id} />);
 				}
 			})
-			.catch((err) => {
-				console.error(err, "Error occurred while sending new rental request.");
+			.catch(() => {
 				if (isSuccess) {
 					document.getElementById("rental_payment_btn").disabled = true;
 					document.getElementById("rental_next_btn").innerHTML = "Continue";
 					toast.error(
-						err?.code == "ERR_NETWORK"
-							? "Please check your internet connection."
-							: "Bad Request.",
-						{
-							description:
-								"Oops! Rental not confirmed. Please contact us to verify.",
-						}
+						"Oops! Rental not confirmed. Please contact us to verify."
 					);
 				}
 			})
@@ -247,9 +237,13 @@ export const usePayment = () => {
 					mountPortalModal(<RentalSuccessModal id={ticket_id} />);
 				}
 			})
-			.catch((err) => {
-				console.error(err, "Error rental");
-				toast.error("Error");
+			.catch((error) => {
+				if (
+					!error.code === "ERR_NETWORK" ||
+					!error.code === "ERR_INTERNET_DISCONNECTED" ||
+					!error.code === "ECONNABORTED"
+				)
+					toast.error("Error occurred while creating new rental.");
 			})
 			.finally(() => setLoading(false));
 	};

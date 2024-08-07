@@ -28,7 +28,7 @@ import { Helmet } from "react-helmet-async";
 import { toast } from "sonner";
 import Loader from "@/components/animation/Loader";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import baseurl from "@/api/instance";
+import baseurl from "@/api";
 
 const ProtectedRoute = () => {
 	const navigate = useNavigate();
@@ -244,8 +244,14 @@ export const DataQueryLoader = async () => {
 	try {
 		const response = await baseurl.get("/booking/queryall");
 		return response.data.bookings.reverse();
-	} catch (err) {
-		toast.error("Could not retrieve booking details. Refresh page.");
+	} catch (error) {
+		if (
+			!error.code === "ERR_NETWORK" ||
+			!error.code === "ERR_INTERNET_DISCONNECTED" ||
+			!error.code === "ECONNABORTED"
+		) {
+			toast.error("Could not retrieve booking details. Refresh page.");
+		}
 		return [];
 	}
 };

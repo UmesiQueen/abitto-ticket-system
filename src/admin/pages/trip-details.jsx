@@ -34,10 +34,11 @@ import Logo from "@/assets/logo.svg";
 import RescheduleEditModal from "@/components/modals/reschedule.edit";
 import ConfirmationModal from "@/components/modals/confirmation";
 import { useScheduleTrip } from "@/hooks/useScheduleTrip";
-import baseurl from "@/api/instance";
+import baseurl from "@/api";
 import { useReactToPrint } from "react-to-print";
 import { humanize } from "@/lib/utils";
 import { formatValue } from "react-currency-input-field";
+import { toast } from "sonner";
 
 const TripDetails = () => {
 	const { mountPortalModal, setLoading, adminProfile } =
@@ -379,8 +380,13 @@ export const TripDetailsLoader = async ({ params }) => {
 			trip_code: params.tripCode,
 		});
 		return response.data.ticket;
-	} catch (err) {
-		console.error(err, "Error occurred while retrieving trip details");
+	} catch (error) {
+		if (
+			!error.code === "ERR_NETWORK" ||
+			!error.code === "ERR_INTERNET_DISCONNECTED" ||
+			!error.code === "ECONNABORTED"
+		)
+			toast.error("Error occurred while retrieving trip details");
 		return null;
 	}
 };

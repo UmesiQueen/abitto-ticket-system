@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import baseurl from "@/api/instance";
+import baseurl from "@/api";
 import { Helmet } from "react-helmet-async";
 import { toast } from "sonner";
 import {
@@ -422,8 +422,13 @@ const ContactForm = () => {
 					);
 				}
 			})
-			.catch(() => {
-				toast.error("Request failed. Please try again later.");
+			.catch((error) => {
+				if (
+					!error.code === "ERR_NETWORK" ||
+					!error.code === "ERR_INTERNET_DISCONNECTED" ||
+					!error.code === "ECONNABORTED"
+				)
+					toast.error("Request failed. Please try again later.");
 			})
 			.finally(() => {
 				setLoading(false);

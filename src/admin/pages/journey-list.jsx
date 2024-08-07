@@ -31,7 +31,7 @@ import { CaretIcon, CalendarIcon } from "@/assets/icons";
 import SelectField from "@/components/custom/SelectField";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { Refresh } from "iconsax-react";
-import baseurl from "@/api/instance";
+import baseurl from "@/api";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { toast } from "sonner";
 
@@ -221,10 +221,14 @@ const JourneyTable = () => {
 					}
 				})
 				.catch((error) => {
-					console.error(error, "Error occurred while fetching journey list.");
-					toast.error(
-						"Error occurred while fetching journey list. Refresh page."
-					);
+					if (
+						!error.code === "ERR_NETWORK" ||
+						!error.code === "ERR_INTERNET_DISCONNECTED" ||
+						!error.code === "ECONNABORTED"
+					)
+						toast.error(
+							"Error occurred while fetching journey list. Refresh page."
+						);
 				})
 				.finally(() => setLoading(false));
 		// eslint-disable-next-line react-hooks/exhaustive-deps

@@ -33,7 +33,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { TimeField } from "@mui/x-date-pickers/TimeField";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { Refresh } from "iconsax-react";
-import baseurl from "@/api/instance";
+import baseurl from "@/api";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { toast } from "sonner";
 import { capitalize, truncate } from "lodash";
@@ -231,8 +231,14 @@ const RentalTable = () => {
 				}
 			})
 			.catch((error) => {
-				console.error(error, "Error occurred while fetching rental data.");
-				toast.error("Error occurred while fetching rental data. Refresh page.");
+				if (
+					!error.code === "ERR_NETWORK" ||
+					!error.code === "ERR_INTERNET_DISCONNECTED" ||
+					!error.code === "ECONNABORTED"
+				)
+					toast.error(
+						"Error occurred while fetching rental data. Refresh page."
+					);
 			});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
