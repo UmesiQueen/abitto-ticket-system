@@ -6,8 +6,8 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { toast } from "sonner";
+import baseurl from "@/api";
 
 const schema = yup.object().shape({
 	email: yup
@@ -31,8 +31,8 @@ const Login = () => {
 
 	const onSubmit = handleSubmit((formData) => {
 		setLoading(true);
-		axios
-			.post("https://abitto-api.onrender.com/api/user/login", formData)
+		baseurl
+			.post("/user/login", formData)
 			.then((res) => {
 				if (res.status == 200) {
 					const { user, token } = res.data;
@@ -47,19 +47,34 @@ const Login = () => {
 						terminal: user.terminal,
 					});
 					localStorage.setItem("access token", JSON.stringify(token));
-					const navigateTo =
-						user.account_type == "admin"
-							? "/backend/admin/dashboard"
-							: "/backend/salesperson/create";
-					return navigate(navigateTo);
+					return navigate(navigateTo(user.account_type));
 				}
 			})
-			.catch((err) => {
-				toast.error(`${err.message}`);
-				console.error(err);
+			.catch((error) => {
+				if (
+					!error.code === "ERR_NETWORK" ||
+					!error.code === "ERR_INTERNET_DISCONNECTED" ||
+					!error.code === "ECONNABORTED"
+				)
+					toast.error(`${error.message}`);
 			})
 			.finally(() => setLoading(false));
 	});
+
+	const navigateTo = (account_type) => {
+		switch (account_type) {
+			case "super-admin":
+				return "/backend/super-admin/dashboard";
+			case "admin":
+				return "/backend/admin/dashboard";
+			case "salesperson":
+				return "/backend/salesperson/create";
+			case "dev":
+				return "/backend/dev/dashboard";
+			default:
+				return "/backend/login";
+		}
+	};
 
 	return (
 		<div className="bg-[#F7F7F7] min-h-screen flex justify-center items-center font-poppins p-5">

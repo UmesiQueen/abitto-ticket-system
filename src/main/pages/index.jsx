@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import axios from "axios";
+import baseurl from "@/api";
 import { Helmet } from "react-helmet-async";
 import { toast } from "sonner";
 import {
@@ -17,6 +17,14 @@ import { GlobalCTX } from "@/contexts/GlobalContext";
 import Button from "@/components/custom/Button";
 import { cn } from "@/lib/utils";
 import HeroGIF from "@/assets/hero.gif";
+import CountUp from "react-countup";
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "@/components/ui/accordion";
+import SuccessModal from "@/components/modals/success";
 
 const Home = () => {
 	const { contact } = React.useContext(GlobalCTX);
@@ -80,15 +88,22 @@ const Home = () => {
 					<ul className="flex gap-10 justify-between md:justify-center p-5 pb-20 text-center font-semibold [&_p:last-of-type]:font-normal  text-xl [&_p:last-of-type]:text-xs items-center">
 						<li className="hidden md:block">Invaluable Metrics</li>
 						<li>
-							<p>2M +</p>
+							<p>
+								<CountUp end={1000} enableScrollSpy />
+								k+
+							</p>
 							<p>Happy Clients</p>
 						</li>
 						<li>
-							<p>10 +</p>
+							<p>
+								<CountUp end={10} start={100} enableScrollSpy />+
+							</p>
 							<p>Years in business</p>
 						</li>
 						<li>
-							<p>200 +</p>
+							<p>
+								<CountUp end={200} enableScrollSpy />+
+							</p>
 							<p>Successful Ferry Trip</p>
 						</li>
 					</ul>
@@ -147,7 +162,7 @@ const Home = () => {
 						<iframe
 							width="560"
 							height="560"
-							src="https://www.youtube.com/embed/oKqH4VeBtD4?si=S_XWOUBpzK6LS_WN"
+							src="https://www.youtube.com/embed/oKqH4VeBtD4?autoplay=1&mute=1&loop=1&playlist=oKqH4VeBtD4&rel=0"
 							title="At Abitto, Your Safety is our priority"
 							frameBorder="0"
 							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -155,9 +170,6 @@ const Home = () => {
 							allowFullScreen
 							className="w-full aspect-video h-full lg:h-[560px] "
 						/>
-						{/* <p className="self-start text-sm font-medium text-gray-500 mt-4">
-              Safety instructions for Abitto ferry services.
-            </p> */}
 					</div>
 				</div>
 			</section>
@@ -280,6 +292,105 @@ const Home = () => {
 					</div>
 				</div>
 			</section>
+
+			{/* faq */}
+			<section className="py-20 px-5 md:px-20 bg-white">
+				<div className="max-w-[1440px] mx-auto">
+					<h2 className="font-semibold text-xl md:text-2xl text-center">
+						Frequently Asked Questions (FAQs)
+					</h2>
+					<div className="my-10">
+						<Accordion type="single" collapsible className="w-full space-y-5">
+							<AccordionItem
+								value="item-1"
+								className="data-[state=open]:border-2 data-[state=open]:border-t-0 data-[state=open]:border-[#666666] shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
+							>
+								<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
+									How do I book a ticket with Abitto Ferry?
+								</AccordionTrigger>
+								<AccordionContent className="text-sm md:text-base p-5 md:p-10">
+									Visit our website at{" "}
+									<a
+										href="http://www.abittoferry.com/booking"
+										className="text-blue-500 hover:text-blue-700 font-bold"
+									>
+										www.abittoferry.com
+									</a>
+									. From the homepage, click on 'Book a Ticket,' choose your
+									trip type (One-Way or Round Trip), fill in your details, and
+									follow the prompts to complete your booking.
+								</AccordionContent>
+							</AccordionItem>
+							<AccordionItem
+								value="item-2"
+								className="data-[state=open]:border-2 data-[state=open]:border-t-0 data-[state=open]:border-[#666666] shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
+							>
+								<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
+									What payment methods are accepted?
+								</AccordionTrigger>
+								<AccordionContent className="text-sm md:text-base p-5 md:p-10">
+									We accept various payment methods, including credit/debit
+									cards, Paystack, and other secure online payment options.
+									Simply choose your preferred payment method during the booking
+									process.
+								</AccordionContent>
+							</AccordionItem>
+							<AccordionItem
+								value="item-3"
+								className="data-[state=open]:border-2 data-[state=open]:border-t-0 data-[state=open]:border-[#666666] shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
+							>
+								<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
+									Can I reschedule my trip?
+								</AccordionTrigger>
+								<AccordionContent className="text-sm md:text-base p-5 md:p-10">
+									Yes, trips can be rescheduled. Please contact our customer
+									support team at least 24 hours before your departure time to
+									make any changes to your booking.
+								</AccordionContent>
+							</AccordionItem>
+							<AccordionItem
+								value="item-4"
+								className="data-[state=open]:border-2 data-[state=open]:border-t-0 data-[state=open]:border-[#666666] shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
+							>
+								<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
+									How do I check in for my trip?
+								</AccordionTrigger>
+								<AccordionContent className="text-sm md:text-base p-5 md:p-10">
+									Check-in is done at the terminal before departure. Please
+									arrive at the terminal at least 30 minutes before your
+									scheduled departure time to complete the check-in process.
+								</AccordionContent>
+							</AccordionItem>
+							<AccordionItem
+								value="item-6"
+								className="data-[state=open]:border-2 data-[state=open]:border-t-0 data-[state=open]:border-[#666666] shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
+							>
+								<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
+									What happens if I encounter issues with my payment?
+								</AccordionTrigger>
+								<AccordionContent className="text-sm md:text-base p-5 md:p-10">
+									If you experience any issues with your payment, please contact
+									our customer support team for immediate assistance. We’re here
+									to ensure your booking process is smooth and hassle-free.
+								</AccordionContent>
+							</AccordionItem>
+							<AccordionItem
+								value="item-5"
+								className="data-[state=open]:border-2 data-[state=open]:border-t-0 data-[state=open]:border-[#666666] shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
+							>
+								<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
+									What if my preferred departure time is sold out?
+								</AccordionTrigger>
+								<AccordionContent className="text-sm md:text-base p-5 md:p-10">
+									If your preferred departure time is sold out, you can select
+									another available time. We recommend booking in advance to
+									secure your desired time slot.
+								</AccordionContent>
+							</AccordionItem>
+						</Accordion>
+					</div>
+				</div>
+			</section>
 		</>
 	);
 };
@@ -294,19 +405,30 @@ const ContactForm = () => {
 		reset,
 	} = useForm();
 	const [loading, setLoading] = React.useState(false);
+	const { mountPortalModal } = React.useContext(GlobalCTX);
 
 	const onSubmit = handleSubmit((formData) => {
 		setLoading(true);
-		axios
-			.post("https://abitto-api.onrender.com/api/email/contact", formData)
+		baseurl
+			.post("/email/contact", formData)
 			.then((res) => {
-				if (res.status === 200) {
-					toast.success("Request sent successfully.");
-					reset();
+				if (res.status == 200) {
+					mountPortalModal(
+						<SuccessModal
+							header="Request sent successfully."
+							text="Thank you. We have received your message and we will contact you shortly."
+							onclick={reset}
+						/>
+					);
 				}
 			})
-			.catch(() => {
-				toast.error("Request failed. Please try again later.");
+			.catch((error) => {
+				if (
+					!error.code === "ERR_NETWORK" ||
+					!error.code === "ERR_INTERNET_DISCONNECTED" ||
+					!error.code === "ECONNABORTED"
+				)
+					toast.error("Request failed. Please try again later.");
 			})
 			.finally(() => {
 				setLoading(false);

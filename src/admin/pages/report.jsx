@@ -5,11 +5,9 @@ import { FerryBoatIcon, UserGroupIcon, WalletIcon } from "@/assets/icons";
 import { formatValue } from "react-currency-input-field";
 import { BarChart } from "@tremor/react";
 import { BookingCTX } from "@/contexts/BookingContext";
-// import { useLoaderData } from "react-router-dom";
-import axios from "axios";
+import baseurl from "@/api";
 import { toast } from "sonner";
 import { PieChart, pieArcLabelClasses } from "@mui/x-charts/PieChart";
-// import { format } from "date-fns";
 import {
 	Select,
 	SelectContent,
@@ -44,7 +42,7 @@ const Report = () => {
 
 	React.useEffect(() => {
 		const totalEarnings = bookingQuery
-			.filter((booking) => booking.status === "Success")
+			.filter((booking) => booking.payment_status === "Success")
 			.map((booking) => Number(booking?.total_ticket_cost ?? 0))
 			.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
@@ -61,19 +59,19 @@ const Report = () => {
 			.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
 		const totalSuccess = bookingQuery.filter(
-			(booking) => booking.status == "Success"
+			(booking) => booking.payment_status == "Success"
 		).length;
 
 		const totalPending = bookingQuery.filter(
-			(booking) => booking.status == "Pending"
+			(booking) => booking.payment_status == "Pending"
 		).length;
 
 		const totalCanceled = bookingQuery.filter(
-			(booking) => booking.status == "Canceled"
+			(booking) => booking.payment_status == "Canceled"
 		).length;
 
-		axios
-			.get("https://abitto-api.onrender.com/api/booking/getmonthly")
+		baseurl
+			.get("/booking/getmonthly")
 			.then((res) => {
 				const totals = res.data;
 				setTotal({
@@ -97,10 +95,14 @@ const Report = () => {
 				});
 			})
 			.catch((error) => {
-				console.error(error, "Error occurred while fetching journey list.");
-				toast.error(
-					"Error occurred while fetching journey list. Refresh page."
-				);
+				if (
+					!error.code === "ERR_NETWORK" ||
+					!error.code === "ERR_INTERNET_DISCONNECTED" ||
+					!error.code === "ECONNABORTED"
+				)
+					toast.error(
+						"Error occurred while fetching dashboard data. Refresh page."
+					);
 			});
 	}, [bookingQuery]);
 

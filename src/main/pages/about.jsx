@@ -4,6 +4,7 @@ import Button from "@/components/custom/Button";
 import { about, about2 } from "@/assets/images";
 import FounderImg from "@/assets/images/founder.jpg";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import CountUp from "react-countup";
 
 const About = () => {
 	const navigate = useNavigate();
@@ -62,15 +63,22 @@ const About = () => {
 						<ul className="flex gap-10 justify-between md:justify-center p-5 pb-20 text-center font-semibold [&_p:last-of-type]:font-normal  text-xl [&_p:last-of-type]:text-xs items-center">
 							<li className="hidden md:block">Invaluable Metrics</li>
 							<li>
-								<p>2M +</p>
+								<p>
+									<CountUp end={1000} enableScrollSpy />
+									k+
+								</p>
 								<p>Happy Clients</p>
 							</li>
 							<li>
-								<p>10 +</p>
+								<p>
+									<CountUp end={10} start={100} enableScrollSpy />+
+								</p>
 								<p>Years in business</p>
 							</li>
 							<li>
-								<p>200 +</p>
+								<p>
+									<CountUp end={200} enableScrollSpy />+
+								</p>
 								<p>Successful Ferry Trip</p>
 							</li>
 						</ul>
@@ -221,30 +229,23 @@ const About = () => {
 							<div className="space-y-3 *:indent-3">
 								<p>
 									Mr. Richard Akinaka is the Chairman and CEO of Abitto Global
-									Services Limited. He is a highly skilled project manager with
-									a wealth of experience in various fields, including oil and
-									gas services, engineering, and water resources. Mr. Akinaka
-									has successfully led projects involving construction, roads,
-									drainage systems, and more.
+									Services Limited. A skilled project manager with extensive
+									experience in oil and gas services, engineering, and water
+									resources, he has successfully led various construction
+									projects.
 								</p>
 								<p>
 									With a degree in policy and administrative studies from the
 									University of Calabar, Nigeria, Mr. Akinaka brings strong
-									leadership and management skills to Abitto. He has a proven
-									track record of working well with professionals from different
-									industries and managing complex projects.
+									leadership and management skills to Abitto. As one of the
+									founders, he leverages his business acumen and network to
+									drive the company's success, focusing on Total Quality
+									Management to deliver top-notch services.
 								</p>
 								<p>
-									As one of the founders of Abitto Global Services, Mr. Akinaka
-									leverages his extensive business knowledge and wide network of
-									contacts to drive the {"company's"} success. His focus on
-									Total Quality Management ensures that Abitto delivers
-									top-notch services to its clients.
-								</p>
-								<p>
-									His vision and leadership continue to drive Abitto Global
-									Services to excel in innovative solutions across multiple
-									industries.
+									His vision and leadership continue to propel Abitto Global
+									Services forward in providing innovative solutions across
+									multiple industries.
 								</p>
 							</div>
 						</div>
@@ -270,7 +271,7 @@ const About = () => {
 							<iframe
 								width="560"
 								height="315"
-								src="https://www.youtube.com/embed/heNz8-wIxws?si=vqxZXBcPMusCAHqi"
+								src="https://www.youtube.com/embed/heNz8-wIxws?autoplay=1&mute=1&loop=1&playlist=heNz8-wIxws&controls=0&modestbranding&rel=0"
 								title="Abitto products"
 								frameBorder="0"
 								allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

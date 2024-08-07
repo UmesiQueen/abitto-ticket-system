@@ -153,7 +153,7 @@ const Payment = () => {
 		<div className="flex gap-5">
 			<form
 				onSubmit={onSubmit}
-				className="basis-8/12 bg-white p-10 my-8 rounded-lg flex flex-col gap-5"
+				className="basis-8/12 bg-white p-10 rounded-lg flex flex-col gap-5"
 			>
 				<h2 className="text-blue-500 text-base font-semibold">
 					Customer Details
@@ -288,7 +288,7 @@ const Payment = () => {
 					/>
 				</div>
 			</form>
-			<div className=" self-start basis-4/12 my-8 bg-white rounded-lg p-5 flex flex-col gap-6">
+			<div className=" self-start basis-4/12  bg-white rounded-lg p-5 flex flex-col gap-6">
 				<div>
 					<h3 className="text-blue-500 font-semibold text-base ">
 						Ticket Summary

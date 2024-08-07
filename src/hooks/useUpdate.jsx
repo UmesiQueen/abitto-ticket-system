@@ -1,5 +1,5 @@
 import React from "react";
-import axios from "axios";
+import baseurl from "@/api";
 import { toast } from "sonner";
 import SuccessModal from "@/components/modals/success";
 import { BookingCTX } from "@/contexts/BookingContext";
@@ -17,8 +17,8 @@ export const useUpdate = () => {
 			ticket_id,
 		};
 
-		axios
-			.patch("https://abitto-api.onrender.com/api/booking/update", formValues)
+		baseurl
+			.patch("/booking/update", formValues)
 			.then((res) => {
 				if (res.status == 200)
 					setModalContent(
@@ -28,13 +28,14 @@ export const useUpdate = () => {
 						/>
 					);
 			})
-			.catch((err) => {
+			.catch((error) => {
 				unMountPortalModal();
-				console.error(err, "Error occurred while checking-in.");
-				if (err.code == "ERR_NETWORK")
-					return toast.error("Please check your internet connection.");
-				if (err.code == "ERR_BAD_REQUEST") return toast.error("bad request.");
-				return toast.error("Error occurred while checking-in. Try again.");
+				if (
+					!error.code === "ERR_NETWORK" ||
+					!error.code === "ERR_INTERNET_DISCONNECTED" ||
+					!error.code === "ECONNABORTED"
+				)
+					toast.error("Error occurred while checking-in. Try again.");
 			})
 			.finally(() => setLoading(false));
 	};

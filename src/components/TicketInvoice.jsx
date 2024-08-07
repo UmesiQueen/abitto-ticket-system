@@ -1,5 +1,5 @@
 import React from "react";
-import axios from "axios";
+import baseurl from "@/api";
 import { format } from "date-fns";
 import { formatValue } from "react-currency-input-field";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import {
 	Boat2Icon,
 	UsersIcon,
 } from "@/assets/icons";
+import { toast } from "sonner";
 
 const TicketInvoice = () => {
 	const navigate = useNavigate();
@@ -328,15 +329,17 @@ export default TicketInvoice;
 // Post: query booking detail by bookingId
 export const TicketLoader = async ({ params }) => {
 	try {
-		const response = await axios.post(
-			"https://abitto-api.onrender.com/api/booking/querynew",
-			{
-				ticket_id: params.bookingID,
-			}
-		);
+		const response = await baseurl.post("/booking/querynew", {
+			ticket_id: params.bookingID,
+		});
 		return response.data.booking;
 	} catch (error) {
-		console.error(error, "error");
+		if (
+			!error.code === "ERR_NETWORK" ||
+			!error.code === "ERR_INTERNET_DISCONNECTED" ||
+			!error.code === "ECONNABORTED"
+		)
+			toast.error("Error occurred while retrieving ticket invoice.");
 		return null;
 	}
 };

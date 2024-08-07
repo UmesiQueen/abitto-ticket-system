@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button as ButtonIcon } from "@/components/ui/button";
 import Logo from "@/assets/logo.svg";
-import { addDays, format } from "date-fns";
+import { format } from "date-fns";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { CaretIcon, CircleArrowLeftIcon } from "@/assets/icons";
@@ -26,13 +26,14 @@ import {
 } from "@tanstack/react-table";
 import { Button as ButtonUI } from "@/components/ui/button";
 import Button from "@/components/custom/Button";
-import { formatValue } from "react-currency-input-field";
+// import { formatValue } from "react-currency-input-field";
 import { PaginationEllipsis } from "@/components/ui/pagination";
 import ReactPaginate from "react-paginate";
 import { truncate, capitalize } from "lodash";
 import ConfirmationModal from "@/components/modals/confirmation";
 import { useUpdate } from "@/hooks/useUpdate";
-import { cn } from "@/lib/utils";
+// import { cn } from "@/lib/utils";
+import humanizeList from "humanize-list";
 
 const CheckIn = () => {
 	const navigate = useNavigate();
@@ -66,7 +67,7 @@ const CheckIn = () => {
 								</h2>
 								<p>
 									<strong>Terminal:</strong>
-									{adminProfile.terminal}
+									{humanizeList(adminProfile.terminal, { conjunction: "&" })}
 								</p>
 								<p>
 									<strong>Date:</strong>
@@ -86,6 +87,7 @@ export default CheckIn;
 
 const CheckInTable = () => {
 	const navigate = useNavigate();
+	const { accountType } = useParams();
 	const {
 		bookingQuery,
 		currentPageIndex,
@@ -99,6 +101,8 @@ const CheckInTable = () => {
 	const [columnFilters, setColumnFilters] = React.useState([]);
 	const [columnVisibility, setColumnVisibility] = React.useState({
 		fullName: false,
+		departure: accountType == "dev" ? true : false,
+		phone_number: accountType != "dev" ? true : false,
 	});
 	const [rowSelection, setRowSelection] = React.useState({});
 	const [pagination, setPagination] = React.useState({
@@ -108,20 +112,12 @@ const CheckInTable = () => {
 	const [dailyBookingQuery, setDailyBookingQuery] = React.useState([]);
 
 	React.useEffect(() => {
-		if (bookingQuery.length) {
-			const result = bookingQuery.filter((booking) => {
-				const bookedDate = new Date(
-					addDays(new Date(booking?.departure_date), 1)
-				)
-					.toISOString()
-					.split("T")[0];
-				const currentDate = new Date().toISOString().split("T")[0];
-				const isCurrentDate = bookedDate == currentDate;
-				const isSuccess = booking?.payment_status == "Success";
-				return isCurrentDate && isSuccess;
-			});
-			setDailyBookingQuery(result);
-		}
+		const result = bookingQuery.filter((booking) => {
+			const bookedDate = format(new Date(booking.departure_date), "P");
+			const currentDate = format(new Date().toISOString().split("T")[0], "P");
+			return bookedDate === currentDate && booking.payment_status == "Success";
+		});
+		setDailyBookingQuery(result);
 	}, [bookingQuery]);
 
 	const columns = [
@@ -129,6 +125,7 @@ const CheckInTable = () => {
 			accessorKey: "sn",
 			header: <p className="font-bold">SN</p>,
 			cell: ({ row }) => <div className="font-bold">{Number(row.id) + 1}</div>,
+			enableGlobalFilter: false,
 		},
 		{
 			accessorKey: "ticket_id",
@@ -162,16 +159,31 @@ const CheckInTable = () => {
 					</p>
 				</div>
 			),
+			enableGlobalFilter: false,
+		},
+		{
+			accessorKey: "phone_number",
+			header: "Phone number",
+			cell: ({ row }) => row.original.passenger1_phone_number,
+			enableGlobalFilter: false,
+		},
+		{
+			accessorKey: "departure",
+			header: "Departure",
+			cell: ({ row }) => row.original.travel_from,
+			enableGlobalFilter: false,
 		},
 		{
 			accessorKey: "type",
 			header: "Trip type",
-			cell: ({ row }) => <div>{row.original.trip_type}</div>,
+			cell: ({ row }) => row.original.trip_type,
+			enableGlobalFilter: false,
 		},
 		{
 			accessorKey: "time",
 			header: "Time",
 			cell: ({ row }) => row.original.departure_time,
+			enableGlobalFilter: false,
 		},
 		{
 			accessorKey: "passengers",
@@ -179,39 +191,17 @@ const CheckInTable = () => {
 			cell: ({ row }) => (
 				<p className="text-center">{row.original.total_passengers}</p>
 			),
+			enableGlobalFilter: false,
 		},
-		{
-			accessorKey: "amount",
-			header: "Amount",
-			cell: ({ row }) =>
-				formatValue({
-					value: String(row.original.total_ticket_cost ?? 0),
-					prefix: "₦",
-				}),
-		},
-		{
-			accessorKey: "trip_status",
-			header: <div className="text-center">Trip Status</div>,
-			cell: ({ row }) => {
-				const trip_status = row.original?.trip_status;
-				return (
-					<div
-						className={cn(
-							"rounded-lg w-20 mx-auto py-1 text-[10px] text-center font-semibold",
-							{
-								"text-green-500 bg-green-100": trip_status === "Completed",
-								"text-[#E78913] bg-[#F8DAB6]": trip_status === "Upcoming",
-								"text-[#F00000] bg-[#FAB0B0]": trip_status === "Canceled",
-								"text-black bg-slate-500/50 ": trip_status === "Rescheduled",
-								"text-purple-900 bg-purple-300/30 ": trip_status === "Missed",
-							}
-						)}
-					>
-						{trip_status}
-					</div>
-				);
-			},
-		},
+		// {
+		// 	accessorKey: "amount",
+		// 	header: "Amount",
+		// 	cell: ({ row }) =>
+		// 		formatValue({
+		// 			value: String(row.original.total_ticket_cost ?? 0),
+		// 			prefix: "₦",
+		// 		}),
+		// },
 		{
 			id: "action",
 			header: <div className="text-center">Action</div>,
@@ -253,7 +243,7 @@ const CheckInTable = () => {
 	});
 
 	React.useEffect(() => {
-		table.setPageIndex(currentPageIndex);
+		table.setPageIndex(currentPageIndex.checkIn);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -301,7 +291,7 @@ const CheckInTable = () => {
 										onDoubleClick={(event) => {
 											if (event.target.tagName !== "BUTTON")
 												navigate(
-													`/backend/salesperson/booking-details/${row.original._id}`
+													`/backend/${accountType}/booking-details/${row.original._id}`
 												);
 										}}
 										data-state={row.getIsSelected() && "selected"}
@@ -349,9 +339,12 @@ const CheckInTable = () => {
 						}
 						onPageChange={(val) => {
 							table.setPageIndex(val.selected);
-							setCurrentPageIndex(val.selected);
+							setCurrentPageIndex((prev) => ({
+								...prev,
+								checkIn: val.selected,
+							}));
 						}}
-						initialPage={table.getPageCount()}
+						initialPage={currentPageIndex.checkIn}
 						pageRangeDisplayed={3}
 						pageCount={table.getPageCount()}
 						previousLabel={

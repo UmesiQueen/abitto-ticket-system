@@ -25,10 +25,10 @@ import React from "react";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { Helmet } from "react-helmet-async";
-import axios from "axios";
 import { toast } from "sonner";
 import Loader from "@/components/animation/Loader";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import baseurl from "@/api";
 
 const ProtectedRoute = () => {
 	const navigate = useNavigate();
@@ -39,19 +39,22 @@ const ProtectedRoute = () => {
 	const { pathname } = useLocation();
 	const dataQuery = useLoaderData();
 	const accountType = adminProfile.account_type;
-	// const terminals = adminProfile.terminal;
 	const searchBarVisibility = [
 		`/backend/${accountType}/booking-details`,
 		`/backend/${accountType}/rental-details`,
-		`/backend/salesperson/create/check-in`,
-		"/backend/admin/customers",
+		`/backend/${accountType}/create/check-in`,
+		`/backend/${accountType}/customers`,
 	].includes(pathname);
 
 	React.useEffect(() => {
-		// FIXME: sort by terminal and not city
-		const sortedQuery = dataQuery.filter((booking) =>
-			booking.travel_from.includes(adminProfile.city)
+		const terminals = adminProfile.terminal.map((location) =>
+			location.split(",")[1].trim().toLowerCase()
 		);
+		// Filter records based on the terminal
+		const sortedQuery = dataQuery.filter((booking) => {
+			const city = booking.travel_from.split(",")[1].trim().toLowerCase();
+			return terminals.includes(city);
+		});
 		setBookingQuery(sortedQuery);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dataQuery]);
@@ -63,47 +66,54 @@ const ProtectedRoute = () => {
 
 	const menuItems = [
 		[
-			"Create",
-			`/backend/salesperson/create`,
-			<TicketIcon key="1" />,
-			["salesperson"],
+			"Dashboard",
+			`/backend/${accountType}/dashboard`,
+			<DashboardSquareIcon key="1" />,
+			["admin", "super-admin", "dev"],
 		],
 		[
-			"Dashboard",
-			`/backend/admin/dashboard`,
-			<DashboardSquareIcon key="1" />,
-			["admin"],
+			"Create",
+			`/backend/${accountType}/create`,
+			<TicketIcon key="1" />,
+			["salesperson", "dev"],
 		],
 		[
 			"Schedule Trip",
-			`/backend/admin/schedule-trip`,
-			<MenuBoardIcon key="1" />,
-			["admin"],
+			`/backend/${accountType}/schedule-trip`,
+			<div key="1" className="scale-[.85] -ml-1">
+				<MenuBoardIcon />
+			</div>,
+			["super-admin", "dev"],
 		],
 		[
 			"Journey List",
 			`/backend/${accountType}/journey-list`,
 			<InvoiceIcon key="1" />,
-			["admin", "salesperson"],
+			["admin", "super-admin", "salesperson", "dev"],
 		],
 		[
 			"Booking Details",
 			`/backend/${accountType}/booking-details`,
 			<BookIcon key="1" />,
-			["admin", "salesperson"],
+			["admin", "super-admin", "salesperson", "dev"],
 		],
 		[
 			"Rental Details",
 			`/backend/${accountType}/rental-details`,
 			<ShipIcon key="1" />,
-			["admin", "salesperson"],
+			["admin", "super-admin", "salesperson", "dev"],
 		],
-		["Customers", `/backend/admin/customers`, <UserIcon key="1" />, ["admin"]],
+		[
+			"Customers",
+			`/backend/${accountType}/customers`,
+			<UserIcon key="1" />,
+			["admin", "super-admin", "dev"],
+		],
 		[
 			"Settings",
 			`/backend/${accountType}/settings`,
 			<SettingsIcon key="1" />,
-			["admin", "salesperson"],
+			["admin", "super-admin", "salesperson", "dev"],
 		],
 	];
 
@@ -185,7 +195,7 @@ const ProtectedRoute = () => {
 									{adminProfile.account_type} - {adminProfile.city}
 								</p>
 							</div>
-							<Link to={`/${accountType}/settings`}>
+							<Link to={`/backend/${accountType}/settings`}>
 								<Avatar
 									alt={adminProfile.first_name.substring(0, 1)}
 									src={adminProfile.profile_picture}
@@ -224,12 +234,16 @@ export default AdminLayout;
 
 export const DataQueryLoader = async () => {
 	try {
-		const response = await axios.get(
-			"https://abitto-api.onrender.com/api/booking/queryall"
-		);
+		const response = await baseurl.get("/booking/queryall");
 		return response.data.bookings.reverse();
-	} catch (err) {
-		toast.error("Could not retrieve booking details. Refresh page.");
+	} catch (error) {
+		if (
+			!error.code === "ERR_NETWORK" ||
+			!error.code === "ERR_INTERNET_DISCONNECTED" ||
+			!error.code === "ECONNABORTED"
+		) {
+			toast.error("Could not retrieve booking details. Refresh page.");
+		}
 		return [];
 	}
 };

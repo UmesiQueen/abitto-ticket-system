@@ -4,7 +4,7 @@ import {
 	useNavigate,
 	useLoaderData,
 	Navigate,
-	useLocation,
+	useParams,
 } from "react-router-dom";
 import { format } from "date-fns";
 import { capitalize } from "lodash";
@@ -34,9 +34,11 @@ import Logo from "@/assets/logo.svg";
 import RescheduleEditModal from "@/components/modals/reschedule.edit";
 import ConfirmationModal from "@/components/modals/confirmation";
 import { useScheduleTrip } from "@/hooks/useScheduleTrip";
-import axios from "axios";
+import baseurl from "@/api";
 import { useReactToPrint } from "react-to-print";
 import { humanize } from "@/lib/utils";
+import { formatValue } from "react-currency-input-field";
+import { toast } from "sonner";
 
 const TripDetails = () => {
 	const { mountPortalModal, setLoading, adminProfile } =
@@ -48,7 +50,7 @@ const TripDetails = () => {
 	const { cancelRequest } = useScheduleTrip();
 	const [isPrinting, setIsPrinting] = React.useState(false);
 	const componentRef = React.useRef(null);
-	const { pathname } = useLocation();
+	const { accountType } = useParams();
 	const [sorting, setSorting] = React.useState([]);
 	const [columnFilters, setColumnFilters] = React.useState([]);
 	const [columnVisibility, setColumnVisibility] = React.useState({});
@@ -217,7 +219,10 @@ const TripDetails = () => {
 								{ grow: isPrinting }
 							)}
 						>
-							<h2 className="font-bold uppercase">Abitto Ferry</h2>
+							<hgroup className="flex gap-1">
+								<h2 className="font-bold uppercase">Abitto Ferry</h2>
+								<p>({selectedTrip?.trip_code})</p>
+							</hgroup>
 							<p>
 								<strong>Route: </strong>
 								{selectedTrip?.departure} - {selectedTrip?.arrival}
@@ -229,6 +234,13 @@ const TripDetails = () => {
 							<p>
 								<strong>Time:</strong>
 								{selectedTrip?.time}
+							</p>
+							<p>
+								<strong>Ticket Cost:</strong>
+								{formatValue({
+									value: String(selectedTrip?.ticket_cost),
+									prefix: "₦",
+								})}
 							</p>
 							<p>
 								<strong>Trip Status:</strong>
@@ -253,25 +265,26 @@ const TripDetails = () => {
 								{ hidden: isPrinting }
 							)}
 						>
-							{pathname.includes("admin") && (
-								<>
-									<Button
-										text="Re-schedule Trip"
-										variant="outline"
-										className="text-nowrap h-10"
-										onClick={() => {
-											mountPortalModal(<RescheduleEditModal />);
-										}}
-									/>
-									<IconButton
-										variant="destructive"
-										size="icon"
-										onClick={handleCancel}
-									>
-										<DeleteIcon />
-									</IconButton>
-								</>
-							)}
+							{["dev", "super-admin"].includes(accountType) &&
+								selectedTrip?.trip_status == "Upcoming" && (
+									<>
+										<Button
+											text="Edit Journey Details"
+											variant="outline"
+											className="text-nowrap h-10"
+											onClick={() => {
+												mountPortalModal(<RescheduleEditModal />);
+											}}
+										/>
+										<IconButton
+											variant="destructive"
+											size="icon"
+											onClick={handleCancel}
+										>
+											<DeleteIcon />
+										</IconButton>
+									</>
+								)}
 
 							<IconButton
 								size="icon"
@@ -363,13 +376,17 @@ export default TripDetails;
 //  Post: query trip detail by trip_code
 export const TripDetailsLoader = async ({ params }) => {
 	try {
-		const response = await axios.post(
-			"https://abitto-api.onrender.com/api/ticket/tripcode",
-			{ trip_code: params.tripCode }
-		);
+		const response = await baseurl.post("/ticket/tripcode", {
+			trip_code: params.tripCode,
+		});
 		return response.data.ticket;
-	} catch (err) {
-		console.error(err, "Error occurred while retrieving trip details");
+	} catch (error) {
+		if (
+			!error.code === "ERR_NETWORK" ||
+			!error.code === "ERR_INTERNET_DISCONNECTED" ||
+			!error.code === "ECONNABORTED"
+		)
+			toast.error("Error occurred while retrieving trip details");
 		return null;
 	}
 };

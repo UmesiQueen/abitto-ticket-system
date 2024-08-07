@@ -1,6 +1,6 @@
 import React from "react";
 import PaystackPop from "@paystack/inline-js";
-import axios from "axios";
+import baseurl from "@/api";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { toast } from "sonner";
 import { GlobalCTX } from "@/contexts/GlobalContext";
@@ -82,29 +82,20 @@ export const usePayment = () => {
 
 		if (isSuccess) setLoading(true);
 
-		axios
-			.post(
-				"https://abitto-api.onrender.com/api/booking/newbooking",
-				requestData
-			)
+		baseurl
+			.post("/booking/newbooking", requestData)
 			.then((res) => {
 				if ((res.status == 200) & isSuccess) {
 					const ticket_id = res.data.booking.ticket_id;
 					mountPortalModal(<BookingSuccessModal id={ticket_id} />);
 				}
 			})
-			.catch((err) => {
+			.catch(() => {
 				if (isSuccess) {
 					document.getElementById("paystack_btn").disabled = true;
 					document.getElementById("payment_next_btn").innerHTML = "Continue";
 					toast.error(
-						err?.code == "ERR_NETWORK"
-							? "Please check your internet connection."
-							: "Bad Request.",
-						{
-							description:
-								"Oops! Booking not confirmed. Please contact us to verify.",
-						}
+						"Oops! Booking not confirmed. Please contact us to verify."
 					);
 				}
 			})
@@ -137,20 +128,21 @@ export const usePayment = () => {
 			trip_status: "Upcoming",
 		};
 
-		axios
-			.post(
-				"https://abitto-api.onrender.com/api/booking/newbooking",
-				requestData
-			)
+		baseurl
+			.post("/booking/newbooking", requestData)
 			.then((res) => {
 				if (res.status == 200) {
 					const ticket_id = res.data.booking.ticket_id;
 					mountPortalModal(<BookingSuccessModal id={ticket_id} />);
 				}
 			})
-			.catch((err) => {
-				toast.error("Booking not confirmed. Please try again.");
-				console.error(err, "Error occurred while sending new booking request.");
+			.catch((error) => {
+				if (
+					!error.code === "ERR_NETWORK" ||
+					!error.code === "ERR_INTERNET_DISCONNECTED" ||
+					!error.code === "ECONNABORTED"
+				)
+					toast.error("Booking not confirmed. Please try again.");
 			})
 			.finally(() => {
 				setLoading(false);
@@ -201,27 +193,20 @@ export const usePayment = () => {
 
 		const isSuccess = payment_status === "Success";
 
-		axios
-			.post("https://abitto-api.onrender.com/api/rent/createrent", requestData)
+		baseurl
+			.post("/rent/createrent", requestData)
 			.then((res) => {
 				if (res.status == 200 && isSuccess) {
 					const ticket_id = res.data.rent.ticket_id;
 					mountPortalModal(<RentalSuccessModal id={ticket_id} />);
 				}
 			})
-			.catch((err) => {
-				console.error(err, "Error occurred while sending new rental request.");
+			.catch(() => {
 				if (isSuccess) {
 					document.getElementById("rental_payment_btn").disabled = true;
 					document.getElementById("rental_next_btn").innerHTML = "Continue";
 					toast.error(
-						err?.code == "ERR_NETWORK"
-							? "Please check your internet connection."
-							: "Bad Request.",
-						{
-							description:
-								"Oops! Rental not confirmed. Please contact us to verify.",
-						}
+						"Oops! Rental not confirmed. Please contact us to verify."
 					);
 				}
 			})
@@ -244,17 +229,21 @@ export const usePayment = () => {
 			trxRef: transaction_ref,
 		};
 
-		axios
-			.post("https://abitto-api.onrender.com/api/rent/createrent", requestData)
+		baseurl
+			.post("/rent/createrent", requestData)
 			.then((res) => {
 				if (res.status == 200) {
 					const ticket_id = res.data.rent.ticket_id;
 					mountPortalModal(<RentalSuccessModal id={ticket_id} />);
 				}
 			})
-			.catch((err) => {
-				console.error(err, "Error rental");
-				toast.error("Error");
+			.catch((error) => {
+				if (
+					!error.code === "ERR_NETWORK" ||
+					!error.code === "ERR_INTERNET_DISCONNECTED" ||
+					!error.code === "ECONNABORTED"
+				)
+					toast.error("Error occurred while creating new rental.");
 			})
 			.finally(() => setLoading(false));
 	};

@@ -1,6 +1,6 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { addDays, format } from "date-fns";
 import {
 	flexRender,
@@ -31,7 +31,7 @@ import { CaretIcon, CalendarIcon } from "@/assets/icons";
 import SelectField from "@/components/custom/SelectField";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { Refresh } from "iconsax-react";
-import axios from "axios";
+import baseurl from "@/api";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { toast } from "sonner";
 
@@ -83,11 +83,12 @@ const searchSchema = yup
 const SearchForm = () => {
 	const { loading, setLoading, setSearchParams, searchParams } =
 		React.useContext(BookingCTX);
+	const { accountType } = useParams();
 
 	const {
-		// register,
+		register,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isSubmitted },
 		control,
 		reset,
 	} = useForm({
@@ -120,20 +121,26 @@ const SearchForm = () => {
 			className="flex gap-5 justify-between bg-white rounded-lg my-8 p-6"
 		>
 			<div className="flex gap-5 w-full ">
-				{/* <SelectField
-					{...register("departure")}
-					label="Departure"
-					placeholder="Select Departure Terminal"
-					options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
-					errors={errors}
-				/>
-				<SelectField
-					{...register("arrival")}
-					label="Arrival"
-					placeholder="Select Arrival Terminal"
-					options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
-					errors={errors}
-				/> */}
+				{["super-admin", "dev"].includes(accountType) && (
+					<>
+						<SelectField
+							{...register("departure")}
+							label="Departure"
+							placeholder="Select Departure Terminal"
+							options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
+							errors={errors}
+							formState={isSubmitted}
+						/>
+						<SelectField
+							{...register("arrival")}
+							label="Arrival"
+							placeholder="Select Arrival Terminal"
+							options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
+							errors={errors}
+							formState={isSubmitted}
+						/>
+					</>
+				)}
 				<div className="flex flex-col w-full">
 					<label className="text-xs md:text-sm !w-full flex flex-col ">
 						Choose Date
@@ -173,7 +180,7 @@ const SearchForm = () => {
 				text="Search"
 				type="submit"
 				loading={loading}
-				className="w-40 py-6  md:mt-7 "
+				className="w-44 py-6  md:mt-7 "
 			/>
 		</form>
 	);
@@ -198,27 +205,32 @@ const JourneyTable = () => {
 
 	React.useEffect(() => {
 		setLoading(true),
-			axios
-				.get("https://abitto-api.onrender.com/api/ticket/get")
+			baseurl
+				.get("/ticket/get")
 				.then((res) => {
-					const sortedList = res.data.tickets.filter((list) =>
-						list.departure.includes(adminProfile.city)
-					);
-					setJourneyList(sortedList);
+					if (res.status == 200) {
+						const terminals = adminProfile.terminal.map((location) =>
+							location.split(",")[1].trim().toLowerCase()
+						);
+						// Filter records based on the terminal
+						const sortedJourneyList = res.data.tickets.filter((list) => {
+							const city = list.departure.split(",")[1].trim().toLowerCase();
+							return terminals.includes(city);
+						});
+						setJourneyList(sortedJourneyList);
+					}
 				})
 				.catch((error) => {
-					console.error(error, "Error occurred while fetching journey list.");
-					toast.error(
-						"Error occurred while fetching journey list. Refresh page."
-					);
+					if (
+						!error.code === "ERR_NETWORK" ||
+						!error.code === "ERR_INTERNET_DISCONNECTED" ||
+						!error.code === "ECONNABORTED"
+					)
+						toast.error(
+							"Error occurred while fetching journey list. Refresh page."
+						);
 				})
 				.finally(() => setLoading(false));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	//TODO: set pageIndex on render only if previous location path includes current page path
-	React.useEffect(() => {
-		table.setPageIndex(currentPageIndex);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -306,7 +318,7 @@ const JourneyTable = () => {
 			header: "DateTime",
 			accessorFn: (row) => {
 				const dateTime = new Date(`${row.date} ${row.time}`);
-				return format(dateTime, "PPp");
+				return format(dateTime, "Pp");
 			},
 		},
 	];
@@ -332,7 +344,7 @@ const JourneyTable = () => {
 			sorting: [
 				{
 					id: "dateTime",
-					asc: true, // sort by name in descending order by default
+					desc: true, // sort by name in descending order by default
 				},
 			],
 		},
@@ -438,10 +450,12 @@ const JourneyTable = () => {
 						}
 						onPageChange={(val) => {
 							table.setPageIndex(val.selected);
-							setCurrentPageIndex(val.selected);
+							setCurrentPageIndex((prev) => ({
+								...prev,
+								journeyList: val.selected,
+							}));
 						}}
 						initialPage={0}
-						// initialPage={currentPageIndex}
 						pageRangeDisplayed={3}
 						pageCount={table.getPageCount()}
 						previousLabel={
@@ -464,16 +478,3 @@ const JourneyTable = () => {
 		</div>
 	);
 };
-
-// Get: query all scheduled trips
-// export const JourneyListLoader = async () => {
-//   try {
-//     const response = await axios.get(
-//       "https://abitto-api.onrender.com/api/ticket/get"
-//     );
-//     return response.data.tickets;
-//   } catch (error) {
-//     console.error(error, "Error occurred while fetching journey list.");
-//     return [];
-//   }
-// };

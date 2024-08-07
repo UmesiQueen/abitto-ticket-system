@@ -2,7 +2,7 @@ import React from "react";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { toast } from "sonner";
-import axios from "axios";
+import baseurl from "@/api";
 import { useStepper } from "@/hooks/useStepper";
 
 export const useSearchTrip = () => {
@@ -12,15 +12,19 @@ export const useSearchTrip = () => {
 
 	const searchAvailableTrips = (reqData) => {
 		setLoading(true);
-		axios
-			.post("https://abitto-api.onrender.com/api/ticket/query", reqData)
+		baseurl
+			.post("/ticket/query", reqData)
 			.then((res) => {
 				onNextClick();
 				setAvailableTrips(res.data);
 			})
-			.catch((err) => {
-				console.error(err, "Error occurred while retrieving available trips.");
-				toast.error("Unable to retrieve available trips. Please try again.");
+			.catch((error) => {
+				if (
+					!error.code === "ERR_NETWORK" ||
+					!error.code === "ERR_INTERNET_DISCONNECTED" ||
+					!error.code === "ECONNABORTED"
+				)
+					toast.error("Unable to retrieve available trips. Please try again.");
 			})
 			.finally(() => {
 				setLoading(false);

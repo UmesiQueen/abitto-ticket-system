@@ -20,10 +20,10 @@ import {
 } from "@tanstack/react-table";
 import { Button as ButtonUI } from "@/components/ui/button";
 import { capitalize } from "lodash";
-import { GlobalCTX } from "@/contexts/GlobalContext";
+// import { GlobalCTX } from "@/contexts/GlobalContext";
 import { PaginationEllipsis } from "@/components/ui/pagination";
 import ReactPaginate from "react-paginate";
-import axios from "axios";
+import baseurl from "@/api";
 import { formatValue } from "react-currency-input-field";
 import { v4 as uuid } from "uuid";
 import { BookingCTX } from "@/contexts/BookingContext";
@@ -31,9 +31,14 @@ import { toast } from "sonner";
 
 const Customers = () => {
 	// const navigate = useNavigate();
-	const { setCurrentPageIndex, currentPageIndex } = React.useContext(GlobalCTX);
-	const { customersData, setCustomersData, filtering, setFiltering } =
-		React.useContext(BookingCTX);
+	const {
+		customersData,
+		setCustomersData,
+		filtering,
+		setFiltering,
+		setCurrentPageIndex,
+		currentPageIndex,
+	} = React.useContext(BookingCTX);
 	const [sorting, setSorting] = React.useState([]);
 	const [columnFilters, setColumnFilters] = React.useState([]);
 	const [columnVisibility, setColumnVisibility] = React.useState({
@@ -46,8 +51,8 @@ const Customers = () => {
 	});
 
 	React.useEffect(() => {
-		axios
-			.get("https://abitto-api.onrender.com/api/booking/customerdetails")
+		baseurl
+			.get("/booking/customerdetails")
 			.then((res) => {
 				if (res.status == 200) {
 					const response = res.data.customerDetails;
@@ -77,11 +82,15 @@ const Customers = () => {
 					setCustomersData(customersData_);
 				}
 			})
-			.catch((err) => {
-				console.error(err, "Error occurred while fetching customers data.");
-				toast.error(
-					"Error occurred while fetching customers data. Refresh page."
-				);
+			.catch((error) => {
+				if (
+					!error.code === "ERR_NETWORK" ||
+					!error.code === "ERR_INTERNET_DISCONNECTED" ||
+					!error.code === "ECONNABORTED"
+				)
+					toast.error(
+						"Error occurred while fetching customers data. Refresh page."
+					);
 			});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -162,6 +171,11 @@ const Customers = () => {
 		},
 	});
 
+	React.useEffect(() => {
+		table.setPageIndex(currentPageIndex.customers);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
 	return (
 		<>
 			<Helmet>
@@ -239,9 +253,12 @@ const Customers = () => {
 						}
 						onPageChange={(val) => {
 							table.setPageIndex(val.selected);
-							setCurrentPageIndex(val.selected);
+							setCurrentPageIndex((prev) => ({
+								...prev,
+								customers: val.selected,
+							}));
 						}}
-						initialPage={currentPageIndex}
+						initialPage={currentPageIndex.customers}
 						pageRangeDisplayed={3}
 						pageCount={table.getPageCount()}
 						previousLabel={
@@ -266,15 +283,3 @@ const Customers = () => {
 };
 
 export default Customers;
-
-// export const CustomerLoader = async () => {
-//   try {
-//     const response = await axios.get(
-//       "https://abitto-api.onrender.com/api/booking/customerdetails"
-//     );
-//     return response.data.customerDetails;
-//   } catch (error) {
-//     console.error(error, "Error occurred while fetching customers data.");
-//     return [];
-//   }
-// };
