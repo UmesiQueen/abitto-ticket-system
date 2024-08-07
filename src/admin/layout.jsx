@@ -195,21 +195,13 @@ const ProtectedRoute = () => {
 									{adminProfile.account_type} - {adminProfile.city}
 								</p>
 							</div>
-							{accountType == "salesperson" ? (
+							<Link to={`/backend/${accountType}/settings`}>
 								<Avatar
 									alt={adminProfile.first_name.substring(0, 1)}
 									src={adminProfile.profile_picture}
 									className="bg-gray-300"
 								/>
-							) : (
-								<Link to={`/backend/${accountType}/settings`}>
-									<Avatar
-										alt={adminProfile.first_name.substring(0, 1)}
-										src={adminProfile.profile_picture}
-										className="bg-gray-300"
-									/>
-								</Link>
-							)}
+							</Link>
 						</div>
 					</header>
 					<section className="relative min-h-[calc(100vh-64px)]">
