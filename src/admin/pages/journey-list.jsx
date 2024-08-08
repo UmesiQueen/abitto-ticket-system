@@ -34,6 +34,14 @@ import { Refresh } from "iconsax-react";
 import baseurl from "@/api";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { toast } from "sonner";
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 
 const JourneyList = () => {
 	return (
@@ -41,7 +49,7 @@ const JourneyList = () => {
 			<Helmet>
 				<title>Journey List | Admin</title>
 			</Helmet>
-			<h1 className=" text-lg font-semibold">Journey List</h1>
+			<h1 className=" text-lg font-semibold mb-10">Journey List</h1>
 			<SearchForm />
 			<JourneyTable />
 		</>
@@ -63,15 +71,14 @@ const searchSchema = yup
 					  )
 					: schema
 			),
-		arrival: yup.string(),
 		date: yup.string(),
 	})
-	.test("require at least one field", function ({ departure, arrival, date }) {
-		const a = !!(departure || arrival || date); // At least one must be non-empty
+	.test("require at least one field", function ({ departure, date }) {
+		const a = !!(departure || date); // At least one must be non-empty
 
 		if (!a) {
 			return new yup.ValidationError(
-				"At least one of the three fields must be filled.", //Message
+				"At least one of the two fields must be filled.", //Message
 				"null",
 				"departure", //error name
 				"required" //type
@@ -80,7 +87,7 @@ const searchSchema = yup
 		return true;
 	});
 
-const SearchForm = () => {
+export const SearchForm = () => {
 	const { loading, setLoading, setSearchParams, searchParams } =
 		React.useContext(BookingCTX);
 	const { accountType } = useParams();
@@ -118,7 +125,7 @@ const SearchForm = () => {
 	return (
 		<form
 			onSubmit={onSubmit}
-			className="flex gap-5 justify-between bg-white rounded-lg my-8 p-6"
+			className="flex gap-5 justify-between bg-white rounded-lg p-6"
 		>
 			<div className="flex gap-5 w-full ">
 				{["super-admin", "dev"].includes(accountType) && (
@@ -127,14 +134,6 @@ const SearchForm = () => {
 							{...register("departure")}
 							label="Departure"
 							placeholder="Select Departure Terminal"
-							options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
-							errors={errors}
-							formState={isSubmitted}
-						/>
-						<SelectField
-							{...register("arrival")}
-							label="Arrival"
-							placeholder="Select Arrival Terminal"
 							options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
 							errors={errors}
 							formState={isSubmitted}
@@ -190,12 +189,8 @@ const JourneyTable = () => {
 	const navigate = useNavigate();
 	// const journeyList = useLoaderData();
 	const { setLoading, adminProfile } = React.useContext(GlobalCTX);
-	const {
-		searchParams,
-		setSearchParams,
-		setCurrentPageIndex,
-		currentPageIndex,
-	} = React.useContext(BookingCTX);
+	const { searchParams, setSearchParams, setCurrentPageIndex } =
+		React.useContext(BookingCTX);
 	const [rowSelection, setRowSelection] = React.useState({});
 	const [pagination, setPagination] = React.useState({
 		pageIndex: 0,
@@ -237,7 +232,6 @@ const JourneyTable = () => {
 	React.useEffect(() => {
 		if (searchParams) {
 			table.getColumn("departure").setFilterValue(searchParams?.departure);
-			table.getColumn("arrival").setFilterValue(searchParams?.arrival);
 			table
 				.getColumn("date")
 				.setFilterValue(searchParams?.date && format(searchParams?.date, "PP"));
@@ -273,19 +267,9 @@ const JourneyTable = () => {
 			header: "Time",
 			cell: ({ row }) => row.getValue("time"),
 		},
-		// {
-		// 	accessorKey: "available",
-		// 	header: <p className="text-center">Available Seats</p>,
-		// 	cell: ({ row }) => (
-		// 		<p className="text-center">
-		// 			{row.original?.available_seats.length > 1
-		// 				/? row.original?.available_seats.length
-		// 				: "FULL"}
-		// 		</p>
-		// 	),
-		// },
 		{
-			accessorKey: "status",
+			accessorKey: "payment_status",
+			id: "payment_status",
 			header: <div className="text-center">Trip Status</div>,
 			cell: ({ row }) => {
 				let status = row.original.trip_status;
@@ -353,7 +337,7 @@ const JourneyTable = () => {
 	return (
 		<div>
 			{Object.keys(searchParams).length ? (
-				<div className="flex justify-between items-center mt-14 mb-5">
+				<div className="flex justify-between items-center mt-16 mb-5">
 					<div className="inline-flex gap-1">
 						<h2 className="font-semibold">Trip search results </h2>
 						<p className="divide-x divide-black flex gap-2 [&>*:not(:first-of-type)]:pl-2">
@@ -361,7 +345,6 @@ const JourneyTable = () => {
 							{searchParams?.departure && (
 								<span>{searchParams.departure} </span>
 							)}
-							{searchParams?.arrival && <span>{searchParams.arrival}</span>}
 							{searchParams?.date && <span>{searchParams.date}</span>})
 						</p>
 					</div>
@@ -377,9 +360,37 @@ const JourneyTable = () => {
 					</ButtonUI>
 				</div>
 			) : (
-				<h2 className="font-semibold mt-14 mb-5">Recent Scheduled Trips</h2>
+				<h2 className="font-semibold mt-14 mb-5">All Scheduled Trips</h2>
 			)}
-			<div className="bg-white rounded-lg p-5">
+
+			<div className="flex items-center w-fit border border-gray-200 font-medium rounded-t-lg mt-8 bg-white ">
+				<span className="px-4 text-nowrap text-sm font-semibold h-full inline-flex items-center rounded-l-lg">
+					Filter
+				</span>
+				<Select
+					defaultValue="#"
+					value={table.getColumn("payment_status")?.getFilterValue() ?? "#"}
+					onValueChange={(value) => {
+						if (value === "#") {
+							return table.getColumn("payment_status")?.setFilterValue("");
+						}
+						table.getColumn("payment_status")?.setFilterValue(value);
+					}}
+				>
+					<SelectTrigger className="w-[150px] grow rounded-none rounded-r-lg border-0 border-l px-5 focus:ring-0 focus:ring-offset-0 bg-white">
+						<SelectValue />
+					</SelectTrigger>
+					<SelectContent>
+						<SelectGroup>
+							<SelectItem value="#">All trips</SelectItem>
+							<SelectItem value="Upcoming">Upcoming</SelectItem>
+							<SelectItem value="Completed">Completed</SelectItem>
+							<SelectItem value="Canceled">Canceled</SelectItem>
+						</SelectGroup>
+					</SelectContent>
+				</Select>
+			</div>
+			<div className="bg-white rounded-lg rounded-tl-none p-5">
 				<Table>
 					<TableHeader>
 						{table.getHeaderGroups().map((headerGroup) => (
