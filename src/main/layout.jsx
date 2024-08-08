@@ -37,7 +37,7 @@ export default MainLayout;
 const Navbar = () => {
 	const [isOpen, setOpen] = React.useState(false);
 	const [scroll, setScroll] = React.useState(false);
-	const { contact, scrollToSection } = React.useContext(GlobalCTX);
+	const { contact, faq, scrollToSection } = React.useContext(GlobalCTX);
 	const { pathname } = useLocation();
 	const navigate = useNavigate();
 	const navRef = React.useRef();
@@ -135,6 +135,14 @@ const Navbar = () => {
 						<Link to="/rental" onClick={closeNavbar}>
 							Rent a Boat
 						</Link>
+					</li>
+					<li
+						onClick={() => {
+							handleNavItemClick(faq);
+						}}
+						className="hover:bg-gray-400/20 md:hover:bg-transparent md:hover:text-blue-500 data-[state=active]:font-medium *:md:py-0 *:py-4 text-center md:text-left  *:block md:hover:font-normal transition-all duration-75 ease-in-out text-base md:text-lg"
+					>
+						<p>FAQ</p>
 					</li>
 				</ul>
 				<Button

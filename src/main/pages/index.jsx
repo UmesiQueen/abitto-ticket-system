@@ -21,7 +21,7 @@ import SuccessModal from "@/components/modals/success";
 import EmblaCarousel from "@/components/embla-carousel/EmblaCarousel";
 
 const Home = () => {
-	const { contact } = React.useContext(GlobalCTX);
+	const { contact, faq } = React.useContext(GlobalCTX);
 	const navigate = useNavigate();
 
 	return (
@@ -140,7 +140,6 @@ const Home = () => {
 								</span>
 								<CaretIcon />
 							</Link>
-							hgbb4r45{" "}
 						</div>
 					</div>
 				</div>
@@ -289,7 +288,7 @@ const Home = () => {
 			</section>
 
 			{/* faq */}
-			<section className="py-20 px-5 md:px-20 bg-white">
+			<section ref={faq} className="py-20 px-5 md:px-20 bg-white">
 				<div className="max-w-[1440px] mx-auto">
 					<h2 className="font-semibold text-xl md:text-2xl text-center">
 						Frequently Asked Questions (FAQs)
