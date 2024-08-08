@@ -83,20 +83,19 @@ const Home = () => {
 						<li className="hidden md:block">Invaluable Metrics</li>
 						<li>
 							<p>
-								<CountUp end={1000} enableScrollSpy />
-								k+
+								<CountUp end={500} enableScrollSpy />+
 							</p>
 							<p>Happy Clients</p>
 						</li>
 						<li>
 							<p>
-								<CountUp end={10} start={100} enableScrollSpy />+
+								<CountUp end={4} start={100} enableScrollSpy />+
 							</p>
-							<p>Years in business</p>
+							<p>Months in business</p>
 						</li>
 						<li>
 							<p>
-								<CountUp end={200} enableScrollSpy />+
+								<CountUp end={50} enableScrollSpy />+
 							</p>
 							<p>Successful Ferry Trip</p>
 						</li>
