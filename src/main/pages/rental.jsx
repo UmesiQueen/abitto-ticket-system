@@ -3,8 +3,6 @@ import { Helmet } from "react-helmet-async";
 import PropTypes from "prop-types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BoatURL from "@/assets/images/boat1.jpg";
-// import BoatURL2 from "@/assets/images/boat2.png";
-// import BoatURL3 from "@/assets/images/boat3.png";
 import Button from "@/components/custom/Button";
 import { UsersIcon, CalendarIcon, Boat2Icon, ClockIcon } from "@/assets/icons";
 import { BookingCTX } from "@/contexts/BookingContext";
@@ -21,7 +19,8 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { rentalSchema } from "@/lib/validators/rentalSchema";
 import { useStepper } from "@/hooks/useStepper";
-import { usePayment } from "@/hooks/usePayment";
+import { GlobalCTX } from "@/contexts/GlobalContext";
+import BookingWarningModal from "@/components/modals/book.warning";
 
 const Rental = () => {
 	const { activeStep } = useStepper();
@@ -414,7 +413,7 @@ export const RentalForm = () => {
 const RentalSummary = () => {
 	const { rentalData, handleReset } = React.useContext(BookingCTX);
 	const { onPrevClick } = useStepper();
-	const { onlineRentalPayment } = usePayment();
+	const { mountPortalModal } = React.useContext(GlobalCTX);
 
 	const getArrivalDateTime = () => {
 		const dateTime = new Date(
@@ -599,7 +598,7 @@ const RentalSummary = () => {
 							const text = event.target.innerHTML;
 							text == "Back"
 								? onPrevClick()
-								: text == "Continue"
+								: text == "Clear"
 								? handleReset()
 								: "";
 						}}
@@ -607,7 +606,9 @@ const RentalSummary = () => {
 					<Button
 						id="rental_payment_btn"
 						text="Pay with Paystack"
-						onClick={onlineRentalPayment}
+						onClick={() => {
+							mountPortalModal(<BookingWarningModal />);
+						}}
 						className=" w-full md:w-48"
 					/>
 				</div>

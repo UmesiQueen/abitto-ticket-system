@@ -17,6 +17,7 @@ const GlobalContext = ({ children }) => {
 		if (Object.keys(adminProfile).length)
 			localStorage.setItem("admin", JSON.stringify(adminProfile));
 	}, [adminProfile]);
+
 	const mountPortalModal = (modalContent) => {
 		if (!showModal) {
 			setShowModal(true);
@@ -47,6 +48,7 @@ const GlobalContext = ({ children }) => {
 		adminProfile,
 		setAdminProfile,
 		showModal,
+		setShowModal,
 		modalContent,
 		setModalContent,
 		mountPortalModal,
