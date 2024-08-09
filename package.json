@@ -38,6 +38,8 @@
 		"clsx": "^2.1.1",
 		"date-fns": "^3.6.0",
 		"dayjs": "^1.11.11",
+		"embla-carousel-autoplay": "^8.1.8",
+		"embla-carousel-react": "^8.1.8",
 		"hamburger-react": "^2.5.0",
 		"humanize-list": "^1.0.1",
 		"iconsax-react": "^0.0.8",

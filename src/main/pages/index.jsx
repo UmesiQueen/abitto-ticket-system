@@ -4,18 +4,11 @@ import { useForm } from "react-hook-form";
 import baseurl from "@/api";
 import { Helmet } from "react-helmet-async";
 import { toast } from "sonner";
-import {
-	MapIcon,
-	PhoneIcon,
-	CaretIcon,
-	BoatIcon,
-	ArrowIcon,
-} from "@/assets/icons";
+import { MapIcon, PhoneIcon, CaretIcon, BoatIcon } from "@/assets/icons";
 import { marinaMap, timberMap } from "@/assets/images";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 // import FadeInBackgroundTransition from "@/components/animation/FadeIn";
 import Button from "@/components/custom/Button";
-import { cn } from "@/lib/utils";
 import HeroGIF from "@/assets/hero.gif";
 import CountUp from "react-countup";
 import {
@@ -25,9 +18,10 @@ import {
 	AccordionTrigger,
 } from "@/components/ui/accordion";
 import SuccessModal from "@/components/modals/success";
+import EmblaCarousel from "@/components/embla-carousel/EmblaCarousel";
 
 const Home = () => {
-	const { contact } = React.useContext(GlobalCTX);
+	const { contact, faq } = React.useContext(GlobalCTX);
 	const navigate = useNavigate();
 
 	return (
@@ -89,20 +83,19 @@ const Home = () => {
 						<li className="hidden md:block">Invaluable Metrics</li>
 						<li>
 							<p>
-								<CountUp end={1000} enableScrollSpy />
-								k+
+								<CountUp end={500} enableScrollSpy />+
 							</p>
 							<p>Happy Clients</p>
 						</li>
 						<li>
 							<p>
-								<CountUp end={10} start={100} enableScrollSpy />+
+								<CountUp end={4} start={100} enableScrollSpy />+
 							</p>
-							<p>Years in business</p>
+							<p>Months in business</p>
 						</li>
 						<li>
 							<p>
-								<CountUp end={200} enableScrollSpy />+
+								<CountUp end={50} enableScrollSpy />+
 							</p>
 							<p>Successful Ferry Trip</p>
 						</li>
@@ -294,7 +287,7 @@ const Home = () => {
 			</section>
 
 			{/* faq */}
-			<section className="py-20 px-5 md:px-20 bg-white">
+			<section ref={faq} className="py-20 px-5 md:px-20 bg-white">
 				<div className="max-w-[1440px] mx-auto">
 					<h2 className="font-semibold text-xl md:text-2xl text-center">
 						Frequently Asked Questions (FAQs)
@@ -303,7 +296,7 @@ const Home = () => {
 						<Accordion type="single" collapsible className="w-full space-y-5">
 							<AccordionItem
 								value="item-1"
-								className="data-[state=open]:border-2 data-[state=open]:border-t-0 data-[state=open]:border-[#666666] shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
+								className=" shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
 							>
 								<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
 									How do I book a ticket with Abitto Ferry?
@@ -316,14 +309,14 @@ const Home = () => {
 									>
 										www.abittoferry.com
 									</a>
-									. From the homepage, click on 'Book a Ticket,' choose your
+									. From the homepage, click on{" 'Book a Ticket,' "}choose your
 									trip type (One-Way or Round Trip), fill in your details, and
 									follow the prompts to complete your booking.
 								</AccordionContent>
 							</AccordionItem>
 							<AccordionItem
 								value="item-2"
-								className="data-[state=open]:border-2 data-[state=open]:border-t-0 data-[state=open]:border-[#666666] shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
+								className=" shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
 							>
 								<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
 									What payment methods are accepted?
@@ -337,7 +330,7 @@ const Home = () => {
 							</AccordionItem>
 							<AccordionItem
 								value="item-3"
-								className="data-[state=open]:border-2 data-[state=open]:border-t-0 data-[state=open]:border-[#666666] shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
+								className=" shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
 							>
 								<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
 									Can I reschedule my trip?
@@ -350,7 +343,7 @@ const Home = () => {
 							</AccordionItem>
 							<AccordionItem
 								value="item-4"
-								className="data-[state=open]:border-2 data-[state=open]:border-t-0 data-[state=open]:border-[#666666] shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
+								className=" shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
 							>
 								<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
 									How do I check in for my trip?
@@ -363,7 +356,7 @@ const Home = () => {
 							</AccordionItem>
 							<AccordionItem
 								value="item-6"
-								className="data-[state=open]:border-2 data-[state=open]:border-t-0 data-[state=open]:border-[#666666] shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
+								className=" shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
 							>
 								<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
 									What happens if I encounter issues with my payment?
@@ -376,7 +369,7 @@ const Home = () => {
 							</AccordionItem>
 							<AccordionItem
 								value="item-5"
-								className="data-[state=open]:border-2 data-[state=open]:border-t-0 data-[state=open]:border-[#666666] shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
+								className=" shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
 							>
 								<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
 									What if my preferred departure time is sold out?
@@ -491,70 +484,23 @@ const testimonials = [
 		review:
 			"Such a relaxing way to travel! I took the ferry and absolutely loved it. A fantastic option for anyone looking to avoid the hassle of traffic and enjoy the journey.",
 	},
+	{
+		id: 3,
+		name: "Stella",
+		imgUrl: "https://i.ibb.co/6bSCnmj/stella.jpg",
+		review:
+			"I was impressed with the entire process, it felt like being at the airport. The cozy atmosphere and beautiful experience exceeded my expectations. Thumbs up to the management of Abitto Ferry.",
+	},
+	{
+		id: 4,
+		name: "Hon. Ukam",
+		imgUrl: "https://i.ibb.co/hHdSNrT/Hon-Ukam.jpg",
+		review:
+			"I had a wonderful experience with Abitto Ferry. It’s a complete alternative to traveling by road from Calabar to Uyo. With Abitto, you can be sure of your arrival time compared to road travel. Great job to the management for this initiative",
+	},
 ];
 
 const TestimonialsCarousel = () => {
-	const [active, setActive] = React.useState(1);
-	const carouselContainer = React.useRef();
-
-	// const handleScroll = () => {
-	//   const scrollPosition = carouselContainer.current.scrollLeft;
-	//   Array.from({ length: testimonials.length }).map((_, index) => {
-	//     const id = index + 1;
-	//     const carouselItem = document.getElementById(`slide-item${id}`);
-	//     const nextOffset =
-	//       carouselItem.offsetLeft + carouselItem.offsetWidth + 32;
-	//     if (
-	//       scrollPosition > carouselItem.offsetLeft &&
-	//       scrollPosition <= nextOffset
-	//     ) {
-	//       return setActive(id);
-	//     }
-	//   });
-	// };
-
-	// React.useEffect(() => {
-	//   const divElement = carouselContainer.current;
-	//   divElement.addEventListener("scroll", handleScroll);
-
-	//   // Clean up the event listener on component unmount
-	//   divElement.removeEventListener("scroll", handleScroll);
-	// }, []);
-
-	const handlePrev = () => {
-		if (active > 1) {
-			setActive((prev) => {
-				const previous = prev - 1;
-				scrollTo(previous);
-				return previous;
-			});
-		}
-	};
-
-	const handleNext = () => {
-		if (active < testimonials.length) {
-			setActive((prev) => {
-				const next = prev + 1;
-				scrollTo(next);
-				return next;
-			});
-		}
-	};
-
-	const scrollTo = (id) => {
-		const item = document.getElementById(`slide-item${id}`);
-		carouselContainer.current.scrollTo({
-			top: 0,
-			left: item.offsetLeft,
-			behavior: "smooth",
-		});
-	};
-
-	const handleClick = (id) => {
-		setActive(id);
-		scrollTo(id);
-	};
-
 	return (
 		<section className="py-20 px-5 md:px-20 bg-blue-50 ">
 			<div className="max-w-[1440px] mx-auto">
@@ -566,74 +512,8 @@ const TestimonialsCarousel = () => {
 						{"Here's"} what some of them are saying.
 					</p>
 				</hgroup>
-				<div
-					ref={carouselContainer}
-					className="py-6 flex items-center gap-4 md:gap-8 mx-auto h-[400px] overflow-auto no-scrollbar snap-x snap-mandatory transition-all duration-200 ease-in-out"
-				>
-					{testimonials.map((item, index) => (
-						<div
-							key={item.id}
-							id={`slide-item${item.id}`}
-							onClick={() => {
-								handleClick(item.id);
-							}}
-							data-state={active == index + 1 ? "active" : ""}
-							className="snap-always snap-start min-w-[80%] md:min-w-[45%] data-[state=active]:min-w-[90%] data-[state=active]:md:min-w-[50%] min-h-[306px] p-5 md:p-8 bg-white rounded-lg flex flex-col gap-3 items-start transition-all duration-200 ease-in-out data-[state=active]:scale-y-[1.1]"
-						>
-							<span className="font-bold text-4xl">“</span>
-							<p
-								className={cn(
-									"font-medium text-sm md:text-base w-full md:w-[80%]"
-								)}
-							>
-								{item.review}
-							</p>
-							<div className="flex items-center gap-3 mt-auto">
-								<div className="w-12 aspect-square rounded-full bg-blue-500 overflow-hidden ring-black ring-1">
-									<img
-										src={item.imgUrl}
-										alt="profile"
-										className="min-w-full "
-									/>
-								</div>
-								<div className="space-y-1">
-									<h3 className="font-semibold ">{item.name}</h3>
-									<p className="font-medium text-[#606060]">Traveler</p>
-								</div>
-							</div>
-						</div>
-					))}
-				</div>
-				<div>
-					<div className="flex gap-2 items-center ">
-						<div className="flex items-center gap-2">
-							{Array.from({ length: testimonials.length }).map((_, index) => (
-								<div
-									data-state={active == index + 1 ? "active" : ""}
-									key={index}
-									className="w-2 h-2 bg-white shadow-sm rounded-full data-[state=active]:bg-black"
-								/>
-							))}
-						</div>
-						<button
-							disabled={active <= 1 ? true : false}
-							onClick={handlePrev}
-							className="w-9 h-9 rounded-full bg-blue-500 text-white disabled:bg-white disabled:text-black font-bold text-xl inline-flex items-center justify-center ml-auto transition duration-150 ease-in-out"
-						>
-							<span className="rotate-180">
-								<ArrowIcon />
-							</span>
-						</button>
-						<button
-							disabled={active >= testimonials.length ? true : false}
-							onClick={handleNext}
-							className="w-9 h-9 rounded-full bg-blue-500 text-white disabled:bg-white disabled:text-black font-bold text-xl inline-flex items-center justify-center transition duration-150 ease-in-out"
-						>
-							<span>
-								<ArrowIcon />
-							</span>
-						</button>
-					</div>
+				<div className="mt-5">
+					<EmblaCarousel slides={testimonials} />
 				</div>
 			</div>
 		</section>

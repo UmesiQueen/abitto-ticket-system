@@ -33,7 +33,6 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 import { Button as ButtonUI } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { formatValue } from "react-currency-input-field";
 import { capitalize, truncate } from "lodash";
 import { cn, humanize } from "@/lib/utils";
@@ -41,30 +40,45 @@ import { PaginationEllipsis } from "@/components/ui/pagination";
 import ReactPaginate from "react-paginate";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
+import { SearchForm } from "./journey-list";
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import { Refresh } from "iconsax-react";
 
 const BookingDetails = () => {
 	const navigate = useNavigate();
-	const { bookingQuery, currentPageIndex, filtering, setFiltering } =
-		React.useContext(BookingCTX);
+	const {
+		bookingQuery,
+		currentPageIndex,
+		filtering,
+		setFiltering,
+		searchParams,
+		setSearchParams,
+	} = React.useContext(BookingCTX);
+	const { adminProfile } = React.useContext(GlobalCTX);
+	const isColumnVisible =
+		adminProfile.account_type == "dev" ||
+		adminProfile.account_type == "super-admin";
 	const [sorting, setSorting] = React.useState([]);
 	const [columnFilters, setColumnFilters] = React.useState([]);
 	const [columnVisibility, setColumnVisibility] = React.useState({
 		fullName: false,
-		departure: false,
+		departure: isColumnVisible ? true : false,
+		date: false,
 	});
-	const [rowSelection, setRowSelection] = React.useState({});
+	const [pageCount, setPageCount] = React.useState(0);
 	const [pagination, setPagination] = React.useState({
 		pageIndex: 0,
 		pageSize: 7,
 	});
-	// const [extraRows, setExtraRows] = React.useState(0);
 
 	const columns = [
-		// {
-		// 	accessorKey: "sn",
-		// 	header: <p className="font-bold">SN</p>,
-		// 	cell: ({ row }) => <div className="font-bold">{Number(row.id) + 1}</div>,
-		// },
 		{
 			accessorKey: "ticket_id",
 			header: "ID",
@@ -100,20 +114,21 @@ const BookingDetails = () => {
 			enableGlobalFilter: false,
 		},
 		{
-			accessorKey: "type",
+			accessorKey: "trip_type",
+			id: "trip_type",
 			header: "Type",
 			cell: ({ row }) => <div>{row.original.trip_type}</div>,
 			enableGlobalFilter: false,
 		},
 		{
-			accessorKey: "departure",
+			accessorKey: "travel_from",
 			header: "Departure",
-			cell: ({ row }) => <div>{row.original.travel_from}</div>,
-			enableGlobalFilter: false,
+			id: "departure",
+			cell: ({ row }) => truncate(row.original.travel_from, { length: 20 }),
 		},
 		{
 			accessorKey: "date_time",
-			header: "Date & Time",
+			header: <div className="text-nowrap"> Date & Time</div>,
 			cell: ({ row }) => (
 				<div className="space-y-1">
 					<p>{format(row.original.departure_date, "PP")}</p>
@@ -132,16 +147,13 @@ const BookingDetails = () => {
 		},
 		{
 			accessorKey: "payment_status",
-			header: <div className="text-center">Payment Status</div>,
+			header: <div className="text-center text-nowrap">Payment status</div>,
 			cell: ({ row }) => {
-				// FIXME: REMOVE THIS LINE AND MAKE AN INLINE
-				const {
-					original: { payment_status = "Pending" },
-				} = row;
+				const { payment_status } = row.original;
 				return (
 					<div
 						className={cn(
-							"rounded-lg w-20 mx-auto py-1 text-[10px] text-center",
+							"rounded-lg w-20 mx-auto py-1 text-[10px] text-center font-semibold",
 							{
 								"text-green-500 bg-green-100": payment_status === "Success",
 								"text-[#E78913] bg-[#F8DAB6]": payment_status === "Pending",
@@ -168,29 +180,35 @@ const BookingDetails = () => {
 			),
 			enableGlobalFilter: false,
 		},
-
 		{
-			id: "select",
-			header: ({ table }) => (
-				<Checkbox
-					checked={
-						table.getIsAllPageRowsSelected() ||
-						(table.getIsSomePageRowsSelected() && "indeterminate")
-					}
-					onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-					aria-label="Select all"
-				/>
-			),
-			cell: ({ row }) => (
-				<Checkbox
-					checked={row.getIsSelected()}
-					onCheckedChange={(value) => row.toggleSelected(!!value)}
-					aria-label="Select row"
-					className="mr-4"
-				/>
-			),
-			enableSorting: false,
-			enableHiding: false,
+			accessorKey: "trip_status",
+			header: <div className="text-center">Trip status</div>,
+			cell: ({ row }) => {
+				const { trip_status } = row.original;
+				return (
+					<div
+						className={cn(
+							" rounded-lg w-20 mx-auto py-1 text-[10px] px-2 text-center font-semibold",
+							{
+								"text-green-500 bg-green-100": trip_status === "Completed",
+								"text-[#E78913] bg-[#F8DAB6]": trip_status === "Upcoming",
+								"text-[#F00000] bg-[#FAB0B0]": trip_status === "Canceled",
+								"text-black bg-slate-500/50 ": trip_status === "Rescheduled",
+								"text-purple-900 bg-purple-300/30 ": trip_status === "Missed",
+							}
+						)}
+					>
+						{trip_status}
+					</div>
+				);
+			},
+			enableGlobalFilter: false,
+		},
+		{
+			accessorKey: "departure_date",
+			header: "Date",
+			id: "date",
+			accessorFn: (row) => format(row.departure_date, "P"),
 		},
 	];
 
@@ -204,77 +222,169 @@ const BookingDetails = () => {
 		getSortedRowModel: getSortedRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
 		onColumnVisibilityChange: setColumnVisibility,
-		onRowSelectionChange: setRowSelection,
 		onPaginationChange: setPagination,
 		onGroupingChange: setFiltering,
-		pageCount: Math.ceil(bookingQuery.length / pagination.pageSize),
+		pageCount,
 		state: {
 			sorting,
 			columnFilters,
 			columnVisibility,
-			rowSelection,
 			pagination,
 			globalFilter: filtering,
 		},
 	});
 
 	React.useEffect(() => {
+		if (bookingQuery.length)
+			setPageCount(Math.ceil(bookingQuery.length / pagination.pageSize));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [bookingQuery]);
+
+	React.useEffect(() => {
+		if (columnFilters.length)
+			setPageCount(
+				Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
+			);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [columnFilters]);
+
+	React.useEffect(() => {
 		table.setPageIndex(currentPageIndex.booking);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	// React.useEffect(() => {
-	//   const pageRowCount = table.getRowModel().rows.length;
-	//   if (pageRowCount) {
-	//     const extraRows = pagination.pageSize - pageRowCount;
-	//     setExtraRows(extraRows);
-	//   }
-	//   // eslint-disable-next-line react-hooks/exhaustive-deps
-	// }, [pagination.pageIndex]);
+	React.useEffect(() => {
+		if (searchParams) {
+			table.getColumn("departure").setFilterValue(searchParams?.departure);
+			if (searchParams?.date) {
+				const formatDate = format(new Date(searchParams.date), "P");
+				table.getColumn("date").setFilterValue(formatDate);
+			}
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [searchParams]);
 
 	return (
 		<>
 			<Helmet>
 				<title>Booking Details | Admin</title>
 			</Helmet>
-			<div className="flex items-center gap-5 mb-8">
-				<h1 className="text-lg font-semibold">Booking Details</h1>
-				{/* <div className="rounded-lg border ml-auto">
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<ButtonUI variant="ghost" className="px-5">
-								<span className="mr-1">
-									<FilterIcon />
-								</span>
-								Filter
-							</ButtonUI>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
-							{table
-								.getAllColumns()
-								.filter((column) => column.getCanHide())
-								.map((column) => {
-									return (
-										<DropdownMenuCheckboxItem
-											key={column.id}
-											className="capitalize"
-											checked={column.getIsVisible()}
-											onCheckedChange={(value) =>
-												column.toggleVisibility(!!value)
-											}
-										>
-											{column.id}
-										</DropdownMenuCheckboxItem>
-									);
-								})}
-						</DropdownMenuContent>
-					</DropdownMenu>
+
+			<h1 className="text-lg font-semibold mb-10">Booking Details</h1>
+			<SearchForm />
+			<div className="my-10 flex gap-5 justify-end">
+				<div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg">
+					<span className="px-4 text-nowrap text-sm font-semibold bg-white h-full inline-flex items-center rounded-l-lg">
+						Trip type
+					</span>
+					<Select
+						defaultValue="#"
+						value={table.getColumn("trip_type")?.getFilterValue() ?? "#"}
+						onValueChange={(value) => {
+							if (value === "#") {
+								return table.getColumn("trip_type")?.setFilterValue("");
+							}
+							table.getColumn("trip_type")?.setFilterValue(value);
+						}}
+					>
+						<SelectTrigger className="w-[170px] grow rounded-none rounded-r-lg border-0 border-l px-5 focus:ring-0 focus:ring-offset-0 bg-white">
+							<SelectValue />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectGroup>
+								<SelectItem value="#">All trip types</SelectItem>
+								<SelectItem value="One-Way Trip">One-Way Trip</SelectItem>
+								<SelectItem value="Round Trip">Round Trip</SelectItem>
+							</SelectGroup>
+						</SelectContent>
+					</Select>
 				</div>
-				<div className="rounded-lg cursor-pointer bg-blue-500 p-2">
-					<CloudIcon />
-				</div> */}
+				<div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg">
+					<span className="px-4 text-nowrap text-sm font-semibold bg-white h-full inline-flex items-center rounded-l-lg">
+						Medium
+					</span>
+					<Select
+						defaultValue="#"
+						value={table.getColumn("medium")?.getFilterValue() ?? "#"}
+						onValueChange={(value) => {
+							if (value === "#") {
+								return table.getColumn("medium")?.setFilterValue("");
+							}
+							table.getColumn("medium")?.setFilterValue(value);
+						}}
+					>
+						<SelectTrigger className="w-[170px] grow rounded-none rounded-r-lg border-0 border-l px-5 focus:ring-0 focus:ring-offset-0 bg-white">
+							<SelectValue />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectGroup>
+								<SelectItem value="#">Both mediums</SelectItem>
+								<SelectItem value="Online">Online</SelectItem>
+								<SelectItem value="Offline">Offline</SelectItem>
+							</SelectGroup>
+						</SelectContent>
+					</Select>
+				</div>
+				<div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg">
+					<span className="px-4 text-nowrap text-sm font-semibold bg-white h-full inline-flex items-center rounded-l-lg">
+						Trip status
+					</span>
+					<Select
+						defaultValue="#"
+						value={table.getColumn("trip_status")?.getFilterValue() ?? "#"}
+						onValueChange={(value) => {
+							if (value === "#") {
+								return table.getColumn("trip_status")?.setFilterValue("");
+							}
+							table.getColumn("trip_status")?.setFilterValue(value);
+						}}
+					>
+						<SelectTrigger className="w-[170px] grow rounded-none rounded-r-lg border-0 border-l px-5 focus:ring-0 focus:ring-offset-0 bg-white">
+							<SelectValue />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectGroup>
+								<SelectItem value="#">All Passengers</SelectItem>
+								<SelectItem value="Completed">Completed</SelectItem>
+								<SelectItem value="Upcoming">Upcoming</SelectItem>
+								<SelectItem value="Rescheduled">Rescheduled</SelectItem>
+								<SelectItem value="Canceled">Canceled</SelectItem>
+								<SelectItem value="Missed">Missed</SelectItem>
+							</SelectGroup>
+						</SelectContent>
+					</Select>
+				</div>
 			</div>
-			<div className="bg-white rounded-lg px-4 py-2">
+
+			{Object.keys(searchParams).length ? (
+				<div className="flex items-center mb-5">
+					<div className="inline-flex gap-1">
+						<h2 className="font-semibold">Booking search results </h2>
+						<p className="divide-x divide-black flex gap-2 [&>*:not(:first-of-type)]:pl-2">
+							({" "}
+							{searchParams?.departure && (
+								<span>{searchParams.departure} </span>
+							)}
+							{searchParams?.date && <span>{searchParams.date}</span>})
+						</p>
+					</div>
+
+					<ButtonUI
+						size="icon"
+						variant="ghost"
+						className="inline-flex gap-1 ml-5"
+						onClick={() => {
+							table.resetColumnFilters(true);
+							setSearchParams({});
+						}}
+					>
+						<Refresh />
+					</ButtonUI>
+				</div>
+			) : (
+				<h2 className="font-semibold mb-5">All Bookings</h2>
+			)}
+			<div className="bg-white rounded-lg px-4 py-2 ">
 				<Table>
 					<TableHeader>
 						{table.getHeaderGroups().map((headerGroup) => (
@@ -300,11 +410,7 @@ const BookingDetails = () => {
 								{table.getRowModel().rows.map((row) => (
 									<TableRow
 										key={row.id}
-										onDoubleClick={(event) => {
-											if (event.target.tagName !== "BUTTON")
-												navigate(`${row.original._id}`);
-										}}
-										data-state={row.getIsSelected() && "selected"}
+										onDoubleClick={() => navigate(`${row.original._id}`)}
 									>
 										{row.getVisibleCells().map((cell) => (
 											<TableCell key={cell.id} className="h-[77px]">
@@ -316,16 +422,6 @@ const BookingDetails = () => {
 										))}
 									</TableRow>
 								))}
-								{/* {extraRows
-                  ? Array.from({ length: extraRows }).map((_, index) => (
-                      <TableRow key={index}>
-                        <TableCell
-                          colSpan={columns.length}
-                          className="h-[77px]"
-                        />
-                      </TableRow>
-                    ))
-                  : ""} */}
 							</>
 						) : (
 							<TableRow>
@@ -343,8 +439,7 @@ const BookingDetails = () => {
 				{/* Pagination */}
 				<div className="flex items-center gap-8  p-4">
 					<div className="font-medium text-sm">
-						{table.getFilteredSelectedRowModel().rows.length} of{" "}
-						{table.getFilteredRowModel().rows.length} row(s) selected.
+						{table.getFilteredRowModel().rows.length} result(s).
 					</div>
 					<Pagination props={{ table }} />
 				</div>

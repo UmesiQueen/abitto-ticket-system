@@ -8,7 +8,6 @@ import BookingSuccessModal from "@/components/modals/book.success";
 import { v4 as uuid } from "uuid";
 import { sampleSize } from "lodash";
 import { RentalSuccessModal } from "@/components/modals/book.success";
-import { format } from "date-fns";
 
 export const usePayment = () => {
 	const { formData, rentalData, selectedTrip } = React.useContext(BookingCTX);
@@ -181,7 +180,6 @@ export const usePayment = () => {
 		setLoading(true);
 		const requestData = {
 			...rentalData,
-			rental_date: format(rentalData?.rental_date, "PPP"),
 			boat_id: "bt-54321",
 			rental_status: "Upcoming",
 			payment_method: "Paystack",
@@ -219,7 +217,6 @@ export const usePayment = () => {
 		setLoading(true);
 		const requestData = {
 			...rentalData,
-			rental_date: format(rentalData?.rental_date, "PPP"),
 			boat_id: "bt-54321",
 			rental_status: "Upcoming",
 			payment_medium: "Offline",
