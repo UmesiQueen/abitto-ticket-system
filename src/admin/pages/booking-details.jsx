@@ -72,6 +72,7 @@ const BookingDetails = () => {
 		departure: isColumnVisible ? true : false,
 		date: false,
 	});
+	const [pageCount, setPageCount] = React.useState(0);
 	const [pagination, setPagination] = React.useState({
 		pageIndex: 0,
 		pageSize: 7,
@@ -223,7 +224,7 @@ const BookingDetails = () => {
 		onColumnVisibilityChange: setColumnVisibility,
 		onPaginationChange: setPagination,
 		onGroupingChange: setFiltering,
-		pageCount: Math.ceil(bookingQuery.length / pagination.pageSize),
+		pageCount,
 		state: {
 			sorting,
 			columnFilters,
@@ -232,6 +233,20 @@ const BookingDetails = () => {
 			globalFilter: filtering,
 		},
 	});
+
+	React.useEffect(() => {
+		if (bookingQuery.length)
+			setPageCount(Math.ceil(bookingQuery.length / pagination.pageSize));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [bookingQuery]);
+
+	React.useEffect(() => {
+		if (columnFilters.length)
+			setPageCount(
+				Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
+			);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [columnFilters]);
 
 	React.useEffect(() => {
 		table.setPageIndex(currentPageIndex.booking);

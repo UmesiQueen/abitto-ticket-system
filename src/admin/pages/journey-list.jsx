@@ -192,6 +192,8 @@ const JourneyTable = () => {
 	const { searchParams, setSearchParams, setCurrentPageIndex } =
 		React.useContext(BookingCTX);
 	const [rowSelection, setRowSelection] = React.useState({});
+	const [columnFilters, setColumnFilters] = React.useState([]);
+	const [pageCount, setPageCount] = React.useState(0);
 	const [pagination, setPagination] = React.useState({
 		pageIndex: 0,
 		pageSize: 7,
@@ -268,8 +270,8 @@ const JourneyTable = () => {
 			cell: ({ row }) => row.getValue("time"),
 		},
 		{
-			accessorKey: "payment_status",
-			id: "payment_status",
+			accessorKey: "trip_status",
+			id: "trip_status",
 			header: <div className="text-center">Trip Status</div>,
 			cell: ({ row }) => {
 				let status = row.original.trip_status;
@@ -311,14 +313,16 @@ const JourneyTable = () => {
 		data: journeyList,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
+		onColumnFiltersChange: setColumnFilters,
 		getPaginationRowModel: getPaginationRowModel(),
 		getSortedRowModel: getSortedRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
 		onRowSelectionChange: setRowSelection,
 		onPaginationChange: setPagination,
-		pageCount: Math.ceil(journeyList.length / pagination.pageSize),
+		pageCount,
 		state: {
 			rowSelection,
+			columnFilters,
 			pagination,
 			columnVisibility: {
 				dateTime: false,
@@ -334,10 +338,24 @@ const JourneyTable = () => {
 		},
 	});
 
+	React.useEffect(() => {
+		if (journeyList.length)
+			setPageCount(Math.ceil(journeyList.length / pagination.pageSize));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [journeyList]);
+
+	React.useEffect(() => {
+		if (columnFilters.length)
+			setPageCount(
+				Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
+			);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [columnFilters]);
+
 	return (
 		<div>
 			{Object.keys(searchParams).length ? (
-				<div className="flex justify-between items-center mt-16 mb-5">
+				<div className="flex items-center mt-16 mb-5">
 					<div className="inline-flex gap-1">
 						<h2 className="font-semibold">Trip search results </h2>
 						<p className="divide-x divide-black flex gap-2 [&>*:not(:first-of-type)]:pl-2">
@@ -351,12 +369,14 @@ const JourneyTable = () => {
 
 					<ButtonUI
 						className="inline-flex gap-1 ml-5"
+						size="icon"
+						variant="ghost"
 						onClick={() => {
 							table.resetColumnFilters(true);
 							setSearchParams({});
 						}}
 					>
-						<Refresh /> Reset
+						<Refresh />
 					</ButtonUI>
 				</div>
 			) : (
@@ -369,12 +389,12 @@ const JourneyTable = () => {
 				</span>
 				<Select
 					defaultValue="#"
-					value={table.getColumn("payment_status")?.getFilterValue() ?? "#"}
+					value={table.getColumn("trip_status")?.getFilterValue() ?? "#"}
 					onValueChange={(value) => {
 						if (value === "#") {
-							return table.getColumn("payment_status")?.setFilterValue("");
+							return table.getColumn("trip_status")?.setFilterValue("");
 						}
-						table.getColumn("payment_status")?.setFilterValue(value);
+						table.getColumn("trip_status")?.setFilterValue(value);
 					}}
 				>
 					<SelectTrigger className="w-[150px] grow rounded-none rounded-r-lg border-0 border-l px-5 focus:ring-0 focus:ring-offset-0 bg-white">
