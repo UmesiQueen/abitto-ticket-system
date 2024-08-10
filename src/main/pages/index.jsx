@@ -496,7 +496,7 @@ const testimonials = [
 		name: "Hon. Ukam",
 		imgUrl: "https://i.ibb.co/hHdSNrT/Hon-Ukam.jpg",
 		review:
-			"I had a wonderful experience with Abitto Ferry. It’s a complete alternative to traveling by road from Calabar to Uyo. With Abitto, you can be sure of your arrival time compared to road travel. Great job to the management for this initiative",
+			"I had a wonderful experience with Abitto Ferry. It’s a complete alternative to traveling by road from Calabar to Uyo. With Abitto, you can be sure of your arrival time compared to road travel. Great job to the management for this initiative.",
 	},
 ];
 

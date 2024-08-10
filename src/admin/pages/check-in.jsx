@@ -180,6 +180,12 @@ const CheckInTable = () => {
 			enableGlobalFilter: false,
 		},
 		{
+			accessorKey: "medium",
+			header: "Medium",
+			cell: ({ row }) => row.original.medium,
+			enableGlobalFilter: false,
+		},
+		{
 			accessorKey: "time",
 			header: "Time",
 			cell: ({ row }) => row.original.departure_time,
@@ -187,21 +193,12 @@ const CheckInTable = () => {
 		},
 		{
 			accessorKey: "passengers",
-			header: "Passengers",
+			header: <div className="text-center"> Passengers</div>,
 			cell: ({ row }) => (
 				<p className="text-center">{row.original.total_passengers}</p>
 			),
 			enableGlobalFilter: false,
 		},
-		// {
-		// 	accessorKey: "amount",
-		// 	header: "Amount",
-		// 	cell: ({ row }) =>
-		// 		formatValue({
-		// 			value: String(row.original.total_ticket_cost ?? 0),
-		// 			prefix: "₦",
-		// 		}),
-		// },
 		{
 			id: "action",
 			header: <div className="text-center">Action</div>,
