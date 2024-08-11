@@ -38,13 +38,13 @@ const Navbar = () => {
 	const [isOpen, setOpen] = React.useState(false);
 	const [scroll, setScroll] = React.useState(false);
 	const { contact, faq, scrollToSection } = React.useContext(GlobalCTX);
-	const { pathname } = useLocation();
+	const location = useLocation();
 	const navigate = useNavigate();
 	const navRef = React.useRef();
 
 	const handleNavItemClick = (ref) => {
 		setOpen(false);
-		if (!String("/").includes(pathname)) {
+		if (!String("/").includes(location.pathname)) {
 			navigate("/");
 			return setTimeout(() => {
 				scrollToSection(ref);
@@ -78,7 +78,7 @@ const Navbar = () => {
 			className={cn(
 				"fixed right-0 left-0 px-5 md:px-20 h-[67px] w-full text-white backdrop-blur-[1px] z-[3] bg-[#111111]/80",
 				{
-					"bg-transparent": ["/", "/about"].includes(pathname),
+					"bg-transparent": ["/", "/about"].includes(location.pathname),
 					"bg-[#111111]/80": isOpen || scroll,
 				}
 			)}
@@ -99,51 +99,45 @@ const Navbar = () => {
 				</div>
 				<ul
 					className={cn(
-						"top-[67px] md:top-0 right-0 left-0 absolute md:relative overflow-hidden flex flex-col md:flex-row shadow-lg md:shadow-none *:md:uppercase *:font-normal gap-x-6 md:bg-transparent h-screen md:h-fit *:px-5 bg-white text-black md:text-white *:cursor-pointer transition-all duration-300 ease-in-out",
+						"top-[67px] md:top-0 right-0 left-0 absolute md:relative overflow-hidden flex flex-col md:flex-row shadow-lg md:shadow-none gap-x-6 md:bg-transparent h-screen md:h-fit bg-white text-black md:text-white transition-all duration-300 ease-in-out",
 						{ "h-0 ": !isOpen }
 					)}
 				>
-					<li
-						data-state={pathname == "/about" ? "active" : ""}
-						className="hover:bg-gray-400/20 md:hover:bg-transparent md:hover:text-blue-500  data-[state=active]:font-medium *:md:py-0 *:py-4 text-center md:text-left *:block md:hover:font-normal transition-all duration-75 ease-in-out text-base md:text-lg"
-					>
-						<Link to="/about" onClick={closeNavbar}>
-							About Us
-						</Link>
-					</li>
-					<li
-						onClick={() => {
-							handleNavItemClick(contact);
-						}}
-						data-state={pathname == "/contact" ? "active" : ""}
-						className="hover:bg-gray-400/20 md:hover:bg-transparent md:hover:text-blue-500 data-[state=active]:font-medium *:md:py-0 *:py-4 text-center md:text-left  *:block md:hover:font-normal transition-all duration-75 ease-in-out text-base md:text-lg"
-					>
-						<p>Contact Us</p>
-					</li>
-					<li
-						data-state={pathname == "/booking" ? "active" : ""}
-						className="md:hidden hover:bg-gray-400/20 md:hover:bg-transparent md:hover:text-blue-500  data-[state=active]:font-medium *:md:py-0 *:py-4 text-center md:text-left *:block md:hover:font-normal transition-all duration-75 ease-in-out text-base md:text-lg"
-					>
-						<Link to="/booking" onClick={closeNavbar}>
-							Book a Trip
-						</Link>
-					</li>
-					<li
-						data-state={pathname == "/rental" ? "active" : ""}
-						className="md:hidden hover:bg-gray-400/20 md:hover:bg-transparent md:hover:text-blue-500  data-[state=active]:font-medium *:md:py-0 *:py-4 text-center md:text-left *:block md:hover:font-normal transition-all duration-75 ease-in-out text-base md:text-lg"
-					>
-						<Link to="/rental" onClick={closeNavbar}>
-							Rent a Boat
-						</Link>
-					</li>
-					<li
-						onClick={() => {
-							handleNavItemClick(faq);
-						}}
-						className="hover:bg-gray-400/20 md:hover:bg-transparent md:hover:text-blue-500 data-[state=active]:font-medium *:md:py-0 *:py-4 text-center md:text-left  *:block md:hover:font-normal transition-all duration-75 ease-in-out text-base md:text-lg"
-					>
-						<p>FAQ</p>
-					</li>
+					{[
+						["About Us", "/about"],
+						["Contact Us", "#contact"],
+						["Book a trip", "/booking"],
+						["Rent a Boat", "/rental"],
+						["FAQ", "#faq"],
+					].map(([title, slug]) => {
+						return (
+							<li
+								key={title}
+								data-state={
+									location.pathname == slug || location.hash == slug
+										? "active"
+										: ""
+								}
+								className={cn(
+									"hover:bg-gray-400/20 md:hover:bg-transparent md:hover:text-blue-500 font-normal data-[state=active]:font-bold text-center md:text-left transition-all duration-75 ease-in-out text-lg uppercase h-24 md:h-fit tracking-wide inline-flex items-center justify-center ",
+									{
+										"md:hidden": ["Book a trip", "Rent a Boat"].includes(title),
+									}
+								)}
+							>
+								<Link
+									to={slug}
+									onClick={() => {
+										closeNavbar();
+										if (title == "FAQ") handleNavItemClick(faq);
+										if (title == "Contact Us") handleNavItemClick(contact);
+									}}
+								>
+									{title}
+								</Link>
+							</li>
+						);
+					})}
 				</ul>
 				<Button
 					text="Book a Ticket"
