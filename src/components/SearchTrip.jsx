@@ -1,11 +1,9 @@
 import React from "react";
-import { BoatIcon } from "@/assets/icons";
 import { formatValue } from "react-currency-input-field";
 import Button from "./custom/Button";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { useStepper } from "@/hooks/useStepper";
-import { addHours, format } from "date-fns";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 
@@ -26,11 +24,6 @@ const SearchTrip = () => {
 	const total_passengers =
 		Number(formData.bookingDetails?.children_number ?? 0) +
 		Number(formData.bookingDetails.adults_number);
-
-	const getArrivalDateTime = (time, date) => {
-		const dateTime = new Date(`${date} ${time}`);
-		return addHours(dateTime, 1);
-	};
 
 	React.useEffect(() => {
 		if (Object.keys(selectedTrip?.departure).length) {
@@ -106,7 +99,7 @@ const SearchTrip = () => {
 		<section className="space-y-10 px-3 md:px-0">
 			<div className="flex flex-col-reverse md:flex-row gap-5 justify-between md:items-center">
 				<hgroup>
-					<h2 className="font-semibold md:text-lg">Select Departure Trip</h2>
+					<h2 className="font-semibold md:text-lg">Select Departure Time</h2>
 					<p className="text-sm">Choose an option to continue</p>
 				</hgroup>
 				<div className=" self-end text-xs text-gray-500 bg-gray-200 h-12 p-1 flex gap-2 rounded-lg *:inline-flex *:items-center *:px-2 [&>*.active]:border-blue-500 [&>*.active]:border-2 [&>*.active]:font-semibold [&>*.active]:text-blue-500 *:rounded-lg">
@@ -157,47 +150,20 @@ const SearchTrip = () => {
 										);
 									}
 								}}
-								className="grid overflow-hidden grid-cols-3 md:grid-cols-7 rounded-lg border border-gray-400 md:border-none divide-y divide-solid md:divide-y-0  min-h-32 *:bg-white [&>*]:data-[state=active]:bg-blue-50 data-[state=active]:shadow-lg *:py-2 transition-all duration-150 ease-in-out  [&>*]:data-[state=disabled]:bg-red-100 [&>*]:data-[state=disabled]:border-red-700 "
+								className="grid overflow-hidden grid-cols-4 md:grid-cols-7 rounded-lg border border-gray-400 md:border-none  min-h-32 *:bg-white [&>*]:data-[state=active]:bg-blue-50 data-[state=active]:shadow-lg *:py-2 transition-all duration-150 ease-in-out  [&>*]:data-[state=disabled]:bg-red-100 [&>*]:data-[state=disabled]:border-red-700 "
 							>
-								<ul className="px-5 md:px-8 col-span-3 md:col-span-4 flex-grow flex gap-3 justify-between items-center rounded-t-lg md:rounded-lg">
-									<li className="space-y-1 basis-2/5 text-left">
-										<p className="font-bold">{item.time}</p>
-										<p className="text-gray-500 text-sm">
-											{item.departure.includes("Uyo")
-												? "Nwaniba, Uyo"
-												: item.departure}
-										</p>
-										<p className="text-gray-500 text-sm">{item.date}</p>
-									</li>
-									<li className="text-gray-500 space-y-1 text-center basis-1/5">
-										{/* TODO: MAKE THIS DYNAMIC */}
-										<p className="text-xs">1 hour</p>
-										<div className="hidden md:inline-flex items-center">
-											---
-											<span className="rounded-full border border-gray-200 w-9 h-9 inline-flex justify-center items-center">
-												<BoatIcon />
-											</span>
-											---
-										</div>
-										<span className="md:hidden rounded-full border border-gray-200 p-1 inline-flex justify-center items-center">
-											<BoatIcon />
-										</span>
-									</li>
-									<li className="space-y-1 text-right basis-2/5">
-										<p className="font-bold">
-											{format(getArrivalDateTime(item.time, item.date), "p")}
-										</p>
-										<p className="text-gray-500 text-sm">
-											{item.arrival.includes("Uyo")
-												? "Nwaniba, Uyo"
-												: item.arrival}
-										</p>
-										<p className="text-gray-500 text-sm">
-											{format(getArrivalDateTime(item.time, item.date), "PP")}
-										</p>
-									</li>
-								</ul>
-								<div className="px-6 col-span-2 md:col-span-1 flex flex-col justify-center items-center md:rounded-lg md:border-l-2 border-gray-400">
+								<div className="px-5 md:px-8 col-span-2 md:col-span-2 flex-grow flex flex-col justify-center items-center rounded-tl-lg md:rounded-lg text-center">
+									<p className="font-bold">{item.time}</p>
+									<p className="text-gray-500 text-sm md:text-base ">
+										{item.departure.includes("Uyo")
+											? "Nwaniba, Uyo"
+											: item.departure}
+									</p>
+									<p className="text-gray-500 text-sm md:text-base ">
+										{item.date}
+									</p>
+								</div>
+								<div className="px-6 col-span-2 md:col-span-2 flex flex-col justify-center items-center md:rounded-lg border-l md:border-l-2  border-gray-400">
 									<p className="text-sm">Price(NGN)</p>
 									<p className="md:text-lg font-semibold">
 										{formatValue({
@@ -206,7 +172,7 @@ const SearchTrip = () => {
 										})}
 									</p>
 								</div>
-								<div className="px-6 col-span-2 md:col-span-1 col-start-1 flex flex-col justify-center rounded-bl-lg  md:rounded-lg items-center md:border-l-2 border-gray-400">
+								<div className="px-6 row-start-2 md:row-span-1 col-span-3 md:col-span-2 col-start-1 flex flex-col justify-center rounded-bl-lg  md:rounded-lg items-center border-t md:border-t-0 md:border-l-2 border-gray-400">
 									<p className="text-sm">Status</p>
 									<div className="text-center">
 										{isAvailableSeatsExceeded ? (
@@ -223,7 +189,7 @@ const SearchTrip = () => {
 										)}
 									</div>
 								</div>
-								<div className="px-6 row-start-2 md:row-row-start-1 row-span-2 md:row-span-1 col-start-3 md:col-start-7 rounded-br-lg md:rounded-lg flex items-center justify-center border-l md:border-l-2  border-gray-400">
+								<div className="px-6 row-start-2 md:row-start-1 md:row-span-1 col-start-4 md:col-start-7 rounded-br-lg md:rounded-lg flex items-center justify-center border-l border-t md:border-t-0 md:border-l-2  border-gray-400">
 									<Checkbox
 										tabIndex={-1}
 										className="data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
@@ -284,46 +250,20 @@ const SearchTrip = () => {
 											);
 										}
 									}}
-									className="grid overflow-hidden grid-cols-3 md:grid-cols-7 rounded-lg border border-gray-400 md:border-none divide-y divide-solid md:divide-y-0  min-h-32 *:bg-white [&>*]:data-[state=active]:bg-blue-50 data-[state=active]:shadow-lg *:py-2 transition-all duration-150 ease-in-out  [&>*]:data-[state=disabled]:bg-red-100 [&>*]:data-[state=disabled]:border-red-700 "
+									className="grid overflow-hidden grid-cols-4 md:grid-cols-7 rounded-lg border border-gray-400 md:border-none  min-h-32 *:bg-white [&>*]:data-[state=active]:bg-blue-50 data-[state=active]:shadow-lg *:py-2 transition-all duration-150 ease-in-out  [&>*]:data-[state=disabled]:bg-red-100 [&>*]:data-[state=disabled]:border-red-700 "
 								>
-									<ul className="px-5 md:px-8 col-span-3 md:col-span-4 flex-grow flex gap-3 justify-between items-center rounded-t-lg md:rounded-lg">
-										<li className="space-y-1 basis-2/5 text-left">
-											<p className="font-bold">{item.time}</p>
-											<p className="text-gray-500 text-sm">
-												{item.departure.includes("Uyo")
-													? "Nwaniba, Uyo"
-													: item.departure}
-											</p>
-											<p className="text-gray-500 text-sm">{item.date}</p>
-										</li>
-										<li className="text-gray-500 space-y-1 text-center basis-1/5">
-											<p className="text-xs">1 hour</p>
-											<div className="hidden md:inline-flex items-center">
-												---
-												<span className="rounded-full border border-gray-200 w-9 h-9 inline-flex justify-center items-center">
-													<BoatIcon />
-												</span>
-												---
-											</div>
-											<span className="md:hidden rounded-full border border-gray-200 p-1 inline-flex justify-center items-center">
-												<BoatIcon />
-											</span>
-										</li>
-										<li className="space-y-1 text-right basis-2/5">
-											<p className="font-bold">
-												{format(getArrivalDateTime(item.time, item.date), "p")}
-											</p>
-											<p className="text-gray-500 text-sm">
-												{item.arrival.includes("Uyo")
-													? "Nwaniba, Uyo"
-													: item.arrival}
-											</p>
-											<p className="text-gray-500 text-sm">
-												{format(getArrivalDateTime(item.time, item.date), "PP")}
-											</p>
-										</li>
-									</ul>
-									<div className="px-6 col-span-2 md:col-span-1 flex flex-col justify-center items-center md:rounded-lg md:border-l-2 border-gray-400">
+									<div className="px-5 md:px-8 col-span-2 md:col-span-2 flex-grow flex flex-col justify-center items-center rounded-tl-lg md:rounded-lg text-center">
+										<p className="font-bold">{item.time}</p>
+										<p className="text-gray-500 text-sm md:text-base ">
+											{item.departure.includes("Uyo")
+												? "Nwaniba, Uyo"
+												: item.departure}
+										</p>
+										<p className="text-gray-500 text-sm md:text-base ">
+											{item.date}
+										</p>
+									</div>
+									<div className="px-6 col-span-2 md:col-span-2 flex flex-col justify-center items-center md:rounded-lg border-l md:border-l-2  border-gray-400">
 										<p className="text-sm">Price(NGN)</p>
 										<p className="md:text-lg font-semibold">
 											{formatValue({
@@ -332,7 +272,7 @@ const SearchTrip = () => {
 											})}
 										</p>
 									</div>
-									<div className="px-6 col-span-2 md:col-span-1 col-start-1 flex flex-col justify-center rounded-bl-lg  md:rounded-lg items-center md:border-l-2 border-gray-400">
+									<div className="px-6 row-start-2 md:row-span-1 col-span-3 md:col-span-2 col-start-1 flex flex-col justify-center rounded-bl-lg  md:rounded-lg items-center border-t md:border-t-0 md:border-l-2 border-gray-400">
 										<p className="text-sm">Status</p>
 										<div className="text-center">
 											{isAvailableSeatsExceeded ? (
@@ -349,7 +289,7 @@ const SearchTrip = () => {
 											)}
 										</div>
 									</div>
-									<div className="px-6 row-start-2 md:row-row-start-1 row-span-2 md:row-span-1 col-start-3 md:col-start-7 rounded-br-lg md:rounded-lg flex items-center justify-center border-l md:border-l-2  border-gray-400">
+									<div className="px-6 row-start-2 md:row-start-1 md:row-span-1 col-start-4 md:col-start-7 rounded-br-lg md:rounded-lg flex items-center justify-center border-l border-t md:border-t-0 md:border-l-2  border-gray-400">
 										<Checkbox
 											tabIndex={-1}
 											className="data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
