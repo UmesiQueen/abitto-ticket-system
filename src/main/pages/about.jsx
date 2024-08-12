@@ -1,10 +1,11 @@
 import { Helmet } from "react-helmet-async";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Button from "@/components/custom/Button";
 import { about, about2 } from "@/assets/images";
 import FounderImg from "@/assets/images/founder.jpg";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CountUp from "react-countup";
+import { CaretIcon } from "@/assets/icons";
 
 const About = () => {
 	const navigate = useNavigate();
@@ -57,30 +58,33 @@ const About = () => {
 					</div>
 				</section>
 
+				{/* metrics */}
+				<section className="max-w-[1440px] mx-auto">
+					<ul className="flex gap-2 md:gap-10 justify-evenly text-center px-5 py-10 sm:py-20 font-bold [&_p:last-of-type]:font-normal text-3xl sm:text-6xl [&_p:last-of-type]:text-xs  sm:[&_p:last-of-type]:text-base *:flex *:flex-col *:items-center *:grow *:w-full">
+						<li>
+							<p>
+								<CountUp end={500} enableScrollSpy />+
+							</p>
+							<p>Happy Clients</p>
+						</li>
+						<li>
+							<p>
+								<CountUp end={4} start={100} enableScrollSpy />+
+							</p>
+							<p>Months in Business</p>
+						</li>
+						<li>
+							<p>
+								<CountUp end={50} enableScrollSpy />+
+							</p>
+							<p>Successful Ferry Trips</p>
+						</li>
+					</ul>
+				</section>
+
 				{/* about us */}
-				<section className="px-5 pb-20 md:px-20 bg-white">
-					<div className="max-w-[1440px] mx-auto pt-5">
-						<ul className="flex gap-10 justify-between md:justify-center p-5 pb-20 text-center font-semibold [&_p:last-of-type]:font-normal  text-xl [&_p:last-of-type]:text-xs items-center">
-							<li className="hidden md:block">Invaluable Metrics</li>
-							<li>
-								<p>
-									<CountUp end={500} enableScrollSpy />+
-								</p>
-								<p>Happy Clients</p>
-							</li>
-							<li>
-								<p>
-									<CountUp end={4} start={100} enableScrollSpy />+
-								</p>
-								<p>Months in business</p>
-							</li>
-							<li>
-								<p>
-									<CountUp end={50} enableScrollSpy />+
-								</p>
-								<p>Successful Ferry Trip</p>
-							</li>
-						</ul>
+				<section className="px-5 py-20 md:px-20 bg-white" id="about-us">
+					<div className="max-w-[1440px] mx-auto">
 						<div className=" text-center md:text-left flex flex-col md:flex-row justify-between md:gap-20 lg:gap-28">
 							<div className="basis-2/6 mb-10 md:mb-0 md:self-center">
 								<img
@@ -91,25 +95,37 @@ const About = () => {
 									className="rounded-lg shadow-2xl w-full md:w-[500px] h-[300px] md:h-[400px] object-cover "
 								/>
 							</div>
-							<div className="flex-1 space-y-5 lg:pr-44">
-								<div className="flex items-center justify-center md:justify-start">
-									<span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 " />
-									<h3 className="uppercase font-medium">About us</h3>
+							<div className="flex-1">
+								<div className="space-y-5 lg:w-9/12">
+									<div className="flex items-center justify-center md:justify-start">
+										<span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 " />
+										<h3 className="uppercase font-medium">About us</h3>
+									</div>
+									<p className="font-medium text-2xl ">
+										Welcome to Abitto, where innovation meets reliability in
+										public water travel.
+									</p>
+									<p className="text-black/80  ">
+										Welcome to Abitto, where innovation and reliability redefine{" "}
+										{/* eslint-disable-next-line react/no-unescaped-entities */}
+										public water travel. We don't just ferry passengers; we
+										revolutionize your water transportation experience. With
+										cutting-edge technology and unwavering safety protocols, we
+										ensure every journey is convenient and intelligent. Join
+										Abitto, where every trip showcases our dedication to
+										excellence and your peace of mind.
+									</p>
+									<Link
+										target="_blank"
+										to="https://abittoglobal.com/?fbclid=PAZXh0bgNhZW0CMTEAAaaf2uWLgUdLwd18fE__CVzgHmX_XRFos7kxw4Ffa5sWyB58fZLwenzHvl8_aem_Af6umzSDXJvWgv1zoBRtzSSytwgTKLgfroif0Z8SpzdPUu-G5NWP8AMOlqscYrrjWJHGjX5_iSPUUMd4IcFzKNIs"
+										className="text-blue-500 hover:text-blue-700 transition duration-150 ease-in-out flex items-center justify-center md:justify-start gap-3 cursor-pointer"
+									>
+										<span className="underline font-medium">
+											Discover More About Us
+										</span>
+										<CaretIcon />
+									</Link>
 								</div>
-								<p className="font-medium text-2xl ">
-									Welcome to Abitto, where innovation meets reliability in
-									public water travel.
-								</p>
-								<p className="text-black/80 ">
-									Welcome to Abitto, where innovation and reliability redefine{" "}
-									{/* eslint-disable-next-line react/no-unescaped-entities */}
-									public water travel. We don't just ferry passengers; we
-									revolutionize your water transportation experience. With
-									cutting-edge technology and unwavering safety protocols, we
-									ensure every journey is convenient and intelligent. Join
-									Abitto, where every trip showcases our dedication to
-									excellence and your peace of mind.
-								</p>
 							</div>
 						</div>
 					</div>
@@ -275,7 +291,7 @@ const About = () => {
 								frameBorder="0"
 								allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 								referrerPolicy="strict-origin-when-cross-origin"
-								allowfullscreen
+								allowFullScreen
 								className="w-full aspect-video h-full lg:h-[560px] "
 							/>
 						</div>

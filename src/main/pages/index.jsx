@@ -76,30 +76,33 @@ const Home = () => {
 				</div>
 			</section>
 
+			{/* metrics */}
+			<section className="max-w-[1440px] mx-auto">
+				<ul className="flex gap-2 md:gap-10 justify-evenly text-center px-5 py-10 sm:py-20 font-bold [&_p:last-of-type]:font-normal text-3xl sm:text-6xl [&_p:last-of-type]:text-xs  sm:[&_p:last-of-type]:text-base *:flex *:flex-col *:items-center *:grow *:w-full">
+					<li>
+						<p>
+							<CountUp end={500} enableScrollSpy />+
+						</p>
+						<p>Happy Clients</p>
+					</li>
+					<li>
+						<p>
+							<CountUp end={4} start={100} enableScrollSpy />+
+						</p>
+						<p>Months in Business</p>
+					</li>
+					<li>
+						<p>
+							<CountUp end={50} enableScrollSpy />+
+						</p>
+						<p>Successful Ferry Trips</p>
+					</li>
+				</ul>
+			</section>
+
 			{/* About us  */}
-			<section className="px-5 pb-20 md:px-20 bg-white" id="about-us">
-				<div className="max-w-[1440px] mx-auto pt-5">
-					<ul className="flex gap-10 justify-between md:justify-center p-5 pb-20 text-center font-semibold [&_p:last-of-type]:font-normal  text-xl [&_p:last-of-type]:text-xs items-center">
-						<li className="hidden md:block">Invaluable Metrics</li>
-						<li>
-							<p>
-								<CountUp end={500} enableScrollSpy />+
-							</p>
-							<p>Happy Clients</p>
-						</li>
-						<li>
-							<p>
-								<CountUp end={4} start={100} enableScrollSpy />+
-							</p>
-							<p>Months in business</p>
-						</li>
-						<li>
-							<p>
-								<CountUp end={50} enableScrollSpy />+
-							</p>
-							<p>Successful Ferry Trip</p>
-						</li>
-					</ul>
+			<section className="px-5 py-20 md:px-20 bg-white" id="about-us">
+				<div className="max-w-[1440px] mx-auto">
 					<div className=" text-center md:text-left flex flex-col md:flex-row justify-between md:gap-20 lg:gap-28">
 						<div className="basis-2/6 mb-10 md:mb-0 md:self-center">
 							<img
@@ -110,42 +113,44 @@ const Home = () => {
 								className="rounded-lg shadow-2xl w-full md:w-[500px] h-[300px] md:h-[400px] object-cover "
 							/>
 						</div>
-						<div className="flex-1 space-y-5 lg:pr-44">
-							<div className="flex items-center justify-center md:justify-start">
-								<span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 " />
-								<h3 className="uppercase font-medium">About us</h3>
+						<div className="flex-1">
+							<div className="space-y-5 lg:w-9/12">
+								<div className="flex items-center justify-center md:justify-start">
+									<span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 " />
+									<h3 className="uppercase font-medium">About us</h3>
+								</div>
+								<p className="font-medium text-2xl ">
+									Welcome to Abitto, where innovation meets reliability in
+									public water travel.
+								</p>
+								<p className="text-black/80  ">
+									Welcome to Abitto, where innovation and reliability redefine{" "}
+									{/* eslint-disable-next-line react/no-unescaped-entities */}
+									public water travel. We don't just ferry passengers; we
+									revolutionize your water transportation experience. With
+									cutting-edge technology and unwavering safety protocols, we
+									ensure every journey is convenient and intelligent. Join
+									Abitto, where every trip showcases our dedication to
+									excellence and your peace of mind.
+								</p>
+								<Link
+									target="_blank"
+									to="https://abittoglobal.com/?fbclid=PAZXh0bgNhZW0CMTEAAaaf2uWLgUdLwd18fE__CVzgHmX_XRFos7kxw4Ffa5sWyB58fZLwenzHvl8_aem_Af6umzSDXJvWgv1zoBRtzSSytwgTKLgfroif0Z8SpzdPUu-G5NWP8AMOlqscYrrjWJHGjX5_iSPUUMd4IcFzKNIs"
+									className="text-blue-500 hover:text-blue-700 transition duration-150 ease-in-out flex items-center justify-center md:justify-start gap-3 cursor-pointer"
+								>
+									<span className="underline font-medium">
+										Discover More About Us
+									</span>
+									<CaretIcon />
+								</Link>
 							</div>
-							<p className="font-medium text-2xl ">
-								Welcome to Abitto, where innovation meets reliability in public
-								water travel.
-							</p>
-							<p className="text-black/80 ">
-								Welcome to Abitto, where innovation and reliability redefine{" "}
-								{/* eslint-disable-next-line react/no-unescaped-entities */}
-								public water travel. We don't just ferry passengers; we
-								revolutionize your water transportation experience. With
-								cutting-edge technology and unwavering safety protocols, we
-								ensure every journey is convenient and intelligent. Join Abitto,
-								where every trip showcases our dedication to excellence and your
-								peace of mind.
-							</p>
-							<Link
-								target="_blank"
-								to="https://abittoglobal.com/?fbclid=PAZXh0bgNhZW0CMTEAAaaf2uWLgUdLwd18fE__CVzgHmX_XRFos7kxw4Ffa5sWyB58fZLwenzHvl8_aem_Af6umzSDXJvWgv1zoBRtzSSytwgTKLgfroif0Z8SpzdPUu-G5NWP8AMOlqscYrrjWJHGjX5_iSPUUMd4IcFzKNIs"
-								className="text-blue-500 hover:text-blue-700 transition duration-150 ease-in-out flex items-center justify-center md:justify-start gap-3 cursor-pointer"
-							>
-								<span className="underline font-medium">
-									Discover More About Us
-								</span>
-								<CaretIcon />
-							</Link>
 						</div>
 					</div>
 				</div>
 			</section>
 
 			{/* Youtube video */}
-			<section className="bg-white  px-5 pb-20 md:p-20 ">
+			<section className="bg-white  px-5 py-20 md:p-20 ">
 				<div className="max-w-[1440px] mx-auto flex flex-col">
 					<h3 className=" self-center md:w-[500px] text-center font-semibold mb-6 text-lg md:text-xl ">
 						Watch our instructional video to learn more about Abitto Ferry
@@ -174,21 +179,26 @@ const Home = () => {
 			<section
 				className="py-20 px-5 md:px-20 bg-white"
 				ref={contact}
-				id="contact-us"
+				id="contact"
 			>
 				<div className="max-w-[1440px] mx-auto">
 					<h2 className="font-semibold text-xl md:text-2xl mb-7 inline-flex items-center justify-center w-full ">
 						<span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 md:hidden " />
 						Contact Us
 					</h2>
-					<div className="flex flex-col-reverse md:flex-row gap-10 lg:gap-16 justify-between ">
-						<div className="flex flex-col flex-1">
-							<div className="flex items-center justify-center md:hidden mb-5">
-								<span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 " />
-								<h3 className="uppercase font-medium">Our Location</h3>
-							</div>
+					<div className="md:bg-blue-50 rounded-lg p-0 md:p-10 ">
+						<ContactForm />
+					</div>
+
+					<div className="mt-10">
+						<h2 className="font-semibold text-lg md:text-xl mb-7 inline-flex items-center justify-center w-full ">
+							<span className="h-3 w-3 mr-3 rounded-full bg-blue-500 md:hidden " />
+							Our Locations
+						</h2>
+
+						<div className="flex flex-col lg:flex-row gap-5 md:gap-10 *:md:shadow-lg *:grow *:w-full">
 							{/* Calabar */}
-							<div className="lg:flex gap-8 mb-10 md:bg-blue-50 p-0 md:p-5 rounded-lg">
+							<div className="lg:flex flex-wrap gap-8 md:bg-blue-50 rounded-lg p-0 md:p-10 lg:p-5">
 								<Link
 									target="_blank"
 									to="https://maps.google.com/maps/place//data=!4m2!3m1!1s0x10678776d57d673d:0x3a5ca1c3f4f97ad4?entry=s&sa=X&ved=1t:8290&hl=en-US&ictx=111"
@@ -232,7 +242,7 @@ const Home = () => {
 								</ul>
 							</div>
 							{/* Uyo */}
-							<div className="lg:flex gap-8 md:bg-blue-50 rounded-lg  p-0 md:p-5 ">
+							<div className="lg:flex flex-wrap gap-8 md:bg-blue-50 rounded-lg p-0 md:p-10 lg:p-5">
 								<Link
 									target="_blank"
 									to="https://www.google.com/maps/dir//520106+Nwaniba+Road,+Uyo+520106,+Akwa+Ibom/@5.0557182,7.9578196,12z/data=!4m8!4m7!1m0!1m5!1m1!1s0x105d5813586afc87:0x6734e8be23eaf5d8!2m2!1d8.0402216!2d5.0557234?entry=ttu"
@@ -279,17 +289,15 @@ const Home = () => {
 								</ul>
 							</div>
 						</div>
-						<div className="flex-1 md:bg-blue-50 rounded-lg p-0 md:p-5 w-full self-start lg:self-stretch">
-							<ContactForm />
-						</div>
 					</div>
 				</div>
 			</section>
 
 			{/* faq */}
-			<section ref={faq} className="py-20 px-5 md:px-20 bg-white">
+			<section id="faq" ref={faq} className="py-20 px-5 md:px-20 bg-white">
 				<div className="max-w-[1440px] mx-auto">
-					<h2 className="font-semibold text-xl md:text-2xl text-center">
+					<h2 className="font-semibold text-xl md:text-2xl mb-7 inline-flex items-center justify-center w-full ">
+						<span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 md:hidden " />
 						Frequently Asked Questions (FAQs)
 					</h2>
 					<div className="my-10">
@@ -462,7 +470,7 @@ const ContactForm = () => {
 					type="submit"
 					loading={loading}
 					text={"Send Message"}
-					className="w-full md:w-40 !mt-auto"
+					className="w-full md:w-56 ml-auto mt-5"
 				/>
 			</form>
 		</>
