@@ -43,14 +43,10 @@ const Navbar = () => {
 	const navRef = React.useRef();
 
 	const handleNavItemClick = (ref) => {
-		setOpen(false);
-		if (!String("/").includes(location.pathname)) {
-			navigate("/");
-			return setTimeout(() => {
-				scrollToSection(ref);
-			});
-		}
-		return scrollToSection(ref);
+		if (isOpen) setOpen(false);
+		setTimeout(() => {
+			scrollToSection(ref);
+		});
 	};
 
 	// Detect outside navbar click
@@ -105,10 +101,10 @@ const Navbar = () => {
 				>
 					{[
 						["About Us", "/about"],
-						["Contact Us", "#contact"],
+						["Contact Us", "/#contact"],
 						["Book a trip", "/booking"],
 						["Rent a Boat", "/rental"],
-						["FAQ", "#faq"],
+						["FAQ", "/#faq"],
 					].map(([title, slug]) => {
 						return (
 							<li
@@ -119,7 +115,7 @@ const Navbar = () => {
 										: ""
 								}
 								className={cn(
-									"hover:bg-gray-400/20 md:hover:bg-transparent md:hover:text-blue-500 font-normal data-[state=active]:font-bold text-center md:text-left transition-all duration-75 ease-in-out text-lg uppercase h-24 md:h-fit tracking-wide inline-flex items-center justify-center ",
+									"hover:bg-gray-400/20 md:hover:bg-transparent md:hover:text-blue-500 font-normal data-[state=active]:font-bold text-center md:text-left transition-all duration-75 ease-in-out text-lg  md:text-base uppercase h-24 md:h-fit tracking-wide *:inline-flex *:items-center *:w-full *:h-full *:justify-center  ",
 									{
 										"md:hidden": ["Book a trip", "Rent a Boat"].includes(title),
 									}
