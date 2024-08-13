@@ -51,7 +51,7 @@ const EmblaCarousel = (props) => {
 								<span className="font-bold text-2xl md:text-4xl">“</span>
 								<p
 									className={cn(
-										"font-medium text-sm md:text-lg w-full md:w-[85%]"
+										"font-medium text-sm sm:text-lg w-full md:w-[85%]"
 									)}
 								>
 									{slide.review}

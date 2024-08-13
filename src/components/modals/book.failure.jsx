@@ -14,7 +14,7 @@ const BookingFailedModal = () => {
 	return (
 		<div className="font-poppins mx-auto py-10 px-5 md:p-10 w-full max-w-[450px] bg-white text-center flex flex-col rounded-lg">
 			<div className="mx-auto w-fit">
-				<img src={paymentFailed} alt="checkIcon" width={200} height={100} />
+				<img src={paymentFailed} alt="declined icon" width={200} height={100} />
 			</div>
 			<h2 className="font-semibold text-base md:text-xl text-[#454545] mb-5">
 				Payment Declined.

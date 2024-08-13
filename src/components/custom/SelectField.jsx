@@ -1,9 +1,7 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable react/display-name */
 import React from "react";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-// import PropTypes from "prop-types";
 
 const SelectField = React.forwardRef((props, ref) => {
 	const {
@@ -84,10 +82,6 @@ const SelectField = React.forwardRef((props, ref) => {
 		</div>
 	);
 });
-
-// SelectField_.propTypes = {
-//   props: { label: PropTypes.string, placeholder: PropTypes.string },
-//   ref: PropTypes.func,
-// };
+SelectField.displayName = "SelectField";
 
 export default SelectField;
