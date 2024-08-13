@@ -77,27 +77,29 @@ const Home = () => {
 			</section>
 
 			{/* metrics */}
-			<section className="max-w-[1440px] mx-auto">
-				<ul className="flex gap-2 md:gap-10 justify-evenly text-center px-5 py-10 sm:py-20 font-bold [&_p:last-of-type]:font-normal text-3xl sm:text-6xl [&_p:last-of-type]:text-xs  sm:[&_p:last-of-type]:text-base *:flex *:flex-col *:items-center *:grow *:w-full">
-					<li>
-						<p>
-							<CountUp end={500} enableScrollSpy />+
-						</p>
-						<p>Happy Clients</p>
-					</li>
-					<li>
-						<p>
-							<CountUp end={4} start={100} enableScrollSpy />+
-						</p>
-						<p>Months in Business</p>
-					</li>
-					<li>
-						<p>
-							<CountUp end={50} enableScrollSpy />+
-						</p>
-						<p>Successful Ferry Trips</p>
-					</li>
-				</ul>
+			<section className="bg-white ">
+				<div className="max-w-[1440px] mx-auto">
+					<ul className="flex gap-2 md:gap-10 justify-evenly text-center px-5 py-10 sm:py-20 font-bold [&_p:last-of-type]:font-normal text-3xl sm:text-6xl [&_p:last-of-type]:text-xs  sm:[&_p:last-of-type]:text-base *:flex *:flex-col *:items-center *:grow *:w-full">
+						<li>
+							<p>
+								<CountUp end={500} enableScrollSpy />+
+							</p>
+							<p>Happy Clients</p>
+						</li>
+						<li>
+							<p>
+								<CountUp end={4} start={100} enableScrollSpy />+
+							</p>
+							<p>Months in Business</p>
+						</li>
+						<li>
+							<p>
+								<CountUp end={50} enableScrollSpy />+
+							</p>
+							<p>Successful Ferry Trips</p>
+						</li>
+					</ul>
+				</div>
 			</section>
 
 			{/* About us  */}

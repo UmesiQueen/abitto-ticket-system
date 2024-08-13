@@ -59,27 +59,29 @@ const About = () => {
 				</section>
 
 				{/* metrics */}
-				<section className="max-w-[1440px] mx-auto">
-					<ul className="flex gap-2 md:gap-10 justify-evenly text-center px-5 py-10 sm:py-20 font-bold [&_p:last-of-type]:font-normal text-3xl sm:text-6xl [&_p:last-of-type]:text-xs  sm:[&_p:last-of-type]:text-base *:flex *:flex-col *:items-center *:grow *:w-full">
-						<li>
-							<p>
-								<CountUp end={500} enableScrollSpy />+
-							</p>
-							<p>Happy Clients</p>
-						</li>
-						<li>
-							<p>
-								<CountUp end={4} start={100} enableScrollSpy />+
-							</p>
-							<p>Months in Business</p>
-						</li>
-						<li>
-							<p>
-								<CountUp end={50} enableScrollSpy />+
-							</p>
-							<p>Successful Ferry Trips</p>
-						</li>
-					</ul>
+				<section className="bg-white ">
+					<div className="max-w-[1440px] mx-auto">
+						<ul className="flex gap-2 md:gap-10 justify-evenly text-center px-5 py-10 sm:py-20 font-bold [&_p:last-of-type]:font-normal text-3xl sm:text-6xl [&_p:last-of-type]:text-xs  sm:[&_p:last-of-type]:text-base *:flex *:flex-col *:items-center *:grow *:w-full">
+							<li>
+								<p>
+									<CountUp end={500} enableScrollSpy />+
+								</p>
+								<p>Happy Clients</p>
+							</li>
+							<li>
+								<p>
+									<CountUp end={4} start={100} enableScrollSpy />+
+								</p>
+								<p>Months in Business</p>
+							</li>
+							<li>
+								<p>
+									<CountUp end={50} enableScrollSpy />+
+								</p>
+								<p>Successful Ferry Trips</p>
+							</li>
+						</ul>
+					</div>
 				</section>
 
 				{/* about us */}
@@ -155,11 +157,11 @@ const About = () => {
 									</TabsList>
 								</div>
 							</div>
-							<div className="p-5 px-8 rounded-lg bg-white mt-5 md:mt-0">
+							<div className="pt-5 p-8 rounded-lg bg-white mt-5 md:mt-0 *:min-h-[300px]">
 								<TabsContent value={"mission"}>
 									<div className="rounded-lg min-h-72 space-y-4">
 										<h3 className="font-semibold">Mission Statement</h3>
-										<div className="border-t-2 pt-4 text-sm md:text-base border-black space-y-1">
+										<div className="border-t-2 pt-4 text-sm md:text-base border-black space-y-2">
 											<p>
 												Abitto Ferry strives to deliver secure, dependable, and
 												efficient ferry transportation services that link
@@ -180,7 +182,7 @@ const About = () => {
 								<TabsContent value={"vision"}>
 									<div className="rounded-lg min-h-72 space-y-4">
 										<h3 className="font-semibold">Vision Statement</h3>
-										<div className="border-t-2 pt-4 text-sm md:text-base border-black space-y-1">
+										<div className="border-t-2 pt-4 text-sm md:text-base border-black space-y-2">
 											<p>
 												Our vision is to offer a superior transportation
 												alternative by establishing seamless connections between
@@ -203,7 +205,7 @@ const About = () => {
 								<TabsContent value={"history"}>
 									<div className="rounded-lg min-h-72 space-y-4">
 										<h3 className="font-semibold">Our History</h3>
-										<p className="border-t-2 pt-4 text-sm md:text-base border-black space-y-1">
+										<p className="border-t-2 pt-4 text-sm md:text-base border-black space-y-2">
 											<p>
 												Abitto ferry is a ferry transportation service offered
 												by Abitto global Services Limited.
@@ -231,7 +233,7 @@ const About = () => {
 
 				{/* Meet the founder */}
 				<section className="px-5 pb-20 md:p-20 bg-white">
-					<div className="max-w-[1440px] mx-auto pt-5 md:flex gap-20 *:w-full">
+					<div className="max-w-[1440px] mx-auto pt-5 flex flex-col lg:flex-row gap-x-5 gap-y-20 *:w-full">
 						<div className="text-center md:text-left mt-10 md:mt-0">
 							<div className="flex items-center justify-center md:justify-start">
 								<span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 " />
@@ -241,7 +243,7 @@ const About = () => {
 								<p className="font-semibold text-2xl mb-2">Richard Akinaka</p>
 								<p className=" font-medium">Founder Abitto Global services</p>
 							</div>
-							<div className="space-y-3 *:indent-3">
+							<div className="space-y-3">
 								<p>
 									Mr. Richard Akinaka is the Chairman and CEO of Abitto Global
 									Services Limited. A skilled project manager with extensive
@@ -265,11 +267,11 @@ const About = () => {
 							</div>
 						</div>
 						<div className="mt-10 md:mt-0">
-							<div className=" w-fit md:w-[500px] max-h-[500px] mx-auto overflow-hidden rounded-lg bg-slate-500">
+							<div className="w-full md:w-[500px] max-h-[500px] mx-auto overflow-hidden rounded-lg ">
 								<img
 									alt="founders image"
 									src={FounderImg}
-									className="w-full h-full object-contain md:object-cover object-center "
+									className="w-full h-full object-contain md:object-cover rounded-lg "
 								/>
 							</div>
 						</div>
