@@ -292,7 +292,7 @@ const BookingDetails = () => {
 						</SelectTrigger>
 						<SelectContent>
 							<SelectGroup>
-								<SelectItem value="#">All trip types</SelectItem>
+								<SelectItem value="#">Both trip types</SelectItem>
 								<SelectItem value="One-Way Trip">One-Way Trip</SelectItem>
 								<SelectItem value="Round Trip">Round Trip</SelectItem>
 							</SelectGroup>
@@ -321,6 +321,33 @@ const BookingDetails = () => {
 								<SelectItem value="#">Both mediums</SelectItem>
 								<SelectItem value="Online">Online</SelectItem>
 								<SelectItem value="Offline">Offline</SelectItem>
+							</SelectGroup>
+						</SelectContent>
+					</Select>
+				</div>
+				<div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg">
+					<span className="px-4 text-nowrap text-sm font-semibold bg-white h-full inline-flex items-center rounded-l-lg">
+						Payment status
+					</span>
+					<Select
+						defaultValue="#"
+						value={table.getColumn("payment_status")?.getFilterValue() ?? "#"}
+						onValueChange={(value) => {
+							if (value === "#") {
+								return table.getColumn("payment_status")?.setFilterValue("");
+							}
+							table.getColumn("payment_status")?.setFilterValue(value);
+						}}
+					>
+						<SelectTrigger className="w-[170px] grow rounded-none rounded-r-lg border-0 border-l px-5 focus:ring-0 focus:ring-offset-0 bg-white">
+							<SelectValue />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectGroup>
+								<SelectItem value="#">All Passengers</SelectItem>
+								<SelectItem value="Success">Success</SelectItem>
+								<SelectItem value="Canceled">Canceled</SelectItem>
+								<SelectItem value="Pending">Pending</SelectItem>
 							</SelectGroup>
 						</SelectContent>
 					</Select>
