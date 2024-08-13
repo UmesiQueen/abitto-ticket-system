@@ -72,7 +72,7 @@ const Login = () => {
 			case "dev":
 				return "/backend/dev/dashboard";
 			default:
-				return "/backend/login";
+				return "/login";
 		}
 	};
 
