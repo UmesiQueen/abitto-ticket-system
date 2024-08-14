@@ -389,7 +389,7 @@ const Home = () => {
 						<span className=" h-3 w-3 mr-3 rounded-full bg-blue-500" />
 						Contact Us
 					</h2>
-					<div className="md:bg-blue-50 rounded-lg p-0 md:p-10 ">
+					<div className="md:bg-blue-50 rounded-lg p-0 md:p-10 mb-5 md:mb-10  ">
 						<ContactForm />
 					</div>
 				</div>
