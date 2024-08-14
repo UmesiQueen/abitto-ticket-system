@@ -261,11 +261,7 @@ const RentalSummary = () => {
 							className="w-full md:w-40"
 							onClick={onPrevClick}
 						/>
-						<Button
-							type="submit"
-							text="Pay with Paystack"
-							className=" w-full md:w-48"
-						/>
+						<Button type="submit" text="Submit" className=" w-full md:w-48" />
 					</div>
 				</form>
 			</div>

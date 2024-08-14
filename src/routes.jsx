@@ -38,6 +38,7 @@ import RentalDetails from "./admin/pages/rental-details";
 import PageNotFoundAdmin from "./admin/pages/page-not-found";
 import CheckIn from "./admin/pages/check-in";
 // import Reschedule from "./admin/pages/reschedule";
+import { RentDetail } from "./admin/pages/rental-details";
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -67,6 +68,11 @@ export const router = createBrowserRouter(
 						element={<Reschedule />}
 					/> */}
 					<Route path="rental-details" element={<RentalDetails />} />
+					<Route
+						path="rental-details/:rentalID"
+						element={<RentDetail />}
+						loader={RentalInvoiceLoader}
+					/>
 					<Route path="journey-list" element={<JourneyList />} />
 					<Route
 						path="journey-list/:tripCode"
