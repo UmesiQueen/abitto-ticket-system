@@ -4,6 +4,7 @@ import { GlobalCTX } from "@/contexts/GlobalContext";
 import Button from "@/components/custom/Button";
 import { usePayment } from "@/hooks/usePayment";
 import { useLocation } from "react-router-dom";
+import cautionSVG from "@/assets/caution.gif";
 
 const BookingWarningModal = () => {
 	const { unMountPortalModal } = React.useContext(GlobalCTX);
@@ -12,6 +13,9 @@ const BookingWarningModal = () => {
 
 	return (
 		<div className="font-poppins mx-auto pt-8 p-5 md:p-10 w-full max-w-[450px] bg-white  flex flex-col rounded-lg">
+			<div className="mx-auto w-fit">
+				<img src={cautionSVG} alt="caution icon" width={200} height={100} />
+			</div>
 			<h2 className="font-semibold text-base md:text-xl text-[#454545] mb-5 text-center">
 				A step closer to securing your seat.
 			</h2>
