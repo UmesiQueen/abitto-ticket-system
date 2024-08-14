@@ -28,9 +28,11 @@ import { formatValue } from "react-currency-input-field";
 import { v4 as uuid } from "uuid";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { toast } from "sonner";
+import { GlobalCTX } from "@/contexts/GlobalContext";
 
 const Customers = () => {
 	// const navigate = useNavigate();
+	const { setLoading } = React.useContext(GlobalCTX);
 	const {
 		customersData,
 		setCustomersData,
@@ -51,6 +53,7 @@ const Customers = () => {
 	});
 
 	React.useEffect(() => {
+		setLoading(true);
 		baseurl
 			.get("/booking/customerdetails")
 			.then((res) => {
@@ -91,7 +94,8 @@ const Customers = () => {
 					toast.error(
 						"Error occurred while fetching customers data. Refresh page."
 					);
-			});
+			})
+			.finally(() => setLoading(false));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

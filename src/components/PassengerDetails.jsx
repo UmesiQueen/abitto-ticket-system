@@ -82,17 +82,17 @@ const PassengerDetails = () => {
 				<ul className="w-full [&_h4]:uppercase [&_h4]:text-gray-400 [&_h4]:text-xs [&_p]:text-white [&_p]:text-sm flex flex-wrap  *:grow px-2 items-center gap-5 md:justify-around md:divide-x-2 h-full md:[&_li:not(:first-of-type)]:pl-5 *:space-y-1">
 					<li>
 						<h4>Trip type</h4>
-						<p>{formData.bookingDetails.trip_type}</p>
+						<p>{formData.bookingDetails?.trip_type}</p>
 					</li>
 					<li>
 						<h4>Route</h4>
 						<p>
-							{formData.bookingDetails.travel_from.includes("Calabar")
+							{formData.bookingDetails?.travel_from.includes("Calabar")
 								? "Calabar"
 								: "Uyo"}{" "}
 							==
 							{">"}{" "}
-							{formData.bookingDetails.travel_to.includes("Calabar")
+							{formData.bookingDetails?.travel_to.includes("Calabar")
 								? "Calabar"
 								: "Uyo"}
 						</p>
@@ -100,11 +100,11 @@ const PassengerDetails = () => {
 					<li>
 						<h4> Departure Date & Time</h4>
 						<p>
-							{format(new Date(formData.bookingDetails.departure_date), "PP")} -{" "}
-							{formData.bookingDetails.departure_time}
+							{format(new Date(formData.bookingDetails?.departure_date), "PP")}{" "}
+							- {formData.bookingDetails?.departure_time}
 						</p>
 					</li>
-					{formData.bookingDetails.trip_type === "Round Trip" && (
+					{formData.bookingDetails?.trip_type === "Round Trip" && (
 						<li>
 							<h4> Return Date & Time</h4>
 							<p>
@@ -115,11 +115,11 @@ const PassengerDetails = () => {
 					)}
 					<li>
 						<h4>Adult</h4>
-						<p>{formData.bookingDetails.adults_number}</p>
+						<p>{formData.bookingDetails?.adults_number}</p>
 					</li>
 					<li>
 						<h4>Children</h4>
-						<p>{formData.bookingDetails.children_number ?? 0}</p>
+						<p>{formData.bookingDetails?.children_number ?? 0}</p>
 					</li>
 				</ul>
 			</div>
@@ -182,7 +182,7 @@ const PassengerDetails = () => {
 										value={formData.seatDetails?.departure_seats ?? ""}
 										onClick={handleSeatSelection}
 									/>
-									{formData.bookingDetails.trip_type === "Round Trip" && (
+									{formData.bookingDetails?.trip_type === "Round Trip" && (
 										<InputField
 											{...register("return_seats")}
 											label="Return Seat"
