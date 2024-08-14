@@ -51,12 +51,15 @@ const Login = () => {
 				}
 			})
 			.catch((error) => {
+				if (error.code == "ERR_BAD_REQUEST")
+					toast.error("Email or password is incorrect.");
+
 				if (
 					!error.code === "ERR_NETWORK" ||
 					!error.code === "ERR_INTERNET_DISCONNECTED" ||
 					!error.code === "ECONNABORTED"
 				)
-					toast.error(`${error.message}`);
+					toast.error("Unknown Error occurred!");
 			})
 			.finally(() => setLoading(false));
 	});
