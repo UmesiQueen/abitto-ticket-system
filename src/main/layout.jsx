@@ -72,7 +72,7 @@ const Navbar = () => {
 	return (
 		<nav
 			className={cn(
-				"fixed right-0 left-0 px-5 md:px-20 h-[67px] w-full text-white backdrop-blur-[1px] z-[3] bg-[#111111]/80",
+				"fixed right-0 left-0 px-5 md:px-20 h-[67px] w-full text-white backdrop-blur-[3px] z-[3] bg-[#111111]/80",
 				{
 					"bg-transparent": ["/", "/about"].includes(location.pathname),
 					"bg-[#111111]/80": isOpen || scroll,
