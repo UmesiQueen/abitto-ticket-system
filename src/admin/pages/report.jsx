@@ -36,13 +36,6 @@ const Report = () => {
 		tripsAll: 0,
 		tripsUyo: 0,
 		tripsCalabar: 0,
-		rentRevenueAll: [],
-		rentRevenueCalabar: [],
-		rentRevenueUyo: [],
-		rentalCountAll: 0,
-		rentalCountCalabar: 0,
-		rentalCountUyo: 0,
-		rentalCountWithinMarina: 0,
 	});
 	const [bookingTotals, setBookingTotals] = React.useState({
 		totalPending: 0,
@@ -63,19 +56,6 @@ const Report = () => {
 		totalRescheduledTrips: 0,
 		totalCanceledTrips: 0,
 	});
-	const [rentalTotals, setRentalTotals] = React.useState({
-		totalPending: 0,
-		totalSuccess: 0,
-		totalCanceled: 0,
-		totalPassengers: 0,
-		totalEarnings: 0,
-		totalOffline: 0,
-		totalOnline: 0,
-		totalPaystack: 0,
-		totalPos: 0,
-		totalCash: 0,
-		totalTransfer: 0,
-	});
 	const [city, setCity] = React.useState("All");
 
 	React.useEffect(() => {
@@ -86,31 +66,11 @@ const Report = () => {
 				const totals = res.data;
 				setTotal({
 					bookingRevenueAll: totals.Revenue,
-					bookingRevenueCalabar: totals.Calabarrevenue,
-					bookingRevenueUyo: totals.Uyorevenue,
-
+					bookingRevenueCalabar: totals.Calabar_revenue,
+					bookingRevenueUyo: totals.Uyo_revenue,
 					tripsAll: totals.trips,
-					tripsUyo: totals.uyoTrips,
-					tripsCalabar: totals.calabarTrips,
-
-					// rentRevenueAll: totals.rentRevenue,
-					// rentRevenueCalabar: totals.rentRevenueCalabar,
-					// rentRevenueUyo: totals.rentRevenueUyo,
-					rentRevenueAll: [],
-					rentRevenueCalabar: [],
-					rentRevenueUyo: [],
-
-					rentalCountAll: totals.rentsCount,
-					// FIXME: spelling error from backend
-					rentalCountCalabar: totals.calabatrentsCount,
-					rentalCountUyo: totals.uyorentsCount,
-					rentalCountWithinMarina: 0,
-
-					// completedRentals: totals?.rentalStatus?.Completed ?? 0,
-					// upcomingRentals: totals?.rentalStatus?.Upcoming ?? 0,
-					// totalRentalWithin: totals?.rentPackages["within marina"],
-					// totalRentalCalabar: totals?.rentPackages["calabar to uyo"],
-					// totalRentalUyo: totals.rentPackages["uyo to calabar"],
+					tripsUyo: totals.uyo_Trips,
+					tripsCalabar: totals.calabar_Trips,
 				});
 			})
 			.catch((error) => {
@@ -224,7 +184,7 @@ const Report = () => {
 			<Helmet>
 				<title>Report | Admin</title>
 			</Helmet>
-			<h1 className="text-lg font-semibold">Dashboard Overview</h1>
+			<h1 className="text-lg font-semibold my-5 ">Dashboard Overview</h1>
 
 			{isSuperAdmin && (
 				<div className="flex justify-end">
@@ -418,207 +378,6 @@ const Report = () => {
 								rescheduled: bookingTotals.totalRescheduledTrips,
 							}}
 						/>
-					</div>
-				</div>
-			</div>
-			<div className="mt-20">
-				<h2 className="mb-3 font-semibold">Rental Report</h2>
-				<div className="mb-8 grid grid-cols-12 gap-5 w-full">
-					<div className="col-start-1 col-span-8 row-span-1 bg-white rounded-lg p-5 ">
-						<ul className="border rounded-lg p-5 flex flex-wrap *:grow  gap-5 justify-between items-center min-h-[100px] [&_li]:min-w-[25%]  [&_li:not(:first-of-type)]:pl-7 divide-x ">
-							<li className="item flex items-center gap-3">
-								<div className="rounded-lg bg-blue-50 p-2">
-									<WalletIcon />
-								</div>
-								<div>
-									<p className="text-xs text-[#7F7F7F] ">
-										Total Earnings (MRR)
-									</p>
-									<p className="text-base">
-										<strong>
-											{formatValue({
-												value: String(rentalTotals.totalEarnings ?? 0),
-												prefix: "₦",
-												decimalScale: 2,
-											})}
-										</strong>
-									</p>
-								</div>
-							</li>
-							<li className="item flex items-center gap-3 ">
-								<div className="rounded-lg bg-blue-50 p-2">
-									<UserGroupIcon />
-								</div>
-								<div>
-									<p className="text-xs text-[#7F7F7F] ">Total Rentals</p>
-									<p className="text-base">
-										<strong>
-											{formatValue({
-												value: String(total[`rentalCount${city}`]),
-											})}
-										</strong>
-									</p>
-								</div>
-							</li>
-							<li className="item flex items-center gap-3 ">
-								<div className="rounded-lg bg-blue-50 p-2">
-									<FerryBoatIcon />
-								</div>
-								<div>
-									<p className="text-xs text-[#7F7F7F] ">Upcoming Rentals</p>
-									<p className="text-base">
-										<strong>
-											{formatValue({
-												value: String(0),
-											})}
-										</strong>
-									</p>
-								</div>
-							</li>
-						</ul>
-					</div>
-					<div className="row-start-2 row-span-4  col-start-1 col-span-8 bg-white rounded-lg p-5 ">
-						<div className="border rounded-lg p-5 flex flex-col justify-between h-full">
-							<CustomizedBarChart
-								props={{
-									title: "Rental Sales Revenue",
-									data: total[`rentRevenue${city}`],
-								}}
-							/>
-						</div>
-					</div>
-					<div className="row-span-3 row-start-1 col-start-9 col-span-4 bg-white rounded-lg p-5">
-						<div className="rounded-lg border p-5 space-y-5 mx-auto">
-							<h3 className="font-semibold mb-1">Rental Mediums</h3>
-							<div className="max-w-[450px] mx-auto relative flex flex-col justify-center">
-								<div className="w-fit mx-auto">
-									<PieChart
-										series={[
-											{
-												data: [
-													{
-														label: "Offline Booking",
-														value: rentalTotals.totalOffline,
-														color: "#3366CC",
-													},
-													{
-														label: "Online Booking",
-														value: rentalTotals.totalOnline,
-														color: "#85AD33",
-													},
-												],
-												innerRadius: 75,
-												outerRadius: 105,
-												paddingAngle: 0,
-												cornerRadius: 0,
-												startAngle: -90,
-												endAngle: 90,
-												cx: 104,
-												cy: 100,
-											},
-										]}
-										width={216}
-										height={200}
-										slotProps={{
-											legend: { hidden: true },
-										}}
-									/>
-								</div>
-								<div className="w-full absolute top-28 space-y-3">
-									<p className="text-center flex flex-col">
-										<strong className=" text-3xl font-semibold">
-											{rentalTotals.totalRentals}
-										</strong>
-										<span className="text-[#7F7F7F] text-base">
-											Total Rentals
-										</span>
-									</p>
-								</div>
-								<div className="flex flex-col gap-5 items-center ">
-									<p className="text-[#7F7F7F] before:content-[''] before:px-3 before:rounded-full before:bg-blue-500 before:mr-3 text-nowrap">
-										{rentalTotals.totalOffline} Offline Rental
-									</p>
-									<p className=" text-[#7F7F7F] before:content-[''] before:px-3 before:rounded-full before:bg-green-500 before:mr-3 text-nowrap">
-										{rentalTotals.totalOnline} Online Rental
-									</p>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div className="row-span-2 row-start-4 col-start-9 col-span-4 bg-white rounded-lg p-5 h-full w-full">
-						<PaymentStatusPieChart
-							props={{
-								title: "Rental Payment Status",
-								success: rentalTotals.totalSuccess,
-								pending: rentalTotals.totalPending,
-								canceled: rentalTotals.totalCanceled,
-							}}
-						/>
-					</div>
-					<div className="col-span-6 row-start-6 row-span-2 bg-white rounded-lg p-5">
-						<PaymentMethodPieChart
-							props={{
-								title: "Rental Payment Methods",
-								paystack: rentalTotals.totalPaystack,
-								pos: rentalTotals.totalPos,
-								transfer: rentalTotals.totalTransfer,
-								cash: rentalTotals.totalCash,
-							}}
-						/>
-					</div>
-					<div className="col-start-7 col-span-6 row-start-6 row-span-2 bg-white rounded-lg p-5 ">
-						<div className="border rounded-lg p-5 pb-0 h-full">
-							<h3 className="font-semibold">Rental Packages</h3>
-							<div className="flex items-center max-w-[450px] font-poppins mx-auto">
-								<PieChart
-									series={[
-										{
-											data: [
-												{
-													label: "Within Marina",
-													value: rentalTotals.rentalCountWithinMarina,
-													color: "#3366CC",
-												},
-												{
-													label: "Uyo to Calabar",
-													value: rentalTotals.rentalCountUyo,
-													color: "#85AD33",
-												},
-												{
-													label: "Calabar to Uyo",
-													value: rentalTotals.rentalCountCalabar,
-													color: "#152b56",
-												},
-											],
-											innerRadius: 35,
-											outerRadius: 105,
-											paddingAngle: 3,
-											cornerRadius: 5,
-											startAngle: -190,
-											endAngle: 40,
-											cx: 150,
-											cy: 100,
-										},
-									]}
-									width={400}
-									height={210}
-									slotProps={{
-										legend: { hidden: true },
-									}}
-								/>
-								<ul className="w-1/2 space-y-2 pl-2 ">
-									<li className=" text-[#7F7F7F] before:content-[''] before:px-3 before:rounded-full before:bg-[#3366CC] before:mr-3 text-nowrap">
-										Within Marina
-									</li>
-									<li className=" text-[#7F7F7F] before:content-[''] before:px-3 before:rounded-full before:bg-[#85AD33] before:mr-3 text-nowrap">
-										Uyo to Calabar
-									</li>
-									<li className=" text-[#7F7F7F] before:content-[''] before:px-3 before:rounded-full before:bg-[#152b56] before:mr-3 text-nowrap">
-										Calabar to Uyo
-									</li>
-								</ul>
-							</div>
-						</div>
 					</div>
 				</div>
 			</div>
@@ -902,10 +661,10 @@ const CustomizedBarChart = ({ props: { title, data } }) => {
 	const [filter, setFilter] = React.useState("all");
 	const [salesRevenue, setSalesRevenue] = React.useState(0);
 
-	const formatData = data.map((record) => ({
-		...record,
-		date: format(new Date(record.date), "PP"),
-	}));
+	// const formatData = data.map((record) => ({
+	// 	...record,
+	// 	date: format(new Date(record.date), "PP"),
+	// }));
 
 	React.useEffect(() => {
 		const summaryData = processData(data, filter);
@@ -954,7 +713,7 @@ const CustomizedBarChart = ({ props: { title, data } }) => {
 				</Select>
 			</div>
 			<BarChart
-				data={formatData}
+				data={summary}
 				index="date"
 				categories={["totalRevenue"]}
 				colors={["blue"]}
