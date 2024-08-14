@@ -201,6 +201,14 @@ const Payment = () => {
 					<b>30 minutes</b> before your scheduled take off.
 				</p>
 				<p>
+					Each passenger is entitled to a <strong>10kg</strong> baggage
+					allowance.
+				</p>
+				<p>
+					All baggage that exceeds the specified weight must be conveyed via
+					abitto logistics.
+				</p>
+				<p>
 					<strong>
 						This ticket is Non-refundable and cannot be rescheduled if scheduled
 						time is missed.
