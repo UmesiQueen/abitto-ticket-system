@@ -283,7 +283,7 @@ const RentalTable = () => {
 			header: "Date & Time",
 			cell: ({ row }) => (
 				<div className="space-y-1">
-					<p>{truncate(row.original.rental_date)}</p>
+					<p>{format(row.original.rental_date, "PP")}</p>
 					<p>{row.original.rental_time}</p>
 				</div>
 			),
@@ -494,8 +494,6 @@ const RentalTable = () => {
 export const RentDetail = () => {
 	const navigate = useNavigate();
 	const currentRental = useLoaderData();
-
-	console.log(currentRental);
 
 	return (
 		<div>
