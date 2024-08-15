@@ -120,7 +120,7 @@ const ProtectedRoute = () => {
 	const handleLogout = () => {
 		localStorage.removeItem("access token");
 		localStorage.removeItem("admin");
-		navigate("/backend/login");
+		navigate("login");
 	};
 
 	const handleChange = (event) => {
@@ -227,7 +227,7 @@ const AdminLayout = () => {
 	const accessToken = JSON.parse(localStorage.getItem("access token")) ?? "";
 	const isAuth = accessToken && String(accountType).includes(account_type);
 
-	return <>{isAuth ? <ProtectedRoute /> : <Navigate to="/backend/login" />}</>;
+	return <>{isAuth ? <ProtectedRoute /> : <Navigate to="/login" />}</>;
 };
 
 export default AdminLayout;

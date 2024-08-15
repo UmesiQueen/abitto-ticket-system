@@ -8,11 +8,19 @@ import BookingSuccessModal from "@/components/modals/book.success";
 import { v4 as uuid } from "uuid";
 import { sampleSize } from "lodash";
 import { RentalSuccessModal } from "@/components/modals/book.success";
+import BookingFailedModal, {
+	BookingRequestFailedModal,
+} from "@/components/modals/book.failure";
 
 export const usePayment = () => {
 	const { formData, rentalData, selectedTrip } = React.useContext(BookingCTX);
-	const { mountPortalModal, adminProfile, setLoading } =
-		React.useContext(GlobalCTX);
+	const {
+		mountPortalModal,
+		setModalContent,
+		setShowModal,
+		adminProfile,
+		setLoading,
+	} = React.useContext(GlobalCTX);
 	const { bookingDetails, passengerDetails, seatDetails, ticket_id } = formData;
 	const total_ticket_cost =
 		(Number(formData.bookingDetails.departure_ticket_cost) +
@@ -25,10 +33,10 @@ export const usePayment = () => {
 	};
 
 	const onlinePayment = () => {
+		setShowModal(false);
 		const paystack = new PaystackPop();
 
 		paystack.newTransaction({
-			// key: "pk_live_297c0c356506ae67d9de7d6a51967914d9af9567", // all-in
 			key: "pk_live_b25d12c8f8e8a5b151d6015b71ae2e99d1e4e243", // abitto
 			// key: "pk_test_5d5cd21c077f1395d701366d2880665b3e9fb0f5",
 			amount: total_ticket_cost * 100,
@@ -49,9 +57,8 @@ export const usePayment = () => {
 					trxRef: "N/A",
 					trip_status: "Canceled",
 				});
-				toast.error("Payment Declined", {
-					description: "Transaction failed. Please try again.",
-				});
+				setShowModal(true);
+				setModalContent(<BookingFailedModal />);
 			},
 		});
 	};
@@ -86,19 +93,18 @@ export const usePayment = () => {
 			.then((res) => {
 				if ((res.status == 200) & isSuccess) {
 					const ticket_id = res.data.booking.ticket_id;
-					mountPortalModal(<BookingSuccessModal id={ticket_id} />);
+					setModalContent(<BookingSuccessModal id={ticket_id} />);
 				}
 			})
 			.catch(() => {
 				if (isSuccess) {
 					document.getElementById("paystack_btn").disabled = true;
-					document.getElementById("payment_next_btn").innerHTML = "Continue";
-					toast.error(
-						"Oops! Booking not confirmed. Please contact us to verify."
-					);
+					document.getElementById("payment_next_btn").innerHTML = "Clear";
+					setModalContent(<BookingRequestFailedModal header="Booking" />);
 				}
 			})
 			.finally(() => {
+				setShowModal(true);
 				setLoading(false);
 			});
 	};
@@ -124,7 +130,7 @@ export const usePayment = () => {
 			trxRef: data.transaction_ref,
 			booked_by: `${adminProfile.first_name}(${adminProfile.account_type})`,
 			check_in: data.check_in,
-			trip_status: "Upcoming",
+			trip_status: data.check_in ? "Completed" : "Upcoming",
 		};
 
 		baseurl
@@ -149,11 +155,11 @@ export const usePayment = () => {
 	};
 
 	const onlineRentalPayment = () => {
+		setShowModal(false);
 		const paystack = new PaystackPop();
 
 		paystack.newTransaction({
 			key: "pk_live_b25d12c8f8e8a5b151d6015b71ae2e99d1e4e243", //abitto
-			// key: "pk_live_297c0c356506ae67d9de7d6a51967914d9af9567", // all-in
 			// key: "pk_test_5d5cd21c077f1395d701366d2880665b3e9fb0f5", // queen
 			amount: rentalData.total_cost * 100,
 			email: rentalData.email,
@@ -171,7 +177,8 @@ export const usePayment = () => {
 					payment_status: "Canceled",
 					trxRef: "N/A",
 				});
-				toast.error("Transaction failed. Please try again.");
+				setShowModal(true);
+				setModalContent(<BookingFailedModal />);
 			},
 		});
 	};
@@ -196,19 +203,20 @@ export const usePayment = () => {
 			.then((res) => {
 				if (res.status == 200 && isSuccess) {
 					const ticket_id = res.data.rent.ticket_id;
-					mountPortalModal(<RentalSuccessModal id={ticket_id} />);
+					setModalContent(<RentalSuccessModal id={ticket_id} />);
 				}
 			})
 			.catch(() => {
 				if (isSuccess) {
 					document.getElementById("rental_payment_btn").disabled = true;
-					document.getElementById("rental_next_btn").innerHTML = "Continue";
-					toast.error(
-						"Oops! Rental not confirmed. Please contact us to verify."
-					);
+					document.getElementById("rental_next_btn").innerHTML = "Clear";
+					setModalContent(<BookingRequestFailedModal header={"Rental"} />);
 				}
 			})
-			.finally(() => setLoading(false));
+			.finally(() => {
+				setShowModal(true);
+				setLoading(false);
+			});
 	};
 
 	const offlineRentalPayment = (data) => {

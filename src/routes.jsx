@@ -2,7 +2,6 @@ import {
 	createBrowserRouter,
 	createRoutesFromElements,
 	Route,
-	Navigate,
 } from "react-router-dom";
 
 import App from "./App";
@@ -39,6 +38,7 @@ import RentalDetails from "./admin/pages/rental-details";
 import PageNotFoundAdmin from "./admin/pages/page-not-found";
 import CheckIn from "./admin/pages/check-in";
 // import Reschedule from "./admin/pages/reschedule";
+import { RentDetail } from "./admin/pages/rental-details";
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -51,10 +51,6 @@ export const router = createBrowserRouter(
 				<Route path="rental" element={<Rental />} />
 			</Route>
 
-			<Route
-				path="/backend"
-				element={<Navigate to="/backend/login" replace />}
-			/>
 			<Route path="/backend" element={<AdminLayout />} loader={DataQueryLoader}>
 				<Route path="/backend/:accountType">
 					<Route path="dashboard" element={<Report />} />
@@ -72,6 +68,11 @@ export const router = createBrowserRouter(
 						element={<Reschedule />}
 					/> */}
 					<Route path="rental-details" element={<RentalDetails />} />
+					<Route
+						path="rental-details/:rentalID"
+						element={<RentDetail />}
+						loader={RentalInvoiceLoader}
+					/>
 					<Route path="journey-list" element={<JourneyList />} />
 					<Route
 						path="journey-list/:tripCode"
@@ -96,7 +97,7 @@ export const router = createBrowserRouter(
 				element={<RentalInvoice />}
 				loader={RentalInvoiceLoader}
 			/>
-			<Route path="/backend/login" element={<Login />} />
+			<Route path="/login" element={<Login />} />
 			<Route path="*" element={<PageNotFound />} />
 		</Route>
 	)

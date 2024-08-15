@@ -36,6 +36,7 @@ const Login = () => {
 			.then((res) => {
 				if (res.status == 200) {
 					const { user, token } = res.data;
+					toast.success(`Welcome back ${user.first_name}`);
 					setAdminProfile({
 						account_type: user.account_type,
 						email: user.email,
@@ -51,12 +52,15 @@ const Login = () => {
 				}
 			})
 			.catch((error) => {
+				if (error.code == "ERR_BAD_REQUEST")
+					toast.error("Email or password is incorrect.");
+
 				if (
 					!error.code === "ERR_NETWORK" ||
 					!error.code === "ERR_INTERNET_DISCONNECTED" ||
 					!error.code === "ECONNABORTED"
 				)
-					toast.error(`${error.message}`);
+					toast.error("Unknown Error occurred!");
 			})
 			.finally(() => setLoading(false));
 	});
@@ -72,7 +76,7 @@ const Login = () => {
 			case "dev":
 				return "/backend/dev/dashboard";
 			default:
-				return "/backend/login";
+				return "/login";
 		}
 	};
 

@@ -13,15 +13,13 @@ import { BookingCTX } from "@/contexts/BookingContext";
 import Button from "@/components/custom/Button";
 import { Button as IconButton } from "./ui/button";
 import { useStepper } from "@/hooks/useStepper";
-import { usePayment } from "@/hooks/usePayment";
 import { GlobalCTX } from "@/contexts/GlobalContext";
+import BookingWarningModal from "@/components/modals/book.warning";
 
 const Payment = () => {
 	const { loading, formData, handleReset } = React.useContext(BookingCTX);
 	const { mountPortalModal } = React.useContext(GlobalCTX);
 	const { onPrevClick } = useStepper();
-	const { onlinePayment } = usePayment();
-	// const { testOnlinePayment } = usePayment();
 	const total_ticket_cost =
 		(Number(formData.bookingDetails.departure_ticket_cost) +
 			Number(formData.bookingDetails?.return_ticket_cost ?? 0)) *
@@ -203,6 +201,14 @@ const Payment = () => {
 					<b>30 minutes</b> before your scheduled take off.
 				</p>
 				<p>
+					Each passenger is entitled to a <strong>10kg</strong> baggage
+					allowance.
+				</p>
+				<p>
+					All baggage that exceeds the specified weight must be conveyed via
+					abitto logistics.
+				</p>
+				<p>
 					<strong>
 						This ticket is Non-refundable and cannot be rescheduled if scheduled
 						time is missed.
@@ -212,7 +218,9 @@ const Payment = () => {
 
 			<div className="my-5 md:mt-8 md:mb-0 space-y-5">
 				<Button
-					onClick={onlinePayment}
+					onClick={() => {
+						mountPortalModal(<BookingWarningModal />);
+					}}
 					id="paystack_btn"
 					loading={loading}
 					text={"Pay with paystack"}
@@ -223,7 +231,7 @@ const Payment = () => {
 						const text = event.target.innerHTML;
 						text == "Back"
 							? onPrevClick()
-							: text == "Continue"
+							: text == "Clear"
 							? handleReset()
 							: "";
 					}}
