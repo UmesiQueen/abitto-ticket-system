@@ -202,10 +202,13 @@ const RentalTable = () => {
 						location.split(",")[1].trim().toLowerCase()
 					);
 					// Filter records based on the terminal
-					const sortedRentals = res.data.rents.filter((rental) => {
-						const city = rental.departure.split(",")[1].trim().toLowerCase();
-						return terminals.includes(city);
-					});
+					const sortedRentals = res.data.rents
+						.filter((rental) => {
+							const city = rental.departure.split(",")[1].trim().toLowerCase();
+							return terminals.includes(city);
+						})
+						.filter((rentals) => rentals.email !== "preciousdmicah@gmail.com");
+					// FIXME::DELETE THIS CONDITION
 					setRentalData(sortedRentals);
 				}
 			})

@@ -105,6 +105,7 @@ const Report = () => {
 		).length;
 
 		const totalPassengers = filteredBooking
+			.filter((booking) => booking.payment_status == "Success")
 			.map((booking) => booking.total_passengers)
 			.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
@@ -580,12 +581,6 @@ const TripStatusPieChart = ({
 					</li>
 					<li className=" text-[#7F7F7F] before:content-[''] before:px-3 before:rounded-full before:bg-[#AA0000] before:mr-3 text-nowrap">
 						Canceled
-					</li>
-					<li className=" text-[#7F7F7F] before:content-[''] before:px-3 before:rounded-full before:bg-[#3366CC] before:mr-3 text-nowrap">
-						Missed
-					</li>
-					<li className=" text-[#7F7F7F] before:content-[''] before:px-3 before:rounded-full before:bg-[#E8D2A6] before:mr-3 text-nowrap">
-						Rescheduled
 					</li>
 				</ul>
 			</div>

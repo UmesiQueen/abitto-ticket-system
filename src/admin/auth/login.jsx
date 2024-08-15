@@ -36,6 +36,7 @@ const Login = () => {
 			.then((res) => {
 				if (res.status == 200) {
 					const { user, token } = res.data;
+					toast.success(`Welcome back ${user.first_name}`);
 					setAdminProfile({
 						account_type: user.account_type,
 						email: user.email,
