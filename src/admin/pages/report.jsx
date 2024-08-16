@@ -456,7 +456,7 @@ const PaymentMethodPieChart = ({
 	const data = [
 		{ label: "Paystack", value: paystack, color: "#071952" },
 		{ label: "POS", value: pos, color: "#134B70" },
-		{ label: "Bank Transfer", value: transfer, color: "#EBF4F6" },
+		{ label: "Bank Transfer", value: transfer, color: "#5B99C2" },
 		{ label: "Cash", value: cash, color: "#508C9B" },
 	];
 
@@ -504,7 +504,7 @@ const PaymentMethodPieChart = ({
 					<li className=" text-[#7F7F7F] before:content-[''] before:px-3 before:rounded-full before:bg-[#134B70] before:mr-3 text-nowrap">
 						POS
 					</li>
-					<li className=" text-[#7F7F7F] before:content-[''] before:px-3 before:rounded-full before:bg-[#EBF4F6] before:mr-3 text-nowrap">
+					<li className=" text-[#7F7F7F] before:content-[''] before:px-3 before:rounded-full before:bg-[#5B99C2] before:mr-3 text-nowrap">
 						Bank Transfer
 					</li>
 					<li className=" text-[#7F7F7F] before:content-[''] before:px-3 before:rounded-full before:bg-[#508C9B] before:mr-3 text-nowrap">

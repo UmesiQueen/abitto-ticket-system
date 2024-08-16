@@ -30,6 +30,7 @@ import Loader from "@/components/animation/Loader";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import baseurl from "@/api";
 import { Feedback } from "@mui/icons-material";
+import Logo from "@/assets/logo2.svg";
 
 const ProtectedRoute = () => {
 	const navigate = useNavigate();
@@ -144,13 +145,15 @@ const ProtectedRoute = () => {
 			<div className="relative">
 				{/* sidebar */}
 				<aside className=" h-screen w-40 md:w-60 bg-black text-white flex flex-col gap-10 fixed">
-					<img
-						alt="logo"
-						src="https://i.ibb.co/17zsqj1/logo2.png"
-						width={176}
-						height={60}
-						className="px-5"
-					/>
+					<div>
+						<img
+							alt="logo"
+							src={Logo}
+							width={150}
+							height={50}
+							className="pl-5 pt-3"
+						/>
+					</div>
 					<nav className="px-5 mx-auto">
 						<ul>
 							{menuItems.map(([title, url, icon, auth]) => {

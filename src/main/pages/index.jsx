@@ -206,12 +206,12 @@ const Home = () => {
 								<li>
 									<Link
 										className="hover:text-blue-500 duration-150 ease-in-out transition"
-										to="tel:+234 813 047 8003"
+										to="tel:+2347070600307"
 									>
 										<span>
 											<PhoneIcon />
 										</span>
-										<p>+234 813 047 8003</p>
+										<p>+234 707 060 0307</p>
 									</Link>
 								</li>
 								<li>
@@ -250,12 +250,12 @@ const Home = () => {
 								<li>
 									<Link
 										className="hover:text-blue-500 duration-150 ease-in-out transition"
-										to="tel:+234 813 047 8003"
+										to="tel:+2347077404553"
 									>
 										<span>
 											<PhoneIcon />
 										</span>
-										<p>+234 813 047 8003</p>
+										<p>+234 707 740 4553</p>
 									</Link>
 								</li>
 								<li>
