@@ -41,6 +41,7 @@ import CheckIn from "./admin/pages/check-in";
 import { RentDetail } from "./admin/pages/rental-details";
 import Feedback from "./main/pages/feedback";
 import FeedbackAdmin, { FeedbackDetails } from "./admin/pages/feedback";
+import Logistics from "./admin/pages/logistics";
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -61,6 +62,7 @@ export const router = createBrowserRouter(
 					<Route path="create/book-ticket" element={<BookTicket />} />
 					<Route path="create/check-in" element={<CheckIn />} />
 					<Route path="create/rental" element={<RentalAdmin />} />
+					<Route path="create/logistics" element={<Logistics />} />
 					<Route path="booking-details" element={<BookingDetails />} />
 					<Route
 						path="booking-details/:bookingID"
