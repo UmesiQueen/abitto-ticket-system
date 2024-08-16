@@ -12,6 +12,7 @@ const GlobalContext = ({ children }) => {
 	const [adminProfile, setAdminProfile] = React.useState(adminStore);
 	const [showModal, setShowModal] = React.useState(false);
 	const [modalContent, setModalContent] = React.useState();
+	const [starRating, setStarRating] = React.useState(0);
 
 	React.useEffect(() => {
 		if (Object.keys(adminProfile).length)
@@ -53,6 +54,8 @@ const GlobalContext = ({ children }) => {
 		setModalContent,
 		mountPortalModal,
 		unMountPortalModal,
+		starRating,
+		setStarRating,
 	};
 
 	return (

@@ -29,6 +29,7 @@ import { toast } from "sonner";
 import Loader from "@/components/animation/Loader";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import baseurl from "@/api";
+import { Feedback } from "@mui/icons-material";
 
 const ProtectedRoute = () => {
 	const navigate = useNavigate();
@@ -108,6 +109,14 @@ const ProtectedRoute = () => {
 			`/backend/${accountType}/customers`,
 			<UserIcon key="1" />,
 			["admin", "super-admin", "dev"],
+		],
+		[
+			"User Feedback",
+			`/backend/${accountType}/feedback`,
+			<div key="1" className="scale-[.85] -ml-1">
+				<Feedback />
+			</div>,
+			["super-admin", "dev"],
 		],
 		[
 			"Settings",

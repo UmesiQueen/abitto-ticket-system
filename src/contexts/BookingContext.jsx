@@ -12,6 +12,7 @@ const BookingContext = ({ children }) => {
 		booking: 0,
 		checkIn: 0,
 		journeyList: 0,
+		feedback: 0,
 	});
 	const [activeStep, setActiveStep] = React.useState(0);
 	const [formData, setFormData] = React.useState({

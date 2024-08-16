@@ -511,6 +511,7 @@ const testimonials = [
 ];
 
 const TestimonialsCarousel = () => {
+	const navigate = useNavigate();
 	return (
 		<section className="py-20 px-5 md:px-20 bg-blue-50 ">
 			<div className="max-w-[1440px] mx-auto">
@@ -525,6 +526,11 @@ const TestimonialsCarousel = () => {
 				<div className="mt-5">
 					<EmblaCarousel slides={testimonials} />
 				</div>
+				<Button
+					text="Send your Feedback"
+					className="mx-auto px-5"
+					onClick={() => navigate("feedback")}
+				/>
 			</div>
 		</section>
 	);

@@ -39,6 +39,8 @@ import PageNotFoundAdmin from "./admin/pages/page-not-found";
 import CheckIn from "./admin/pages/check-in";
 // import Reschedule from "./admin/pages/reschedule";
 import { RentDetail } from "./admin/pages/rental-details";
+import Feedback from "./main/pages/feedback";
+import FeedbackAdmin, { FeedbackDetails } from "./admin/pages/feedback";
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -49,6 +51,7 @@ export const router = createBrowserRouter(
 				<Route path="booking" element={<Booking />} />
 				<Route path="about" element={<About />} />
 				<Route path="rental" element={<Rental />} />
+				<Route path="feedback" element={<Feedback />} />
 			</Route>
 
 			<Route path="/backend" element={<AdminLayout />} loader={DataQueryLoader}>
@@ -83,6 +86,8 @@ export const router = createBrowserRouter(
 					<Route path="customers" element={<Customers />} />
 					{/* <Route path="customers/:customerID" element={<CustomerHistory />} /> */}
 					<Route path="settings" element={<Settings />} />
+					<Route path="feedback" element={<FeedbackAdmin />} />
+					<Route path="feedback/:feedbackID" element={<FeedbackDetails />} />
 				</Route>
 				<Route path="pageNotFound" element={<PageNotFoundAdmin />} />
 			</Route>
