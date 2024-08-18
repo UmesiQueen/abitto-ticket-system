@@ -9,6 +9,7 @@ import {
 	BookIcon,
 	ShipIcon,
 	MenuBoardIcon,
+	PackageIcon,
 } from "@/assets/icons";
 import {
 	Outlet,
@@ -46,6 +47,7 @@ const ProtectedRoute = () => {
 		`/backend/${accountType}/rental-details`,
 		`/backend/${accountType}/create/check-in`,
 		`/backend/${accountType}/customers`,
+		`/backend/${accountType}/logistics`,
 	].includes(pathname);
 
 	React.useEffect(() => {
@@ -103,6 +105,14 @@ const ProtectedRoute = () => {
 			"Rental Details",
 			`/backend/${accountType}/rental-details`,
 			<ShipIcon key="1" />,
+			["admin", "super-admin", "salesperson", "dev"],
+		],
+		[
+			"Logistics",
+			`/backend/${accountType}/logistics`,
+			<div className="scale-[1.2]" key="1">
+				<PackageIcon />
+			</div>,
 			["admin", "super-admin", "salesperson", "dev"],
 		],
 		[
@@ -167,9 +177,7 @@ const ProtectedRoute = () => {
 													className="[&.active]:bg-blue-500 px-5 py-3 rounded-xl hover:bg-gray-700/90 mb-2 transition-all  ease-in-out cursor-pointer flex items-center gap-2 [&>.title]:hidden  w-fit md:w-full md:[&>.title]:block"
 												>
 													<span className="text-[#f1f1f1]">{icon}</span>
-													<span className="title font-medium text-sm ">
-														{title}
-													</span>
+													<span className="font-medium text-sm ">{title}</span>
 												</NavLink>
 											</li>
 										)}

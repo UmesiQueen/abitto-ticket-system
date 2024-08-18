@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Button as ButtonUI } from "@/components/ui/button";
 import { CircleArrowLeftIcon } from "@/assets/icons";
@@ -7,26 +7,40 @@ import Logo from "@/assets/logo3.svg";
 import SelectField from "@/components/custom/SelectField";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import { useStepper } from "@/hooks/useStepper";
 import { BookingCTX } from "@/contexts/BookingContext";
+import { GlobalCTX } from "@/contexts/GlobalContext";
 import InputField from "@/components/custom/InputField";
 import { Textarea } from "@/components/ui/textarea";
 import Button from "@/components/custom/Button";
 import { NumericFormat } from "react-number-format";
+import {
+	shipmentDetailsSchema,
+	senderDetailsSchema,
+	receiverDetailsSchema,
+	paymentSchema,
+} from "@/lib/validators/logisticsSchema";
+import { formatValue } from "react-currency-input-field";
 
 const ctx = React.createContext();
 
 const Logistics = () => {
 	const navigate = useNavigate();
 	const { activeStep } = React.useContext(BookingCTX);
+	const [packageDetails, setPackageDetails] = React.useState({});
+	const [price, setPrice] = React.useState(0);
+
+	React.useEffect(() => {
+		//fetch price data
+		setPrice(1000);
+	}, []);
 
 	return (
 		<>
 			<Helmet>
 				<title>Logistics | Admin </title>
 			</Helmet>
-			<ctx.Provider>
+			<ctx.Provider value={{ packageDetails, setPackageDetails, price }}>
 				<div className="flex gap-1 items-center mb-10 ">
 					<ButtonUI size="icon" variant="ghost" onClick={() => navigate(-1)}>
 						<CircleArrowLeftIcon />
@@ -79,68 +93,113 @@ const Logistics = () => {
 
 export default Logistics;
 
-const shipmentDetailsSchema = yup.object().shape({
-	departure: yup.string().required("This field is required."),
-	arrival: yup.string().required("This field is required."),
-	category: yup.string().required("This field is required."),
-	item_name: yup.string(),
-	item_description: yup.string(),
-	no_item: yup
-		.number()
-		.typeError("No. of item must be a number")
-		.required("This field is required."),
-	weight: yup
-		.number()
-		.typeError("Weight must be a number")
-		.required("This field is required."),
-});
-
 const ShippingDetails = () => {
+	const { pathname } = useLocation();
+	const { adminProfile } = React.useContext(GlobalCTX);
 	const { onNextClick } = useStepper();
+	const { packageDetails, setPackageDetails, price } = React.useContext(ctx);
+
+	const isSalesperson =
+		["salesperson"].includes(adminProfile.account_type) &&
+		pathname.includes("/backend")
+			? true
+			: false;
+
+	const destinations = {
+		Calabar: {
+			departure: "Marina, Calabar",
+			arrival: "Nwaniba Timber Beach, Uyo",
+		},
+		Uyo: {
+			departure: "Nwaniba Timber Beach, Uyo",
+			arrival: "Marina, Calabar",
+		},
+	};
+
 	const {
 		register,
 		handleSubmit,
 		control,
-		formState: { errors },
+		watch,
+		formState: { errors, defaultValues },
 	} = useForm({
 		mode: "onChange",
 		resolver: yupResolver(shipmentDetailsSchema),
+		defaultValues: {
+			...packageDetails,
+			...(isSalesperson && {
+				...destinations[adminProfile.city],
+			}),
+		},
 	});
 
+	const isOthers = watch("category") == "Others" ? true : false;
+
 	const onSubmit = handleSubmit((formData) => {
+		setPackageDetails((prev) => ({
+			...prev,
+			value: formatCost(formData.value),
+			cost_per_kg: price,
+			total_cost: Number(formData?.weight ?? 0) * Number(price),
+		}));
 		console.log(formData, "form Data");
 		onNextClick();
 	});
 
+	const formatCost = (cost) => {
+		return cost
+			.substring(1)
+			.split("")
+			.filter((cost) => cost !== ",")
+			.join("");
+	};
+
+	const handleChange = (e) => {
+		const { value, name } = e.target;
+		setPackageDetails((prev) => ({
+			...prev,
+			[name]: value,
+		}));
+	};
+
 	return (
 		<div>
+			<hgroup className="mb-8">
+				<h2 className="text-blue-500 text-base font-semibold">
+					Shipment Details
+				</h2>
+				<p className="text-sm">
+					Please fill in shipment details and get quote to proceed
+				</p>
+			</hgroup>
 			<form onSubmit={onSubmit} className="flex flex-col gap-5">
 				<div className="flex gap-5">
 					<SelectField
 						{...register("departure")}
-						// defaultValue={defaultValues["shipping_from"]}
-						label="Shipping From"
+						defaultValue={defaultValues["departure"]}
+						label="Departure"
 						placeholder="Select Departure Terminal"
 						options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
 						errors={errors}
-						// handlechange={handleChange}
-						// disabled={isSalesperson ? true : false}
+						handlechange={handleChange}
+						disabled={isSalesperson ? true : false}
 					/>
 					<SelectField
 						{...register("arrival")}
-						// defaultValue={defaultValues["shipping_to"]}
-						label="Shipping To"
+						defaultValue={defaultValues["arrival"]}
+						label="Arrival"
 						placeholder="Select Arrival Terminal"
 						options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
 						errors={errors}
-						// handlechange={handleChange}
-						// disabled={isSalesperson ? true : false}
+						handlechange={handleChange}
+						disabled={isSalesperson ? true : false}
 					/>
 				</div>
 				<div className="flex gap-5">
 					<SelectField
 						{...register("category")}
-						label="Nature of item"
+						defaultValue={defaultValues["category"]}
+						label="Category"
 						placeholder="Select Item Category"
 						options={[
 							"Food",
@@ -152,62 +211,40 @@ const ShippingDetails = () => {
 							"Others",
 						]}
 						errors={errors}
-						// handlechange={handleChange}
-						// disabled={isSalesperson ? true : false}
+						handlechange={handleChange}
 					/>
 					<InputField
 						{...register("no_item")}
+						defaultValue={defaultValues["no_item"]}
 						label="No. of item"
 						placeholder="Enter no. of item"
 						type="number"
 						max={35}
 						min={0}
 						errors={errors}
+						handlechange={handleChange}
 					/>
 				</div>
-
-				<InputField
-					{...register("item_name")}
-					label="Item Name"
-					placeholder="Enter name of item"
-					type="text"
-					max={35}
-					min={0}
-					errors={errors}
-				/>
-				<div className="flex flex-col w-full">
-					<label
-						className={
-							"text-xs md:text-sm !w-full flex gap-2 md:gap-3 flex-col"
-						}
-					>
-						Item Description
-						<Textarea
-							{...register("item_description")}
-							placeholder="Describe item briefly..."
-							rows="6"
-							className="bg-blue-50 p-3 border border-blue-500 font-normal !text-base placeholder:text-xs w-full rounded-lg font-poppins resize-none "
-						/>
-					</label>
-				</div>
-
 				<div className="flex gap-5">
 					<InputField
 						{...register("weight")}
+						defaultValue={defaultValues["weight"]}
 						label="Weight(kg)"
 						placeholder="Enter weight of item"
 						type="number"
 						max={35}
 						min={0}
 						errors={errors}
+						handlechange={handleChange}
 					/>
+
 					{/* NumericFormat Input Field */}
 					<div className="flex flex-col w-full">
 						<label className="text-xs md:text-sm !w-full flex gap-2 md:gap-3 flex-col">
 							Value(NGN)
 							<Controller
 								control={control}
-								name="cost"
+								name="value"
 								render={({ field: { name, onChange, onBlur, value, ref } }) => {
 									return (
 										<NumericFormat
@@ -219,6 +256,7 @@ const ShippingDetails = () => {
 											placeholder="Enter est. value of item"
 											thousandSeparator=","
 											allowNegative={false}
+											autoComplete="off"
 											onValueChange={(_, sourceInfo) => {
 												onChange(sourceInfo.event);
 											}}
@@ -228,38 +266,67 @@ const ShippingDetails = () => {
 								}}
 							/>
 						</label>
-						{errors?.cost && (
+						{errors?.value && (
 							<p className="text-xs pt-2 text-red-700">
-								{errors?.cost.message}
+								{errors?.value.message}
 							</p>
 						)}
 					</div>
 				</div>
 
-				<div className="flex items-center *:grow *:w-full mt-20">
-					<div>
-						<Button
-							text="Get Quote"
-							variant="outline"
-							type="button"
-							className="w-44"
+				{isOthers && (
+					<InputField
+						{...register("name")}
+						defaultValue={defaultValues["name"]}
+						label="Item Name"
+						placeholder="Enter name of item"
+						type="text"
+						max={35}
+						min={0}
+						errors={errors}
+						handlechange={handleChange}
+					/>
+				)}
+				<div className="flex flex-col w-full">
+					<label
+						className={
+							"text-xs md:text-sm !w-full flex gap-2 md:gap-3 flex-col"
+						}
+					>
+						Item Description
+						<Textarea
+							{...register("description")}
+							defaultValue={defaultValues["description"]}
+							placeholder="Describe item briefly..."
+							rows="6"
+							className="bg-blue-50 p-3 border border-blue-500 font-normal !text-base placeholder:text-xs w-full rounded-lg font-poppins resize-none "
 						/>
-					</div>
-					<div className="flex justify-between items-center py-2 px-5 border-y-2 border-dashed border-gray-500">
-						<p className="font-semibold">Amount:</p>
-						<div>
-							<p>#2000 x 1kg</p>
-							<p className="font-bold">NGN 45,000</p>
-						</div>
-					</div>
+					</label>
 				</div>
 
-				<Button
-					text="Continue"
-					// type="submit"
-					onClick={onNextClick}
-					className="w-full mt-20"
-				/>
+				<div className="w-4/6">
+					<div className="flex justify-between items-center p-5 border-y-2 border-dashed border-gray-500 my-20">
+						<p className="font-semibold">Amount:</p>
+						<div>
+							<p>
+								{formatValue({
+									value: String(price),
+									prefix: "₦",
+								})}{" "}
+								x {packageDetails?.weight ?? 0}kg
+							</p>
+							<p className="font-bold text-xl">
+								{formatValue({
+									value: String(
+										Number(packageDetails?.weight ?? 0) * Number(price)
+									),
+									prefix: "NGN ",
+								})}
+							</p>
+						</div>
+					</div>
+					<Button text="Continue" type="submit" className="w-full" />
+				</div>
 			</form>
 		</div>
 	);
@@ -267,48 +334,81 @@ const ShippingDetails = () => {
 
 const SenderDetails = () => {
 	const { onPrevClick, onNextClick } = useStepper();
+	const { packageDetails, setPackageDetails } = React.useContext(ctx);
+	const {
+		register,
+		handleSubmit,
+		formState: { errors, defaultValues },
+	} = useForm({
+		mode: "onChange",
+		resolver: yupResolver(senderDetailsSchema),
+		defaultValues: packageDetails,
+	});
+
+	const onSubmit = handleSubmit((formData) => {
+		console.log(formData, "Sender Details");
+		onNextClick();
+	});
+
+	const handleChange = (e) => {
+		const { value, name } = e.target;
+		setPackageDetails((prev) => ({
+			...prev,
+			[name]: value,
+		}));
+	};
+
 	return (
 		<div>
-			<h2 className="font-semibold mb-5 text-blue-500">Sender Details</h2>
-			<div className=" flex flex-col gap-5">
+			<hgroup className="mb-8">
+				<h2 className="text-blue-500 text-base font-semibold">
+					Sender Details
+				</h2>
+				<p className="text-sm">Please fill in sender details</p>
+			</hgroup>
+			<form onSubmit={onSubmit} className=" flex flex-col gap-5">
 				<div className="flex gap-5">
 					<InputField
-						// {...register("item_name")}
+						{...register("sender_name")}
+						defaultValue={defaultValues["sender_name"]}
 						label="Name"
 						placeholder="Enter sender name"
 						type="text"
 						max={35}
-						min={0}
-						// errors={errors}
+						handlechange={handleChange}
+						errors={errors}
 					/>
 					<InputField
-						// {...register("item_name")}
+						{...register("sender_phone_number")}
+						defaultValue={defaultValues["sender_phone_number"]}
 						label="Phone Number"
 						placeholder="Enter sender phone number"
 						type="text"
 						max={35}
-						min={0}
-						// errors={errors}
+						handlechange={handleChange}
+						errors={errors}
 					/>
 				</div>
 				<div className="flex gap-5">
 					<InputField
-						// {...register("item_name")}
+						{...register("sender_email")}
+						defaultValue={defaultValues["sender_email"]}
 						label="Email"
 						placeholder="Enter sender email"
 						type="text"
 						max={35}
-						min={0}
-						// errors={errors}
+						handlechange={handleChange}
+						errors={errors}
 					/>
 					<InputField
-						// {...register("item_name")}
+						{...register("sender_alt_phone_number")}
+						defaultValue={defaultValues["sender_alt_phone_number"]}
 						label="Alt. Phone Number"
 						placeholder="Enter alt. sender phone number"
 						type="text"
 						max={35}
-						min={0}
-						// errors={errors}
+						handlechange={handleChange}
+						errors={errors}
 					/>
 				</div>
 				<div className="flex flex-col w-full">
@@ -319,7 +419,8 @@ const SenderDetails = () => {
 					>
 						Address
 						<Textarea
-							// {...register("trip_remark")}
+							{...register("sender_address")}
+							defaultValue={defaultValues["sender_address"]}
 							placeholder="Enter sender address"
 							rows={2}
 							className="bg-blue-50 p-3 border border-blue-500 font-normal !text-base placeholder:text-xs w-full rounded-lg font-poppins resize-none "
@@ -333,63 +434,90 @@ const SenderDetails = () => {
 						onClick={onPrevClick}
 						className="w-40"
 					/>
-					<Button
-						text="Continue"
-						// type="submit"
-						// loading={loading}
-						onClick={onNextClick}
-						className="w-40 "
-					/>
+					<Button text="Continue" type="submit" className="w-40 " />
 				</div>
-			</div>
+			</form>
 		</div>
 	);
 };
 
 const ReceiverDetails = () => {
 	const { onPrevClick, onNextClick } = useStepper();
+	const { packageDetails, setPackageDetails } = React.useContext(ctx);
+	const {
+		register,
+		handleSubmit,
+		formState: { errors, defaultValues },
+	} = useForm({
+		mode: "onChange",
+		resolver: yupResolver(receiverDetailsSchema),
+		defaultValues: packageDetails,
+	});
+
+	const onSubmit = handleSubmit((formData) => {
+		console.log(formData, "Sender Details");
+		onNextClick();
+	});
+
+	const handleChange = (e) => {
+		const { value, name } = e.target;
+		setPackageDetails((prev) => ({
+			...prev,
+			[name]: value,
+		}));
+	};
+
 	return (
 		<div>
-			<h2 className="font-semibold mb-5 text-blue-500">Receiver Details</h2>
-			<div className=" flex flex-col gap-5">
+			<hgroup className="mb-8">
+				<h2 className="text-blue-500 text-base font-semibold">
+					Receiver Details
+				</h2>
+				<p className="text-sm">Please fill in receiver details</p>
+			</hgroup>
+			<form onSubmit={onSubmit} className=" flex flex-col gap-5">
 				<div className="flex gap-5">
 					<InputField
-						// {...register("item_name")}
+						{...register("receiver_name")}
+						defaultValue={defaultValues["receiver_name"]}
 						label="Name"
 						placeholder="Enter receiver name"
 						type="text"
 						max={35}
-						min={0}
-						// errors={errors}
+						handlechange={handleChange}
+						errors={errors}
 					/>
 					<InputField
-						// {...register("item_name")}
+						{...register("receiver_phone_number")}
+						defaultValue={defaultValues["receiver_phone_number"]}
 						label="Phone Number"
 						placeholder="Enter receiver phone number"
 						type="text"
 						max={35}
-						min={0}
-						// errors={errors}
+						handlechange={handleChange}
+						errors={errors}
 					/>
 				</div>
 				<div className="flex gap-5">
 					<InputField
-						// {...register("item_name")}
+						{...register("receiver_email")}
+						defaultValue={defaultValues["receiver_email"]}
 						label="Email"
 						placeholder="Enter receiver email"
 						type="text"
 						max={35}
-						min={0}
-						// errors={errors}
+						handlechange={handleChange}
+						errors={errors}
 					/>
 					<InputField
-						// {...register("item_name")}
+						{...register("receiver_alt_phone_number")}
+						defaultValue={defaultValues["receiver_alt_phone_number"]}
 						label="Alt. Phone Number"
 						placeholder="Enter alt. receiver phone number"
 						type="text"
 						max={35}
-						min={0}
-						// errors={errors}
+						handlechange={handleChange}
+						errors={errors}
 					/>
 				</div>
 				<div className="flex flex-col w-full">
@@ -400,7 +528,8 @@ const ReceiverDetails = () => {
 					>
 						Address
 						<Textarea
-							// {...register("trip_remark")}
+							{...register("receiver_address")}
+							defaultValue={defaultValues["receiver_address"]}
 							placeholder="Enter receiver address"
 							rows={2}
 							className="bg-blue-50 p-3 border border-blue-500 font-normal !text-base placeholder:text-xs w-full rounded-lg font-poppins resize-none "
@@ -414,21 +543,37 @@ const ReceiverDetails = () => {
 						onClick={onPrevClick}
 						className="w-40"
 					/>
-					<Button
-						text="Continue"
-						// type="submit"
-						// loading={loading}
-						onClick={onNextClick}
-						className="w-40 "
-					/>
+					<Button text="Continue" type="submit" className="w-40" />
 				</div>
-			</div>
+			</form>
 		</div>
 	);
 };
 
 const Payment = () => {
 	const { onPrevClick } = useStepper();
+	const { packageDetails, setPackageDetails } = React.useContext(ctx);
+	const {
+		register,
+		handleSubmit,
+		formState: { errors, defaultValues },
+	} = useForm({
+		mode: "onChange",
+		resolver: yupResolver(paymentSchema),
+		defaultValues: packageDetails,
+	});
+
+	const onSubmit = handleSubmit((formData) => {
+		console.log(formData, "payment Details");
+	});
+
+	const handleChange = (e) => {
+		const { value, name } = e.target;
+		setPackageDetails((prev) => ({
+			...prev,
+			[name]: value,
+		}));
+	};
 	return (
 		<div>
 			<h2 className="font-semibold mb-5 text-blue-500">Shipment Summary</h2>
@@ -436,39 +581,46 @@ const Payment = () => {
 				<ul className="space-y-2">
 					<li>
 						<h3>Shipping From:</h3>
-						<p>Marina, Calabar</p>
+						<p>{packageDetails?.departure}</p>
 					</li>
 					<li>
 						<h3>Shipping To:</h3>
-						<p>Nwaniba, Uyo</p>
+						<p>{packageDetails?.arrival}</p>
 					</li>
 					<li className="flex gap-10">
 						<div>
 							<h3>Nature of item:</h3>
-							<p>Food</p>
+							<p>{packageDetails?.category}</p>
 						</div>
 						<div>
 							<h3>Number of items:</h3>
-							<p>3</p>
+							<p>{packageDetails?.no_item}</p>
 						</div>
 					</li>
 
-					<li>
-						<h3>Item Name:</h3>
-						<p>Food</p>
-					</li>
+					{packageDetails?.name && (
+						<li>
+							<h3>Item Name:</h3>
+							<p>{packageDetails?.name}</p>
+						</li>
+					)}
 					<li>
 						<h3>Item Description:</h3>
-						<p>Food</p>
+						<p>{packageDetails?.description}</p>
 					</li>
 					<li className="flex gap-10">
 						<div>
 							<h3>Weight(kg):</h3>
-							<p>10</p>
+							<p>{packageDetails?.weight}</p>
 						</div>
 						<div>
 							<h3>Value(NGN):</h3>
-							<p>#1000</p>
+							<p>
+								{formatValue({
+									value: String(packageDetails?.value),
+									prefix: "₦",
+								})}
+							</p>
 						</div>
 					</li>
 					<li></li>
@@ -476,16 +628,23 @@ const Payment = () => {
 				<div className="space-y-10">
 					<div>
 						<h3>Sender Details:</h3>
-						<p>John Doe</p>
-						<p>queencee@gmail.com</p>
-						<p>08038034902492</p>
+						<p>{packageDetails?.sender_name}</p>
+						<p>{packageDetails?.sender_email}</p>
+						<p>{packageDetails?.sender_phone_number}</p>
+						{packageDetails?.sender_alt_phone_number && (
+							<p>{packageDetails?.sender_alt_phone_number}</p>
+						)}
+						<p>{packageDetails?.sender_address}</p>
 					</div>
 					<div>
 						<h3>Receiver Details:</h3>
-						<p>John Doe</p>
-						<p>queencee@gmail.com</p>
-						<p>08038034902492</p>
-						<p>08038034902492</p>
+						<p>{packageDetails?.receiver_name}</p>
+						<p>{packageDetails?.receiver_email}</p>
+						<p>{packageDetails?.receiver_phone_number}</p>
+						{packageDetails?.receiver_alt_phone_number && (
+							<p>{packageDetails?.receiver_alt_phone_number}</p>
+						)}
+						<p>{packageDetails?.receiver_address}</p>
 					</div>
 				</div>
 			</div>
@@ -493,48 +652,62 @@ const Payment = () => {
 			<div className=" w-4/6 my-10 flex justify-between items-center py-5 border-y-2 border-dashed border-gray-500">
 				<p className="font-semibold">Amount:</p>
 				<div>
-					<p>#2000 x 1kg</p>
-					<p className="font-bold">NGN 45,000</p>
+					<p>
+						{formatValue({
+							value: String(packageDetails?.cost_per_kg),
+							prefix: "₦",
+						})}{" "}
+						x {packageDetails?.weight}kg
+					</p>
+					<p className="font-bold">
+						{formatValue({
+							value: String(packageDetails?.total_cost),
+							prefix: "NGN",
+						})}
+					</p>
 				</div>
 			</div>
 
-			<div className=" py-10 flex gap-5 w-4/6">
-				<SelectField
-					// {...register("payment_method")}
-					label="Payment Method"
-					placeholder="Select payment method"
-					options={["POS", "Bank Transfer", "Cash"]}
-					// errors={errors}
-					className="bg-white"
-				/>
-
-				<InputField
-					// {...register("transaction_ref")}
-					label="Transaction Reference"
-					placeholder="Enter trx ref"
-					type="text"
-					maxLength={35}
-					className="bg-white"
-					autoComplete="off"
-					// errors={errors}
-				/>
-			</div>
-
-			<div className="flex gap-4 mt-10">
-				<Button
-					text="Back"
-					variant="outline"
-					onClick={onPrevClick}
-					className="w-full md:w-40"
-				/>
-				<Button
-					text="Submit"
-					// type="submit"
-					// loading={loading}
-					// onClick={onNextClick}
-					className="col-start-1 w-full md:w-40 "
-				/>
-			</div>
+			<form onSubmit={onSubmit}>
+				<div className=" py-10 flex gap-5 w-4/6">
+					<SelectField
+						{...register("payment_method")}
+						defaultValue={defaultValues["payment_method"]}
+						label="Payment Method"
+						placeholder="Select payment method"
+						options={["POS", "Bank Transfer", "Cash"]}
+						errors={errors}
+						handlechange={handleChange}
+						className="bg-white"
+					/>
+					<InputField
+						{...register("trxRef")}
+						defaultValue={defaultValues["trxRef"]}
+						label="Transaction Reference"
+						placeholder="Enter trx ref"
+						type="text"
+						maxLength={35}
+						className="bg-white"
+						autoComplete="off"
+						handlechange={handleChange}
+						errors={errors}
+					/>
+				</div>
+				<div className="flex gap-4 mt-10">
+					<Button
+						text="Back"
+						variant="outline"
+						onClick={onPrevClick}
+						className="w-40"
+					/>
+					<Button
+						text="Submit"
+						type="submit"
+						// loading={loading}
+						className="w-40 "
+					/>
+				</div>
+			</form>
 		</div>
 	);
 };

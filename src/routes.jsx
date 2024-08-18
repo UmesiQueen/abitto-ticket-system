@@ -28,7 +28,6 @@ import Report from "./admin/pages/report";
 import Rental from "./main/pages/rental";
 import { TicketLoader } from "./components/TicketInvoice";
 import { TripDetailsLoader } from "./admin/pages/trip-details";
-// import { JourneyListLoader } from "./admin/pages/journey-list";
 import { DataQueryLoader } from "./admin/layout";
 import RentalInvoice from "./components/RentalInvoice";
 import { RentalInvoiceLoader } from "./components/RentalInvoice";
@@ -42,6 +41,9 @@ import { RentDetail } from "./admin/pages/rental-details";
 import Feedback from "./main/pages/feedback";
 import FeedbackAdmin, { FeedbackDetails } from "./admin/pages/feedback";
 import Logistics from "./admin/pages/logistics";
+import LogisticsDetails, {
+	ShipmentDetails,
+} from "./admin/pages/logistics-detail";
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -90,6 +92,8 @@ export const router = createBrowserRouter(
 					<Route path="settings" element={<Settings />} />
 					<Route path="feedback" element={<FeedbackAdmin />} />
 					<Route path="feedback/:feedbackID" element={<FeedbackDetails />} />
+					<Route path="logistics" element={<LogisticsDetails />} />
+					<Route path="logistics/:shipmentID" element={<ShipmentDetails />} />
 				</Route>
 				<Route path="pageNotFound" element={<PageNotFoundAdmin />} />
 			</Route>
