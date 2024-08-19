@@ -45,6 +45,7 @@ import LogisticsDetails, {
 	ShipmentDetails,
 } from "./admin/pages/logistics-detail";
 import GetQuote from "./main/pages/quote";
+import Pricing from "./admin/pages/pricing";
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -96,6 +97,7 @@ export const router = createBrowserRouter(
 					<Route path="feedback/:feedbackID" element={<FeedbackDetails />} />
 					<Route path="logistics" element={<LogisticsDetails />} />
 					<Route path="logistics/:shipmentID" element={<ShipmentDetails />} />
+					<Route path="pricing" element={<Pricing />} />
 				</Route>
 				<Route path="pageNotFound" element={<PageNotFoundAdmin />} />
 			</Route>

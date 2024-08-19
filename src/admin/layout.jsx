@@ -30,7 +30,7 @@ import { toast } from "sonner";
 import Loader from "@/components/animation/Loader";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import baseurl from "@/api";
-import { Feedback } from "@mui/icons-material";
+import { Feedback, PriceChange } from "@mui/icons-material";
 import Logo from "@/assets/logo2.svg";
 
 const ProtectedRoute = () => {
@@ -86,6 +86,14 @@ const ProtectedRoute = () => {
 			`/backend/${accountType}/schedule-trip`,
 			<div key="1" className="scale-[.85] -ml-1">
 				<MenuBoardIcon />
+			</div>,
+			["super-admin", "dev"],
+		],
+		[
+			"Manage Prices",
+			`/backend/${accountType}/pricing`,
+			<div key="1" className="scale-[.85] -ml-1">
+				<PriceChange />
 			</div>,
 			["super-admin", "dev"],
 		],
@@ -154,7 +162,7 @@ const ProtectedRoute = () => {
 			</Helmet>
 			<div className="relative">
 				{/* sidebar */}
-				<aside className=" h-screen w-40 md:w-60 bg-black text-white flex flex-col gap-10 fixed">
+				<aside className="h-screen w-40 md:w-[14.5rem] bg-black text-white flex flex-col fixed">
 					<div>
 						<img
 							alt="logo"
@@ -164,7 +172,7 @@ const ProtectedRoute = () => {
 							className="pl-5 pt-3"
 						/>
 					</div>
-					<nav className="px-5 mx-auto">
+					<nav className="pt-6 pb-2 px-5 mx-auto overflow-scroll no-scrollbar">
 						<ul>
 							{menuItems.map(([title, url, icon, auth]) => {
 								const isAuth = auth.includes(accountType);
@@ -174,10 +182,12 @@ const ProtectedRoute = () => {
 											<li key={title}>
 												<NavLink
 													to={url}
-													className="[&.active]:bg-blue-500 px-5 py-3 rounded-xl hover:bg-gray-700/90 mb-2 transition-all  ease-in-out cursor-pointer flex items-center gap-2 [&>.title]:hidden  w-fit md:w-full md:[&>.title]:block"
+													className="[&.active]:bg-blue-500 px-5 md:min-w-44 py-3 rounded-xl hover:bg-gray-700/90 mb-2 transition-all ease-in-out cursor-pointer flex items-center gap-2 [&>.title]:hidden  w-fit md:w-full md:[&>.title]:block"
 												>
 													<span className="text-[#f1f1f1]">{icon}</span>
-													<span className="font-medium text-sm ">{title}</span>
+													<span className="font-medium text-sm hidden md:block">
+														{title}
+													</span>
 												</NavLink>
 											</li>
 										)}
@@ -187,14 +197,14 @@ const ProtectedRoute = () => {
 						</ul>
 					</nav>
 					<button
-						className=" px-10 py-5 mt-auto flex items-center gap-2 hover:bg-gray-900/80 "
+						className="px-10 text-sm py-3 border-t mt-auto flex items-center gap-2 hover:bg-gray-900/80 "
 						onClick={handleLogout}
 					>
 						<LogoutIcon />
 						<span>Logout</span>
 					</button>
 				</aside>
-				<main className="ml-40 md:ml-60  bg-[#F7F7F7] ">
+				<main className="ml-40 md:ml-[14.5rem] bg-[#F7F7F7] ">
 					<header className="h-16 w-full bg-white px-8 flex items-center gap-5">
 						{searchBarVisibility && (
 							<div className="h-10 w-80 bg-blue-50 p-3 border border-blue-500 rounded-lg font-normal text-xs font-poppins flex items-center gap-2">
