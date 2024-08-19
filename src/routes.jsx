@@ -44,6 +44,7 @@ import Logistics from "./admin/pages/logistics";
 import LogisticsDetails, {
 	ShipmentDetails,
 } from "./admin/pages/logistics-detail";
+import GetQuote from "./main/pages/quote";
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -55,6 +56,7 @@ export const router = createBrowserRouter(
 				<Route path="about" element={<About />} />
 				<Route path="rental" element={<Rental />} />
 				<Route path="feedback" element={<Feedback />} />
+				<Route path="get-quote" element={<GetQuote />} />
 			</Route>
 
 			<Route path="/backend" element={<AdminLayout />} loader={DataQueryLoader}>

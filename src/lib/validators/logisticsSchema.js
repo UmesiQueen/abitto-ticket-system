@@ -1,24 +1,36 @@
 import * as yup from "yup";
 
 export const shipmentDetailsSchema = yup.object().shape({
-	departure: yup.string().required("This field is required."),
-	arrival: yup.string().required("This field is required."),
-	category: yup.string().required("This field is required."),
-	name: yup.string().when("category", ([category], field) =>
-		category === "Others" // Condition to check if the name is "Queen"
-			? field.required("Item name is required").trim()
-			: field.notRequired()
-	),
+	departure: yup.string().required("Departure is required."),
+	arrival: yup
+		.string()
+		.required("Arrival is required.")
+		.when("departure", ([departure], schema) =>
+			departure
+				? schema.notOneOf(
+						[yup.ref("departure")],
+						"Departure and arrival cannot be the same."
+				  )
+				: schema
+		),
+	category: yup.string().required("Category is required."),
+	name: yup
+		.string()
+		.when(["category", "$isAdmin"], ([category, isAdmin], field) => {
+			category === "Others" && isAdmin // Condition to check if the name is "Others" and isAdmin
+				? field.required("Item name is required").trim()
+				: field.notRequired();
+		}),
 	description: yup.string().notRequired(),
 	no_item: yup
 		.number()
-		.required("This field is required.")
+		.required("No. of item is required.")
 		.typeError("No. of item must be a number."),
 	weight: yup
 		.number()
-		.required("This field is required.")
+		.required("Weight is required.")
 		.typeError("Weight must be a number."),
-	value: yup.string().required("This field is required."),
+	value: yup.string().required("Value is required."),
 });
 
 export const senderDetailsSchema = yup.object().shape({

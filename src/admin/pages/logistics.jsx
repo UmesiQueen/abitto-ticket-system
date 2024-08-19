@@ -131,6 +131,7 @@ const ShippingDetails = () => {
 				...destinations[adminProfile.city],
 			}),
 		},
+		context: { isAdmin: true },
 	});
 
 	const isOthers = watch("category") == "Others" ? true : false;
