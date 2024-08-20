@@ -36,8 +36,8 @@ export const shipmentDetailsSchema = yup.object().shape({
 export const senderDetailsSchema = yup.object().shape({
 	sender_name: yup
 		.string()
-		.required("Surname is required.")
-		.min(2, "Surname must have at least 2 characters.")
+		.required("Name is required.")
+		.min(2, "Name must have at least 2 characters.")
 		.trim()
 		.lowercase(),
 	sender_email: yup
@@ -52,20 +52,15 @@ export const senderDetailsSchema = yup.object().shape({
 		.matches(/^\+?\d+$/, "Invalid phone number.")
 		.min(11, "Phone number must have at least 11 characters.")
 		.trim(),
-	sender_alt_phone_number: yup
-		.string()
-		.required("Phone number is required.")
-		.matches(/^\+?\d+$/, "Invalid phone number.")
-		.min(11, "Phone number must have at least 11 characters.")
-		.trim(),
+	sender_alt_phone_number: yup.string().notRequired(),
 	sender_address: yup.string().trim(),
 });
 
 export const receiverDetailsSchema = yup.object().shape({
 	receiver_name: yup
 		.string()
-		.required("Surname is required.")
-		.min(2, "Surname must have at least 2 characters.")
+		.required("Name is required.")
+		.min(2, "Name must have at least 2 characters.")
 		.trim()
 		.lowercase(),
 	receiver_email: yup
@@ -80,12 +75,7 @@ export const receiverDetailsSchema = yup.object().shape({
 		.matches(/^\+?\d+$/, "Invalid phone number.")
 		.min(11, "Phone number must have at least 11 characters.")
 		.trim(),
-	receiver_alt_phone_number: yup
-		.string()
-		.required("Phone number is required.")
-		.matches(/^\+?\d+$/, "Invalid phone number.")
-		.min(11, "Phone number must have at least 11 characters.")
-		.trim(),
+	receiver_alt_phone_number: yup.string().notRequired(),
 	receiver_address: yup.string().trim(),
 });
 
