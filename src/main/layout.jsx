@@ -37,7 +37,8 @@ export default MainLayout;
 const Navbar = () => {
 	const [isOpen, setOpen] = React.useState(false);
 	const [scroll, setScroll] = React.useState(false);
-	const { contact, faq, scrollToSection } = React.useContext(GlobalCTX);
+	const { contact, faq, services, scrollToSection } =
+		React.useContext(GlobalCTX);
 	const location = useLocation();
 	const navigate = useNavigate();
 	const navRef = React.useRef();
@@ -87,7 +88,7 @@ const Navbar = () => {
 						src={LogoSVG}
 						width={176}
 						height={60}
-						className="w-36 md:w-44"
+						className="w-36 md:w-44 h-12"
 					/>
 				</Link>
 				<div className="md:hidden">
@@ -136,9 +137,10 @@ const Navbar = () => {
 					})}
 				</ul>
 				<Button
-					text="Book a Ticket"
+					text="Get Started"
 					onClick={() => {
-						navigate("/booking");
+						handleNavItemClick(services);
+						navigate("/#services");
 					}}
 					className="hidden md:block px-6"
 				/>

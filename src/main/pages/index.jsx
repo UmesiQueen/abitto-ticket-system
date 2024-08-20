@@ -19,9 +19,11 @@ import {
 } from "@/components/ui/accordion";
 import SuccessModal from "@/components/modals/success";
 import EmblaCarousel from "@/components/embla-carousel/EmblaCarousel";
+// import WaveSVG from "@/assets/blob-scene-haikei.svg";
 
 const Home = () => {
-	const { contact, faq } = React.useContext(GlobalCTX);
+	const { contact, faq, services, scrollToSection } =
+		React.useContext(GlobalCTX);
 	const navigate = useNavigate();
 
 	return (
@@ -54,23 +56,15 @@ const Home = () => {
 								Experience the Easiest & Safest Water Travel Across Nigeria &
 								Africa with Abitto
 							</p>
-							<div className="flex flex-col md:flex-row items-center gap-5">
-								<Button
-									text="Book a Ticket"
-									onClick={() => {
-										navigate("/booking");
-									}}
-									className="w-40"
-								/>
-								<Button
-									text="Rent a Boat"
-									onClick={() => {
-										navigate("/rental");
-									}}
-									variant="outline"
-									className="w-40 border-white !text-white hover:!text-blue-700 hover:!bg-blue-100"
-								/>
-							</div>
+
+							<Button
+								text="Get Started"
+								onClick={() => {
+									scrollToSection(services);
+									navigate("/#services");
+								}}
+								className="w-40 mx-auto md:mx-0"
+							/>
 						</div>
 					</div>
 				</div>
@@ -112,15 +106,15 @@ const Home = () => {
 								alt="about-us"
 								width={100}
 								height={100}
-								className="rounded-lg shadow-2xl w-full md:w-[500px] h-[300px] md:h-[400px] object-cover "
+								className="rounded-lg shadow-2xl w-full md:w-[500px] h-[300px] md:h-[400px] object-cover border "
 							/>
 						</div>
 						<div className="flex-1">
 							<div className="space-y-5 lg:w-9/12">
-								<div className="flex items-center justify-center md:justify-start">
-									<span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 " />
-									<h3 className="uppercase font-medium">About us</h3>
-								</div>
+								<h2 className="font-semibold text-xl md:text-2xl inline-flex items-center w-full ">
+									<span className="h-3 w-3 mr-3 rounded-full bg-blue-500" />
+									About Us
+								</h2>
 								<p className="font-medium text-2xl ">
 									Welcome to Abitto, where innovation meets reliability in
 									public water travel.
@@ -145,6 +139,99 @@ const Home = () => {
 									</span>
 									<CaretIcon />
 								</Link>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section
+				id="services"
+				ref={services}
+				className="py-20 px-5 md:px-20 bg-blue-50"
+			>
+				<div className="max-w-[1440px] mx-auto">
+					<h2 className="font-semibold text-xl md:text-2xl  mb-7 inline-flex items-center justify-center w-full ">
+						<span className="h-3 w-3 mr-3 rounded-full bg-blue-500" />
+						Our Services
+					</h2>
+					<div className="flex flex-wrap *:basis-72 *:grow gap-5">
+						<div className="bg-white rounded-[1.8rem] p-6 md:p-10 h-[15rem] md:h-[20rem]  hover:scale-[1.02] hover:shadow-md transition-all relative overflow-hidden ">
+							{/* <img src={WaveSVG} alt="svg" className="absolute top-0 left-0 " /> */}
+							<div className=" flex flex-col gap-2 md:gap-5 h-full relative z-1">
+								<h3 className="text-xl md:text-2xl font-semibold text-blue-500">
+									Book a trip
+								</h3>
+								<p className="md:text-lg">
+									Write some text here write more stuff and more stuff and add
+									better styling
+								</p>
+								<div className="ml-auto mt-auto">
+									<Button
+										text={
+											<p className="inline-flex items-center gap-2 ">
+												Book a trip
+												<span>
+													<CaretIcon />
+												</span>
+											</p>
+										}
+										className="rounded-full w-40 md:w-44 h-10 md:h-12"
+										onClick={() => navigate("/booking")}
+									/>
+								</div>
+							</div>
+						</div>
+						<div className="bg-white rounded-[1.8rem] p-6 md:p-10 h-[15rem] md:h-[20rem]  hover:scale-[1.02] hover:shadow-md transition-all relative overflow-hidden ">
+							{/* <img src={WaveSVG} alt="svg" className="absolute top-0 left-0 " /> */}
+							<div className=" flex flex-col gap-2 md:gap-5 h-full relative z-1">
+								<h3 className="text-xl md:text-2xl font-semibold text-blue-500">
+									Boat Rentals
+								</h3>
+								<p className="md:text-lg">
+									Write some text here write more stuff and more stuff and add
+									better styling
+								</p>
+								<div className="ml-auto mt-auto">
+									<Button
+										text={
+											<p className="inline-flex items-center gap-2 ">
+												Rent a boat
+												<span>
+													<CaretIcon />
+												</span>
+											</p>
+										}
+										className="rounded-full w-40 md:w-44 h-10 md:h-12"
+										onClick={() => navigate("/rental")}
+									/>
+								</div>
+							</div>
+						</div>
+						<div className="bg-white rounded-[1.8rem] p-6 md:p-10 h-[15rem] md:h-[20rem]  hover:scale-[1.02] hover:shadow-md transition-all relative overflow-hidden ">
+							{/* <img src={WaveSVG} alt="svg" className="absolute top-0 left-0 " /> */}
+							<div className=" flex flex-col gap-2 md:gap-5 h-full relative z-1">
+								<h3 className="text-xl md:text-2xl font-semibold text-blue-500">
+									Logistics
+								</h3>
+								<p className="md:text-lg">
+									Write some text here write more stuff and more stuff and add
+									better styling
+								</p>
+								<div className="ml-auto mt-auto">
+									<Button
+										text={
+											<p className="inline-flex items-center gap-2 ">
+												Get a Quote
+												<span>
+													<CaretIcon />
+												</span>
+											</p>
+										}
+										className="rounded-full w-40 md:w-44 h-10 md:h-12"
+										onClick={() => navigate("/get-quote")}
+									/>
+								</div>
 							</div>
 						</div>
 					</div>

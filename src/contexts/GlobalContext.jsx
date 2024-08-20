@@ -8,6 +8,7 @@ const adminStore = JSON.parse(localStorage.getItem("admin")) ?? {};
 const GlobalContext = ({ children }) => {
 	const contact = React.useRef();
 	const faq = React.useRef();
+	const services = React.useRef();
 	const [loading, setLoading] = React.useState(false);
 	const [adminProfile, setAdminProfile] = React.useState(adminStore);
 	const [showModal, setShowModal] = React.useState(false);
@@ -42,6 +43,7 @@ const GlobalContext = ({ children }) => {
 	const ctxValues = {
 		contact,
 		faq,
+		services,
 		scrollToSection,
 		loading,
 		setLoading,
