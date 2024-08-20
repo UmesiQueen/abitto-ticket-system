@@ -32,6 +32,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import baseurl from "@/api";
 import { Feedback, PriceChange } from "@mui/icons-material";
 import Logo from "@/assets/logo2.svg";
+import { Mailbox } from "lucide-react";
 
 const ProtectedRoute = () => {
 	const navigate = useNavigate();
@@ -138,6 +139,14 @@ const ProtectedRoute = () => {
 			["super-admin", "dev"],
 		],
 		[
+			"Information Box",
+			`/backend/${accountType}/information`,
+			<div key="1" className="scale-[.85] -ml-1">
+				<Mailbox />
+			</div>,
+			["super-admin", "dev"],
+		],
+		[
 			"Settings",
 			`/backend/${accountType}/settings`,
 			<SettingsIcon key="1" />,
@@ -162,7 +171,7 @@ const ProtectedRoute = () => {
 			</Helmet>
 			<div className="relative">
 				{/* sidebar */}
-				<aside className="h-screen w-40 md:w-[14.5rem] bg-black text-white flex flex-col fixed">
+				<aside className="h-screen w-40 md:w-60 bg-black text-white flex flex-col fixed">
 					<div>
 						<img
 							alt="logo"
@@ -196,15 +205,17 @@ const ProtectedRoute = () => {
 							})}
 						</ul>
 					</nav>
-					<button
-						className="px-10 text-sm py-3 border-t mt-auto flex items-center gap-2 hover:bg-gray-900/80 "
-						onClick={handleLogout}
-					>
-						<LogoutIcon />
-						<span>Logout</span>
-					</button>
+					<div className="pt-2">
+						<button
+							className="px-10 w-full text-sm py-3 border-t mt-auto flex items-center gap-2 hover:bg-gray-900/80 "
+							onClick={handleLogout}
+						>
+							<LogoutIcon />
+							<span>Logout</span>
+						</button>
+					</div>
 				</aside>
-				<main className="ml-40 md:ml-[14.5rem] bg-[#F7F7F7] ">
+				<main className="ml-40 md:ml-60 bg-[#F7F7F7] ">
 					<header className="h-16 w-full bg-white px-8 flex items-center gap-5">
 						{searchBarVisibility && (
 							<div className="h-10 w-80 bg-blue-50 p-3 border border-blue-500 rounded-lg font-normal text-xs font-poppins flex items-center gap-2">
