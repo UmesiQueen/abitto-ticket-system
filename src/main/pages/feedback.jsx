@@ -11,8 +11,7 @@ import { CalendarIcon, ClockIcon } from "@/assets/icons";
 import { format } from "date-fns";
 import { Textarea } from "@/components/ui/textarea";
 import Button from "@/components/custom/Button";
-import { GlobalCTX } from "@/contexts/GlobalContext";
-import FeedbackRatingModal from "@/components/modals/feedback.rating";
+import Rating from "@mui/material/Rating";
 
 const feedbackSchema = yup.object().shape({
 	full_name: yup
@@ -31,13 +30,10 @@ const feedbackSchema = yup.object().shape({
 	trip_remark: yup.string().notRequired(),
 	comment: yup.string().notRequired(),
 });
-const Feedback = () => {
-	const { mountPortalModal, starRating } = React.useContext(GlobalCTX);
-	const [suggestions, setSuggestions] = React.useState([]);
 
-	React.useEffect(() => {
-		if (starRating < 1) mountPortalModal(<FeedbackRatingModal />);
-	}, []);
+const Feedback = () => {
+	const [suggestions, setSuggestions] = React.useState([]);
+	const [starRating, setStarRating] = React.useState(0);
 
 	const {
 		register,
@@ -226,6 +222,29 @@ const Feedback = () => {
 						/>
 					</div>
 
+					<div className="flex flex-col md:flex-row items-center gap-3 mt-3">
+						<h2 className="font-semibold text-sm md:text-lg text-center">
+							How would you rate your experience?
+						</h2>
+
+						<Rating
+							name="star_rating"
+							value={starRating}
+							onChange={(_, newValue) => {
+								setStarRating(newValue);
+							}}
+							size="large"
+							sx={{
+								"& .MuiRating-iconFilled": {
+									color: "#3366CC",
+								},
+								"& .MuiRating-iconHover": {
+									color: "#0167ff",
+								},
+							}}
+						/>
+					</div>
+
 					<div className="flex justify-between gap-5 items-center mt-5 md:mt-10">
 						<Button text="Submit" type="submit" className="w-40 md:w-44" />
 						<button
@@ -233,6 +252,7 @@ const Feedback = () => {
 							onClick={() => {
 								reset();
 								setSuggestions([]);
+								setStarRating(0);
 							}}
 							className="text-sm md:text-base hover:text-blue-700 font-semibold"
 						>

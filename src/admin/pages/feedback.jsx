@@ -171,9 +171,9 @@ const FeedbackAdmin = () => {
 				</Table>
 
 				<div className="flex items-center gap-8  p-4">
-					<tr className="font-medium text-sm">
+					<p className="font-medium text-sm">
 						{table.getFilteredRowModel().rows.length} Feedback results.
-					</tr>
+					</p>
 					<ReactPaginate
 						breakLabel={<PaginationEllipsis />}
 						nextLabel={
@@ -261,7 +261,7 @@ export const FeedbackDetails = () => {
 							</tr>
 							<tr>
 								<td>Travel date:</td>
-								<td>{currentFeedback.travel_date}</td>
+								<td>{format(currentFeedback.travel_date, "PPP")}</td>
 							</tr>
 							<tr>
 								<td>Travel time:</td>
@@ -281,18 +281,20 @@ export const FeedbackDetails = () => {
 							</tr>
 							<tr>
 								<td>Star rating:</td>
-								<td className="inline-flex items-center w-full border-none">
-									<Rating
-										size="small"
-										sx={{
-											"& .MuiRating-iconFilled": {
-												color: "#3366CC",
-											},
-										}}
-										value={currentFeedback.star_rating}
-										readOnly
-									/>
-									({currentFeedback.star_rating})
+								<td>
+									<div className="inline-flex items-center ">
+										<Rating
+											size="small"
+											sx={{
+												"& .MuiRating-iconFilled": {
+													color: "#3366CC",
+												},
+											}}
+											value={currentFeedback.star_rating}
+											readOnly
+										/>
+										({currentFeedback.star_rating})
+									</div>
 								</td>
 							</tr>
 						</tbody>
