@@ -267,7 +267,6 @@ const Report = () => {
 		resolver: yupResolver(schema),
 	});
 
-	console.log(errors);
 	const onSubmit = handleSubmit((formData) => {
 		console.log({ from: formData.to, to: formData.from });
 	});
