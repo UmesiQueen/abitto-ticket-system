@@ -87,14 +87,13 @@ const About = () => {
 										public water travel.
 									</p>
 									<p className="text-black/80  ">
-										Welcome to Abitto, where innovation and reliability redefine{" "}
 										{/* eslint-disable-next-line react/no-unescaped-entities */}
-										public water travel. We don't just ferry passengers; we
-										revolutionize your water transportation experience. With
-										cutting-edge technology and unwavering safety protocols, we
-										ensure every journey is convenient and intelligent. Join
-										Abitto, where every trip showcases our dedication to
-										excellence and your peace of mind.
+										We don't just ferry passengers; we revolutionize your water
+										transportation experience. With cutting-edge technology and
+										unwavering safety protocols, we ensure every journey is
+										convenient and intelligent. Join Abitto, where every trip
+										showcases our dedication to excellence and your peace of
+										mind.
 									</p>
 									<Link
 										target="_blank"
