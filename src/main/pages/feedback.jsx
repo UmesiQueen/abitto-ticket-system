@@ -60,18 +60,17 @@ const Feedback = () => {
 
 	return (
 		<div className="px-2 py-32">
-			<div className="max-w-[1000px] w-full mx-auto min-h-12 bg-white p-5 md:p-10">
-				<h2 className="text-blue-500 text-lg font-semibold mb-1">
-					Get in Touch
-				</h2>
-				<p className="font-medium md:w-4/6">
-					Your feedback is important for us to better understand your needs and
-					tailor our services accordingly.
-				</p>
-				<form
-					onSubmit={onSubmit}
-					className="mt-10 flex flex-col gap-y-5 md:gap-y-7"
-				>
+			<div className="max-w-[1000px] w-full mx-auto min-h-12 bg-white p-5 md:p-10 rounded-lg">
+				<hgroup className="mb-8">
+					<h2 className="text-blue-500 text-lg font-semibold mb-1">
+						Get in Touch
+					</h2>
+					<p className="font-medium md:w-4/6 text-sm md:text-base">
+						Your feedback is important for us to better understand your needs
+						and tailor our services accordingly.
+					</p>
+				</hgroup>
+				<form onSubmit={onSubmit} className="flex flex-col gap-y-5 md:gap-y-7">
 					{/* name and email */}
 					<div className="flex flex-col md:flex-row gap-5">
 						<InputField
@@ -245,7 +244,7 @@ const Feedback = () => {
 						/>
 					</div>
 
-					<div className="flex justify-between gap-5 items-center mt-5 md:mt-10">
+					<div className="flex justify-between gap-5 items-center mt-10">
 						<Button text="Submit" type="submit" className="w-40 md:w-44" />
 						<button
 							type="button"

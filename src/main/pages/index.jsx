@@ -70,32 +70,6 @@ const Home = () => {
 				</div>
 			</section>
 
-			{/* metrics */}
-			<section className="bg-white ">
-				<div className="max-w-[1440px] mx-auto">
-					<ul className="flex gap-2 md:gap-10 justify-evenly text-center px-5 py-10 sm:py-20 font-bold [&_p:last-of-type]:font-normal text-3xl sm:text-6xl [&_p:last-of-type]:text-xs  sm:[&_p:last-of-type]:text-base *:flex *:flex-col *:items-center *:grow *:w-full">
-						<li>
-							<p>
-								<CountUp end={500} enableScrollSpy />+
-							</p>
-							<p>Happy Clients</p>
-						</li>
-						<li>
-							<p>
-								<CountUp end={4} start={100} enableScrollSpy />+
-							</p>
-							<p>Months in Business</p>
-						</li>
-						<li>
-							<p>
-								<CountUp end={50} enableScrollSpy />+
-							</p>
-							<p>Successful Ferry Trips</p>
-						</li>
-					</ul>
-				</div>
-			</section>
-
 			{/* About us  */}
 			<section className="px-5 py-20 md:px-20 bg-white" id="about-us">
 				<div className="max-w-[1440px] mx-auto">
@@ -111,7 +85,7 @@ const Home = () => {
 						</div>
 						<div className="flex-1">
 							<div className="space-y-5 lg:w-9/12">
-								<h2 className="font-semibold text-xl md:text-2xl inline-flex items-center w-full ">
+								<h2 className="font-semibold text-xl md:text-2xl inline-flex items-center justify-center md:justify-start w-full ">
 									<span className="h-3 w-3 mr-3 rounded-full bg-blue-500" />
 									About Us
 								</h2>
@@ -151,7 +125,7 @@ const Home = () => {
 				className="py-20 px-5 md:px-20 bg-blue-50"
 			>
 				<div className="max-w-[1440px] mx-auto">
-					<h2 className="font-semibold text-xl md:text-2xl  mb-7 inline-flex items-center justify-center w-full ">
+					<h2 className="font-semibold text-xl md:text-2xl mb-10 inline-flex items-center justify-center w-full ">
 						<span className="h-3 w-3 mr-3 rounded-full bg-blue-500" />
 						Our Services
 					</h2>
@@ -238,8 +212,34 @@ const Home = () => {
 				</div>
 			</section>
 
+			{/* metrics */}
+			<section className="bg-white ">
+				<div className="max-w-[1440px] mx-auto">
+					<ul className="flex gap-2 md:gap-10 justify-evenly text-center px-5 py-10 sm:py-20 font-bold [&_p:last-of-type]:font-normal text-3xl sm:text-6xl [&_p:last-of-type]:text-xs  sm:[&_p:last-of-type]:text-base *:flex *:flex-col *:items-center *:grow *:w-full">
+						<li>
+							<p>
+								<CountUp end={500} enableScrollSpy />+
+							</p>
+							<p>Happy Clients</p>
+						</li>
+						<li>
+							<p>
+								<CountUp end={4} start={100} enableScrollSpy />+
+							</p>
+							<p>Months in Business</p>
+						</li>
+						<li>
+							<p>
+								<CountUp end={50} enableScrollSpy />+
+							</p>
+							<p>Successful Ferry Trips</p>
+						</li>
+					</ul>
+				</div>
+			</section>
+
 			{/* Youtube video */}
-			<section className="bg-white  px-5 py-20 md:p-20 ">
+			<section className="bg-white  px-5 pt-10 pb-20 md:p-20 ">
 				<div className="max-w-[1440px] mx-auto flex flex-col">
 					<h3 className=" self-center md:w-[500px] text-center font-semibold mb-6 text-lg md:text-xl ">
 						Watch our instructional video to learn more about Abitto Ferry
@@ -365,122 +365,118 @@ const Home = () => {
 				</div>
 			</section>
 
-			{/* faq */}
-			<section id="faq" ref={faq} className="py-20 px-5 md:px-20 bg-white">
-				<div className="max-w-[1440px] mx-auto">
-					<h2 className="font-semibold text-xl md:text-2xl mb-7 inline-flex items-center justify-center w-full ">
-						<span className=" h-3 w-3 mr-3 rounded-full bg-blue-500" />
-						Frequently Asked Questions (FAQs)
-					</h2>
-					<div className="mt-10">
-						<Accordion type="single" collapsible className="w-full space-y-5">
-							<AccordionItem
-								value="item-1"
-								className=" shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
-							>
-								<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
-									How do I book a ticket with Abitto Ferry?
-								</AccordionTrigger>
-								<AccordionContent className="text-sm md:text-base p-5 md:p-10">
-									Visit our website at{" "}
-									<a
-										href="http://www.abittoferry.com/booking"
-										className="text-blue-500 hover:text-blue-700 font-bold"
-									>
-										www.abittoferry.com
-									</a>
-									. From the homepage, click on{" 'Book a Ticket,' "}choose your
-									trip type (One-Way or Round Trip), fill in your details, and
-									follow the prompts to complete your booking.
-								</AccordionContent>
-							</AccordionItem>
-							<AccordionItem
-								value="item-2"
-								className=" shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
-							>
-								<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
-									What payment methods are accepted?
-								</AccordionTrigger>
-								<AccordionContent className="text-sm md:text-base p-5 md:p-10">
-									We accept various payment methods, including credit/debit
-									cards, Paystack, and other secure online payment options.
-									Simply choose your preferred payment method during the booking
-									process.
-								</AccordionContent>
-							</AccordionItem>
-							<AccordionItem
-								value="item-3"
-								className=" shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
-							>
-								<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
-									Can I reschedule my trip?
-								</AccordionTrigger>
-								<AccordionContent className="text-sm md:text-base p-5 md:p-10">
-									Yes, trips can be rescheduled. Please contact our customer
-									support team at least 24 hours before your departure time to
-									make any changes to your booking.
-								</AccordionContent>
-							</AccordionItem>
-							<AccordionItem
-								value="item-4"
-								className=" shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
-							>
-								<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
-									How do I check in for my trip?
-								</AccordionTrigger>
-								<AccordionContent className="text-sm md:text-base p-5 md:p-10">
-									Check-in is done at the terminal before departure. Please
-									arrive at the terminal at least 30 minutes before your
-									scheduled departure time to complete the check-in process.
-								</AccordionContent>
-							</AccordionItem>
-							<AccordionItem
-								value="item-6"
-								className=" shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
-							>
-								<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
-									What happens if I encounter issues with my payment?
-								</AccordionTrigger>
-								<AccordionContent className="text-sm md:text-base p-5 md:p-10">
-									If you experience any issues with your payment, please contact
-									our customer support team for immediate assistance. We’re here
-									to ensure your booking process is smooth and hassle-free.
-								</AccordionContent>
-							</AccordionItem>
-							<AccordionItem
-								value="item-5"
-								className=" shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
-							>
-								<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
-									What if my preferred departure time is sold out?
-								</AccordionTrigger>
-								<AccordionContent className="text-sm md:text-base p-5 md:p-10">
-									If your preferred departure time is sold out, you can select
-									another available time. We recommend booking in advance to
-									secure your desired time slot.
-								</AccordionContent>
-							</AccordionItem>
-						</Accordion>
-					</div>
+			<div className="bg-white px-5 md:px-20 pt-0 pb-20 md:pt-20">
+				<div className="flex flex-col md:flex-row gap-y-20 md:gap-10 *:w-full *:grow  max-w-[1440px] mx-auto">
+					{/* faq */}
+					<section id="faq" ref={faq} className="mt-auto">
+						<h2 className="font-semibold text-xl md:text-2xl mb-7 inline-flex items-center justify-center w-full ">
+							<span className="h-3 w-3 mr-3 rounded-full bg-blue-500" />
+							Frequently Asked Questions (FAQs)
+						</h2>
+						<div>
+							<Accordion type="single" collapsible className="w-full space-y-5">
+								<AccordionItem
+									value="item-1"
+									className=" shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
+								>
+									<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
+										How do I book a ticket with Abitto Ferry?
+									</AccordionTrigger>
+									<AccordionContent className="text-sm md:text-base p-5 md:p-10">
+										Visit our website at{" "}
+										<a
+											href="http://www.abittoferry.com/booking"
+											className="text-blue-500 hover:text-blue-700 font-bold"
+										>
+											www.abittoferry.com
+										</a>
+										. From the homepage, click on{" 'Book a Ticket,' "}choose
+										your trip type (One-Way or Round Trip), fill in your
+										details, and follow the prompts to complete your booking.
+									</AccordionContent>
+								</AccordionItem>
+								<AccordionItem
+									value="item-2"
+									className=" shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
+								>
+									<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
+										What payment methods are accepted?
+									</AccordionTrigger>
+									<AccordionContent className="text-sm md:text-base p-5 md:p-10">
+										We accept various payment methods, including credit/debit
+										cards, Paystack, and other secure online payment options.
+										Simply choose your preferred payment method during the
+										booking process.
+									</AccordionContent>
+								</AccordionItem>
+								<AccordionItem
+									value="item-3"
+									className=" shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
+								>
+									<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
+										Can I reschedule my trip?
+									</AccordionTrigger>
+									<AccordionContent className="text-sm md:text-base p-5 md:p-10">
+										Yes, trips can be rescheduled. Please contact our customer
+										support team at least 24 hours before your departure time to
+										make any changes to your booking.
+									</AccordionContent>
+								</AccordionItem>
+								<AccordionItem
+									value="item-4"
+									className=" shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
+								>
+									<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
+										How do I check in for my trip?
+									</AccordionTrigger>
+									<AccordionContent className="text-sm md:text-base p-5 md:p-10">
+										Check-in is done at the terminal before departure. Please
+										arrive at the terminal at least 30 minutes before your
+										scheduled departure time to complete the check-in process.
+									</AccordionContent>
+								</AccordionItem>
+								<AccordionItem
+									value="item-6"
+									className=" shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
+								>
+									<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
+										What happens if I encounter issues with my payment?
+									</AccordionTrigger>
+									<AccordionContent className="text-sm md:text-base p-5 md:p-10">
+										If you experience any issues with your payment, please
+										contact our customer support team for immediate assistance.
+										We’re here to ensure your booking process is smooth and
+										hassle-free.
+									</AccordionContent>
+								</AccordionItem>
+								<AccordionItem
+									value="item-5"
+									className=" shadow-[0px_4px_4px_0px_#00000040] rounded-lg"
+								>
+									<AccordionTrigger className="hover:bg-gray-100 hover:no-underline text-left text-sm md:text-lg border rounded-lg border-[#666666] px-3 md:px-5">
+										What if my preferred departure time is sold out?
+									</AccordionTrigger>
+									<AccordionContent className="text-sm md:text-base p-5 md:p-10">
+										If your preferred departure time is sold out, you can select
+										another available time. We recommend booking in advance to
+										secure your desired time slot.
+									</AccordionContent>
+								</AccordionItem>
+							</Accordion>
+						</div>
+					</section>
+					{/* Contact us  */}
+					<section ref={contact} id="contact">
+						<h2 className="font-semibold text-xl md:text-2xl mb-7 inline-flex items-center justify-center w-full ">
+							<span className=" h-3 w-3 mr-3 rounded-full bg-blue-500" />
+							Contact Us
+						</h2>
+						<div className="md:bg-blue-50 rounded-lg p-0 md:p-10 ">
+							<ContactForm />
+						</div>
+					</section>
 				</div>
-			</section>
-
-			{/* Contact us  */}
-			<section
-				className="py-20 px-5 md:px-20 bg-white"
-				ref={contact}
-				id="contact"
-			>
-				<div className="max-w-[1440px] mx-auto">
-					<h2 className="font-semibold text-xl md:text-2xl mb-7 inline-flex items-center justify-center w-full ">
-						<span className=" h-3 w-3 mr-3 rounded-full bg-blue-500" />
-						Contact Us
-					</h2>
-					<div className="md:bg-blue-50 rounded-lg p-0 md:p-10 mb-5 md:mb-10  ">
-						<ContactForm />
-					</div>
-				</div>
-			</section>
+			</div>
 		</>
 	);
 };
@@ -615,7 +611,7 @@ const TestimonialsCarousel = () => {
 				</div>
 				<Button
 					text="Send your Feedback"
-					className="mx-auto px-5"
+					className="mx-auto px-5 mt-10 md:mt-5"
 					onClick={() => navigate("feedback")}
 				/>
 			</div>

@@ -30,8 +30,6 @@ const GetQuote = () => {
 			...prev,
 			value: formatCost(formData.value),
 		}));
-		console.log(formData, "form Data");
-
 		mountPortalModal(<QuoteModal />);
 	});
 
@@ -57,12 +55,12 @@ const GetQuote = () => {
 				<title>Get Quote | Abitto Ferry </title>
 			</Helmet>
 			<div className="max-w-[1040px] mx-auto py-24">
-				<div className=" bg-white mx-5 p-5 md:p-10 ">
+				<div className=" bg-white mx-5 p-5 md:p-10 rounded-lg">
 					<hgroup className="mb-8">
 						<h2 className="text-blue-500 font-semibold text-base md:text-xl">
 							Get Quote
 						</h2>
-						<p className="text-xs md:text-sm">
+						<p className="text-sm md:text-base font-medium">
 							Please fill in cargo details and to get quote
 						</p>
 					</hgroup>
