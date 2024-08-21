@@ -1,14 +1,25 @@
+import React from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate, Link } from "react-router-dom";
 import Button from "@/components/custom/Button";
 import { about, about2 } from "@/assets/images";
 import FounderImg from "@/assets/images/founder.jpg";
+import FounderImg2 from "@/assets/images/abitto-founder.jpg";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CountUp from "react-countup";
 import { CaretIcon } from "@/assets/icons";
+import { GlobalCTX } from "@/contexts/GlobalContext";
+
+import { Swiper, SwiperSlide } from "swiper/react";
+import { EffectCoverflow, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/effect-coverflow";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
 
 const About = () => {
 	const navigate = useNavigate();
+	const { services, scrollToSection } = React.useContext(GlobalCTX);
 
 	return (
 		<>
@@ -34,12 +45,6 @@ const About = () => {
 							backgroundColor: "rgb(0,0,0)",
 							background:
 								"linear-gradient(90deg, rgba(0,0,0,0.8016018907563025) 50%, rgba(255,255,255,0) 100%)",
-							//   background:
-							//     "-webkit-linear-gradient(90deg, rgba(0,0,0,0.8016018907563025) 50%, rgba(255,255,255,0) 100%)",
-							//   background:
-							//     " linear-gradient(90deg, rgba(0,0,0,0.8016018907563025) 50%, rgba(255,255,255,0) 100%)",
-							//   filter:
-							//     "progid:DXImageTransform.Microsoft.gradient(startColorstr='#000000',endColorstr='#ffffff',GradientType=1)",
 						}}
 					/>
 
@@ -55,32 +60,6 @@ const About = () => {
 								</p>
 							</div>
 						</div>
-					</div>
-				</section>
-
-				{/* metrics */}
-				<section className="bg-white ">
-					<div className="max-w-[1440px] mx-auto">
-						<ul className="flex gap-2 md:gap-10 justify-evenly text-center px-5 py-10 sm:py-20 font-bold [&_p:last-of-type]:font-normal text-3xl sm:text-6xl [&_p:last-of-type]:text-xs  sm:[&_p:last-of-type]:text-base *:flex *:flex-col *:items-center *:grow *:w-full">
-							<li>
-								<p>
-									<CountUp end={500} enableScrollSpy />+
-								</p>
-								<p>Happy Clients</p>
-							</li>
-							<li>
-								<p>
-									<CountUp end={4} start={100} enableScrollSpy />+
-								</p>
-								<p>Months in Business</p>
-							</li>
-							<li>
-								<p>
-									<CountUp end={50} enableScrollSpy />+
-								</p>
-								<p>Successful Ferry Trips</p>
-							</li>
-						</ul>
 					</div>
 				</section>
 
@@ -130,6 +109,32 @@ const About = () => {
 								</div>
 							</div>
 						</div>
+					</div>
+				</section>
+
+				{/* metrics */}
+				<section className="bg-white ">
+					<div className="max-w-[1440px] mx-auto">
+						<ul className="flex gap-2 md:gap-10 justify-evenly text-center px-5 py-10 sm:py-20 font-bold [&_p:last-of-type]:font-normal text-3xl sm:text-6xl [&_p:last-of-type]:text-xs  sm:[&_p:last-of-type]:text-base *:flex *:flex-col *:items-center *:grow *:w-full">
+							<li>
+								<p>
+									<CountUp end={500} enableScrollSpy />+
+								</p>
+								<p>Happy Clients</p>
+							</li>
+							<li>
+								<p>
+									<CountUp end={4} start={100} enableScrollSpy />+
+								</p>
+								<p>Months in Business</p>
+							</li>
+							<li>
+								<p>
+									<CountUp end={50} enableScrollSpy />+
+								</p>
+								<p>Successful Ferry Trips</p>
+							</li>
+						</ul>
 					</div>
 				</section>
 
@@ -232,9 +237,9 @@ const About = () => {
 				</section>
 
 				{/* Meet the founder */}
-				<section className="px-5 pb-20 md:p-20 bg-white">
-					<div className="max-w-[1440px] mx-auto pt-5 flex flex-col lg:flex-row gap-x-5 gap-y-20 *:w-full">
-						<div className="text-center md:text-left mt-10 md:mt-0">
+				<section className="px-5 py-20 md:p-20 bg-white">
+					<div className="max-w-[1440px] mx-auto pt-5 flex flex-col lg:flex-row gap-x-5 gap-y-20 *:w-full *:grow">
+						<div className="text-center md:text-left">
 							<div className="flex items-center justify-center md:justify-start">
 								<span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 " />
 								<h3 className="uppercase font-semibold">Meet our founder</h3>
@@ -266,14 +271,8 @@ const About = () => {
 								</p>
 							</div>
 						</div>
-						<div className="mt-10 md:mt-0">
-							<div className="w-full md:w-[500px] max-h-[500px] mx-auto overflow-hidden rounded-lg ">
-								<img
-									alt="founders image"
-									src={FounderImg}
-									className="w-full h-full object-contain md:object-cover rounded-lg "
-								/>
-							</div>
+						<div className="*:w-[500px]">
+							<SwiperContent />
 						</div>
 					</div>
 				</section>
@@ -315,11 +314,12 @@ const About = () => {
 							Experience Seamless and Enjoyable Water Travel
 						</p>
 						<Button
-							text="Book your trip"
+							text="Get Started"
 							onClick={() => {
-								navigate("/booking");
+								scrollToSection(services);
+								navigate("/#services");
 							}}
-							className="px-5 mx-auto mt-5"
+							className="w-40 mx-auto mt-5"
 						/>
 					</div>
 				</section>
@@ -339,3 +339,54 @@ const StyledTabsTrigger = ({ value, title }) => (
 		{title}
 	</TabsTrigger>
 );
+
+const SwiperContent = () => {
+	return (
+		<>
+			<Swiper
+				effect={"coverflow"}
+				grabCursor={true}
+				centeredSlides={true}
+				slidesPerView={"auto"}
+				coverflowEffect={{
+					rotate: 0,
+					stretch: 0,
+					depth: 120,
+					modifier: 1,
+					slideShadows: true,
+				}}
+				pagination={true}
+				modules={[EffectCoverflow, Pagination]}
+				className="mySwiper"
+			>
+				<SwiperSlide>
+					<div className="h-[450px] overflow-hidden">
+						<img
+							src={FounderImg}
+							alt="founder1"
+							className="rounded-lg overflow-hidden w-full h-full object-cover object-top"
+						/>
+					</div>
+				</SwiperSlide>
+				<SwiperSlide>
+					<div className="h-[450px] overflow-hidden">
+						<img
+							src={FounderImg2}
+							alt="founder2"
+							className="rounded-lg overflow-hidden w-full h-full object-cover object-top"
+						/>
+					</div>
+				</SwiperSlide>
+				<SwiperSlide>
+					<div className="h-[450px] overflow-hidden">
+						<img
+							src={"https://swiperjs.com/demos/images/nature-3.jpg"}
+							alt="founder3"
+							className="rounded-lg overflow-hidden w-full h-full object-cover object-top"
+						/>
+					</div>
+				</SwiperSlide>
+			</Swiper>
+		</>
+	);
+};
