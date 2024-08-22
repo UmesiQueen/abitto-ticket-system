@@ -16,7 +16,6 @@ import Settings from "./admin/pages/settings";
 import Login from "./admin/auth/login";
 import { CustomerDetails } from "./admin/pages/booking-details";
 import TicketInvoice from "./components/TicketInvoice";
-// import Notice from "./pages/notice";
 import MainLayout from "./main/layout";
 import About from "./main/pages/about";
 import BookTicket from "./admin/pages/book-ticket";
@@ -51,7 +50,6 @@ import InformationBox from "./admin/pages/information-box";
 export const router = createBrowserRouter(
 	createRoutesFromElements(
 		<Route path="/" element={<App />}>
-			{/* <Route index element={<Notice/>} /> */}
 			<Route element={<MainLayout />}>
 				<Route index element={<Home />} />
 				<Route path="booking" element={<Booking />} />

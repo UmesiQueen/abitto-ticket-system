@@ -415,6 +415,25 @@ const Report = () => {
 					</form>
 				)}
 			</div>
+
+			<div className="bg-white mt-10 p-5 rounded-lg">
+				<div className="border flex items-center gap-5 p-5 rounded-lg">
+					<div className="rounded-lg bg-blue-50 p-2">
+						<WalletIcon />
+					</div>
+					<h3>All Earnings</h3>
+					<p className="text-base">
+						<strong>
+							{formatValue({
+								value: String(bookingTotals.totalEarnings ?? 0),
+								prefix: "₦",
+								decimalScale: 2,
+							})}
+						</strong>
+					</p>
+				</div>
+			</div>
+
 			<div className="mt-10">
 				<h2 className="mb-3 font-semibold">Booking Report</h2>
 				<div className="mb-8 grid grid-cols-12 gap-5 w-full">
@@ -769,6 +788,91 @@ const Report = () => {
 								</ul>
 							</div>
 						</div>
+					</div>
+				</div>
+			</div>
+			<div className="mt-20">
+				<h2 className="mb-3 font-semibold">Logistics Report</h2>
+				<div className="mb-8 grid grid-cols-12 gap-5 w-full">
+					<div className="col-start-1 col-span-8 row-span-1 bg-white rounded-lg p-5 ">
+						<ul className="border rounded-lg p-5 flex flex-wrap *:grow  gap-5 justify-between items-center min-h-[100px] [&_li]:min-w-[25%]  [&_li:not(:first-of-type)]:pl-7 divide-x ">
+							<li className="item flex items-center gap-3">
+								<div className="rounded-lg bg-blue-50 p-2">
+									<WalletIcon />
+								</div>
+								<div>
+									<p className="text-xs text-[#7F7F7F] ">
+										Total Earnings (MRR)
+									</p>
+									<p className="text-base">
+										<strong>
+											{formatValue({
+												value: String(rentalTotals.totalEarnings ?? 0),
+												prefix: "₦",
+												decimalScale: 2,
+											})}
+										</strong>
+									</p>
+								</div>
+							</li>
+							<li className="item flex items-center gap-3 ">
+								<div className="rounded-lg bg-blue-50 p-2">
+									<UserGroupIcon />
+								</div>
+								<div>
+									<p className="text-xs text-[#7F7F7F] ">Total Logistics</p>
+									<p className="text-base">
+										<strong>
+											{formatValue({
+												value: String(total[`rentalCount${city}`]),
+											})}
+										</strong>
+									</p>
+								</div>
+							</li>
+							<li className="item flex items-center gap-3 ">
+								<div className="rounded-lg bg-blue-50 p-2">
+									<FerryBoatIcon />
+								</div>
+								<div>
+									<p className="text-xs text-[#7F7F7F]">Pending Deliveries</p>
+									<p className="text-base">
+										<strong>
+											{formatValue({
+												value: String(0),
+											})}
+										</strong>
+									</p>
+								</div>
+							</li>
+						</ul>
+					</div>
+					<div className="row-start-2 row-span-4  col-start-1 col-span-8 bg-white rounded-lg p-5 ">
+						<div className="border rounded-lg p-5 flex flex-col justify-between h-full">
+							<CustomizedBarChart
+								props={{
+									title: "Logistics Sales Revenue",
+									data: total[`rentRevenue${city}`],
+								}}
+							/>
+						</div>
+					</div>
+					<div className="row-span-3 row-start-1 col-start-9 col-span-4 bg-white rounded-lg p-5">
+						<div
+							className="rounded-lg border p-5 space-y-5 mx-auto h-full
+						"
+						></div>
+					</div>
+					<div className="row-span-2 row-start-4 col-start-9 col-span-4 bg-white rounded-lg p-5 h-full w-full">
+						<PaymentMethodPieChart
+							props={{
+								title: "Logistics Payment Methods",
+								paystack: rentalTotals.totalPaystack,
+								pos: rentalTotals.totalPos,
+								transfer: rentalTotals.totalTransfer,
+								cash: rentalTotals.totalCash,
+							}}
+						/>
 					</div>
 				</div>
 			</div>

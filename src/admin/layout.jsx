@@ -205,7 +205,7 @@ const ProtectedRoute = () => {
 							})}
 						</ul>
 					</nav>
-					<div className="pt-2">
+					<div className="pt-2 mt-auto">
 						<button
 							className="px-10 w-full text-sm py-3 border-t mt-auto flex items-center gap-2 hover:bg-gray-900/80 "
 							onClick={handleLogout}
