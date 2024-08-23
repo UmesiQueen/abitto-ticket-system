@@ -14,6 +14,7 @@ const GlobalContext = ({ children }) => {
 	const [showModal, setShowModal] = React.useState(false);
 	const [modalContent, setModalContent] = React.useState();
 	const { live, setLive } = React.useState(false);
+	const [currentFeedback, setCurrentFeedback] = React.useState({});
 
 	React.useEffect(() => {
 		if (Object.keys(adminProfile).length)
@@ -57,6 +58,7 @@ const GlobalContext = ({ children }) => {
 		mountPortalModal,
 		unMountPortalModal,
 		live,
+		currentFeedback, setCurrentFeedback
 	};
 
 	return (

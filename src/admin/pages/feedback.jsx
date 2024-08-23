@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import {
 	flexRender,
@@ -20,34 +20,46 @@ import ReactPaginate from "react-paginate";
 import { Button as ButtonUI } from "@/components/ui/button";
 import { CaretIcon, CircleArrowLeftIcon } from "@/assets/icons";
 import { BookingCTX } from "@/contexts/BookingContext";
-import { truncate } from "lodash";
 import { format } from "date-fns";
 import Rating from "@mui/material/Rating";
-import { humanize } from "@/lib/utils";
+import { GlobalCTX } from "@/contexts/GlobalContext";
+import baseurl from "@/api";
+import { toast } from "sonner";
+import { capitalize } from "lodash";
 
 const FeedbackAdmin = () => {
 	const navigate = useNavigate();
 	const { setCurrentPageIndex } = React.useContext(BookingCTX);
+	const { setLoading, setCurrentFeedback } = React.useContext(GlobalCTX);
+	const [dataQuery, setDataQuery] = React.useState([]);
 	const [pagination, setPagination] = React.useState({
 		pageIndex: 0,
 		pageSize: 10,
 	});
 
-	const dataQuery = [
-		{
-			_id: "9429405024024492440",
-			full_name: "Umesi Queen",
-			email: "queenumesi01@gmailcom",
-			travel_date: String(new Date()),
-			travel_time: "10:00 AM",
-			star_rating: 3,
-			suggestion_title: ["Overall Service", "Customer Support"],
-			comment:
-				"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,",
-			trip_remark:
-				"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,",
-		},
-	];
+	React.useEffect(() => {
+		setLoading(true),
+			baseurl
+				.get("/feedback/get")
+				.then((res) => {
+					if (res.status == 200) {
+						const resData = res.data.feedbacks;
+						setDataQuery(resData)
+					}
+				})
+				.catch((error) => {
+					if (
+						!error.code === "ERR_NETWORK" ||
+						!error.code === "ERR_INTERNET_DISCONNECTED" ||
+						!error.code === "ECONNABORTED"
+					)
+						toast.error(
+							"Error occurred while fetching feedback. Refresh page."
+						);
+				})
+				.finally(() => setLoading(false));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
 	const columns = [
 		{
@@ -55,9 +67,16 @@ const FeedbackAdmin = () => {
 			cell: ({ row }) => Number(row.id) + 1,
 		},
 		{
-			accessorKey: "full_name",
-			header: "Full Name",
-			cell: ({ row }) => row.getValue("full_name"),
+			accessorKey: "fullName",
+			id: "fullName",
+			header: "Full name",
+			accessorFn: (row) => `${row.first_name} ${row.surname}`,
+			cell: ({ row }) => <div className="capitalize">{capitalize(`${row.original.first_name} ${row.original.surname}`)}</div>,
+		},
+		{
+			accessorKey: "phone_number",
+			header: "Phone number",
+			cell: ({ row }) => row.getValue("phone_number"),
 		},
 		{
 			accessorKey: "email",
@@ -65,21 +84,16 @@ const FeedbackAdmin = () => {
 			cell: ({ row }) => row.getValue("email"),
 		},
 		{
-			accessorKey: "travel_date",
-			header: "Travel Date",
-			cell: ({ row }) => format(row.getValue("travel_date"), "PPP"),
+			accessorKey: "feedback_title",
+			header: "Title",
+			cell: ({ row }) => row.getValue("feedback_title")
+			,
 		},
 		{
-			accessorKey: "travel_time",
-			header: "Travel Time",
-			cell: ({ row }) => row.getValue("travel_time"),
-		},
-		{
-			accessorKey: "suggestion_title",
-			header: "Comments",
-			cell: ({ row }) => (
-				<div>{truncate(row.getValue("suggestion_title"), { length: 20 })}</div>
-			),
+			accessorKey: "service_type",
+			header: "Service",
+			cell: ({ row }) =>
+				row.getValue("service_type"),
 		},
 		{
 			accessorKey: "star_rating",
@@ -128,9 +142,9 @@ const FeedbackAdmin = () => {
 											{header.isPlaceholder
 												? null
 												: flexRender(
-														header.column.columnDef.header,
-														header.getContext()
-												  )}
+													header.column.columnDef.header,
+													header.getContext()
+												)}
 										</TableHead>
 									);
 								})}
@@ -145,6 +159,7 @@ const FeedbackAdmin = () => {
 									className="h-[65px]"
 									onDoubleClick={() => {
 										navigate(row.original._id);
+										setCurrentFeedback(row.original)
 									}}
 								>
 									{row.getVisibleCells().map((cell) => (
@@ -221,20 +236,9 @@ export default FeedbackAdmin;
 
 export const FeedbackDetails = () => {
 	const navigate = useNavigate();
+	const { currentFeedback, adminProfile } = React.useContext(GlobalCTX);
 
-	const currentFeedback = {
-		_id: "9429405024024492440",
-		full_name: "Umesi Queen",
-		email: "queenumesi01@gmailcom",
-		travel_date: String(new Date()),
-		travel_time: "10:00 AM",
-		star_rating: 3,
-		suggestion_title: ["Overall Service", "Customer Support"],
-		comment:
-			"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,",
-		trip_remark:
-			"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,",
-	};
+	if (!Object.keys(currentFeedback).length) return <Navigate to={`/backend/${adminProfile.account_type}/feedback`} />
 
 	return (
 		<>
@@ -252,28 +256,24 @@ export const FeedbackDetails = () => {
 					<table className="w-4/6 border border-collapse">
 						<tbody className=" [&_td:first-of-type]:font-semibold  [&_td:first-of-type]:text-nowrap  [&_td]:p-3   [&_td]:border-2 ">
 							<tr>
-								<td>Name:</td>
-								<td>{currentFeedback.full_name}</td>
+								<td>Full name:</td>
+								<td className="capitalize">{capitalize(`${currentFeedback.first_name} ${currentFeedback.surname}`)}</td>
+							</tr>
+							<tr>
+								<td>Phone number:</td>
+								<td>{currentFeedback.phone_number}</td>
 							</tr>
 							<tr>
 								<td>Email:</td>
 								<td>{currentFeedback.email}</td>
 							</tr>
 							<tr>
-								<td>Travel date:</td>
-								<td>{format(currentFeedback.travel_date, "PPP")}</td>
+								<td>Title:</td>
+								<td>{currentFeedback.feedback_title}</td>
 							</tr>
 							<tr>
-								<td>Travel time:</td>
-								<td>{currentFeedback.travel_time}</td>
-							</tr>
-							<tr>
-								<td>Trip remark:</td>
-								<td>{currentFeedback.trip_remark}</td>
-							</tr>
-							<tr>
-								<td>Suggestion title:</td>
-								<td>{humanize(currentFeedback.suggestion_title)}</td>
+								<td>Service:</td>
+								<td>{currentFeedback.service_type}</td>
 							</tr>
 							<tr>
 								<td>Comment:</td>
@@ -296,6 +296,13 @@ export const FeedbackDetails = () => {
 										({currentFeedback.star_rating})
 									</div>
 								</td>
+							</tr>
+							<tr>
+								<td>Created at:</td>
+								<td>{format(currentFeedback.createdAt, "PPPPpppp").split(
+									"GMT",
+									1
+								)}</td>
 							</tr>
 						</tbody>
 					</table>
