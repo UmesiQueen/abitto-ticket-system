@@ -1,5 +1,5 @@
 import React from "react";
-import { useLoaderData, useNavigate, Navigate } from "react-router-dom";
+import { useLoaderData, useNavigate, Navigate, useRevalidator } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import {
 	flexRender,
@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/table";
 import { PaginationEllipsis } from "@/components/ui/pagination";
 import ReactPaginate from "react-paginate";
-import { Button as ButtonUI } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
 	CaretIcon,
 	CircleArrowLeftIcon,
@@ -32,6 +32,8 @@ import { formatValue } from "react-currency-input-field";
 import baseurl from "@/api";
 import { toast } from "sonner";
 import { GlobalCTX } from "@/contexts/GlobalContext";
+import ConfirmationModal from "@/components/modals/confirmation";
+import { useUpdate } from "@/hooks/useUpdate";
 
 const LogisticsDetails = () => {
 	const navigate = useNavigate();
@@ -196,14 +198,14 @@ const LogisticsDetails = () => {
 					<ReactPaginate
 						breakLabel={<PaginationEllipsis />}
 						nextLabel={
-							<ButtonUI
+							<Button
 								variant="ghost"
 								size="sm"
 								onClick={() => table.nextPage()}
 								disabled={!table.getCanNextPage()}
 							>
 								<CaretIcon />
-							</ButtonUI>
+							</Button>
 						}
 						onPageChange={(val) => {
 							table.setPageIndex(val.selected);
@@ -216,7 +218,7 @@ const LogisticsDetails = () => {
 						pageRangeDisplayed={3}
 						pageCount={table.getPageCount()}
 						previousLabel={
-							<ButtonUI
+							<Button
 								variant="ghost"
 								size="sm"
 								onClick={() => table.previousPage()}
@@ -225,7 +227,7 @@ const LogisticsDetails = () => {
 								<span className="rotate-180">
 									<CaretIcon />
 								</span>
-							</ButtonUI>
+							</Button>
 						}
 						renderOnZeroPageCount={null}
 						className="flex gap-2 items-center text-xs font-normal [&_a]:inline-flex [&_a]:items-center [&_a]:justify-center [&_a]:min-w-7 [&_a]:h-8 [&_a]:rounded-lg *:text-center *:[&_.selected]:bg-blue-500  *:[&_.selected]:text-white [&_.disabled]:pointer-events-none"
@@ -240,6 +242,8 @@ export const ShipmentDetails = () => {
 	const navigate = useNavigate();
 	const currentShipment = useLoaderData();
 	const { adminProfile, mountPortalModal } = React.useContext(GlobalCTX);
+	const { updateShipmentStatus } = useUpdate();
+	const { revalidate } = useRevalidator();
 
 	if (!currentShipment?.shipment_id) return <Navigate to={`/backend/${adminProfile.account_type}/pageNotFound`} />;
 
@@ -270,6 +274,29 @@ export const ShipmentDetails = () => {
 										Great news! The shipment has been successfully confirmed
 										from our sales point.
 									</p>
+								</div>
+								<div className="ml-auto">
+									{currentShipment?.shipment_status == "Origin" ?
+										<Button
+											onClick={() => {
+												mountPortalModal(
+													<ConfirmationModal props={{
+														header: "Are you sure this shipment has arrived your terminal and you have notified the receiver?",
+														handleRequest: () => { updateShipmentStatus({ shipment_id: currentShipment?.shipment_id, shipment_status: "Arrived" }, () => { revalidate() }) }
+													}} />)
+											}}
+										>Arrived</Button> :
+										currentShipment?.shipment_status == "Arrived" ?
+											<Button
+												onClick={() => {
+													mountPortalModal(
+														<ConfirmationModal props={{
+															header: "Have you confirmed the receiver of this parcel?",
+															handleRequest: () => { updateShipmentStatus({ shipment_id: currentShipment?.shipment_id, shipment_status: "Collected" }, () => { revalidate() }) }
+														}} />)
+												}}
+											>Collected</Button> : ""
+									}
 								</div>
 							</div>
 
@@ -601,14 +628,14 @@ const DescriptionModal = ({ description }) => {
 
 	return (
 		<div className="bg-white rounded-lg p-10 pt-5 flex flex-col max-w-[600px] w-full relative">
-			<ButtonUI
+			<Button
 				variant="ghost"
 				size="icon"
 				className="absolute top-0 right-0"
 				onClick={unMountPortalModal}
 			>
 				<CancelSquareIcon />
-			</ButtonUI>
+			</Button>
 			<h3 className="font-bold">Item Description</h3>
 			<p>{description}</p>
 		</div>

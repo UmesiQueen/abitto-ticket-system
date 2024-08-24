@@ -39,8 +39,40 @@ export const useUpdate = () => {
 			})
 			.finally(() => setLoading(false));
 	};
-	const rescheduleBooking = () => {};
-	const updatePaymentStatus = () => {};
+	const rescheduleBooking = () => { };
+	const updatePaymentStatus = () => { };
 
-	return { checkInPassenger, rescheduleBooking, updatePaymentStatus };
+	const updateShipmentStatus = (reqData, onSuccess) => {
+		const { shipment_status } = reqData;
+		setLoading(true);
+		baseurl.patch("logistics/update", reqData)
+			.then((res) => {
+				if (res.status == 200)
+					setModalContent(
+						<SuccessModal
+							header={`Shipment status updated to '${shipment_status}'`}
+							text={shipment_status == "Arrived"
+								? "You have confirmed that this shipment has arrived your terminal. Please notify receiver for collection."
+								: shipment_status == "Collected"
+									? "You have confirmed that this shipment has been collected."
+									: "Unknown Request."}
+							onclick={onSuccess}
+						/>
+					);
+			})
+			.catch((error) => {
+				if (
+					!error.code === "ERR_NETWORK" ||
+					!error.code === "ERR_INTERNET_DISCONNECTED" ||
+					!error.code === "ECONNABORTED"
+				) {
+					toast.error("Error occurred while updating shipment status. Try again.");
+				}
+
+			}
+			)
+			.finally(() => setLoading(false));
+	}
+
+	return { checkInPassenger, rescheduleBooking, updatePaymentStatus, updateShipmentStatus };
 };
