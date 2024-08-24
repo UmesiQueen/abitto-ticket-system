@@ -97,7 +97,7 @@ export const router = createBrowserRouter(
 					<Route path="feedback" element={<FeedbackAdmin />} />
 					<Route path="feedback/:feedbackID" element={<FeedbackDetails />} />
 					<Route path="logistics" element={<LogisticsDetails />} />
-					<Route path="logistics/:shipmentID" element={<ShipmentDetails />} />
+					<Route path="logistics/:shipmentID" element={<ShipmentDetails />} loader={ShipmentLoader} />
 					<Route path="pricing" element={<Pricing />} />
 					<Route path="information" element={<InformationBox />} />
 					<Route path="pageNotFound" element={<PageNotFoundAdmin />} />

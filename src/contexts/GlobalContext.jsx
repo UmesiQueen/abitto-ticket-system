@@ -58,7 +58,8 @@ const GlobalContext = ({ children }) => {
 		mountPortalModal,
 		unMountPortalModal,
 		live,
-		currentFeedback, setCurrentFeedback
+		currentFeedback,
+		setCurrentFeedback,
 	};
 
 	return (

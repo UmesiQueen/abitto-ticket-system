@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate, Navigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import {
 	flexRender,
@@ -23,52 +23,45 @@ import {
 	CircleArrowLeftIcon,
 	TickIcon,
 	PrinterIcon,
+	CancelSquareIcon
 } from "@/assets/icons";
 import { BookingCTX } from "@/contexts/BookingContext";
-// import { format } from "date-fns";
+import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { formatValue } from "react-currency-input-field";
-
-const shipmentDataDemo = {
-	_id: "9429405024024492440",
-	shipment_id: "SP-73839021",
-	departure: "Marina, Calabar",
-	arrival: "Nwaniba Timber Beach, Uyo",
-	category: "Food",
-	name: "Food",
-	description: "Lorem Ispum, etor djsns aped medu",
-	no_item: 3,
-	weight: 5,
-	value: "10000",
-	sender_name: "Queen Umesi",
-	sender_email: "queenumesi01@gmailcom",
-	sender_phone_number: "08083931561",
-	sender_alt_phone_number: "",
-	sender_address: "7 Mini-orlu, Banana Island, Calabar",
-	receiver_name: "Ruth Umesi",
-	receiver_email: "ruthumesi01@gmailcom",
-	receiver_phone_number: "08083931561",
-	receiver_alt_phone_number: "07035935342",
-	receiver_address: "7 Mini-orlu, Sudan Island, Uyo",
-	payment_method: "POS",
-	payment_status: "Success",
-	trxRef: "52923T944",
-	cost_per_kg: 1000,
-	total_cost: 5000,
-	created_by: "Dev(dev)",
-	created_at: "August 12th, 2024",
-	shipment_status: "",
-};
+import baseurl from "@/api";
+import { toast } from "sonner";
+import { GlobalCTX } from "@/contexts/GlobalContext";
 
 const LogisticsDetails = () => {
 	const navigate = useNavigate();
 	const { setCurrentPageIndex } = React.useContext(BookingCTX);
+	const { setLoading } = React.useContext(GlobalCTX);
+	const [dataQuery, setDataQuery] = React.useState([]);
 	const [pagination, setPagination] = React.useState({
 		pageIndex: 0,
 		pageSize: 10,
 	});
 
-	const dataQuery = [shipmentDataDemo];
+	React.useEffect(() => {
+		setLoading(true);
+		baseurl.get("logistics/get").then((res) => {
+			if (res.status == 200) {
+				const resData = res.data.logistics;
+				setDataQuery(resData)
+			}
+		}).catch((error) => {
+			if (
+				!error.code === "ERR_NETWORK" ||
+				!error.code === "ERR_INTERNET_DISCONNECTED" ||
+				!error.code === "ECONNABORTED"
+			) {
+				toast.error(
+					"Error occurred while fetching feedback. Refresh page."
+				);
+			}
+		}).finally(() => setLoading(false))
+	}, [])
 
 	const columns = [
 		{
@@ -78,7 +71,7 @@ const LogisticsDetails = () => {
 		{
 			accessorKey: "shipment_id",
 			header: "Shipment ID",
-			cell: ({ row }) => row.getValue("shipment_id"),
+			cell: ({ row }) => <p className="uppercase">{row.getValue("shipment_id")}</p>,
 		},
 		{
 			accessorKey: "departure",
@@ -96,9 +89,32 @@ const LogisticsDetails = () => {
 			cell: ({ row }) => row.getValue("category"),
 		},
 		{
+			accessorKey: "createdAt",
+			header: "Created On",
+			cell: ({ row }) => format(new Date(row.getValue("createdAt").split("T")[0]), "PPP")
+
+
+		},
+		{
 			accessorKey: "shipment_status",
-			header: "Status",
-			cell: ({ row }) => row.getValue("shipment_status"),
+			header: <div className="text-center">Status</div>,
+			cell: ({ row }) => {
+				const status = row.original.shipment_status;
+				return (
+					<div
+						className={cn(
+							"rounded-lg w-20 mx-auto py-1 text-[10px] text-center font-semibold",
+							{
+								"text-green-500 bg-green-100": status === "Collected",
+								"text-[#E78913] bg-[#F8DAB6]": status === "Origin",
+								"text-purple-900 bg-purple-300/30": status === "Arrived",
+							}
+						)}
+					>
+						{status}
+					</div>
+				);
+			},
 		},
 	];
 
@@ -131,9 +147,9 @@ const LogisticsDetails = () => {
 											{header.isPlaceholder
 												? null
 												: flexRender(
-														header.column.columnDef.header,
-														header.getContext()
-												  )}
+													header.column.columnDef.header,
+													header.getContext()
+												)}
 										</TableHead>
 									);
 								})}
@@ -222,7 +238,10 @@ const LogisticsDetails = () => {
 
 export const ShipmentDetails = () => {
 	const navigate = useNavigate();
-	const currentShipment = shipmentDataDemo;
+	const currentShipment = useLoaderData();
+	const { adminProfile, mountPortalModal } = React.useContext(GlobalCTX);
+
+	if (!currentShipment?.shipment_id) return <Navigate to={`/backend/${adminProfile.account_type}/pageNotFound`} />;
 
 	return (
 		<>
@@ -263,7 +282,7 @@ export const ShipmentDetails = () => {
 										</p>
 									</li>
 									<li>
-										<p className="text-xs text-[#7F7F7F]">Departure</p>
+										<p className="text-xs text-[#7F7F7F]">Origin</p>
 										<p className="text-base font-semibold capitalize">
 											{currentShipment?.departure}
 										</p>
@@ -285,14 +304,23 @@ export const ShipmentDetails = () => {
 									<li>
 										<p className="text-xs text-[#7F7F7F] ">Name</p>
 										<p className="text-base font-semibold">
-											{currentShipment?.name ?? currentShipment?.category}
+											{currentShipment?.name}
 										</p>
 									</li>
 									<li>
 										<p className="text-xs text-[#7F7F7F]">Description</p>
 										<p className="text-base font-semibold">
-											{/*TODO: truncate this and make clickable */}
-											{currentShipment?.description ?? "None"}
+											{currentShipment?.description.length ?
+												<button
+													className="text-blue-500 hover:text-blue-700 text-sm underline"
+													onClick={() => {
+														mountPortalModal(
+															<DescriptionModal description={currentShipment?.description} />
+														);
+													}}
+												>
+													See description
+												</button> : "N/A"}
 										</p>
 									</li>
 									<li>
@@ -310,21 +338,13 @@ export const ShipmentDetails = () => {
 									<li>
 										<p className="text-xs text-[#7F7F7F]">Est. Item Value</p>
 										<p className="text-base font-semibold">
-											{currentShipment?.value}
+											{formatValue({
+												value: String(currentShipment.value),
+												prefix: "₦",
+											})}
 										</p>
 									</li>
-									<li>
-										<p className="text-xs text-[#7F7F7F]">Cost/kg</p>
-										<p className="text-base font-semibold">
-											{currentShipment?.cost_per_kg}
-										</p>
-									</li>
-									<li>
-										<p className="text-xs text-[#7F7F7F]">Total Cost</p>
-										<p className="text-base font-semibold">
-											{currentShipment?.total_cost}
-										</p>
-									</li>
+
 								</ul>
 								<div className=" space-y-6 border-l-8 border-green-800 bg-green-50 py-2 pl-3 -ml-5">
 									<ul className="*:flex *:flex-col *:gap-1 flex flex-wrap gap-y-5 gap-x-10">
@@ -353,15 +373,14 @@ export const ShipmentDetails = () => {
 												Sender Alt. Phone Number
 											</p>
 											<p className="text-base font-semibold">
-												{currentShipment?.sender_alt_phone_number.length
-													? currentShipment?.sender_alt_phone_number
-													: "N/A"}
+												{currentShipment?.sender_alt_phone_number ??
+													"N/A"}
 											</p>
 										</li>
 										<li>
 											<p className="text-xs text-[#7F7F7F]">Sender Address</p>
 											<p className="text-base font-semibold">
-												{currentShipment?.sender_address}
+												{currentShipment?.sender_address.length ? currentShipment?.sender_address : "N/A"}
 											</p>
 										</li>
 									</ul>
@@ -393,15 +412,13 @@ export const ShipmentDetails = () => {
 												Receiver Alt. Phone Number
 											</p>
 											<p className="text-base font-semibold">
-												{currentShipment?.receiver_alt_phone_number.length
-													? currentShipment?.receiver_alt_phone_number
-													: "N/A"}
+												{currentShipment?.receiver_alt_phone_number ?? "N/A"}
 											</p>
 										</li>
 										<li>
 											<p className="text-xs text-[#7F7F7F]">Receiver Address</p>
 											<p className="text-base font-semibold">
-												{currentShipment?.receiver_address}
+												{currentShipment?.receiver_address.length ? currentShipment?.receiver_address : "N/A"}
 											</p>
 										</li>
 									</ul>
@@ -437,22 +454,19 @@ export const ShipmentDetails = () => {
 											Transaction Reference
 										</p>
 										<p className="text-base font-semibold">
-											{currentShipment?.trxRef}
+											{currentShipment?.txRef}
 										</p>
 									</li>
 								</ul>
 								<ul className="*:flex *:flex-col *:gap-1 flex flex-wrap gap-y-5 gap-x-10">
 									<li>
-										<p className="text-xs text-[#7F7F7F]">Booked on</p>
+										<p className="text-xs text-[#7F7F7F]">Created on</p>
 										<p className="text-base font-semibold">
-											{/* {format(
-												new Date(currentShipment.created_at),
-												"PPPPpppp"
-											).split("GMT", 1)} */}
+											{format(new Date(currentShipment?.createdAt.split("T")[0]), "PPPPpppp").split("GMT")[0]}
 										</p>
 									</li>
 									<li>
-										<p className="text-xs text-[#7F7F7F]">Booked By</p>
+										<p className="text-xs text-[#7F7F7F]">Created By</p>
 										<p className="text-base font-semibold">
 											{currentShipment?.created_by}
 										</p>
@@ -464,15 +478,11 @@ export const ShipmentDetails = () => {
 												"rounded-lg w-20 mx-auto py-1 text-xs px-2 text-center font-semibold",
 												{
 													"text-green-500 bg-green-100":
-														currentShipment?.shipment_status === "Completed",
+														currentShipment?.shipment_status === "Collected",
 													"text-[#E78913] bg-[#F8DAB6]":
-														currentShipment?.shipment_status === "Upcoming",
-													"text-[#F00000] bg-[#FAB0B0]":
-														currentShipment?.shipment_status === "Canceled",
-													"text-black bg-slate-500/50 ":
-														currentShipment?.shipment_status === "Rescheduled",
+														currentShipment?.shipment_status === "Origin",
 													"text-purple-900 bg-purple-300/30 ":
-														currentShipment?.shipment_status === "Missed",
+														currentShipment?.shipment_status === "Arrived",
 												}
 											)}
 										>
@@ -495,30 +505,45 @@ export const ShipmentDetails = () => {
 									</span>
 								</p>
 							</div>
-							<ul className="space-y-1 text-[#1E1E1E] text-sm font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
+							<ul className="  [&_h3]:font-semibold [&_h3]:text-[13px] md:[&_h3]:text-sm space-y-1 text-[#1E1E1E] text-sm font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
 								<li>
 									<p>
-										<span>Category:</span>
+										<h3>Category:</h3>
 										<span>{currentShipment?.category}</span>
 									</p>
 								</li>
 								<li>
 									<p>
-										<span>No. of item:</span>
+										<h3>No. of item:</h3>
 										<span>{currentShipment?.no_item}</span>
 									</p>
 								</li>
 								<li>
 									<p>
-										<span>Weight:</span>
-										<span>{currentShipment?.weight} kg</span>
+										<h3>Weight:</h3>
+										<span>{currentShipment?.weight}kg</span>
 									</p>
 								</li>
 								<li>
 									<p>
-										<span>Shipment status:</span>
-										<span>{currentShipment?.shipment_status}</span>
+										<h3 className="text-nowrap">Shipment status:</h3>
+										<span
+											className={cn(
+												"w-full py-1 text-xs px-5 text-center font-semibold ",
+												{
+													"text-green-500 bg-green-100":
+														currentShipment?.shipment_status === "Collected",
+													"text-[#E78913] bg-[#F8DAB6]":
+														currentShipment?.shipment_status === "Origin",
+													"text-purple-900 bg-purple-300/30 ":
+														currentShipment?.shipment_status === "Arrived",
+												}
+											)}
+										>
+											{currentShipment?.shipment_status}
+										</span>
 									</p>
+
 								</li>
 							</ul>
 
@@ -538,8 +563,8 @@ export const ShipmentDetails = () => {
 											</td>
 										</tr>
 										<tr>
-											<td className="font-medium text-base">Total</td>
-											<td className="font-medium text-base">
+											<td className="font-semibold text-base">Total</td>
+											<td className="font-semibold  text-base">
 												₦
 												{formatValue({
 													value: String(currentShipment?.total_cost),
@@ -550,9 +575,9 @@ export const ShipmentDetails = () => {
 								</table>
 							</div>
 							<button
-								className=" bg-blue-500 w-56 py-3 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white flex justify-center gap-2 mx-auto rounded-lg "
+								className=" bg-blue-500 w-full py-3 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white flex justify-center gap-2 mx-auto rounded-lg "
 								onClick={() => {
-									navigate(`/ticket-invoice/${currentShipment.ticket_id}`);
+									navigate(`/logistics-invoice/${currentShipment.shipment_id}`);
 								}}
 							>
 								<PrinterIcon />
@@ -563,9 +588,30 @@ export const ShipmentDetails = () => {
 				) : (
 					<p className="ml-10">No Result</p>
 				)}
-			</div>
+			</div >
 		</>
 	);
 };
 
 export default LogisticsDetails;
+
+// eslint-disable-next-line react/prop-types
+const DescriptionModal = ({ description }) => {
+	const { unMountPortalModal } = React.useContext(GlobalCTX);
+
+	return (
+		<div className="bg-white rounded-lg p-10 pt-5 flex flex-col max-w-[600px] w-full relative">
+			<ButtonUI
+				variant="ghost"
+				size="icon"
+				className="absolute top-0 right-0"
+				onClick={unMountPortalModal}
+			>
+				<CancelSquareIcon />
+			</ButtonUI>
+			<h3 className="font-bold">Item Description</h3>
+			<p>{description}</p>
+		</div>
+	)
+
+}
