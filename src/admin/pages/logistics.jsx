@@ -21,6 +21,7 @@ import {
 	paymentSchema,
 } from "@/lib/validators/logisticsSchema";
 import { formatValue } from "react-currency-input-field";
+import { usePayment } from "@/hooks/usePayment";
 
 const ctx = React.createContext();
 
@@ -101,7 +102,7 @@ const ShippingDetails = () => {
 
 	const isSalesperson =
 		["salesperson"].includes(adminProfile.account_type) &&
-		pathname.includes("/backend")
+			pathname.includes("/backend")
 			? true
 			: false;
 
@@ -139,11 +140,11 @@ const ShippingDetails = () => {
 	const onSubmit = handleSubmit((formData) => {
 		setPackageDetails((prev) => ({
 			...prev,
+			...formData,
 			value: formatCost(formData.value),
 			cost_per_kg: price,
 			total_cost: Number(formData?.weight ?? 0) * Number(price),
 		}));
-		console.log(formData, "form Data");
 		onNextClick();
 	});
 
@@ -220,7 +221,6 @@ const ShippingDetails = () => {
 						label="No. of item"
 						placeholder="Enter no. of item"
 						type="number"
-						max={35}
 						min={0}
 						errors={errors}
 						handlechange={handleChange}
@@ -233,7 +233,6 @@ const ShippingDetails = () => {
 						label="Weight(kg)"
 						placeholder="Enter weight of item"
 						type="number"
-						max={35}
 						min={0}
 						errors={errors}
 						handlechange={handleChange}
@@ -300,6 +299,7 @@ const ShippingDetails = () => {
 							defaultValue={defaultValues["description"]}
 							placeholder="Describe item briefly..."
 							rows="6"
+							onChange={handleChange}
 							className="bg-blue-50 p-3 border border-blue-500 font-normal !text-base placeholder:text-xs w-full rounded-lg font-poppins resize-none "
 						/>
 					</label>
@@ -347,7 +347,10 @@ const SenderDetails = () => {
 	});
 
 	const onSubmit = handleSubmit((formData) => {
-		console.log(formData, "Sender Details");
+		setPackageDetails((prev) => ({
+			...prev,
+			...formData
+		}))
 		onNextClick();
 	});
 
@@ -424,6 +427,7 @@ const SenderDetails = () => {
 							defaultValue={defaultValues["sender_address"]}
 							placeholder="Enter sender address"
 							rows={2}
+							onChange={handleChange}
 							className="bg-blue-50 p-3 border border-blue-500 font-normal !text-base placeholder:text-xs w-full rounded-lg font-poppins resize-none "
 						/>
 					</label>
@@ -456,7 +460,10 @@ const ReceiverDetails = () => {
 	});
 
 	const onSubmit = handleSubmit((formData) => {
-		console.log(formData, "Sender Details");
+		setPackageDetails((prev) => ({
+			...prev,
+			...formData
+		}))
 		onNextClick();
 	});
 
@@ -533,6 +540,7 @@ const ReceiverDetails = () => {
 							defaultValue={defaultValues["receiver_address"]}
 							placeholder="Enter receiver address"
 							rows={2}
+							onChange={handleChange}
 							className="bg-blue-50 p-3 border border-blue-500 font-normal !text-base placeholder:text-xs w-full rounded-lg font-poppins resize-none "
 						/>
 					</label>
@@ -554,6 +562,7 @@ const ReceiverDetails = () => {
 const Payment = () => {
 	const { onPrevClick } = useStepper();
 	const { packageDetails, setPackageDetails } = React.useContext(ctx);
+	const { handleLogisticsPayment } = usePayment();
 	const {
 		register,
 		handleSubmit,
@@ -565,7 +574,12 @@ const Payment = () => {
 	});
 
 	const onSubmit = handleSubmit((formData) => {
-		console.log(formData, "payment Details");
+		setPackageDetails((prev) => ({
+			...prev,
+			...formData,
+			...(prev?.name ?? { name: prev.category })
+		}))
+		handleLogisticsPayment(packageDetails, () => { setPackageDetails({}) });
 	});
 
 	const handleChange = (e) => {
@@ -575,6 +589,7 @@ const Payment = () => {
 			[name]: value,
 		}));
 	};
+
 	return (
 		<div>
 			<h2 className="font-semibold mb-5 text-blue-500">Shipment Summary</h2>
@@ -682,8 +697,8 @@ const Payment = () => {
 						className="bg-white"
 					/>
 					<InputField
-						{...register("trxRef")}
-						defaultValue={defaultValues["trxRef"]}
+						{...register("txRef")}
+						defaultValue={defaultValues["txRef"]}
 						label="Transaction Reference"
 						placeholder="Enter trx ref"
 						type="text"

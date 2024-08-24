@@ -8,9 +8,9 @@ export const shipmentDetailsSchema = yup.object().shape({
 		.when("departure", ([departure], schema) =>
 			departure
 				? schema.notOneOf(
-						[yup.ref("departure")],
-						"Departure and arrival cannot be the same."
-				  )
+					[yup.ref("departure")],
+					"Departure and arrival cannot be the same."
+				)
 				: schema
 		),
 	category: yup.string().required("Category is required."),
@@ -80,6 +80,6 @@ export const receiverDetailsSchema = yup.object().shape({
 });
 
 export const paymentSchema = yup.object().shape({
-	trxRef: yup.string().required("This field is required."),
+	txRef: yup.string().required("This field is required."),
 	payment_method: yup.string().required("This field is required."),
 });

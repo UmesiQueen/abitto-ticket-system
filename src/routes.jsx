@@ -46,6 +46,8 @@ import LogisticsDetails, {
 import GetQuote from "./main/pages/quote";
 import Pricing from "./admin/pages/pricing";
 import InformationBox from "./admin/pages/information-box";
+import LogisticsInvoice from "./components/LogisticInvoice";
+import { ShipmentLoader } from "./components/LogisticInvoice";
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -98,8 +100,9 @@ export const router = createBrowserRouter(
 					<Route path="logistics/:shipmentID" element={<ShipmentDetails />} />
 					<Route path="pricing" element={<Pricing />} />
 					<Route path="information" element={<InformationBox />} />
+					<Route path="pageNotFound" element={<PageNotFoundAdmin />} />
 				</Route>
-				<Route path="pageNotFound" element={<PageNotFoundAdmin />} />
+
 			</Route>
 
 			<Route
@@ -111,6 +114,11 @@ export const router = createBrowserRouter(
 				path="rental-invoice/:rentalID"
 				element={<RentalInvoice />}
 				loader={RentalInvoiceLoader}
+			/>
+			<Route
+				path="logistics-invoice/:shipmentID"
+				element={<LogisticsInvoice />}
+				loader={ShipmentLoader}
 			/>
 			<Route path="/login" element={<Login />} />
 			<Route path="*" element={<PageNotFound />} />
