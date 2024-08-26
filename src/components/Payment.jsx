@@ -3,7 +3,6 @@ import { format } from "date-fns";
 import { formatValue } from "react-currency-input-field";
 import {
 	CalendarIcon,
-	ChairIcon,
 	ClockIcon,
 	Boat2Icon,
 	UsersIcon,
@@ -96,13 +95,6 @@ const Payment = () => {
 								<ClockIcon />
 								<p>{formData.bookingDetails.departure_time}</p>
 							</li>
-							<li className="tracking-wide ">
-								<ChairIcon />
-								<p>
-									Seats:{" "}
-									{`${formData.seatDetails.departure_seats ?? "Not Selected"}`}
-								</p>
-							</li>
 						</ul>
 					</div>
 					{formData.bookingDetails.trip_type === "Round Trip" && (
@@ -121,13 +113,6 @@ const Payment = () => {
 								<li>
 									<ClockIcon />
 									<p>{formData.bookingDetails?.return_time}</p>
-								</li>
-								<li className="tracking-wider">
-									<ChairIcon />
-									<p>
-										Seats:{" "}
-										{`${formData.seatDetails?.return_seats ?? "Not Selected"}`}
-									</p>
 								</li>
 							</ul>
 						</div>
@@ -214,6 +199,10 @@ const Payment = () => {
 						time is missed.
 					</strong>
 				</p>
+				<p>
+					{/* <strong>Customer Support Information</strong> <br /> */}
+					After booking, if you encounter any issues, kindly reach out to our customer service at <a href="tel:+2349045591897" className="underline">+2349045591897</a>.
+				</p>
 			</div>
 
 			<div className="my-5 md:mt-8 md:mb-0 space-y-5">
@@ -232,8 +221,8 @@ const Payment = () => {
 						text == "Back"
 							? onPrevClick()
 							: text == "Clear"
-							? handleReset()
-							: "";
+								? handleReset()
+								: "";
 					}}
 					text="Back"
 					id="payment_next_btn"
@@ -274,7 +263,7 @@ const PassengerDetails = () => {
 				</ul>
 			</div>
 			{formData.bookingDetails?.adults_number > 1 &&
-			formData.passengerDetails?.passenger2_first_name ? (
+				formData.passengerDetails?.passenger2_first_name ? (
 				<>
 					{Array.from({
 						length: formData.bookingDetails.adults_number - 1,
@@ -301,7 +290,7 @@ const PassengerDetails = () => {
 										<p>
 											{
 												formData.passengerDetails[
-													`passenger${num}_phone_number`
+												`passenger${num}_phone_number`
 												]
 											}
 										</p>

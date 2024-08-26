@@ -7,13 +7,11 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { format } from "date-fns";
 import { formatValue } from "react-currency-input-field";
-import { humanize } from "@/lib/utils";
 import {
 	CalendarIcon,
 	CircleArrowLeftIcon,
 	InformationCircleIcon,
 	ClockIcon,
-	ChairIcon,
 	UsersIcon,
 	Boat2Icon,
 } from "@/assets/icons";
@@ -180,7 +178,7 @@ const Payment = () => {
 					</ul>
 				</div>
 				{formData.bookingDetails?.adults_number > 1 &&
-				formData.passengerDetails?.passenger2_first_name ? (
+					formData.passengerDetails?.passenger2_first_name ? (
 					<>
 						{Array.from({
 							length: formData.bookingDetails.total_passengers - 1,
@@ -195,7 +193,7 @@ const Payment = () => {
 											<p>
 												{
 													formData.passengerDetails[
-														`passenger${num}_first_name`
+													`passenger${num}_first_name`
 													]
 												}
 											</p>
@@ -211,7 +209,7 @@ const Payment = () => {
 											<p>
 												{
 													formData.passengerDetails[
-														`passenger${num}_phone_number`
+													`passenger${num}_phone_number`
 													]
 												}
 											</p>
@@ -334,12 +332,6 @@ const Payment = () => {
 								<ClockIcon />
 								{formData.bookingDetails.departure_time}
 							</p>
-							<p>
-								<ChairIcon />
-								{humanize(
-									formData.seatDetails?.departure_seats ?? ["Not Selected"]
-								)}
-							</p>
 						</div>
 					</div>
 					{formData.bookingDetails.trip_type === "Round Trip" && (
@@ -353,12 +345,6 @@ const Payment = () => {
 								<p>
 									<ClockIcon />
 									{formData.bookingDetails?.return_time}
-								</p>
-								<p>
-									<ChairIcon />
-									{humanize(
-										formData.seatDetails?.return_seats ?? ["Not Selected"]
-									)}
 								</p>
 							</div>
 						</div>
