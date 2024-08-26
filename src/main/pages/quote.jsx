@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import SelectField from "@/components/custom/SelectField";
@@ -8,16 +9,22 @@ import Button from "@/components/custom/Button";
 import { NumericFormat } from "react-number-format";
 import { shipmentDetailsSchema } from "@/lib/validators/logisticsSchema";
 import { GlobalCTX } from "@/contexts/GlobalContext";
+import { CancelSquareIcon } from "@/assets/icons";
+import { Button as ButtonIcon } from "@/components/ui/button";
+import PackageGIF from "@/assets/package.gif";
+import { formatValue } from "react-currency-input-field";
 
 const GetQuote = () => {
 	const [packageDetails, setPackageDetails] = React.useState({});
 	const { mountPortalModal } = React.useContext(GlobalCTX);
+	const [loading, setLoading] = React.useState(false);
 
 	const {
 		register,
 		handleSubmit,
 		control,
-		formState: { errors },
+		formState: { errors, isSubmitted },
+		reset,
 	} = useForm({
 		mode: "onChange",
 		resolver: yupResolver(shipmentDetailsSchema),
@@ -26,11 +33,25 @@ const GetQuote = () => {
 	});
 
 	const onSubmit = handleSubmit((formData) => {
+		setLoading(true);
 		setPackageDetails((prev) => ({
 			...prev,
 			value: formatCost(formData.value),
 		}));
-		mountPortalModal(<QuoteModal />);
+
+		setTimeout(() => {
+			mountPortalModal(
+				<QuoteModal
+					props={{
+						weight: packageDetails.weight,
+						quantity: packageDetails.no_item,
+						cost_per_kg: 1000,
+						handleReset: () => reset(),
+					}}
+				/>
+			);
+			setLoading(false);
+		}, 600);
 	});
 
 	const formatCost = (cost) => {
@@ -73,6 +94,7 @@ const GetQuote = () => {
 								options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
 								errors={errors}
 								handlechange={handleChange}
+								formState={isSubmitted}
 							/>
 							<SelectField
 								{...register("arrival")}
@@ -81,6 +103,7 @@ const GetQuote = () => {
 								options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
 								errors={errors}
 								handlechange={handleChange}
+								formState={isSubmitted}
 							/>
 						</div>
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -99,13 +122,13 @@ const GetQuote = () => {
 								]}
 								errors={errors}
 								handlechange={handleChange}
+								formState={isSubmitted}
 							/>
 							<InputField
 								{...register("no_item")}
 								label="No. of item"
 								placeholder="Enter no. of item"
 								type="number"
-								max={35}
 								min={0}
 								errors={errors}
 								handlechange={handleChange}
@@ -117,7 +140,6 @@ const GetQuote = () => {
 								label="Weight(kg)"
 								placeholder="Enter weight of item"
 								type="number"
-								max={35}
 								min={0}
 								errors={errors}
 								handlechange={handleChange}
@@ -160,7 +182,12 @@ const GetQuote = () => {
 							</div>
 						</div>
 
-						<Button text="Get Quote" type="submit" className="w-full mt-5" />
+						<Button
+							text="Get Quote"
+							type="submit"
+							className="w-full mt-5"
+							loading={loading}
+						/>
 					</form>
 				</div>
 			</div>
@@ -170,13 +197,69 @@ const GetQuote = () => {
 
 export default GetQuote;
 
-const QuoteModal = () => {
+const QuoteModal = ({
+	props: { weight, quantity, cost_per_kg, handleReset },
+}) => {
 	const { unMountPortalModal } = React.useContext(GlobalCTX);
 
 	return (
-		<div className="w-96 px-5 py-10 rounded-lg bg-white space-y-5">
-			<h2 className="font-semibold text-center">Quote</h2>
-			<Button text="Continue" variant="outline" onClick={unMountPortalModal} />
+		<div className=" w-full max-w-[26rem] p-5 md:p-10 rounded-lg bg-white space-y-5 relative text-center">
+			<ButtonIcon
+				variant="ghost"
+				size="icon"
+				className=" absolute top-0 right-0"
+				onClick={unMountPortalModal}
+			>
+				<CancelSquareIcon />
+			</ButtonIcon>
+			<img src={PackageGIF} alt="package gif" className="mx-auto" />
+			<h2 className="font-bold text-xl md:text-2xl text-blue-500">
+				Shipment Cost Estimate
+			</h2>
+			<p className="text-sm md:text-base">
+				This is just an estimated cost of your shipment. Actual price may vary
+				after creating a shipment.
+			</p>
+
+			<table className="text-sm md:text-base text-left w-full border border-blue-50 border-collapse [&_td]:border [&_td]:border-blue-50 [&_td]:py-1  [&_td]:px-2">
+				<tbody>
+					<tr>
+						<td>Weight:</td>
+						<td>{weight}kg</td>
+					</tr>
+					<tr>
+						<td>Quantity:</td>
+						<td>{quantity}</td>
+					</tr>
+					<tr>
+						<td>Cost/kg:</td>
+						<td>
+							{formatValue({
+								value: String(cost_per_kg ?? 0),
+								prefix: "₦",
+							})}
+						</td>
+					</tr>
+					<tr className="font-semibold">
+						<td>Total:</td>
+						<td>
+							{formatValue({
+								value: String(Number(cost_per_kg) * Number(weight)),
+								prefix: "₦",
+							})}
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<Button
+				text="Continue"
+				className="w-full"
+				onClick={() => {
+					handleReset();
+					unMountPortalModal();
+				}}
+			/>
 		</div>
 	);
 };
