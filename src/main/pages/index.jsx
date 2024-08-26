@@ -19,23 +19,10 @@ import {
 } from "@/components/ui/accordion";
 import SuccessModal from "@/components/modals/success";
 import EmblaCarousel from "@/components/embla-carousel/EmblaCarousel";
-// import WaveSVG from "@/assets/blob-scene-haikei.svg";
-import NoticeModal from "@/components/modals/notice";
 
 const Home = () => {
-	const { contact, faq, services, scrollToSection, mountPortalModal, live } =
-		React.useContext(GlobalCTX);
+	const { contact, faq, services, scrollToSection, } = React.useContext(GlobalCTX);
 	const navigate = useNavigate();
-
-	React.useEffect(() => {
-		if (live) {
-			mountPortalModal(
-				<NoticeModal>
-					<p>hello</p>
-				</NoticeModal>
-			);
-		}
-	}, []);
 
 	return (
 		<>
@@ -99,8 +86,7 @@ const Home = () => {
 									Book a trip
 								</h3>
 								<p className="md:text-lg">
-									Write some text here write more stuff and more stuff and add
-									better styling
+									Easily plan your journey and book a seat on our ferry. Get started in seconds.
 								</p>
 								<div className="ml-auto mt-auto">
 									<Button
@@ -125,8 +111,7 @@ const Home = () => {
 									Boat Rentals
 								</h3>
 								<p className="md:text-lg">
-									Write some text here write more stuff and more stuff and add
-									better styling
+									Rent a boat for your next adventure or event. Secure your reservation today.
 								</p>
 								<div className="ml-auto mt-auto">
 									<Button
@@ -151,8 +136,7 @@ const Home = () => {
 									Logistics
 								</h3>
 								<p className="md:text-lg">
-									Write some text here write more stuff and more stuff and add
-									better styling
+									Transport your goods smoothly with our reliable logistics service. Start your request here.
 								</p>
 								<div className="ml-auto mt-auto">
 									<Button

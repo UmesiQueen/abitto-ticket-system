@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import Button from "@/components/custom/Button";
 import { about, about2 } from "@/assets/images";
 import FounderImg from "@/assets/images/founder.jpg";
+import FounderImg3 from "@/assets/images/founder2.jpg";
 import FounderImg2 from "@/assets/images/abitto-founder.jpg";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CountUp from "react-countup";
@@ -315,7 +316,7 @@ const About = () => {
 						<Button
 							text="Get Started"
 							onClick={() => {
-								scrollToSection(services);
+								setTimeout(() => scrollToSection(services))
 								navigate("/#services");
 							}}
 							className="w-40 mx-auto mt-5"
@@ -379,9 +380,9 @@ const SwiperContent = () => {
 				<SwiperSlide>
 					<div className="h-[450px] overflow-hidden">
 						<img
-							src={"https://swiperjs.com/demos/images/nature-3.jpg"}
+							src={FounderImg3}
 							alt="founder3"
-							className="rounded-lg overflow-hidden w-full h-full object-cover object-top"
+							className="rounded-lg overflow-hidden w-full h-full object-cover object-center"
 						/>
 					</div>
 				</SwiperSlide>
