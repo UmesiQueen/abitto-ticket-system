@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from "react";
+import { useLoaderData, useRevalidator } from "react-router-dom";
 import { Button as ButtonUI } from "@/components/ui/button";
 import Button from "@/components/custom/Button";
 import { useForm } from "react-hook-form";
@@ -8,7 +9,9 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { cn } from "@/lib/utils";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import ConfirmationModal from "@/components/modals/confirmation";
-import SuccessModal from "@/components/modals/success";
+import baseurl from "@/api";
+import { toast } from "sonner";
+import { useUpdate } from "@/hooks/useUpdate";
 
 const pricingSchema = yup.object().shape({
 	within_marina: yup.string().required("Amount cannot be empty."),
@@ -18,50 +21,50 @@ const pricingSchema = yup.object().shape({
 });
 
 const Pricing = () => {
-	const [cost, setCost] = React.useState({
-		within_marina: 200000,
-		calabar_to_uyo: 400000,
-		uyo_to_calabar: 400000,
-		logistics: 1000,
-	});
-	const { mountPortalModal, setLoading, unMountPortalModal } =
-		React.useContext(GlobalCTX);
+	const prices = useLoaderData();
+	const { revalidate, state } = useRevalidator();
+	const { mountPortalModal } = React.useContext(GlobalCTX);
+	const [cost, setCost] = React.useState(prices);
+	const { updatePrices } = useUpdate();
+
+	React.useEffect(() => {
+		if (Object.keys(prices).length)
+			setCost(prices)
+	}, [prices])
+
 	const {
 		register,
 		handleSubmit,
-		formState: { isDirty, defaultValues, errors, isSubmitted },
+		formState: { errors, isSubmitted, defaultValues },
 	} = useForm({
 		mode: "onSubmit",
 		resolver: yupResolver(pricingSchema),
-		defaultValues: cost,
+		defaultValues: cost
 	});
 
-	const handleUpdateRequest = (formData) => {
-		unMountPortalModal();
-		setLoading(true);
-
-		setTimeout(() => {
-			setLoading(false);
-			setCost(formData);
-			mountPortalModal(
-				<SuccessModal
-					header="Prices Updated"
-					text="You have successfully updated prices across the platform."
-				/>
-			);
-		}, 600);
-	};
+	React.useEffect(() => {
+		console.log(defaultValues, "default")
+	}, [isSubmitted])
 
 	const onSubmit = handleSubmit((formData) => {
+		const reqData = Object.entries(formData).map(([key, value]) => ({
+			trip_name: key,
+			cost: value
+		}));
 		mountPortalModal(
 			<ConfirmationModal
 				props={{
 					header: "Are you sure you want to update these prices?",
-					handleRequest: () => handleUpdateRequest(formData),
+					handleRequest: () => updatePrices(reqData, () => { revalidate() })
 				}}
 			/>
 		);
 	});
+
+	const handleChange = (e) => {
+		const { name, value } = e.target;
+		setCost((prev) => ({ ...prev, [name]: value }))
+	}
 
 	return (
 		<form onSubmit={onSubmit} className="space-y-10">
@@ -69,7 +72,7 @@ const Pricing = () => {
 				<h1 className="font-semibold text-lg">Manage Prices</h1>
 				<Button
 					type="submit"
-					disabled={!isDirty}
+					// disabled={!isDirty}
 					text="Save"
 					className="w-40"
 				/>
@@ -77,6 +80,12 @@ const Pricing = () => {
 			<div className="p-10 rounded-lg bg-white">
 				<h2 className="mb-5 font-medium">Rental Pricing</h2>
 				<table className="w-full border [&_th]:p-2  [&_th]:border [&_td]:px-2  [&_td]:py-4 [&_td]:text-center   [&_td]:border  ">
+					<colgroup>
+						<col style={{ 'width': '10%' }} />
+						<col style={{ 'width': '30%' }} />
+						<col style={{ 'width': '40%' }} />
+						<col style={{ 'width': '20%' }} />
+					</colgroup>
 					<thead>
 						<tr>
 							<th>S/N</th>
@@ -90,10 +99,11 @@ const Pricing = () => {
 							<td>1</td>
 							<td>Within Marina</td>
 							<EditableInput
-								defaultValue={defaultValues["within_marina"]}
+								defaultValue={cost["within_marina"]}
 								{...register("within_marina")}
 								error={errors}
-								isSubmitted={isSubmitted}
+								formState={{ isSubmitted, state }}
+								handleOnChange={handleChange}
 							/>
 						</tr>
 						<tr>
@@ -103,7 +113,8 @@ const Pricing = () => {
 								defaultValue={defaultValues["calabar_to_uyo"]}
 								{...register("calabar_to_uyo")}
 								error={errors}
-								isSubmitted={isSubmitted}
+								formState={{ isSubmitted, state }}
+								handleOnChange={handleChange}
 							/>
 						</tr>
 						<tr>
@@ -113,7 +124,9 @@ const Pricing = () => {
 								defaultValue={defaultValues["uyo_to_calabar"]}
 								{...register("uyo_to_calabar")}
 								error={errors}
-								isSubmitted={isSubmitted}
+								formState={{ isSubmitted, state }}
+								handleOnChange={handleChange}
+
 							/>
 						</tr>
 					</tbody>
@@ -122,6 +135,12 @@ const Pricing = () => {
 			<div className="p-10 rounded-lg bg-white">
 				<h2 className="mb-5 font-medium">Logistics Pricing</h2>
 				<table className="w-full border [&_th]:p-2  [&_th]:border [&_td]:px-2  [&_td]:py-4 [&_td]:text-center   [&_td]:border  ">
+					<colgroup>
+						<col style={{ 'width': '10%' }} />
+						<col style={{ 'width': '30%' }} />
+						<col style={{ 'width': '40%' }} />
+						<col style={{ 'width': '20%' }} />
+					</colgroup>
 					<thead>
 						<tr>
 							<th>S/N</th>
@@ -138,7 +157,9 @@ const Pricing = () => {
 								defaultValue={defaultValues["logistics"]}
 								{...register("logistics")}
 								error={errors}
-								isSubmitted={isSubmitted}
+								formState={{ isSubmitted, state }}
+								handleOnChange={handleChange}
+
 							/>
 						</tr>
 					</tbody>
@@ -151,19 +172,26 @@ const Pricing = () => {
 export default Pricing;
 
 const EditableInput = React.forwardRef((props, ref) => {
-	const { name, error, isSubmitted } = props;
+	const { name, error, formState: { isSubmitted, state }, onChange, defaultValue, handleOnChange, ...prop } = props;
 	const errors = error?.[name];
 	const [editable, setEditable] = React.useState(false);
-
+	const [value, setValue] = React.useState(defaultValue);
 	const toggleEditable = (element) => {
 		if (!editable) document.getElementById(element).focus();
 		setEditable((prev) => !prev);
 	};
 
 	React.useEffect(() => {
+		setValue(defaultValue);
+	}, [state])
+
+	React.useEffect(() => {
 		if (isSubmitted) setEditable(false);
 	}, [isSubmitted]);
 
+	const handleChange = (e) => {
+		setValue(e.target.value)
+	}
 	return (
 		<>
 			<td>
@@ -176,9 +204,16 @@ const EditableInput = React.forwardRef((props, ref) => {
 					<p>₦</p>
 					<input
 						ref={ref}
-						{...props}
+						{...prop}
+						name={name}
 						id={name}
-						type="number"
+						value={value}
+						type="text"
+						onChange={(event) => {
+							onChange(event);
+							handleChange(event)
+							handleOnChange(event)
+						}}
 						disabled={!editable}
 						autoFocus={editable ? "autofocus" : ""}
 						className="prices w-full h-full bg-transparent focus:outline-none"
@@ -200,3 +235,26 @@ const EditableInput = React.forwardRef((props, ref) => {
 });
 
 EditableInput.displayName = EditableInput;
+
+export const PriceLoader = async () => {
+	try {
+		const response = await baseurl.get("/price/get");
+		const resData = response.data.prices.map((item) => ({ [item.trip_name]: item.cost }));
+		const result = Object.assign({}, ...resData);
+		return result;
+
+	} catch (error) {
+		if (
+			!error.code === "ERR_NETWORK" ||
+			!error.code === "ERR_INTERNET_DISCONNECTED" ||
+			!error.code === "ECONNABORTED"
+		)
+			toast.error("Error occurred while retrieving trip details");
+		return {
+			within_marina: 0,
+			calabar_to_uyo: 0,
+			uyo_to_calabar: 0,
+			logistics: 0
+		};
+	}
+};

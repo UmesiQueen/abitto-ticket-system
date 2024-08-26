@@ -65,14 +65,35 @@ export const useUpdate = () => {
 					!error.code === "ERR_NETWORK" ||
 					!error.code === "ERR_INTERNET_DISCONNECTED" ||
 					!error.code === "ECONNABORTED"
-				) {
+				)
 					toast.error("Error occurred while updating shipment status. Try again.");
-				}
-
-			}
-			)
+			})
 			.finally(() => setLoading(false));
 	}
 
-	return { checkInPassenger, rescheduleBooking, updatePaymentStatus, updateShipmentStatus };
+	const updatePrices = (reqData, onSuccess) => {
+		setLoading(true);
+		baseurl.patch("price/edit", reqData)
+			.then((res) => {
+				if (res.status == 200)
+					setModalContent(
+						<SuccessModal
+							header="Prices Update Successful"
+							text={"You have successfully updated the prices across the platform."}
+							onclick={onSuccess}
+						/>
+					);
+			})
+			.catch((error) => {
+				if (
+					!error.code === "ERR_NETWORK" ||
+					!error.code === "ERR_INTERNET_DISCONNECTED" ||
+					!error.code === "ECONNABORTED"
+				)
+					toast.error("Error occurred while updating price. Try again.");
+			})
+			.finally(() => setLoading(false));
+	}
+
+	return { checkInPassenger, rescheduleBooking, updatePaymentStatus, updateShipmentStatus, updatePrices };
 };
