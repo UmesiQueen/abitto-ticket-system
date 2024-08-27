@@ -44,8 +44,8 @@ import LogisticsDetails, {
 	ShipmentDetails,
 } from "./admin/pages/logistics-detail";
 import GetQuote from "./main/pages/quote";
-import Pricing from "./admin/pages/pricing";
-import InformationBox from "./admin/pages/information-box";
+// import Pricing from "./admin/pages/pricing";
+// import InformationBox from "./admin/pages/information-box";
 import LogisticsInvoice from "./components/LogisticInvoice";
 import { ShipmentLoader } from "./components/LogisticInvoice";
 import { PriceLoader } from "./admin/pages/pricing";
@@ -57,7 +57,7 @@ export const router = createBrowserRouter(
 				<Route index element={<Home />} />
 				<Route path="booking" element={<Booking />} />
 				<Route path="about" element={<About />} />
-				<Route path="rental" element={<Rental />} />
+				<Route path="rental" element={<Rental />} loader={PriceLoader} />
 				<Route path="feedback" element={<Feedback />} />
 				<Route path="get-quote" element={<GetQuote />} />
 			</Route>
@@ -68,7 +68,7 @@ export const router = createBrowserRouter(
 					<Route path="create" element={<Create />} />
 					<Route path="create/book-ticket" element={<BookTicket />} />
 					<Route path="create/check-in" element={<CheckIn />} />
-					<Route path="create/rental" element={<RentalAdmin />} />
+					<Route path="create/rental" element={<RentalAdmin />} loader={PriceLoader} />
 					<Route path="create/logistics" element={<Logistics />} />
 					<Route path="booking-details" element={<BookingDetails />} />
 					<Route
@@ -97,10 +97,10 @@ export const router = createBrowserRouter(
 					<Route path="settings" element={<Settings />} />
 					<Route path="feedback" element={<FeedbackAdmin />} />
 					<Route path="feedback/:feedbackID" element={<FeedbackDetails />} />
-					<Route path="logistics" element={<LogisticsDetails />} />
+					<Route path="logistics" element={<LogisticsDetails />} loader={PriceLoader} />
 					<Route path="logistics/:shipmentID" element={<ShipmentDetails />} loader={ShipmentLoader} />
-					<Route path="pricing" element={<Pricing />} loader={PriceLoader} />
-					<Route path="information" element={<InformationBox />} />
+					{/* <Route path="pricing" element={<Pricing />} loader={PriceLoader} /> */}
+					{/* <Route path="information" element={<InformationBox />} /> */}
 					<Route path="pageNotFound" element={<PageNotFoundAdmin />} />
 				</Route>
 
