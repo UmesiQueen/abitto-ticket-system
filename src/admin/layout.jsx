@@ -90,14 +90,14 @@ const ProtectedRoute = () => {
 			</div>,
 			["super-admin", "dev"],
 		],
-		[
-			"Manage Prices",
-			`/backend/${accountType}/pricing`,
-			<div key="1" className="scale-[.85] -ml-1">
-				<PriceChange />
-			</div>,
-			["super-admin", "dev"],
-		],
+		// [
+		// 	"Manage Prices",
+		// 	`/backend/${accountType}/pricing`,
+		// 	<div key="1" className="scale-[.85] -ml-1">
+		// 		<PriceChange />
+		// 	</div>,
+		// 	["super-admin", "dev"],
+		// ],
 		[
 			"Journey List",
 			`/backend/${accountType}/journey-list`,
@@ -138,14 +138,14 @@ const ProtectedRoute = () => {
 			</div>,
 			["super-admin", "dev"],
 		],
-		[
-			"Information Box",
-			`/backend/${accountType}/information`,
-			<div key="1" className="scale-[.85] -ml-1">
-				<Mailbox />
-			</div>,
-			["super-admin", "dev"],
-		],
+		// [
+		// 	"Information Box",
+		// 	`/backend/${accountType}/information`,
+		// 	<div key="1" className="scale-[.85] -ml-1">
+		// 		<Mailbox />
+		// 	</div>,
+		// 	["super-admin", "dev"],
+		// ],
 		[
 			"Settings",
 			`/backend/${accountType}/settings`,
