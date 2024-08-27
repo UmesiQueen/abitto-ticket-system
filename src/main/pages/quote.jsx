@@ -13,9 +13,19 @@ import { CancelSquareIcon } from "@/assets/icons";
 import { Button as ButtonIcon } from "@/components/ui/button";
 import PackageGIF from "@/assets/package.gif";
 import { formatValue } from "react-currency-input-field";
+import baseurl from "@/api";
+import { toast } from "sonner";
 
 const GetQuote = () => {
-	const [packageDetails, setPackageDetails] = React.useState({});
+	const defaultValue = {
+		departure: "",
+		arrival: "",
+		no_item: "",
+		category: "",
+		weight: "",
+		value: ""
+	}
+	const [packageDetails, setPackageDetails] = React.useState(defaultValue);
 	const { mountPortalModal } = React.useContext(GlobalCTX);
 	const [loading, setLoading] = React.useState(false);
 
@@ -23,10 +33,10 @@ const GetQuote = () => {
 		register,
 		handleSubmit,
 		control,
-		formState: { errors, isSubmitted },
+		formState: { errors, isSubmitted, defaultValues },
 		reset,
 	} = useForm({
-		mode: "onChange",
+		mode: "onSubmit",
 		resolver: yupResolver(shipmentDetailsSchema),
 		defaultValues: packageDetails,
 		context: { isAdmin: false },
@@ -39,19 +49,31 @@ const GetQuote = () => {
 			value: formatCost(formData.value),
 		}));
 
-		setTimeout(() => {
-			mountPortalModal(
-				<QuoteModal
-					props={{
-						weight: packageDetails.weight,
-						quantity: packageDetails.no_item,
-						cost_per_kg: 1000,
-						handleReset: () => reset(),
-					}}
-				/>
-			);
-			setLoading(false);
-		}, 600);
+		baseurl
+			.get("/price/get")
+			.then((res) => {
+				if (res.status == 200) {
+					const resData = res.data.prices.map((item) => ({ [item.trip_name]: item.cost }));
+					const result = Object.assign({}, ...resData);
+					mountPortalModal(
+						<QuoteModal
+							props={{
+								weight: packageDetails.weight,
+								quantity: packageDetails.no_item,
+								cost_per_kg: result.logistics,
+								handleReset
+							}}
+						/>
+					);
+				}
+			}).catch((error) => {
+				if (
+					!error.code === "ERR_NETWORK" ||
+					!error.code === "ERR_INTERNET_DISCONNECTED" ||
+					!error.code === "ECONNABORTED"
+				)
+					toast.error("Error occurred while getting quote.");
+			}).finally(() => setLoading(false))
 	});
 
 	const formatCost = (cost) => {
@@ -70,6 +92,12 @@ const GetQuote = () => {
 		}));
 	};
 
+	const handleReset = () => {
+		reset(defaultValue);
+		setPackageDetails(defaultValue);
+	}
+
+
 	return (
 		<>
 			<Helmet>
@@ -82,13 +110,14 @@ const GetQuote = () => {
 							Get Quote
 						</h2>
 						<p className="text-sm md:text-base font-medium">
-							Please fill in cargo details and to get quote
+							Please fill in shipment details and to get quote
 						</p>
 					</hgroup>
 					<form onSubmit={onSubmit} className="flex flex-col gap-5">
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+						<div className="grid grid-c0ols-1 md:grid-cols-2 gap-5">
 							<SelectField
 								{...register("departure")}
+								defaultValues={defaultValues["departure"]}
 								label="Departure"
 								placeholder="Select Departure Terminal"
 								options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
@@ -98,6 +127,7 @@ const GetQuote = () => {
 							/>
 							<SelectField
 								{...register("arrival")}
+								defaultValues={defaultValues["arrival"]}
 								label="Arrival"
 								placeholder="Select Arrival Terminal"
 								options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
@@ -109,6 +139,7 @@ const GetQuote = () => {
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 							<SelectField
 								{...register("category")}
+								defaultValues={defaultValues["category"]}
 								label="Category"
 								placeholder="Select Item Category"
 								options={[
@@ -126,6 +157,7 @@ const GetQuote = () => {
 							/>
 							<InputField
 								{...register("no_item")}
+								defaultValues={defaultValues["no_item"]}
 								label="No. of item"
 								placeholder="Enter no. of item"
 								type="number"
@@ -137,6 +169,7 @@ const GetQuote = () => {
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 							<InputField
 								{...register("weight")}
+								defaultValues={defaultValues["weight"]}
 								label="Weight(kg)"
 								placeholder="Enter weight of item"
 								type="number"
@@ -213,13 +246,15 @@ const QuoteModal = ({
 				<CancelSquareIcon />
 			</ButtonIcon>
 			<img src={PackageGIF} alt="package gif" className="mx-auto" />
-			<h2 className="font-bold text-xl md:text-2xl text-blue-500">
-				Shipment Cost Estimate
-			</h2>
-			<p className="text-sm md:text-base">
-				This is just an estimated cost of your shipment. Actual price may vary
-				after creating a shipment.
-			</p>
+			<hgroup>
+				<h2 className="font-bold text-xl md:text-2xl text-blue-500">
+					Shipment Cost Estimate
+				</h2>
+				<p className="text-sm md:text-base">
+					This is just an estimated cost of your shipment. Actual price may vary
+					after creating a shipment.
+				</p>
+			</hgroup>
 
 			<table className="text-sm md:text-base text-left w-full border border-blue-50 border-collapse [&_td]:border [&_td]:border-blue-50 [&_td]:py-1  [&_td]:px-2">
 				<tbody>
