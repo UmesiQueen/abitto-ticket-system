@@ -8,14 +8,13 @@ export const scheduleTripSchema = yup.object().shape({
     .when("departure", ([departure], schema) =>
       departure
         ? schema.notOneOf(
-            [yup.ref("departure")],
-            "Departure and Arrival cannot be the same."
-          )
+          [yup.ref("departure")],
+          "Departure and Arrival cannot be the same."
+        )
         : schema
     ),
   time: yup.string().required("Time field is required."),
   cost: yup.string().required("Ticket cost field is required.").trim(),
-  // .matches(/^\+?\d+$/, "Ticket cost must not include characters."),
   date: yup
     .string()
     .when("$date", ([dateOptions], field) =>
@@ -23,4 +22,6 @@ export const scheduleTripSchema = yup.object().shape({
         ? field.required("Select at least one date.")
         : field.notRequired()
     ),
+  trip_capacity: yup.string().required("Capacity field is required.").trim(),
+
 });

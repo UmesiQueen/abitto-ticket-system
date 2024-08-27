@@ -16,6 +16,7 @@ import { NumericFormat } from "react-number-format";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { useScheduleTrip } from "@/hooks/useScheduleTrip";
 import ConfirmationModal from "@/components/modals/confirmation";
+import InputField from "@/components/custom/InputField";
 
 const ScheduleTrip = () => {
 	const [dateOptions, setDateOptions] = React.useState([]);
@@ -37,7 +38,7 @@ const ScheduleTrip = () => {
 	});
 
 	const onSubmit = handleSubmit((formData) => {
-		const { cost, date, time, departure, arrival } = formData;
+		const { cost, date, time, ...others } = formData;
 		const costString = formatCost(cost);
 
 		const dateArray = date
@@ -45,8 +46,7 @@ const ScheduleTrip = () => {
 			: dateOptions;
 
 		const formValues = {
-			departure,
-			arrival,
+			...others,
 			dates: dateArray,
 			trip_status: "Upcoming",
 			time: format(time, "p"),
@@ -134,7 +134,7 @@ const ScheduleTrip = () => {
 						formState={isSubmitted}
 					/>
 				</div>
-				<div className="flex gap-6">
+				<div className="grid grid-cols-3 gap-6">
 					{/* Time Field */}
 					<div className="flex flex-col w-full">
 						<label className="text-xs md:text-sm w-full flex gap-2 md:gap-3 flex-col relative">
@@ -207,6 +207,14 @@ const ScheduleTrip = () => {
 							</p>
 						)}
 					</div>
+					<InputField
+						{...register("trip_capacity")}
+						label="Capacity"
+						placeholder="Enter boat capacity"
+						type="number"
+						maxLength={50}
+						errors={errors}
+					/>
 				</div>
 
 				{/* Date Field */}

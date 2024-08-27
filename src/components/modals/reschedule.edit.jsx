@@ -17,6 +17,7 @@ import { useScheduleTrip } from "@/hooks/useScheduleTrip";
 import ConfirmationModal from "@/components/modals/confirmation";
 import { NumericFormat } from "react-number-format";
 import { formatValue } from "react-currency-input-field";
+import InputField from "../custom/InputField";
 
 const rescheduleSchema = yup.object().shape({
 	date: yup.string().required("Date field is required."),
@@ -32,6 +33,7 @@ const RescheduleEditModal = () => {
 	} = React.useContext(BookingCTX);
 	const {
 		control,
+		register,
 		formState: { errors, isDirty },
 		handleSubmit,
 	} = useForm({
@@ -41,6 +43,7 @@ const RescheduleEditModal = () => {
 			date,
 			time: dayjs(`${date} ${time}`),
 			cost: formatValue({ value: String(ticket_cost), prefix: "₦" }),
+			trip_capacity: otherDetails?.trip_capacity ?? 29
 		},
 	});
 
@@ -78,20 +81,18 @@ const RescheduleEditModal = () => {
 	};
 
 	return (
-		<div className="bg-white rounded-lg p-10 pt-5 min-w-[700px] flex flex-col gap-5">
-			<div className="flex flex-row-reverse items-center justify-between">
-				<IconButton
-					size="icon"
-					variant="ghost"
-					className=""
-					onClick={unMountPortalModal}
-				>
-					<CancelSquareIcon />
-				</IconButton>
-				<h3 className="font-bold text-center grow">Edit Journey Details</h3>
-			</div>
+		<div className="bg-white rounded-lg p-10 pt-5 min-w-[700px] flex flex-col gap-5 relative">
+			<IconButton
+				size="icon"
+				variant="ghost"
+				className="absolute top-0 right-0"
+				onClick={unMountPortalModal}
+			>
+				<CancelSquareIcon />
+			</IconButton>
+			<h3 className="font-bold text-center text-lg">Edit Journey Details</h3>
 			<form onSubmit={onSubmit}>
-				<div className="flex gap-2">
+				<div className="grid grid-cols-2 gap-5">
 					{/* time */}
 					<div className="flex flex-col w-full">
 						<label className="font-semibold text-xs md:text-sm w-full flex gap-2 md:gap-3 flex-col relative">
@@ -210,6 +211,18 @@ const RescheduleEditModal = () => {
 								{errors?.cost.message}
 							</p>
 						)}
+					</div>
+
+					<div className="[&_label]:font-semibold">
+						<InputField
+							{...register("trip_capacity")}
+							label="Capacity"
+							placeholder="Enter boat capacity"
+							type="number"
+							variant="white"
+							maxLength={50}
+							errors={errors}
+						/>
 					</div>
 				</div>
 				<Button

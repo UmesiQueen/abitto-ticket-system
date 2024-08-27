@@ -255,7 +255,7 @@ const TripDetails = () => {
 								</span>
 							</p>
 							<p>
-								<strong>Total Passengers:</strong>
+								<strong>Checked-in:</strong>
 								{getTotalPassengers()}
 							</p>
 						</li>
