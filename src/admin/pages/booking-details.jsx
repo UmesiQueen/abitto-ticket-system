@@ -168,16 +168,9 @@ const BookingDetails = () => {
 			enableGlobalFilter: false,
 		},
 		{
-			accessorKey: "amount",
-			header: "Amount",
-			cell: ({ row }) => (
-				<div>
-					₦
-					{formatValue({
-						value: String(row.original.total_ticket_cost ?? 0),
-					})}
-				</div>
-			),
+			accessorKey: "total_passengers",
+			header: "Passengers",
+			cell: ({ row }) => <p className="text-center">{row.getValue("total_passengers")}</p>,
 			enableGlobalFilter: false,
 		},
 		{
@@ -422,9 +415,9 @@ const BookingDetails = () => {
 											{header.isPlaceholder
 												? null
 												: flexRender(
-														header.column.columnDef.header,
-														header.getContext()
-												  )}
+													header.column.columnDef.header,
+													header.getContext()
+												)}
 										</TableHead>
 									);
 								})}
@@ -919,7 +912,7 @@ export const CustomerDetails = () => {
 							</table>
 						</div>
 						<button
-							className=" bg-blue-500 w-56 py-3 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white flex justify-center gap-2 mx-auto rounded-lg "
+							className=" bg-blue-500 w-full py-3 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white flex justify-center gap-2 mx-auto rounded-lg "
 							onClick={() => {
 								navigate(`/ticket-invoice/${currentUser.ticket_id}`);
 							}}
