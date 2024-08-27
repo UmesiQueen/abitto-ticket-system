@@ -13,7 +13,7 @@ import Button from "@/components/custom/Button";
 import { Button as IconButton } from "./ui/button";
 import { useStepper } from "@/hooks/useStepper";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import BookingWarningModal from "@/components/modals/book.warning";
+import { useSearchTrip } from "@/hooks/useSearchTrip";
 
 const Payment = () => {
 	const { loading, formData, handleReset } = React.useContext(BookingCTX);
@@ -23,6 +23,7 @@ const Payment = () => {
 		(Number(formData.bookingDetails.departure_ticket_cost) +
 			Number(formData.bookingDetails?.return_ticket_cost ?? 0)) *
 		Number(formData.bookingDetails.total_passengers);
+	const { checkAvailability } = useSearchTrip();
 
 	return (
 		<div className="p-5 md:p-12 !bg-white mx-auto flex flex-col gap-2">
@@ -207,9 +208,7 @@ const Payment = () => {
 
 			<div className="my-5 md:mt-8 md:mb-0 space-y-5">
 				<Button
-					onClick={() => {
-						mountPortalModal(<BookingWarningModal />);
-					}}
+					onClick={checkAvailability}
 					id="paystack_btn"
 					loading={loading}
 					text={"Pay with paystack"}

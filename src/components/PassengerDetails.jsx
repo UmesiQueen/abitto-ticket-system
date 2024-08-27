@@ -9,11 +9,11 @@ import { GlobalCTX } from "@/contexts/GlobalContext";
 import Button from "@/components/custom/Button";
 import { useStepper } from "@/hooks/useStepper";
 import InputField from "@/components/custom/InputField";
-import SeatSelection from "@/components/SeatSelection";
+// import SeatSelection from "@/components/SeatSelection";
 import { format } from "date-fns";
 
 const PassengerDetails = () => {
-	const { loading, setLoading, mountPortalModal } = React.useContext(GlobalCTX);
+	const { loading, setLoading } = React.useContext(GlobalCTX);
 	const { setChecked, isChecked, formData, setFormData } =
 		React.useContext(BookingCTX);
 	const { onPrevClick, onNextClick } = useStepper();
@@ -22,7 +22,7 @@ const PassengerDetails = () => {
 	const {
 		register,
 		handleSubmit,
-		setValue,
+		// setValue,
 		formState: { errors },
 	} = useForm({
 		mode: "onChange",
@@ -58,10 +58,10 @@ const PassengerDetails = () => {
 		}, 650);
 	});
 
-	const handleSeatSelection = (e) => {
-		const tab = e.target.name.split("_")[0];
-		mountPortalModal(<SeatSelection props={{ tab, setValue }} />);
-	};
+	// const handleSeatSelection = (e) => {
+	// 	const tab = e.target.name.split("_")[0];
+	// 	mountPortalModal(<SeatSelection props={{ tab, setValue }} />);
+	// };
 
 	const handleChange = (e) => {
 		const { value, name } = e.target;

@@ -2,9 +2,13 @@
 import React from "react";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import Button from "@/components/custom/Button";
+import { Button as IconButton } from "@/components/ui/button";
 import { usePayment } from "@/hooks/usePayment";
 import { useLocation } from "react-router-dom";
 import cautionSVG from "@/assets/caution.gif";
+import { BookingCTX } from "@/contexts/BookingContext";
+import { CancelSquareIcon } from "@/assets/icons";
+
 
 const BookingWarningModal = () => {
 	const { unMountPortalModal } = React.useContext(GlobalCTX);
@@ -38,8 +42,8 @@ const BookingWarningModal = () => {
 					pathname.includes("/rental")
 						? onlineRentalPayment()
 						: pathname.includes("/booking")
-						? onlinePayment()
-						: "";
+							? onlinePayment()
+							: "";
 				}}
 			/>
 			<Button
@@ -53,3 +57,32 @@ const BookingWarningModal = () => {
 };
 
 export default BookingWarningModal;
+
+export const UnAvailableModal = ({ type }) => {
+	const { handleReset } = React.useContext(BookingCTX);
+	const { unMountPortalModal } = React.useContext(GlobalCTX);
+
+	return (
+		<div className="font-poppins mx-auto pt-8 p-5 md:p-10 w-full max-w-[450px] bg-white  flex flex-col rounded-lg relative">
+			<IconButton
+				variant="ghost"
+				size="icon"
+				className="absolute right-0 top-0"
+				onClick={unMountPortalModal}
+			>
+				<CancelSquareIcon />
+			</IconButton>
+			<h2 className="font-semibold text-base md:text-lg text-[#454545] mb-5 text-center">
+				Sorry, There are no longer available seats on this {type} trip.
+			</h2>
+			<Button
+				text={"Search for more"}
+				className="md:py-5 w-full"
+				onClick={() => {
+					unMountPortalModal();
+					handleReset();
+				}}
+			/>
+		</div>
+	)
+}
