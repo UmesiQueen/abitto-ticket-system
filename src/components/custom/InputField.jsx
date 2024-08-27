@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable react/display-name */
 import React from "react";
+import { cn } from "@/lib/utils";
 
 const InputField = React.forwardRef((props, ref) => {
   const {
@@ -9,13 +9,19 @@ const InputField = React.forwardRef((props, ref) => {
     label,
     className,
     onChange,
-    handlechange = () => {},
+    variant = "default",
+    handlechange = () => { },
   } = props;
+
+  const variantOptions = {
+    default: "bg-blue-50 border-blue-500",
+    white: "bg-white border-gray-500"
+  }
 
   return (
     <div className="flex flex-col w-full">
       <label
-        className={"text-xs md:text-sm !w-full flex gap-2 md:gap-3 flex-col"}
+        className="text-xs md:text-sm !w-full flex gap-2 md:gap-3 flex-col"
       >
         {label}
         <input
@@ -25,7 +31,7 @@ const InputField = React.forwardRef((props, ref) => {
             onChange(event); // react hook onChange fn
             handlechange(event);
           }}
-          className={`h-10 md:h-12 bg-blue-50 p-3 border border-blue-500 font-normal !text-base placeholder:text-xs w-full rounded-lg font-poppins ${className}`}
+          className={cn("h-10 md:h-12 p-3 border font-normal !text-base placeholder:text-xs w-full rounded-lg font-poppins", className, variantOptions[variant])}
         />
       </label>
       {errors?.[name] && (
@@ -34,5 +40,6 @@ const InputField = React.forwardRef((props, ref) => {
     </div>
   );
 });
+InputField.displayName = InputField;
 
 export default InputField;
