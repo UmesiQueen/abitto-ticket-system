@@ -8,8 +8,9 @@ import FounderImg3 from "@/assets/images/founder2.jpg";
 import FounderImg2 from "@/assets/images/abitto-founder.jpg";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CountUp from "react-countup";
-import { CaretIcon } from "@/assets/icons";
 import { GlobalCTX } from "@/contexts/GlobalContext";
+import { MapIcon, PhoneIcon, CaretIcon, BoatIcon } from "@/assets/icons";
+import { marinaMap, timberMap } from "@/assets/images";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow, Pagination } from "swiper/modules";
@@ -280,9 +281,10 @@ const About = () => {
 				{/* Youtube video */}
 				<section className="bg-white  px-5 pb-20 md:p-20 ">
 					<div className="max-w-[1440px] mx-auto flex flex-col">
-						<h3 className=" self-center md:w-[500px] text-center font-semibold mb-6 text-lg md:text-xl ">
+						<h2 className="font-semibold text-xl mb-7 inline-flex items-center justify-center w-full ">
+							<span className="h-3 w-3 mr-3 rounded-full bg-blue-500" />
 							Our Products
-						</h3>
+						</h2>
 						<div className="w-full bg-black rounded-lg overflow-hidden">
 							<iframe
 								width="560"
@@ -295,6 +297,108 @@ const About = () => {
 								allowFullScreen
 								className="w-full aspect-video h-full lg:h-[560px] "
 							/>
+						</div>
+					</div>
+				</section>
+
+				{/* Our locations */}
+				<section className="py-20 px-5 md:px-20 bg-white">
+					<div className="max-w-[1440px] mx-auto">
+						<h2 className="font-semibold text-xl  mb-7 inline-flex items-center justify-center w-full ">
+							<span className="h-3 w-3 mr-3 rounded-full bg-blue-500" />
+							Our Locations
+						</h2>
+						<div className="flex flex-col lg:flex-row gap-10 *:md:shadow-lg *:grow *:w-full">
+							{/* Calabar */}
+							<div className="lg:flex flex-wrap gap-8 md:bg-blue-50 rounded-lg p-0 md:p-10 lg:p-5">
+								<Link
+									target="_blank"
+									to="https://maps.google.com/maps/place//data=!4m2!3m1!1s0x10678776d57d673d:0x3a5ca1c3f4f97ad4?entry=s&sa=X&ved=1t:8290&hl=en-US&ictx=111"
+								>
+									<img
+										src={marinaMap}
+										alt="contact-us"
+										className="lg:flex-1 self-start mb-8 lg:mb-0 h-[200px] w-full rounded-lg shadow-lg object-cover"
+									/>
+								</Link>
+								<ul className="lg:flex-1 text-sm [&_a]:flex [&_a]:gap-3 [&_a]:items-center space-y-7 [&_span]:text-black md:[&_span]:text-white md:[&_span]:bg-blue-500 [&_span]:rounded-lg [&_span]:!w-9 [&_span]:h-9  [&_span]:inline-flex [&_span]:justify-center  [&_span]:items-center ">
+									<li className="flex gap-3 items-center">
+										<span>
+											<BoatIcon />
+										</span>
+										<p className="font-medium">Calabar ferry Terminal</p>
+									</li>
+									<li>
+										<Link
+											className="hover:text-blue-500 duration-150 ease-in-out transition"
+											to="tel:+2347070600307"
+										>
+											<span>
+												<PhoneIcon />
+											</span>
+											<p>+234 707 060 0307</p>
+										</Link>
+									</li>
+									<li>
+										<Link
+											className="hover:text-blue-500 duration-150 ease-in-out transition"
+											target="_blank"
+											to="https://maps.google.com/maps/place//data=!4m2!3m1!1s0x10678776d57d673d:0x3a5ca1c3f4f97ad4?entry=s&sa=X&ved=1t:8290&hl=en-US&ictx=111"
+										>
+											<span>
+												<MapIcon />
+											</span>
+											<p>Marina Resort, Calabar</p>
+										</Link>
+									</li>
+								</ul>
+							</div>
+							{/* Uyo */}
+							<div className="lg:flex flex-wrap gap-8 md:bg-blue-50 rounded-lg p-0 md:p-10 lg:p-5">
+								<Link
+									target="_blank"
+									to="https://www.google.com/maps/dir//520106+Nwaniba+Road,+Uyo+520106,+Akwa+Ibom/@5.0557182,7.9578196,12z/data=!4m8!4m7!1m0!1m5!1m1!1s0x105d5813586afc87:0x6734e8be23eaf5d8!2m2!1d8.0402216!2d5.0557234?entry=ttu"
+								>
+									<img
+										src={timberMap}
+										alt="contact-us"
+										className="lg:flex-1 self-start mb-8 lg:mb-0 h-[200px] w-full rounded-lg shadow-lg object-cover"
+									/>
+								</Link>
+								<ul className="lg:flex-1 text-sm [&_a]:flex [&_a]:gap-3 [&_a]:items-center space-y-7 [&_span]:text-black md:[&_span]:text-white md:[&_span]:bg-blue-500 [&_span]:rounded-lg [&_span]:!w-9 [&_span]:h-9 [&_span]:inline-flex  [&_span]:justify-center [&_span]:items-center">
+									<li className="flex gap-3 items-center">
+										<span>
+											<BoatIcon />
+										</span>
+										<p className="font-medium">Uyo ferry Terminal</p>
+									</li>
+									<li>
+										<Link
+											className="hover:text-blue-500 duration-150 ease-in-out transition"
+											to="tel:+2347077404553"
+										>
+											<span>
+												<PhoneIcon />
+											</span>
+											<p>+234 707 740 4553</p>
+										</Link>
+									</li>
+									<li>
+										<Link
+											className="hover:text-blue-500 duration-150 ease-in-out transition"
+											target="_blank"
+											to="https://www.google.com/maps/dir//520106+Nwaniba+Road,+Uyo+520106,+Akwa+Ibom/@5.0557182,7.9578196,12z/data=!4m8!4m7!1m0!1m5!1m1!1s0x105d5813586afc87:0x6734e8be23eaf5d8!2m2!1d8.0402216!2d5.0557234?entry=ttu"
+										>
+											<span className="px-2">
+												<MapIcon />
+											</span>
+											<p>
+												Nwaniba Timber Beach, Uruan, Behind Ibom Icon Resort, Uyo
+											</p>
+										</Link>
+									</li>
+								</ul>
+							</div>
 						</div>
 					</div>
 				</section>

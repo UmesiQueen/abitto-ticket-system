@@ -58,7 +58,7 @@ const Home = () => {
 							<Button
 								text="Get Started"
 								onClick={() => {
-									scrollToSection(services);
+									setTimeout(() => scrollToSection(services));
 									navigate("/#services");
 								}}
 								className="w-40 mx-auto md:mx-0"

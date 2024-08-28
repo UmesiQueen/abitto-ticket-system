@@ -1,5 +1,5 @@
 import React from "react";
-import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import { Twirl as Hamburger } from "hamburger-react";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -13,7 +13,6 @@ import {
 	// TwitterIcon,
 } from "@/assets/icons/index";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import Button from "@/components/custom/Button";
 import LogoSVG from "@/assets/icons/abitto.svg";
 import Loader from "@/components/animation/Loader";
 
@@ -37,10 +36,9 @@ export default MainLayout;
 const Navbar = () => {
 	const [isOpen, setOpen] = React.useState(false);
 	const [scroll, setScroll] = React.useState(false);
-	const { contact, faq, services, scrollToSection } =
+	const { contact, faq, scrollToSection } =
 		React.useContext(GlobalCTX);
 	const location = useLocation();
-	const navigate = useNavigate();
 	const navRef = React.useRef();
 
 	const handleNavItemClick = (ref) => {
@@ -101,25 +99,25 @@ const Navbar = () => {
 					)}
 				>
 					{[
-						["About Us", "/about"],
-						["Contact Us", "/#contact"],
-						["Book a trip", "/booking"],
-						["Rent a Boat", "/rental"],
+						["Home", "/"],
+						["About", "/about"],
+						["Contact", "/#contact"],
+						["Book Trip", "/booking"],
+						["Rent Boat", "/rental"],
+						["Get Quote", "/get-quote"],
 						["FAQ", "/#faq"],
 					].map(([title, slug]) => {
 						return (
 							<li
 								key={title}
 								data-state={
+									// TODO: FIGURE OUT THIS LOGIC FOR HASHES AND HOME
 									location.pathname == slug || location.hash == slug
 										? "active"
 										: ""
 								}
 								className={cn(
-									"hover:bg-gray-400/20 md:hover:bg-transparent md:hover:text-blue-500 font-normal data-[state=active]:font-bold text-center md:text-left transition-all duration-75 ease-in-out text-lg  md:text-base uppercase h-24 md:h-fit tracking-wide *:inline-flex *:items-center *:w-full *:h-full *:justify-center  ",
-									{
-										"md:hidden": ["Book a trip", "Rent a Boat"].includes(title),
-									}
+									"hover:bg-gray-400/20 md:hover:bg-transparent md:hover:text-blue-500 font-normal data-[state=active]:font-bold text-center md:text-left transition-all duration-75 ease-in-out text-lg  md:text-base h-24 md:h-fit tracking-wide *:inline-flex *:items-center *:w-full *:h-full *:justify-center  ",
 								)}
 							>
 								<Link
@@ -127,7 +125,7 @@ const Navbar = () => {
 									onClick={() => {
 										closeNavbar();
 										if (title == "FAQ") handleNavItemClick(faq);
-										if (title == "Contact Us") handleNavItemClick(contact);
+										if (title == "Contact") handleNavItemClick(contact);
 									}}
 								>
 									{title}
@@ -136,14 +134,14 @@ const Navbar = () => {
 						);
 					})}
 				</ul>
-				<Button
+				{/* <Button
 					text="Get Started"
 					onClick={() => {
 						handleNavItemClick(services);
 						navigate("/#services");
 					}}
 					className="hidden md:block px-6"
-				/>
+				/> */}
 			</div>
 		</nav>
 	);
