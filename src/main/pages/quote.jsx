@@ -13,8 +13,8 @@ import { CancelSquareIcon } from "@/assets/icons";
 import { Button as ButtonIcon } from "@/components/ui/button";
 import PackageGIF from "@/assets/package.gif";
 import { formatValue } from "react-currency-input-field";
-import baseurl from "@/api";
-import { toast } from "sonner";
+import { BookingCTX } from "@/contexts/BookingContext";
+import { useLogistics } from "@/hooks/useLogistics";
 
 const GetQuote = () => {
 	const defaultValue = {
@@ -27,7 +27,8 @@ const GetQuote = () => {
 	}
 	const [packageDetails, setPackageDetails] = React.useState(defaultValue);
 	const { mountPortalModal } = React.useContext(GlobalCTX);
-	const [loading, setLoading] = React.useState(false);
+	const { loading } = React.useContext(BookingCTX);
+	const { getLogisticsCost } = useLogistics();
 
 	const {
 		register,
@@ -43,37 +44,24 @@ const GetQuote = () => {
 	});
 
 	const onSubmit = handleSubmit((formData) => {
-		setLoading(true);
 		setPackageDetails((prev) => ({
 			...prev,
 			value: formatCost(formData.value),
 		}));
 
-		baseurl
-			.get("/price/get")
-			.then((res) => {
-				if (res.status == 200) {
-					const resData = res.data.prices.map((item) => ({ [item.trip_name]: item.cost }));
-					const result = Object.assign({}, ...resData);
-					mountPortalModal(
-						<QuoteModal
-							props={{
-								weight: packageDetails.weight,
-								quantity: packageDetails.no_item,
-								cost_per_kg: result.logistics,
-								handleReset
-							}}
-						/>
-					);
-				}
-			}).catch((error) => {
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error("Error occurred while getting quote.");
-			}).finally(() => setLoading(false))
+		getLogisticsCost((cost) => {
+			mountPortalModal(
+				<QuoteModal
+					props={{
+						weight: packageDetails.weight,
+						quantity: packageDetails.no_item,
+						cost_per_kg: cost,
+						handleReset
+					}}
+				/>
+			);
+		})
+
 	});
 
 	const formatCost = (cost) => {

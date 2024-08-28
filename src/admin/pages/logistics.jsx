@@ -22,6 +22,7 @@ import {
 } from "@/lib/validators/logisticsSchema";
 import { formatValue } from "react-currency-input-field";
 import { usePayment } from "@/hooks/usePayment";
+import { useLogistics } from "@/hooks/useLogistics";
 
 const ctx = React.createContext();
 
@@ -29,19 +30,13 @@ const Logistics = () => {
 	const navigate = useNavigate();
 	const { activeStep } = React.useContext(BookingCTX);
 	const [packageDetails, setPackageDetails] = React.useState({});
-	const [price, setPrice] = React.useState(0);
-
-	React.useEffect(() => {
-		//fetch price data
-		setPrice(1000);
-	}, []);
 
 	return (
 		<>
 			<Helmet>
 				<title>Logistics | Admin </title>
 			</Helmet>
-			<ctx.Provider value={{ packageDetails, setPackageDetails, price }}>
+			<ctx.Provider value={{ packageDetails, setPackageDetails }}>
 				<div className="flex gap-1 items-center mb-10 ">
 					<ButtonUI size="icon" variant="ghost" onClick={() => navigate(-1)}>
 						<CircleArrowLeftIcon />
@@ -96,9 +91,18 @@ export default Logistics;
 
 const ShippingDetails = () => {
 	const { pathname } = useLocation();
+	const { packageDetails, setPackageDetails } = React.useContext(ctx);
 	const { adminProfile } = React.useContext(GlobalCTX);
+	const { loading } = React.useContext(BookingCTX);
 	const { onNextClick } = useStepper();
-	const { packageDetails, setPackageDetails, price } = React.useContext(ctx);
+	const { getLogisticsCost } = useLogistics()
+	const [costPerKg, setCostPerKg] = React.useState(0);
+	const [showPopover, setShowPopover] = React.useState(false);
+
+	React.useEffect(() => {
+		if (costPerKg > 0)
+			setShowPopover(true);
+	}, [costPerKg])
 
 	const isSalesperson =
 		["salesperson"].includes(adminProfile.account_type) &&
@@ -142,11 +146,18 @@ const ShippingDetails = () => {
 			...prev,
 			...formData,
 			value: formatCost(formData.value),
-			cost_per_kg: price,
-			total_cost: Number(formData?.weight ?? 0) * Number(price),
+		}));
+		getLogisticsCost(setCostPerKg)
+	});
+
+	const handleNextClick = () => {
+		setPackageDetails((prev) => ({
+			...prev,
+			cost_per_kg: costPerKg,
+			total_cost: Number(prev?.weight) * Number(costPerKg),
 		}));
 		onNextClick();
-	});
+	}
 
 	const formatCost = (cost) => {
 		return cost
@@ -304,31 +315,33 @@ const ShippingDetails = () => {
 						/>
 					</label>
 				</div>
-
-				<div className="w-4/6">
-					<div className="flex justify-between items-center p-5 border-y-2 border-dashed border-gray-500 my-20">
-						<p className="font-semibold">Amount:</p>
-						<div>
-							<p>
-								{formatValue({
-									value: String(price),
-									prefix: "₦",
-								})}{" "}
-								x {packageDetails?.weight ?? 0}kg
-							</p>
-							<p className="font-bold text-xl">
-								{formatValue({
-									value: String(
-										Number(packageDetails?.weight ?? 0) * Number(price)
-									),
-									prefix: "NGN ",
-								})}
-							</p>
-						</div>
-					</div>
-					<Button text="Continue" type="submit" className="w-full" />
-				</div>
+				{!showPopover && <Button text="Get Quote" type="submit" loading={loading} className="w-full" />}
 			</form>
+
+			{/* Quote */}
+			{showPopover && <div>
+				<div className="flex justify-between items-center p-5 border-y-2 border-dashed border-gray-500 my-20">
+					<p className="font-semibold">Amount:</p>
+					<div>
+						<p>
+							{formatValue({
+								value: String(costPerKg),
+								prefix: "₦",
+							})}{" "}
+							x {packageDetails?.weight ?? 0}kg
+						</p>
+						<p className="font-bold text-xl">
+							{formatValue({
+								value: String(
+									Number(packageDetails?.weight ?? 0) * Number(costPerKg)
+								),
+								prefix: "NGN ",
+							})}
+						</p>
+					</div>
+				</div>
+				<Button text="Continue" onClick={handleNextClick} className="w-full" />
+			</div>}
 		</div>
 	);
 };

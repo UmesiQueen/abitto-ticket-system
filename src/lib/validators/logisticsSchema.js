@@ -25,10 +25,12 @@ export const shipmentDetailsSchema = yup.object().shape({
 	no_item: yup
 		.number()
 		.required("No. of item is required.")
+		.min(1, "No.of item must be at least 1")
 		.typeError("No. of item must be a number."),
 	weight: yup
 		.number()
 		.required("Weight is required.")
+		.min(1, "Weight must be at least 1kg.")
 		.typeError("Weight must be a number."),
 	value: yup.string().required("Value is required."),
 });
