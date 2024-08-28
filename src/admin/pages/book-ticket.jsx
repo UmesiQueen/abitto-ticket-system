@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -67,23 +67,23 @@ const BookTicket = () => {
 export default BookTicket;
 
 const TripDetails = () => {
-	const { formData } = React.useContext(BookingCTX);
-	const StyledTabsTrigger = ({ children, value, ...props }) => {
-		return (
-			<TabsTrigger
-				value={value}
-				className="data-[state=active]:bg-blue-500 data-[state=active]:text-white data-[state=active]:rounded-lg py-3 transition-all duration-200 ease-in-out"
-				{...props}
-			>
-				{children}
-			</TabsTrigger>
-		);
-	};
+	// const { formData } = React.useContext(BookingCTX);
+	// const StyledTabsTrigger = ({ children, value, ...props }) => {
+	// 	return (
+	// 		<TabsTrigger
+	// 			value={value}
+	// 			className="data-[state=active]:bg-blue-500 data-[state=active]:text-white data-[state=active]:rounded-lg py-3 transition-all duration-200 ease-in-out"
+	// 			{...props}
+	// 		>
+	// 			{children}
+	// 		</TabsTrigger>
+	// 	);
+	// };
 
 	return (
 		<section className="bg-white p-10 my-8 rounded-lg">
 			<Tabs
-				defaultValue={formData.bookingDetails?.trip_type ?? "One-Way Trip"}
+				defaultValue={"One-Way Trip"}
 				className="w-full"
 			>
 				<div className="flex justify-between">
@@ -93,12 +93,12 @@ const TripDetails = () => {
 						</h2>
 						<p className="text-sm">Please fill in customers trip details</p>
 					</hgroup>
-					<TabsList className="h-14 gap-2 w-fit">
+					{/* <TabsList className="h-14 gap-2 w-fit">
 						<StyledTabsTrigger value="One-Way Trip">
 							One-Way Trip
 						</StyledTabsTrigger>
 						<StyledTabsTrigger value="Round Trip">Round Trip</StyledTabsTrigger>
-					</TabsList>
+					</TabsList> */}
 				</div>
 				<TabsContent value="One-Way Trip">
 					<BookingForm tab="One-Way Trip" />

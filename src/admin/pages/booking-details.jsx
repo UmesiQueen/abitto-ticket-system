@@ -113,18 +113,18 @@ const BookingDetails = () => {
 			),
 			enableGlobalFilter: false,
 		},
-		{
-			accessorKey: "trip_type",
-			id: "trip_type",
-			header: "Type",
-			cell: ({ row }) => <div>{row.original.trip_type}</div>,
-			enableGlobalFilter: false,
-		},
+		// {
+		// 	accessorKey: "trip_type",
+		// 	id: "trip_type",
+		// 	header: "Type",
+		// 	cell: ({ row }) => <div>{row.original.trip_type}</div>,
+		// 	enableGlobalFilter: false,
+		// },
 		{
 			accessorKey: "travel_from",
 			header: "Departure",
 			id: "departure",
-			cell: ({ row }) => truncate(row.original.travel_from, { length: 20 }),
+			cell: ({ row }) => row.original.travel_from,
 		},
 		{
 			accessorKey: "date_time",
@@ -266,7 +266,7 @@ const BookingDetails = () => {
 			<h1 className="text-lg font-semibold mb-10">Booking Details</h1>
 			<SearchForm />
 			<div className="my-10 flex gap-5 justify-end">
-				<div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg">
+				{/* <div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg">
 					<span className="px-4 text-nowrap text-sm font-semibold bg-white h-full inline-flex items-center rounded-l-lg">
 						Trip type
 					</span>
@@ -291,7 +291,7 @@ const BookingDetails = () => {
 							</SelectGroup>
 						</SelectContent>
 					</Select>
-				</div>
+				</div> */}
 				<div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg">
 					<span className="px-4 text-nowrap text-sm font-semibold bg-white h-full inline-flex items-center rounded-l-lg">
 						Medium
