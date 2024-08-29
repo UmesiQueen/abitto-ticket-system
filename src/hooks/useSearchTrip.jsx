@@ -34,10 +34,8 @@ export const useSearchTrip = () => {
 
 	const checkAvailability = () => {
 		loader(true)
-		const isRoundTrip = formData.bookingDetails.trip_type == "Round Trip";
 		const requestData = {
 			departure_trip_code: selectedTrip.departure.trip_code,
-			...(isRoundTrip && { return_trip_code: selectedTrip.return.trip_code })
 		}
 		const { total_passengers } = formData.bookingDetails;
 
@@ -46,7 +44,7 @@ export const useSearchTrip = () => {
 			.then((res) => {
 				if (res.status == 200) {
 					const available_departure_seats = res.data.available_seats;
-					if (available_departure_seats > total_passengers) {
+					if (available_departure_seats >= total_passengers) {
 						return mountPortalModal(<BookingWarningModal />);
 					}
 					return mountPortalModal(<UnAvailableModal type={"departure"} />);
