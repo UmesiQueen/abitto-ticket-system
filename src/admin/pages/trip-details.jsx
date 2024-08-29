@@ -36,7 +36,7 @@ import ConfirmationModal from "@/components/modals/confirmation";
 import { useScheduleTrip } from "@/hooks/useScheduleTrip";
 import baseurl from "@/api";
 import { useReactToPrint } from "react-to-print";
-import { humanize } from "@/lib/utils";
+// import { humanize } from "@/lib/utils";
 import { formatValue } from "react-currency-input-field";
 import { toast } from "sonner";
 
@@ -112,11 +112,11 @@ const TripDetails = () => {
 			header: "Phone Number",
 			cell: ({ row }) => <div>{row.original.passenger1_phone_number}</div>,
 		},
-		{
-			accessorKey: "seat_no",
-			header: "Seat_No",
-			cell: ({ row }) => humanize(row.original?.departure_seats),
-		},
+		// {
+		// 	accessorKey: "seat_no",
+		// 	header: "Seat_No",
+		// 	cell: ({ row }) => humanize(row.original?.departure_seats),
+		// },
 		{
 			accessorKey: "passenger",
 			header: <div className="text-center">Passengers</div>,
@@ -179,7 +179,7 @@ const TripDetails = () => {
 		onAfterPrint: () => setIsPrinting(false),
 	});
 
-	if (!selectedTrip?.trip_code) return <Navigate to="/backend/pageNotFound" />;
+	if (!selectedTrip?.trip_code) return <Navigate to={`/backend/${adminProfile.account_type}/pageNotFound`} />;
 
 	return (
 		<>
@@ -229,11 +229,11 @@ const TripDetails = () => {
 							</p>
 							<p>
 								<strong>Date:</strong>
-								{format(selectedTrip?.date, "PPPP")}
+								{format(selectedTrip?.date, "PPPP")} , {selectedTrip?.time}
 							</p>
 							<p>
-								<strong>Time:</strong>
-								{selectedTrip?.time}
+								<strong>Capacity:</strong>
+								0
 							</p>
 							<p>
 								<strong>Ticket Cost:</strong>
@@ -255,7 +255,7 @@ const TripDetails = () => {
 								</span>
 							</p>
 							<p>
-								<strong>Total Passengers:</strong>
+								<strong>Checked-in:</strong>
 								{getTotalPassengers()}
 							</p>
 						</li>
@@ -319,9 +319,9 @@ const TripDetails = () => {
 												{header.isPlaceholder
 													? null
 													: flexRender(
-															header.column.columnDef.header,
-															header.getContext()
-													  )}
+														header.column.columnDef.header,
+														header.getContext()
+													)}
 											</TableHead>
 										);
 									})}

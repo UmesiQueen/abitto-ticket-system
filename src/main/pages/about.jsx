@@ -1,14 +1,27 @@
+import React from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate, Link } from "react-router-dom";
 import Button from "@/components/custom/Button";
 import { about, about2 } from "@/assets/images";
 import FounderImg from "@/assets/images/founder.jpg";
+import FounderImg3 from "@/assets/images/founder2.jpg";
+import FounderImg2 from "@/assets/images/abitto-founder.jpg";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CountUp from "react-countup";
-import { CaretIcon } from "@/assets/icons";
+import { GlobalCTX } from "@/contexts/GlobalContext";
+import { MapIcon, PhoneIcon, CaretIcon, BoatIcon } from "@/assets/icons";
+import { marinaMap, timberMap } from "@/assets/images";
+
+import { Swiper, SwiperSlide } from "swiper/react";
+import { EffectCoverflow, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/effect-coverflow";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
 
 const About = () => {
 	const navigate = useNavigate();
+	const { services, scrollToSection } = React.useContext(GlobalCTX);
 
 	return (
 		<>
@@ -34,12 +47,6 @@ const About = () => {
 							backgroundColor: "rgb(0,0,0)",
 							background:
 								"linear-gradient(90deg, rgba(0,0,0,0.8016018907563025) 50%, rgba(255,255,255,0) 100%)",
-							//   background:
-							//     "-webkit-linear-gradient(90deg, rgba(0,0,0,0.8016018907563025) 50%, rgba(255,255,255,0) 100%)",
-							//   background:
-							//     " linear-gradient(90deg, rgba(0,0,0,0.8016018907563025) 50%, rgba(255,255,255,0) 100%)",
-							//   filter:
-							//     "progid:DXImageTransform.Microsoft.gradient(startColorstr='#000000',endColorstr='#ffffff',GradientType=1)",
 						}}
 					/>
 
@@ -53,6 +60,53 @@ const About = () => {
 									Unlock Joyful Journeys: Where Every Ferry Ride is a Ticket to
 									Happiness!
 								</p>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				{/* about us */}
+				<section className="px-5 py-20 md:px-20 bg-white" id="about-us">
+					<div className="max-w-[1440px] mx-auto">
+						<div className=" text-center md:text-left flex flex-col md:flex-row *:w-full *:grow justify-between md:gap-10">
+							<div className="mb-10 md:mb-0 md:self-center">
+								<img
+									src="https://i.ibb.co/8BLhcJw/about.jpg"
+									alt="about-us"
+									width={100}
+									height={100}
+									className="rounded-lg shadow-2xl w-full md:w-[450px] h-[300px] md:h-[400px] mx-auto object-cover border "
+								/>
+							</div>
+							<div>
+								<div className="space-y-5 lg:w-10/12">
+									<h2 className="font-semibold text-lg md:text-xl lg:text-2xl inline-flex items-center justify-center md:justify-start w-full ">
+										<span className="h-3 w-3 mr-3 rounded-full bg-blue-500" />
+										About Us
+									</h2>
+									<p className="font-medium text-lg md:text-xl lg:text-2xl">
+										Welcome to Abitto, where innovation meets reliability in
+										public water travel.
+									</p>
+									<p className="text-black/80  ">
+										{/* eslint-disable-next-line react/no-unescaped-entities */}
+										We don't just ferry passengers; we revolutionize your water
+										transportation experience. With cutting-edge technology and
+										unwavering safety protocols, we ensure every journey is
+										convenient and intelligent. Join Abitto, where every trip
+										showcases our dedication to excellence and your peace of mind.
+									</p>
+									<Link
+										target="_blank"
+										to="https://abittoglobal.com/?fbclid=PAZXh0bgNhZW0CMTEAAaaf2uWLgUdLwd18fE__CVzgHmX_XRFos7kxw4Ffa5sWyB58fZLwenzHvl8_aem_Af6umzSDXJvWgv1zoBRtzSSytwgTKLgfroif0Z8SpzdPUu-G5NWP8AMOlqscYrrjWJHGjX5_iSPUUMd4IcFzKNIs"
+										className="text-blue-500 hover:text-blue-700 transition duration-150 ease-in-out flex items-center justify-center md:justify-start gap-3 cursor-pointer"
+									>
+										<span className="underline font-medium">
+											Discover More About Us
+										</span>
+										<CaretIcon />
+									</Link>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -81,55 +135,6 @@ const About = () => {
 								<p>Successful Ferry Trips</p>
 							</li>
 						</ul>
-					</div>
-				</section>
-
-				{/* about us */}
-				<section className="px-5 py-20 md:px-20 bg-white" id="about-us">
-					<div className="max-w-[1440px] mx-auto">
-						<div className=" text-center md:text-left flex flex-col md:flex-row justify-between md:gap-20 lg:gap-28">
-							<div className="basis-2/6 mb-10 md:mb-0 md:self-center">
-								<img
-									src="https://i.ibb.co/8BLhcJw/about.jpg"
-									alt="about-us"
-									width={100}
-									height={100}
-									className="rounded-lg shadow-2xl w-full md:w-[500px] h-[300px] md:h-[400px] object-cover "
-								/>
-							</div>
-							<div className="flex-1">
-								<div className="space-y-5 lg:w-9/12">
-									<div className="flex items-center justify-center md:justify-start">
-										<span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 " />
-										<h3 className="uppercase font-medium">About us</h3>
-									</div>
-									<p className="font-medium text-2xl ">
-										Welcome to Abitto, where innovation meets reliability in
-										public water travel.
-									</p>
-									<p className="text-black/80  ">
-										Welcome to Abitto, where innovation and reliability redefine{" "}
-										{/* eslint-disable-next-line react/no-unescaped-entities */}
-										public water travel. We don't just ferry passengers; we
-										revolutionize your water transportation experience. With
-										cutting-edge technology and unwavering safety protocols, we
-										ensure every journey is convenient and intelligent. Join
-										Abitto, where every trip showcases our dedication to
-										excellence and your peace of mind.
-									</p>
-									<Link
-										target="_blank"
-										to="https://abittoglobal.com/?fbclid=PAZXh0bgNhZW0CMTEAAaaf2uWLgUdLwd18fE__CVzgHmX_XRFos7kxw4Ffa5sWyB58fZLwenzHvl8_aem_Af6umzSDXJvWgv1zoBRtzSSytwgTKLgfroif0Z8SpzdPUu-G5NWP8AMOlqscYrrjWJHGjX5_iSPUUMd4IcFzKNIs"
-										className="text-blue-500 hover:text-blue-700 transition duration-150 ease-in-out flex items-center justify-center md:justify-start gap-3 cursor-pointer"
-									>
-										<span className="underline font-medium">
-											Discover More About Us
-										</span>
-										<CaretIcon />
-									</Link>
-								</div>
-							</div>
-						</div>
 					</div>
 				</section>
 
@@ -232,9 +237,9 @@ const About = () => {
 				</section>
 
 				{/* Meet the founder */}
-				<section className="px-5 pb-20 md:p-20 bg-white">
-					<div className="max-w-[1440px] mx-auto pt-5 flex flex-col lg:flex-row gap-x-5 gap-y-20 *:w-full">
-						<div className="text-center md:text-left mt-10 md:mt-0">
+				<section className="px-5 py-20 md:p-20 bg-white">
+					<div className="max-w-[1440px] mx-auto pt-5 flex flex-col lg:flex-row gap-x-5 gap-y-20 *:w-full *:grow">
+						<div className="text-center md:text-left">
 							<div className="flex items-center justify-center md:justify-start">
 								<span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 " />
 								<h3 className="uppercase font-semibold">Meet our founder</h3>
@@ -266,14 +271,8 @@ const About = () => {
 								</p>
 							</div>
 						</div>
-						<div className="mt-10 md:mt-0">
-							<div className="w-full md:w-[500px] max-h-[500px] mx-auto overflow-hidden rounded-lg ">
-								<img
-									alt="founders image"
-									src={FounderImg}
-									className="w-full h-full object-contain md:object-cover rounded-lg "
-								/>
-							</div>
+						<div className="*:w-[500px]">
+							<SwiperContent />
 						</div>
 					</div>
 				</section>
@@ -281,9 +280,10 @@ const About = () => {
 				{/* Youtube video */}
 				<section className="bg-white  px-5 pb-20 md:p-20 ">
 					<div className="max-w-[1440px] mx-auto flex flex-col">
-						<h3 className=" self-center md:w-[500px] text-center font-semibold mb-6 text-lg md:text-xl ">
+						<h2 className="font-semibold text-xl mb-7 inline-flex items-center justify-center w-full ">
+							<span className="h-3 w-3 mr-3 rounded-full bg-blue-500" />
 							Our Products
-						</h3>
+						</h2>
 						<div className="w-full bg-black rounded-lg overflow-hidden">
 							<iframe
 								width="560"
@@ -296,6 +296,108 @@ const About = () => {
 								allowFullScreen
 								className="w-full aspect-video h-full lg:h-[560px] "
 							/>
+						</div>
+					</div>
+				</section>
+
+				{/* Our locations */}
+				<section className="py-20 px-5 md:px-20 bg-white">
+					<div className="max-w-[1440px] mx-auto">
+						<h2 className="font-semibold text-xl  mb-7 inline-flex items-center justify-center w-full ">
+							<span className="h-3 w-3 mr-3 rounded-full bg-blue-500" />
+							Our Locations
+						</h2>
+						<div className="flex flex-col lg:flex-row gap-10 *:md:shadow-lg *:grow *:w-full">
+							{/* Calabar */}
+							<div className="lg:flex flex-wrap gap-8 md:bg-blue-50 rounded-lg p-0 md:p-10 lg:p-5">
+								<Link
+									target="_blank"
+									to="https://maps.google.com/maps/place//data=!4m2!3m1!1s0x10678776d57d673d:0x3a5ca1c3f4f97ad4?entry=s&sa=X&ved=1t:8290&hl=en-US&ictx=111"
+								>
+									<img
+										src={marinaMap}
+										alt="contact-us"
+										className="lg:flex-1 self-start mb-8 lg:mb-0 h-[200px] w-full rounded-lg shadow-lg object-cover"
+									/>
+								</Link>
+								<ul className="lg:flex-1 text-sm [&_a]:flex [&_a]:gap-3 [&_a]:items-center space-y-7 [&_span]:text-black md:[&_span]:text-white md:[&_span]:bg-blue-500 [&_span]:rounded-lg [&_span]:!w-9 [&_span]:h-9  [&_span]:inline-flex [&_span]:justify-center  [&_span]:items-center ">
+									<li className="flex gap-3 items-center">
+										<span>
+											<BoatIcon />
+										</span>
+										<p className="font-medium">Calabar ferry Terminal</p>
+									</li>
+									<li>
+										<Link
+											className="hover:text-blue-500 duration-150 ease-in-out transition"
+											to="tel:+2347070600307"
+										>
+											<span>
+												<PhoneIcon />
+											</span>
+											<p>+234 707 060 0307</p>
+										</Link>
+									</li>
+									<li>
+										<Link
+											className="hover:text-blue-500 duration-150 ease-in-out transition"
+											target="_blank"
+											to="https://maps.google.com/maps/place//data=!4m2!3m1!1s0x10678776d57d673d:0x3a5ca1c3f4f97ad4?entry=s&sa=X&ved=1t:8290&hl=en-US&ictx=111"
+										>
+											<span>
+												<MapIcon />
+											</span>
+											<p>Marina Resort, Calabar</p>
+										</Link>
+									</li>
+								</ul>
+							</div>
+							{/* Uyo */}
+							<div className="lg:flex flex-wrap gap-8 md:bg-blue-50 rounded-lg p-0 md:p-10 lg:p-5">
+								<Link
+									target="_blank"
+									to="https://www.google.com/maps/dir//520106+Nwaniba+Road,+Uyo+520106,+Akwa+Ibom/@5.0557182,7.9578196,12z/data=!4m8!4m7!1m0!1m5!1m1!1s0x105d5813586afc87:0x6734e8be23eaf5d8!2m2!1d8.0402216!2d5.0557234?entry=ttu"
+								>
+									<img
+										src={timberMap}
+										alt="contact-us"
+										className="lg:flex-1 self-start mb-8 lg:mb-0 h-[200px] w-full rounded-lg shadow-lg object-cover"
+									/>
+								</Link>
+								<ul className="lg:flex-1 text-sm [&_a]:flex [&_a]:gap-3 [&_a]:items-center space-y-7 [&_span]:text-black md:[&_span]:text-white md:[&_span]:bg-blue-500 [&_span]:rounded-lg [&_span]:!w-9 [&_span]:h-9 [&_span]:inline-flex  [&_span]:justify-center [&_span]:items-center">
+									<li className="flex gap-3 items-center">
+										<span>
+											<BoatIcon />
+										</span>
+										<p className="font-medium">Uyo ferry Terminal</p>
+									</li>
+									<li>
+										<Link
+											className="hover:text-blue-500 duration-150 ease-in-out transition"
+											to="tel:+2347077404553"
+										>
+											<span>
+												<PhoneIcon />
+											</span>
+											<p>+234 707 740 4553</p>
+										</Link>
+									</li>
+									<li>
+										<Link
+											className="hover:text-blue-500 duration-150 ease-in-out transition"
+											target="_blank"
+											to="https://www.google.com/maps/dir//520106+Nwaniba+Road,+Uyo+520106,+Akwa+Ibom/@5.0557182,7.9578196,12z/data=!4m8!4m7!1m0!1m5!1m1!1s0x105d5813586afc87:0x6734e8be23eaf5d8!2m2!1d8.0402216!2d5.0557234?entry=ttu"
+										>
+											<span className="px-2">
+												<MapIcon />
+											</span>
+											<p>
+												Nwaniba Timber Beach, Uruan, Behind Ibom Icon Resort, Uyo
+											</p>
+										</Link>
+									</li>
+								</ul>
+							</div>
 						</div>
 					</div>
 				</section>
@@ -315,11 +417,12 @@ const About = () => {
 							Experience Seamless and Enjoyable Water Travel
 						</p>
 						<Button
-							text="Book your trip"
+							text="Get Started"
 							onClick={() => {
-								navigate("/booking");
+								setTimeout(() => scrollToSection(services))
+								navigate("/");
 							}}
-							className="px-5 mx-auto mt-5"
+							className="w-40 mx-auto mt-5"
 						/>
 					</div>
 				</section>
@@ -339,3 +442,54 @@ const StyledTabsTrigger = ({ value, title }) => (
 		{title}
 	</TabsTrigger>
 );
+
+const SwiperContent = () => {
+	return (
+		<>
+			<Swiper
+				effect={"coverflow"}
+				grabCursor={true}
+				centeredSlides={true}
+				slidesPerView={"auto"}
+				coverflowEffect={{
+					rotate: 0,
+					stretch: 0,
+					depth: 120,
+					modifier: 1,
+					slideShadows: true,
+				}}
+				pagination={true}
+				modules={[EffectCoverflow, Pagination]}
+				className="mySwiper"
+			>
+				<SwiperSlide>
+					<div className="h-[450px] overflow-hidden">
+						<img
+							src={FounderImg}
+							alt="founder1"
+							className="rounded-lg overflow-hidden w-full h-full object-cover object-top"
+						/>
+					</div>
+				</SwiperSlide>
+				<SwiperSlide>
+					<div className="h-[450px] overflow-hidden">
+						<img
+							src={FounderImg2}
+							alt="founder2"
+							className="rounded-lg overflow-hidden w-full h-full object-cover object-top"
+						/>
+					</div>
+				</SwiperSlide>
+				<SwiperSlide>
+					<div className="h-[450px] overflow-hidden">
+						<img
+							src={FounderImg3}
+							alt="founder3"
+							className="rounded-lg overflow-hidden w-full h-full object-cover object-center"
+						/>
+					</div>
+				</SwiperSlide>
+			</Swiper>
+		</>
+	);
+};

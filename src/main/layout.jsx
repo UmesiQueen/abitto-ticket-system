@@ -1,5 +1,5 @@
 import React from "react";
-import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import { Twirl as Hamburger } from "hamburger-react";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -13,7 +13,6 @@ import {
 	// TwitterIcon,
 } from "@/assets/icons/index";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import Button from "@/components/custom/Button";
 import LogoSVG from "@/assets/icons/abitto.svg";
 import Loader from "@/components/animation/Loader";
 
@@ -37,9 +36,9 @@ export default MainLayout;
 const Navbar = () => {
 	const [isOpen, setOpen] = React.useState(false);
 	const [scroll, setScroll] = React.useState(false);
-	const { contact, faq, scrollToSection } = React.useContext(GlobalCTX);
+	const { contact, faq, scrollToSection } =
+		React.useContext(GlobalCTX);
 	const location = useLocation();
-	const navigate = useNavigate();
 	const navRef = React.useRef();
 
 	const handleNavItemClick = (ref) => {
@@ -69,10 +68,19 @@ const Navbar = () => {
 		if (isOpen) setOpen(false);
 	};
 
+	const isActive = (slug) => {
+		if (location.hash.length) {
+			if (slug.includes(location.hash))
+				return "active";
+			return;
+		}
+		if (location.pathname == slug) return "active";
+	}
+
 	return (
 		<nav
 			className={cn(
-				"fixed right-0 left-0 px-5 md:px-20 h-[67px] w-full text-white backdrop-blur-[3px] z-[3] bg-[#111111]/80",
+				"fixed right-0 left-0 px-5 md:px-20 min-h-[67px] w-full flex items-center text-white backdrop-blur-[3px] z-[3] bg-[#111111]/80",
 				{
 					"bg-transparent": ["/", "/about"].includes(location.pathname),
 					"bg-[#111111]/80": isOpen || scroll,
@@ -80,14 +88,14 @@ const Navbar = () => {
 			)}
 			ref={navRef}
 		>
-			<div className="max-w-[1440px] mx-auto h-full flex items-center justify-between">
+			<div className="max-w-[1440px] mx-auto h-full w-full flex flex-wrap items-center justify-between">
 				<Link to="/" onClick={closeNavbar}>
 					<img
 						alt="logo"
 						src={LogoSVG}
 						width={176}
 						height={60}
-						className="w-36 md:w-44"
+						className="w-36 md:w-44 h-12"
 					/>
 				</Link>
 				<div className="md:hidden">
@@ -95,38 +103,31 @@ const Navbar = () => {
 				</div>
 				<ul
 					className={cn(
-						"top-[67px] md:top-0 right-0 left-0 absolute md:relative overflow-hidden flex flex-col md:flex-row shadow-lg md:shadow-none gap-x-6 md:bg-transparent h-screen md:h-fit bg-white text-black md:text-white transition-all duration-300 ease-in-out",
+						"top-[67px] md:top-0 right-0 left-0 absolute md:relative md:ml-auto overflow-hidden flex flex-col md:flex-row shadow-lg md:shadow-none gap-x-6 md:bg-transparent h-screen md:h-fit bg-white text-black md:text-white transition-all duration-300 ease-in-out",
 						{ "h-0 ": !isOpen }
 					)}
 				>
 					{[
-						["About Us", "/about"],
-						["Contact Us", "/#contact"],
-						["Book a trip", "/booking"],
-						["Rent a Boat", "/rental"],
+						["Home", "/"],
+						["About", "/about"],
+						["Contact", "/#contact"],
+						["Book Trip", "/booking"],
+						["Rent Boat", "/rental"],
+						["Get Quote", "/get-quote"],
 						["FAQ", "/#faq"],
 					].map(([title, slug]) => {
 						return (
 							<li
 								key={title}
-								data-state={
-									location.pathname == slug || location.hash == slug
-										? "active"
-										: ""
-								}
-								className={cn(
-									"hover:bg-gray-400/20 md:hover:bg-transparent md:hover:text-blue-500 font-normal data-[state=active]:font-bold text-center md:text-left transition-all duration-75 ease-in-out text-lg  md:text-base uppercase h-24 md:h-fit tracking-wide *:inline-flex *:items-center *:w-full *:h-full *:justify-center  ",
-									{
-										"md:hidden": ["Book a trip", "Rent a Boat"].includes(title),
-									}
-								)}
+								data-state={isActive(slug)}
+								className="hover:bg-gray-400/20 md:hover:bg-transparent md:hover:text-blue-500 font-normal data-[state=active]:font-bold text-center md:text-left transition-all duration-75 ease-in-out text-lg  md:text-base h-20 md:h-fit tracking-wide *:inline-flex *:items-center *:w-full *:h-full *:justify-center"
 							>
 								<Link
 									to={slug}
 									onClick={() => {
 										closeNavbar();
 										if (title == "FAQ") handleNavItemClick(faq);
-										if (title == "Contact Us") handleNavItemClick(contact);
+										if (title == "Contact") handleNavItemClick(contact);
 									}}
 								>
 									{title}
@@ -135,13 +136,14 @@ const Navbar = () => {
 						);
 					})}
 				</ul>
-				<Button
-					text="Book a Ticket"
+				{/* <Button
+					text="Get Started"
 					onClick={() => {
-						navigate("/booking");
+						handleNavItemClick(services);
+						navigate("/#services");
 					}}
 					className="hidden md:block px-6"
-				/>
+				/> */}
 			</div>
 		</nav>
 	);
@@ -161,7 +163,7 @@ const Footer = () => {
 							className="w-36 md:w-44"
 						/>
 					</Link>
-					<ul className="hidden md:flex gap-x-10 lg:gap-x-28 [&_a]:block [&_a]:mb-2 [&_a]:text-sm [&_a]:font-normal [&_h3]:font-medium [&_h3]:text-2xl [&_h3]:mb-5">
+					<ul className="hidden md:flex gap-x-10 lg:gap-x-20 [&_a]:block [&_a]:mb-2 [&_a]:text-sm [&_a]:font-normal [&_h3]:font-medium [&_h3]:text-2xl [&_h3]:mb-5">
 						<li>
 							<h3>Company</h3>
 							<Link to="/about">About Us</Link>

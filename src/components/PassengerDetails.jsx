@@ -9,11 +9,11 @@ import { GlobalCTX } from "@/contexts/GlobalContext";
 import Button from "@/components/custom/Button";
 import { useStepper } from "@/hooks/useStepper";
 import InputField from "@/components/custom/InputField";
-import SeatSelection from "@/components/SeatSelection";
+// import SeatSelection from "@/components/SeatSelection";
 import { format } from "date-fns";
 
 const PassengerDetails = () => {
-	const { loading, setLoading, mountPortalModal } = React.useContext(GlobalCTX);
+	const { loading, setLoading } = React.useContext(GlobalCTX);
 	const { setChecked, isChecked, formData, setFormData } =
 		React.useContext(BookingCTX);
 	const { onPrevClick, onNextClick } = useStepper();
@@ -22,7 +22,7 @@ const PassengerDetails = () => {
 	const {
 		register,
 		handleSubmit,
-		setValue,
+		// setValue,
 		formState: { errors },
 	} = useForm({
 		mode: "onChange",
@@ -37,14 +37,14 @@ const PassengerDetails = () => {
 		const formValues = {
 			...(isChecked
 				? {
-						passenger1_first_name: formData_.passenger1_first_name,
-						passenger1_surname: formData_.passenger1_surname,
-						passenger1_phone_number: formData_.passenger1_phone_number,
-						passenger1_email: formData_.passenger1_email,
-				  }
+					passenger1_first_name: formData_.passenger1_first_name,
+					passenger1_surname: formData_.passenger1_surname,
+					passenger1_phone_number: formData_.passenger1_phone_number,
+					passenger1_email: formData_.passenger1_email,
+				}
 				: {
-						...formData_,
-				  }),
+					...formData_,
+				}),
 		};
 
 		setLoading(true);
@@ -58,10 +58,10 @@ const PassengerDetails = () => {
 		}, 650);
 	});
 
-	const handleSeatSelection = (e) => {
-		const tab = e.target.name.split("_")[0];
-		mountPortalModal(<SeatSelection props={{ tab, setValue }} />);
-	};
+	// const handleSeatSelection = (e) => {
+	// 	const tab = e.target.name.split("_")[0];
+	// 	mountPortalModal(<SeatSelection props={{ tab, setValue }} />);
+	// };
 
 	const handleChange = (e) => {
 		const { value, name } = e.target;
@@ -135,7 +135,7 @@ const PassengerDetails = () => {
 					<div className="space-y-8 mt-8">
 						<div className="space-y-5">
 							<h4 className="font-medium text-sm">Passenger 01</h4>
-							<div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+							<div className="grid gap-3 grid-cols-1 sm:grid-cols-2">
 								<InputField
 									{...register("passenger1_first_name")}
 									label="First Name"
@@ -172,7 +172,7 @@ const PassengerDetails = () => {
 									handlechange={handleChange}
 								/>
 
-								<div className="flex gap-5 w-full">
+								{/* <div className="flex gap-5 w-full">
 									<InputField
 										{...register("departure_seats")}
 										label="Departure Seat"
@@ -193,7 +193,7 @@ const PassengerDetails = () => {
 											onClick={handleSeatSelection}
 										/>
 									)}
-								</div>
+								</div> */}
 							</div>
 						</div>
 						{adults_number > 1 && (

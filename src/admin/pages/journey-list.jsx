@@ -66,9 +66,9 @@ const searchSchema = yup
 			.when("arrival", ([arrival], schema) =>
 				arrival
 					? schema.notOneOf(
-							[yup.ref("arrival")],
-							"Departure and arrival cannot be the same."
-					  )
+						[yup.ref("arrival")],
+						"Departure and arrival cannot be the same."
+					)
 					: schema
 			),
 		date: yup.string(),
@@ -255,11 +255,6 @@ const JourneyTable = () => {
 			cell: ({ row }) => row.getValue("departure"),
 		},
 		{
-			accessorKey: "arrival",
-			header: "Arrival",
-			cell: ({ row }) => row.getValue("arrival"),
-		},
-		{
 			accessorKey: "date",
 			header: "Date",
 			cell: ({ row }) => row.getValue("date"),
@@ -268,6 +263,11 @@ const JourneyTable = () => {
 			accessorKey: "time",
 			header: "Time",
 			cell: ({ row }) => row.getValue("time"),
+		},
+		{
+			accessorKey: "trip_capacity",
+			header: "Capacity",
+			cell: ({ row }) => row.getValue("trip_capacity") ?? "N/A",
 		},
 		{
 			accessorKey: "trip_status",
@@ -421,9 +421,9 @@ const JourneyTable = () => {
 											{header.isPlaceholder
 												? null
 												: flexRender(
-														header.column.columnDef.header,
-														header.getContext()
-												  )}
+													header.column.columnDef.header,
+													header.getContext()
+												)}
 										</TableHead>
 									);
 								})}

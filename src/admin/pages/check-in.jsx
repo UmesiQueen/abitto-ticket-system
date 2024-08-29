@@ -173,12 +173,12 @@ const CheckInTable = () => {
 			cell: ({ row }) => row.original.travel_from,
 			enableGlobalFilter: false,
 		},
-		{
-			accessorKey: "type",
-			header: "Trip type",
-			cell: ({ row }) => row.original.trip_type,
-			enableGlobalFilter: false,
-		},
+		// {
+		// 	accessorKey: "type",
+		// 	header: "Trip type",
+		// 	cell: ({ row }) => row.original.trip_type,
+		// 	enableGlobalFilter: false,
+		// },
 		{
 			accessorKey: "medium",
 			header: "Medium",
@@ -270,9 +270,9 @@ const CheckInTable = () => {
 											{header.isPlaceholder
 												? null
 												: flexRender(
-														header.column.columnDef.header,
-														header.getContext()
-												  )}
+													header.column.columnDef.header,
+													header.getContext()
+												)}
 										</TableHead>
 									);
 								})}
@@ -288,7 +288,7 @@ const CheckInTable = () => {
 										onDoubleClick={(event) => {
 											if (event.target.tagName !== "BUTTON")
 												navigate(
-													`/backend/${accountType}/booking-details/${row.original._id}`
+													`/backend/${accountType}/booking-details/${row.original.ticket_id}`
 												);
 										}}
 										data-state={row.getIsSelected() && "selected"}

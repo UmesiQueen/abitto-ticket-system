@@ -1,5 +1,7 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 import { Helmet } from "react-helmet-async";
+import { useLoaderData } from "react-router-dom";
 import PropTypes from "prop-types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BoatURL from "@/assets/images/boat1.jpg";
@@ -24,6 +26,7 @@ import BookingWarningModal from "@/components/modals/book.warning";
 
 const Rental = () => {
 	const { activeStep } = useStepper();
+	const rentalCosts = useLoaderData();
 
 	return (
 		<>
@@ -33,7 +36,7 @@ const Rental = () => {
 			<div className="py-32 px-5 ">
 				<section className="w-full max-w-[1000px] mx-auto ">
 					{activeStep == 0 ? (
-						<RentalSelection />
+						<RentalSelection rentalCosts={rentalCosts} />
 					) : activeStep == 1 ? (
 						<div className="p-5 pb-10 md:p-10 rounded-lg bg-white ">
 							<RentalForm />
@@ -52,7 +55,7 @@ const Rental = () => {
 };
 export default Rental;
 
-export const RentalSelection = () => {
+export const RentalSelection = ({ rentalCosts }) => {
 	const { setRentalData } = React.useContext(BookingCTX);
 	const { onNextClick } = useStepper();
 
@@ -66,6 +69,39 @@ export const RentalSelection = () => {
 		}));
 		onNextClick();
 	};
+
+	const rentalPackages = [
+		{
+			type: "within marina",
+			title: "Rent Within Marina",
+			src: BoatURL,
+			capacity: "10-15",
+			duration: "hour",
+			rental_cost: rentalCosts.within_marina,
+			departure: "Marina, Calabar",
+			arrival: "Marina, Calabar",
+		},
+		{
+			type: "uyo to calabar",
+			title: "Uyo to Calabar",
+			src: BoatURL,
+			capacity: "10-15",
+			duration: "trip",
+			rental_cost: rentalCosts.uyo_to_calabar,
+			departure: "Nwaniba Timber Beach, Uyo",
+			arrival: "Marina, Calabar",
+		},
+		{
+			type: "calabar to uyo",
+			title: "Calabar to Uyo",
+			src: BoatURL,
+			capacity: "10-15",
+			duration: "trip",
+			rental_cost: rentalCosts.calabar_to_uyo,
+			departure: "Marina, Calabar",
+			arrival: "Nwaniba Timber Beach, Uyo",
+		},
+	];
 
 	return (
 		<>
@@ -140,44 +176,11 @@ export const RentalSelection = () => {
 	);
 };
 
-const rentalPackages = [
-	{
-		type: "within marina",
-		title: "Rent Within Marina",
-		src: BoatURL,
-		capacity: "10-15",
-		duration: "hour",
-		rental_cost: 200000,
-		departure: "Marina, Calabar",
-		arrival: "Marina, Calabar",
-	},
-	{
-		type: "uyo to calabar",
-		title: "Uyo to Calabar",
-		src: BoatURL,
-		capacity: "10-15",
-		duration: "trip",
-		rental_cost: 400000,
-		departure: "Nwaniba Timber Beach, Uyo",
-		arrival: "Marina, Calabar",
-	},
-	{
-		type: "calabar to uyo",
-		title: "Calabar to Uyo",
-		src: BoatURL,
-		capacity: "10-15",
-		duration: "trip",
-		rental_cost: 400000,
-		departure: "Marina, Calabar",
-		arrival: "Nwaniba Timber Beach, Uyo",
-	},
-];
-
 const StyledTabsTrigger = ({ value, title }) => {
 	return (
 		<TabsTrigger
 			value={value}
-			className="text-xs md:text-base px-1 data-[state=active]:px-2 data-[state=active]:bg-blue-500 data-[state=active]:text-white py-3 hover:bg-blue-50 rounded-3xl transition-all !duration-150 !ease-in-out"
+			className="text-xs md:text-base px-1 md:px-2 data-[state=active]:bg-blue-500 data-[state=active]:text-white py-3 hover:bg-blue-50 rounded-3xl transition-all !duration-150 !ease-in-out"
 		>
 			{title}
 		</TabsTrigger>
@@ -217,7 +220,7 @@ export const RentalForm = () => {
 	const onSubmit = handleSubmit((formData) => {
 		const total_cost = formData?.rental_duration
 			? Number(rentalData.rental_cost) *
-			  Number(formData.rental_duration.split(" ")[0])
+			Number(formData.rental_duration.split(" ")[0])
 			: Number(rentalData.rental_cost);
 
 		const rental_time = format(
@@ -599,8 +602,8 @@ const RentalSummary = () => {
 							text == "Back"
 								? onPrevClick()
 								: text == "Clear"
-								? handleReset()
-								: "";
+									? handleReset()
+									: "";
 						}}
 					/>
 					<Button

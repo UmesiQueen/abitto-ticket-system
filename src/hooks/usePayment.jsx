@@ -4,7 +4,7 @@ import baseurl from "@/api";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { toast } from "sonner";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import BookingSuccessModal from "@/components/modals/book.success";
+import BookingSuccessModal, { LogisticsSuccessModal } from "@/components/modals/book.success";
 import { v4 as uuid } from "uuid";
 import { sampleSize } from "lodash";
 import { RentalSuccessModal } from "@/components/modals/book.success";
@@ -253,10 +253,39 @@ export const usePayment = () => {
 			.finally(() => setLoading(false));
 	};
 
+	const handleLogisticsPayment = (data, handleReset) => {
+		setLoading(true);
+		const requestData = {
+			...data,
+			shipment_status: "Origin",
+			payment_status: "Success",
+			created_by: `${adminProfile.first_name}(${adminProfile.account_type})`,
+		};
+
+		baseurl
+			.post("/logistics/new", requestData)
+			.then((res) => {
+				if (res.status == 200) {
+					const id = res.data.logistics.shipment_id;
+					mountPortalModal(<LogisticsSuccessModal props={{ id, handleReset }} />);
+				}
+			})
+			.catch((error) => {
+				if (
+					!error.code === "ERR_NETWORK" ||
+					!error.code === "ERR_INTERNET_DISCONNECTED" ||
+					!error.code === "ECONNABORTED"
+				)
+					toast.error("Error occurred while creating new shipment.");
+			})
+			.finally(() => setLoading(false));
+	}
+
 	return {
 		onlinePayment,
 		offlinePayment,
 		onlineRentalPayment,
 		offlineRentalPayment,
+		handleLogisticsPayment
 	};
 };

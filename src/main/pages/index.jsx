@@ -21,7 +21,7 @@ import SuccessModal from "@/components/modals/success";
 import EmblaCarousel from "@/components/embla-carousel/EmblaCarousel";
 
 const Home = () => {
-	const { contact, faq } = React.useContext(GlobalCTX);
+	const { contact, faq, services, scrollToSection, } = React.useContext(GlobalCTX);
 	const navigate = useNavigate();
 
 	return (
@@ -54,22 +54,150 @@ const Home = () => {
 								Experience the Easiest & Safest Water Travel Across Nigeria &
 								Africa with Abitto
 							</p>
-							<div className="flex flex-col md:flex-row items-center gap-5">
-								<Button
-									text="Book a Ticket"
-									onClick={() => {
-										navigate("/booking");
-									}}
-									className="w-40"
-								/>
-								<Button
-									text="Rent a Boat"
-									onClick={() => {
-										navigate("/rental");
-									}}
-									variant="outline"
-									className="w-40 border-white !text-white hover:!text-blue-700 hover:!bg-blue-100"
-								/>
+
+							<Button
+								text="Get Started"
+								onClick={() => {
+									setTimeout(() => scrollToSection(services));
+									navigate("/");
+								}}
+								className="w-40 mx-auto md:mx-0"
+							/>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section
+				id="services"
+				ref={services}
+				className="py-20 px-5 md:px-20 bg-blue-50"
+			>
+				<div className="max-w-[1440px] mx-auto">
+					<h2 className="font-semibold text-lg md:text-xl lg:text-2xl mb-10 inline-flex items-center justify-center w-full ">
+						<span className="h-3 w-3 mr-3 rounded-full bg-blue-500" />
+						Our Services
+					</h2>
+					<div className="flex flex-wrap *:basis-72 *:grow gap-5">
+						<div className="bg-white rounded-[1.8rem] p-6 md:p-8 h-[15rem] md:h-[20rem]  hover:scale-[1.02] hover:shadow-md transition-all relative overflow-hidden ">
+							{/* <img src={WaveSVG} alt="svg" className="absolute top-0 left-0 " /> */}
+							<div className="flex flex-col gap-2 h-full relative z-1">
+								<h3 className="text-lg md:text-xl lg:text-2xl font-semibold text-blue-500">
+									Book a trip
+								</h3>
+								<p className="md:text-lg">
+									Easily plan your journey and book a seat on our ferry. Get started in seconds.
+								</p>
+								<div className="ml-auto mt-auto">
+									<Button
+										text={
+											<p className="inline-flex items-center gap-2">
+												Book a trip
+												<span>
+													<CaretIcon />
+												</span>
+											</p>
+										}
+										className="rounded-full w-40 md:w-44 h-10 md:h-12"
+										onClick={() => navigate("/booking")}
+									/>
+								</div>
+							</div>
+						</div>
+						<div className="bg-white rounded-[1.8rem] p-6 md:p-8 h-[15rem] md:h-[20rem]  hover:scale-[1.02] hover:shadow-md transition-all relative overflow-hidden ">
+							{/* <img src={WaveSVG} alt="svg" className="absolute top-0 left-0 " /> */}
+							<div className=" flex flex-col gap-2 h-full relative z-1">
+								<h3 className="text-lg md:text-xl lg:text-2xl font-semibold text-blue-500">
+									Boat Rentals
+								</h3>
+								<p className="md:text-lg">
+									Rent a boat for your next adventure or event. Secure your reservation today.
+								</p>
+								<div className="ml-auto mt-auto">
+									<Button
+										text={
+											<p className="inline-flex items-center gap-2 ">
+												Rent a boat
+												<span>
+													<CaretIcon />
+												</span>
+											</p>
+										}
+										className="rounded-full w-40 md:w-44 h-10 md:h-12"
+										onClick={() => navigate("/rental")}
+									/>
+								</div>
+							</div>
+						</div>
+						<div className="bg-white rounded-[1.8rem] p-6 md:p-8 h-[15rem] md:h-[20rem]  hover:scale-[1.02] hover:shadow-md transition-all relative overflow-hidden ">
+							{/* <img src={WaveSVG} alt="svg" className="absolute top-0 left-0 " /> */}
+							<div className=" flex flex-col gap-2 h-full relative z-1">
+								<h3 className="text-lg md:text-xl lg:text-2xl font-semibold text-blue-500">
+									Logistics
+								</h3>
+								<p className="md:text-lg">
+									Transport your goods smoothly with our reliable logistics service. Start your request here.
+								</p>
+								<div className="ml-auto mt-auto">
+									<Button
+										text={
+											<p className="inline-flex items-center gap-2 ">
+												Get a Quote
+												<span>
+													<CaretIcon />
+												</span>
+											</p>
+										}
+										className="rounded-full w-40 md:w-44 h-10 md:h-12"
+										onClick={() => navigate("/get-quote")}
+									/>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			{/* About us  */}
+			<section className="px-5 py-20 md:px-20 bg-white" id="about-us">
+				<div className="max-w-[1440px] mx-auto">
+					<div className=" text-center md:text-left flex flex-col md:flex-row *:w-full *:grow justify-between md:gap-10">
+						<div className="mb-10 md:mb-0 md:self-center">
+							<img
+								src="https://i.ibb.co/8BLhcJw/about.jpg"
+								alt="about-us"
+								width={100}
+								height={100}
+								className="rounded-lg shadow-2xl w-full md:w-[450px] h-[300px] md:h-[400px] mx-auto object-cover border "
+							/>
+						</div>
+						<div>
+							<div className="space-y-5 lg:w-10/12">
+								<h2 className="font-semibold text-lg md:text-xl lg:text-2xl inline-flex items-center justify-center md:justify-start w-full ">
+									<span className="h-3 w-3 mr-3 rounded-full bg-blue-500" />
+									About Us
+								</h2>
+								<p className="font-medium text-lg md:text-xl lg:text-2xl">
+									Welcome to Abitto, where innovation meets reliability in
+									public water travel.
+								</p>
+								<p className="text-black/80  ">
+									{/* eslint-disable-next-line react/no-unescaped-entities */}
+									We don't just ferry passengers; we revolutionize your water
+									transportation experience. With cutting-edge technology and
+									unwavering safety protocols, we ensure every journey is
+									convenient and intelligent. Join Abitto, where every trip
+									showcases our dedication to excellence and your peace of mind.
+								</p>
+								<Link
+									target="_blank"
+									to="https://abittoglobal.com/?fbclid=PAZXh0bgNhZW0CMTEAAaaf2uWLgUdLwd18fE__CVzgHmX_XRFos7kxw4Ffa5sWyB58fZLwenzHvl8_aem_Af6umzSDXJvWgv1zoBRtzSSytwgTKLgfroif0Z8SpzdPUu-G5NWP8AMOlqscYrrjWJHGjX5_iSPUUMd4IcFzKNIs"
+									className="text-blue-500 hover:text-blue-700 transition duration-150 ease-in-out flex items-center justify-center md:justify-start gap-3 cursor-pointer"
+								>
+									<span className="underline font-medium">
+										Discover More About Us
+									</span>
+									<CaretIcon />
+								</Link>
 							</div>
 						</div>
 					</div>
@@ -102,57 +230,8 @@ const Home = () => {
 				</div>
 			</section>
 
-			{/* About us  */}
-			<section className="px-5 py-20 md:px-20 bg-white" id="about-us">
-				<div className="max-w-[1440px] mx-auto">
-					<div className=" text-center md:text-left flex flex-col md:flex-row justify-between md:gap-20 lg:gap-28">
-						<div className="basis-2/6 mb-10 md:mb-0 md:self-center">
-							<img
-								src="https://i.ibb.co/8BLhcJw/about.jpg"
-								alt="about-us"
-								width={100}
-								height={100}
-								className="rounded-lg shadow-2xl w-full md:w-[500px] h-[300px] md:h-[400px] object-cover "
-							/>
-						</div>
-						<div className="flex-1">
-							<div className="space-y-5 lg:w-9/12">
-								<div className="flex items-center justify-center md:justify-start">
-									<span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 " />
-									<h3 className="uppercase font-medium">About us</h3>
-								</div>
-								<p className="font-medium text-2xl ">
-									Welcome to Abitto, where innovation meets reliability in
-									public water travel.
-								</p>
-								<p className="text-black/80  ">
-									Welcome to Abitto, where innovation and reliability redefine{" "}
-									{/* eslint-disable-next-line react/no-unescaped-entities */}
-									public water travel. We don't just ferry passengers; we
-									revolutionize your water transportation experience. With
-									cutting-edge technology and unwavering safety protocols, we
-									ensure every journey is convenient and intelligent. Join
-									Abitto, where every trip showcases our dedication to
-									excellence and your peace of mind.
-								</p>
-								<Link
-									target="_blank"
-									to="https://abittoglobal.com/?fbclid=PAZXh0bgNhZW0CMTEAAaaf2uWLgUdLwd18fE__CVzgHmX_XRFos7kxw4Ffa5sWyB58fZLwenzHvl8_aem_Af6umzSDXJvWgv1zoBRtzSSytwgTKLgfroif0Z8SpzdPUu-G5NWP8AMOlqscYrrjWJHGjX5_iSPUUMd4IcFzKNIs"
-									className="text-blue-500 hover:text-blue-700 transition duration-150 ease-in-out flex items-center justify-center md:justify-start gap-3 cursor-pointer"
-								>
-									<span className="underline font-medium">
-										Discover More About Us
-									</span>
-									<CaretIcon />
-								</Link>
-							</div>
-						</div>
-					</div>
-				</div>
-			</section>
-
 			{/* Youtube video */}
-			<section className="bg-white  px-5 py-20 md:p-20 ">
+			<section className="bg-white  px-5 pt-10 pb-20 md:p-20 ">
 				<div className="max-w-[1440px] mx-auto flex flex-col">
 					<h3 className=" self-center md:w-[500px] text-center font-semibold mb-6 text-lg md:text-xl ">
 						Watch our instructional video to learn more about Abitto Ferry
@@ -179,7 +258,7 @@ const Home = () => {
 
 			<section className="py-20 px-5 md:px-20 bg-white">
 				<div className="max-w-[1440px] mx-auto">
-					<h2 className="font-semibold text-xl md:text-2xl  mb-7 inline-flex items-center justify-center w-full ">
+					<h2 className="font-semibold text-lg md:text-xl lg:text-2xl mb-7 inline-flex items-center justify-center w-full ">
 						<span className="h-3 w-3 mr-3 rounded-full bg-blue-500" />
 						Our Locations
 					</h2>
@@ -206,12 +285,12 @@ const Home = () => {
 								<li>
 									<Link
 										className="hover:text-blue-500 duration-150 ease-in-out transition"
-										to="tel:+234 813 047 8003"
+										to="tel:+2347070600307"
 									>
 										<span>
 											<PhoneIcon />
 										</span>
-										<p>+234 813 047 8003</p>
+										<p>+234 707 060 0307</p>
 									</Link>
 								</li>
 								<li>
@@ -250,12 +329,12 @@ const Home = () => {
 								<li>
 									<Link
 										className="hover:text-blue-500 duration-150 ease-in-out transition"
-										to="tel:+234 813 047 8003"
+										to="tel:+2347077404553"
 									>
 										<span>
 											<PhoneIcon />
 										</span>
-										<p>+234 813 047 8003</p>
+										<p>+234 707 740 4553</p>
 									</Link>
 								</li>
 								<li>
@@ -281,7 +360,7 @@ const Home = () => {
 			{/* faq */}
 			<section id="faq" ref={faq} className="py-20 px-5 md:px-20 bg-white">
 				<div className="max-w-[1440px] mx-auto">
-					<h2 className="font-semibold text-xl md:text-2xl mb-7 inline-flex items-center justify-center w-full ">
+					<h2 className="font-semibold text-lg md:text-xl lg:text-2xl mb-7 inline-flex items-center justify-center w-full ">
 						<span className=" h-3 w-3 mr-3 rounded-full bg-blue-500" />
 						Frequently Asked Questions (FAQs)
 					</h2>
@@ -511,6 +590,7 @@ const testimonials = [
 ];
 
 const TestimonialsCarousel = () => {
+	const navigate = useNavigate();
 	return (
 		<section className="py-20 px-5 md:px-20 bg-blue-50 ">
 			<div className="max-w-[1440px] mx-auto">
@@ -525,6 +605,11 @@ const TestimonialsCarousel = () => {
 				<div className="mt-5">
 					<EmblaCarousel slides={testimonials} />
 				</div>
+				<Button
+					text="Send your Feedback"
+					className="mx-auto px-5 mt-10 md:mt-5"
+					onClick={() => navigate("feedback")}
+				/>
 			</div>
 		</section>
 	);

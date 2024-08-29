@@ -1,6 +1,6 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLoaderData } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -26,6 +26,8 @@ import { Button as ButtonIcon } from "@/components/ui/button";
 const RentalAdmin = () => {
 	const { activeStep } = useStepper();
 	const navigate = useNavigate();
+	const rentalCosts = useLoaderData();
+
 	return (
 		<>
 			<Helmet>
@@ -42,7 +44,7 @@ const RentalAdmin = () => {
 							<CircleArrowLeftIcon />
 						</ButtonIcon>
 						<div className="w-full">
-							<RentalSelection />
+							<RentalSelection rentalCosts={rentalCosts} />
 						</div>
 					</div>
 				) : activeStep == 1 ? (

@@ -21,7 +21,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLoaderData, useNavigate, } from "react-router-dom";
 import React from "react";
 import { format } from "date-fns";
 import {
@@ -50,6 +50,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Refresh } from "iconsax-react";
+import Button from "@/components/custom/Button";
 
 const BookingDetails = () => {
 	const navigate = useNavigate();
@@ -113,18 +114,18 @@ const BookingDetails = () => {
 			),
 			enableGlobalFilter: false,
 		},
-		{
-			accessorKey: "trip_type",
-			id: "trip_type",
-			header: "Type",
-			cell: ({ row }) => <div>{row.original.trip_type}</div>,
-			enableGlobalFilter: false,
-		},
+		// {
+		// 	accessorKey: "trip_type",
+		// 	id: "trip_type",
+		// 	header: "Type",
+		// 	cell: ({ row }) => <div>{row.original.trip_type}</div>,
+		// 	enableGlobalFilter: false,
+		// },
 		{
 			accessorKey: "travel_from",
 			header: "Departure",
 			id: "departure",
-			cell: ({ row }) => truncate(row.original.travel_from, { length: 20 }),
+			cell: ({ row }) => row.original.travel_from,
 		},
 		{
 			accessorKey: "date_time",
@@ -168,16 +169,9 @@ const BookingDetails = () => {
 			enableGlobalFilter: false,
 		},
 		{
-			accessorKey: "amount",
-			header: "Amount",
-			cell: ({ row }) => (
-				<div>
-					₦
-					{formatValue({
-						value: String(row.original.total_ticket_cost ?? 0),
-					})}
-				</div>
-			),
+			accessorKey: "total_passengers",
+			header: "Passengers",
+			cell: ({ row }) => <p className="text-center">{row.getValue("total_passengers")}</p>,
 			enableGlobalFilter: false,
 		},
 		{
@@ -273,7 +267,7 @@ const BookingDetails = () => {
 			<h1 className="text-lg font-semibold mb-10">Booking Details</h1>
 			<SearchForm />
 			<div className="my-10 flex gap-5 justify-end">
-				<div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg">
+				{/* <div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg">
 					<span className="px-4 text-nowrap text-sm font-semibold bg-white h-full inline-flex items-center rounded-l-lg">
 						Trip type
 					</span>
@@ -298,7 +292,7 @@ const BookingDetails = () => {
 							</SelectGroup>
 						</SelectContent>
 					</Select>
-				</div>
+				</div> */}
 				<div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg">
 					<span className="px-4 text-nowrap text-sm font-semibold bg-white h-full inline-flex items-center rounded-l-lg">
 						Medium
@@ -422,9 +416,9 @@ const BookingDetails = () => {
 											{header.isPlaceholder
 												? null
 												: flexRender(
-														header.column.columnDef.header,
-														header.getContext()
-												  )}
+													header.column.columnDef.header,
+													header.getContext()
+												)}
 										</TableHead>
 									);
 								})}
@@ -437,7 +431,9 @@ const BookingDetails = () => {
 								{table.getRowModel().rows.map((row) => (
 									<TableRow
 										key={row.id}
-										onDoubleClick={() => navigate(`${row.original._id}`)}
+										onDoubleClick={() =>
+											navigate(`/backend/${adminProfile.account_type}/booking-details/${row.original.ticket_id}`)
+										}
 									>
 										{row.getVisibleCells().map((cell) => (
 											<TableCell key={cell.id} className="h-[77px]">
@@ -525,11 +521,10 @@ const Pagination = ({ props: { table } }) => {
 
 export const CustomerDetails = () => {
 	const navigate = useNavigate();
-	const { bookingID } = useParams();
-	const { bookingQuery } = React.useContext(BookingCTX);
+	const currentUser = useLoaderData();
 	const { mountPortalModal } = React.useContext(GlobalCTX);
 
-	const currentUser = bookingQuery.find((data) => data._id === bookingID);
+	// const canReschedule = currentUser?.trip_status == "Upcoming" && ["dev", "salesperson"].includes(adminProfile.account_type)
 
 	return (
 		<div>
@@ -555,25 +550,16 @@ export const CustomerDetails = () => {
 									from our sales point.
 								</p>
 							</div>
-							{/* FIXME: ADMIN SHOULDN'T BE ABLE TO SEE THIS BUTTONS */}
-							{/* <div className="ml-auto flex gap-2">
-								<Button
-									text="Re-schedule Trip"
-									variant="outline"
-									className="text-nowrap h-10 ml-auto"
-									onClick={() => {
-										navigate(
-											`/salesperson/booking-details/reschedule/${bookingID}`
-										);
-									}}
-								/>
-								<ButtonUI
-									variant="destructive"
-									// onClick={handleCancel}
-								>
-									Cancel
-								</ButtonUI>
-							</div> */}
+							{/* {canReschedule && <Button
+								text="Re-schedule"
+								variant="outline"
+								className="text-nowrap h-10 ml-auto"
+								onClick={() => {
+									navigate(
+										`reschedule`
+									);
+								}}
+							/>} */}
 						</div>
 
 						<div className="p-5 pb-20 space-y-6">
@@ -650,14 +636,14 @@ export const CustomerDetails = () => {
 											{currentUser?.travel_to}
 										</p>
 									</li>
-									<li>
+									{/* <li>
 										<p className="text-xs text-[#7F7F7F]">Seat No.</p>
 										<p className="text-base font-semibold">
 											{currentUser?.departure_seats.length
 												? humanize(currentUser?.departure_seats)
 												: "N/A"}
 										</p>
-									</li>
+									</li> */}
 								</ul>
 								<ul className="*:flex *:flex-col *:gap-1 flex gap-10 ">
 									<li>
@@ -689,14 +675,14 @@ export const CustomerDetails = () => {
 												{currentUser?.travel_from}
 											</p>
 										</li>
-										<li>
+										{/* <li>
 											<p className="text-xs text-[#7F7F7F]">Seat No.</p>
 											<p className="text-base font-semibold">
 												{currentUser?.return_seats.length
 													? humanize(currentUser?.return_seats)
 													: "N/A"}
 											</p>
-										</li>
+										</li> */}
 									</ul>
 									<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
 										<li>
@@ -771,7 +757,7 @@ export const CustomerDetails = () => {
 									<p className="text-xs text-[#7F7F7F]">Trip Status</p>
 									<p
 										className={cn(
-											"rounded-lg w-20 mx-auto py-1 text-xs px-2 text-center font-semibold",
+											"rounded-lg min-w-20 mx-auto py-1 text-xs px-2 text-center font-semibold",
 											{
 												"text-green-500 bg-green-100":
 													currentUser?.trip_status === "Completed",
@@ -846,12 +832,12 @@ export const CustomerDetails = () => {
 										<ClockIcon />
 										{currentUser?.departure_time}
 									</p>
-									<p>
+									{/* <p>
 										<ChairIcon />
 										{currentUser?.departure_seats.length
 											? humanize(currentUser?.departure_seats)
 											: "N/A"}
-									</p>
+									</p> */}
 								</div>
 							</div>
 							{currentUser?.trip_type === "Round Trip" && (
@@ -919,7 +905,7 @@ export const CustomerDetails = () => {
 							</table>
 						</div>
 						<button
-							className=" bg-blue-500 w-56 py-3 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white flex justify-center gap-2 mx-auto rounded-lg "
+							className=" bg-blue-500 w-full py-3 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white flex justify-center gap-2 mx-auto rounded-lg "
 							onClick={() => {
 								navigate(`/ticket-invoice/${currentUser.ticket_id}`);
 							}}

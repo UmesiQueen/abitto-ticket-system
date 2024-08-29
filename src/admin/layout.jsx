@@ -9,6 +9,7 @@ import {
 	BookIcon,
 	ShipIcon,
 	MenuBoardIcon,
+	PackageIcon,
 } from "@/assets/icons";
 import {
 	Outlet,
@@ -29,6 +30,9 @@ import { toast } from "sonner";
 import Loader from "@/components/animation/Loader";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import baseurl from "@/api";
+import { Feedback, PriceChange } from "@mui/icons-material";
+import Logo from "@/assets/logo2.svg";
+import { Mailbox } from "lucide-react";
 
 const ProtectedRoute = () => {
 	const navigate = useNavigate();
@@ -44,6 +48,7 @@ const ProtectedRoute = () => {
 		`/backend/${accountType}/rental-details`,
 		`/backend/${accountType}/create/check-in`,
 		`/backend/${accountType}/customers`,
+		// `/backend/${accountType}/logistics`,
 	].includes(pathname);
 
 	React.useEffect(() => {
@@ -85,6 +90,14 @@ const ProtectedRoute = () => {
 			</div>,
 			["super-admin", "dev"],
 		],
+		// [
+		// 	"Manage Prices",
+		// 	`/backend/${accountType}/pricing`,
+		// 	<div key="1" className="scale-[.85] -ml-1">
+		// 		<PriceChange />
+		// 	</div>,
+		// 	["super-admin", "dev"],
+		// ],
 		[
 			"Journey List",
 			`/backend/${accountType}/journey-list`,
@@ -104,11 +117,35 @@ const ProtectedRoute = () => {
 			["admin", "super-admin", "salesperson", "dev"],
 		],
 		[
+			"Logistics",
+			`/backend/${accountType}/logistics`,
+			<div className="scale-[1.2]" key="1">
+				<PackageIcon />
+			</div>,
+			["admin", "super-admin", "salesperson", "dev"],
+		],
+		[
 			"Customers",
 			`/backend/${accountType}/customers`,
 			<UserIcon key="1" />,
 			["admin", "super-admin", "dev"],
 		],
+		[
+			"User Feedback",
+			`/backend/${accountType}/feedback`,
+			<div key="1" className="scale-[.85] -ml-1">
+				<Feedback />
+			</div>,
+			["super-admin", "dev"],
+		],
+		// [
+		// 	"Information Box",
+		// 	`/backend/${accountType}/information`,
+		// 	<div key="1" className="scale-[.85] -ml-1">
+		// 		<Mailbox />
+		// 	</div>,
+		// 	["super-admin", "dev"],
+		// ],
 		[
 			"Settings",
 			`/backend/${accountType}/settings`,
@@ -134,15 +171,17 @@ const ProtectedRoute = () => {
 			</Helmet>
 			<div className="relative">
 				{/* sidebar */}
-				<aside className=" h-screen w-40 md:w-60 bg-black text-white flex flex-col gap-10 fixed">
-					<img
-						alt="logo"
-						src="https://i.ibb.co/17zsqj1/logo2.png"
-						width={176}
-						height={60}
-						className="px-5"
-					/>
-					<nav className="px-5 mx-auto">
+				<aside className="h-screen w-40 md:w-60 bg-black text-white flex flex-col fixed">
+					<div>
+						<img
+							alt="logo"
+							src={Logo}
+							width={150}
+							height={50}
+							className="pl-5 pt-3"
+						/>
+					</div>
+					<nav className="pt-6 pb-2 px-5 mx-auto overflow-scroll no-scrollbar">
 						<ul>
 							{menuItems.map(([title, url, icon, auth]) => {
 								const isAuth = auth.includes(accountType);
@@ -152,10 +191,10 @@ const ProtectedRoute = () => {
 											<li key={title}>
 												<NavLink
 													to={url}
-													className="[&.active]:bg-blue-500 px-5 py-3 rounded-xl hover:bg-gray-700/90 mb-2 transition-all  ease-in-out cursor-pointer flex items-center gap-2 [&>.title]:hidden  w-fit md:w-full md:[&>.title]:block"
+													className="[&.active]:bg-blue-500 px-5 md:min-w-44 py-3 rounded-xl hover:bg-gray-700/90 mb-2 transition-all ease-in-out cursor-pointer flex items-center gap-2 [&>.title]:hidden  w-fit md:w-full md:[&>.title]:block"
 												>
 													<span className="text-[#f1f1f1]">{icon}</span>
-													<span className="title font-medium text-sm ">
+													<span className="font-medium text-sm hidden md:block">
 														{title}
 													</span>
 												</NavLink>
@@ -166,15 +205,17 @@ const ProtectedRoute = () => {
 							})}
 						</ul>
 					</nav>
-					<button
-						className=" px-10 py-5 mt-auto flex items-center gap-2 hover:bg-gray-900/80 "
-						onClick={handleLogout}
-					>
-						<LogoutIcon />
-						<span>Logout</span>
-					</button>
+					<div className="pt-2 mt-auto">
+						<button
+							className="px-10 w-full text-sm py-3 border-t mt-auto flex items-center gap-2 hover:bg-gray-900/80 "
+							onClick={handleLogout}
+						>
+							<LogoutIcon />
+							<span>Logout</span>
+						</button>
+					</div>
 				</aside>
-				<main className="ml-40 md:ml-60  bg-[#F7F7F7] ">
+				<main className="ml-40 md:ml-60 bg-[#F7F7F7] ">
 					<header className="h-16 w-full bg-white px-8 flex items-center gap-5">
 						{searchBarVisibility && (
 							<div className="h-10 w-80 bg-blue-50 p-3 border border-blue-500 rounded-lg font-normal text-xs font-poppins flex items-center gap-2">

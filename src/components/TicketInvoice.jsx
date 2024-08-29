@@ -131,10 +131,10 @@ const TicketInvoice = () => {
 											<ClockIcon />
 											<p>{currentUser.departure_time}</p>
 										</li>
-										<li>
+										{/* <li>
 											<ChairIcon />
 											<p>Seats: {`${currentUser.departure_seats}`}</p>
-										</li>
+										</li> */}
 									</ul>
 								</div>
 								{currentUser.trip_type === "Round Trip" && (
@@ -184,7 +184,7 @@ const TicketInvoice = () => {
 									</li>
 								</ul>
 								{currentUser?.adults_number > 1 &&
-								currentUser?.passenger2_first_name ? (
+									currentUser?.passenger2_first_name ? (
 									<>
 										{Array.from({
 											length: currentUser.adults_number - 1,
@@ -200,9 +200,8 @@ const TicketInvoice = () => {
 															Full name:
 														</span>{" "}
 														<span className="capitalize">
-															{`${currentUser[`passenger${num}_first_name`]} ${
-																currentUser[`passenger${num}_last_name`]
-															}`}
+															{`${currentUser[`passenger${num}_first_name`]} ${currentUser[`passenger${num}_last_name`]
+																}`}
 														</span>
 													</li>
 													<li>
@@ -335,7 +334,7 @@ const TicketInvoice = () => {
 export default TicketInvoice;
 
 // Post: query booking detail by bookingId
-export const TicketLoader = async ({ params }) => {
+export const CustomerDetailsLoader = async ({ params }) => {
 	try {
 		const response = await baseurl.post("/booking/querynew", {
 			ticket_id: params.bookingID,

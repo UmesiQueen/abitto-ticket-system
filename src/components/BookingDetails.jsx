@@ -1,12 +1,12 @@
 /* eslint-disable react/prop-types */
 import React from "react";
 import { useLocation } from "react-router-dom";
-import Box from "@mui/material/Box";
-import Tab from "@mui/material/Tab";
+// import Box from "@mui/material/Box";
+// import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
-import TabList from "@mui/lab/TabList";
+// import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-import { styled } from "@mui/material/styles";
+// import { styled } from "@mui/material/styles";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import DatePicker from "react-datepicker";
@@ -22,22 +22,22 @@ import { useSearchTrip } from "@/hooks/useSearchTrip";
 import { v4 as uuid } from "uuid";
 
 const BookingDetails = () => {
-	const { formData } = React.useContext(BookingCTX);
-	const defaultTabValue = Object.keys(formData.bookingDetails).length
-		? formData.bookingDetails?.trip_type == "One-Way Trip"
-			? "1"
-			: "2"
-		: "1";
+	// const { formData } = React.useContext(BookingCTX);
+	// const defaultTabValue = Object.keys(formData.bookingDetails).length
+	// 	/? formData.bookingDetails?.trip_type == "One-Way Trip"
+	// 		/? "1"
+	// 		: "2"
+	// 	: "1";
 
-	const [value, setValue] = React.useState(defaultTabValue);
+	// const [value, setValue] = React.useState(defaultTabValue);
 
-	const handleChange = (_, newValue) => {
-		setValue(newValue);
-	};
+	// const handleChange = (_, newValue) => {
+	// 	setValue(newValue);
+	// };
 
 	return (
-		<TabContext value={value}>
-			<Box>
+		<TabContext value="1">
+			{/* <Box>
 				<StyledTabList
 					onChange={handleChange}
 					aria-label="booking ticket forms"
@@ -61,11 +61,14 @@ const BookingDetails = () => {
 						}}
 					/>
 				</StyledTabList>
-			</Box>
+			</Box> */}
 			<div className="bg-white p-5 pb-10 md:p-10 ">
-				<h3 className="text-blue-500 font-semibold text-base md:text-xl font-poppins ">
-					Trip Details
-				</h3>
+				<hgroup>
+					<h3 className="text-blue-500 font-semibold text-base md:text-xl font-poppins ">
+						Trip Details
+					</h3>
+					<p className="text-sm">Please fill in trip details</p>
+				</hgroup>
 				<TabPanel value="1" sx={{ padding: "0" }}>
 					<BookingForm tab="One-Way Trip" />
 				</TabPanel>
@@ -83,7 +86,7 @@ export const BookingForm = ({ tab }) => {
 	const { pathname } = useLocation();
 	const isSalesperson =
 		["salesperson"].includes(adminProfile.account_type) &&
-		pathname.includes("/backend")
+			pathname.includes("/backend")
 			? true
 			: false;
 	const [availableDate, setAvailableDate] = React.useState(
@@ -321,35 +324,35 @@ export const BookingForm = ({ tab }) => {
 	);
 };
 
-const StyledTabList = styled((props) => (
-	<TabList
-		{...props}
-		TabIndicatorProps={{
-			children: <span className="MuiTabs-indicatorSpan" />,
-		}}
-	/>
-))({
-	"& .MuiTabs-indicator": {
-		display: "flex",
-		justifyContent: "center",
-		height: "100%",
-		backgroundColor: "3366cc",
-	},
-	"& .MuiTabs-indicatorSpan": {
-		width: "100%",
-		height: "15px",
-		borderRadius: "49% 49% 0% 0% / 88% 89% 11% 12%;",
-		marginTop: "auto",
-		backgroundColor: "#D9D9D91F",
-	},
-	"& .Mui-selected": {
-		color: "white !important",
-		background: "transparent",
-		zIndex: 1,
-	},
-	"& .MuiTab-root": {
-		width: "140px",
-	},
-});
+// const StyledTabList = styled((props) => (
+// 	<TabList
+// 		{...props}
+// 		TabIndicatorProps={{
+// 			children: <span className="MuiTabs-indicatorSpan" />,
+// 		}}
+// 	/>
+// ))({
+// 	"& .MuiTabs-indicator": {
+// 		display: "flex",
+// 		justifyContent: "center",
+// 		height: "100%",
+// 		backgroundColor: "3366cc",
+// 	},
+// 	"& .MuiTabs-indicatorSpan": {
+// 		width: "100%",
+// 		height: "15px",
+// 		borderRadius: "49% 49% 0% 0% / 88% 89% 11% 12%;",
+// 		marginTop: "auto",
+// 		backgroundColor: "#D9D9D91F",
+// 	},
+// 	"& .Mui-selected": {
+// 		color: "white !important",
+// 		background: "transparent",
+// 		zIndex: 1,
+// 	},
+// 	"& .MuiTab-root": {
+// 		width: "140px",
+// 	},
+// });
 
 export default BookingDetails;
