@@ -232,8 +232,9 @@ const RescheduleSelection = () => {
 			<div className="space-y-3">
 				{availableTrips?.departure_trip.length ? (
 					availableTrips.departure_trip.map((item) => {
+						const available_seats = Number(item.trip_capacity) - Number(item.current_booked_seats);
 						const isAvailableSeatsExceeded =
-							currentUser.total_passengers > item.available_seats.length;
+							currentUser.total_passengers > available_seats
 						const isActive =
 							selectedTrip?.departure?.trip_code === item.trip_code;
 						return (
@@ -299,7 +300,7 @@ const RescheduleSelection = () => {
 													FULL
 												</p>
 												<p className="text-sm">
-													{item.available_seats.length} available seat(s)
+													{available_seats} available seat(s)
 												</p>
 											</>
 										) : (
@@ -323,6 +324,7 @@ const RescheduleSelection = () => {
 					</div>
 				)}
 			</div>
+			{/* FIXME: add a fix width to this rather than col */}
 			<Button
 				text="Reschedule"
 				className="w-full"

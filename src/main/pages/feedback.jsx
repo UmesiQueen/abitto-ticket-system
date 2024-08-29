@@ -75,7 +75,6 @@ const Feedback = () => {
 		baseurl
 			.post("feedback/new", formValues)
 			.then((res) => {
-				console.log(res, "response");
 				if (res.status == 200) {
 					mountPortalModal(
 						<SuccessModal
@@ -83,7 +82,6 @@ const Feedback = () => {
 							text="Thank you for your feedback. This will help use serve you better."
 							onclick={handleReset}
 						/>)
-
 				}
 			})
 			.catch((error) => {

@@ -48,7 +48,7 @@ const ProtectedRoute = () => {
 		`/backend/${accountType}/rental-details`,
 		`/backend/${accountType}/create/check-in`,
 		`/backend/${accountType}/customers`,
-		`/backend/${accountType}/logistics`,
+		// `/backend/${accountType}/logistics`,
 	].includes(pathname);
 
 	React.useEffect(() => {

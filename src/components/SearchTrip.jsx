@@ -34,7 +34,7 @@ const SearchTrip = () => {
 				if (Object.keys(selectedTrip?.return).length) {
 					setTotalCost(
 						Number(selectedTrip.return?.ticket_cost ?? 0) * total_passengers +
-							departureCost
+						departureCost
 					);
 					return setIsDisabled(false);
 				} else {
@@ -102,20 +102,21 @@ const SearchTrip = () => {
 					<h2 className="font-semibold md:text-lg">Select Departure Time</h2>
 					<p className="text-sm">Choose an option to continue</p>
 				</hgroup>
-				<div className=" self-end text-xs text-gray-500 bg-gray-200 h-12 p-1 flex gap-2 rounded-lg *:inline-flex *:items-center *:px-2 [&>*.active]:border-blue-500 [&>*.active]:border-2 [&>*.active]:font-semibold [&>*.active]:text-blue-500 *:rounded-lg">
+				{/* <div className=" self-end text-xs text-gray-500 bg-gray-200 h-12 p-1 flex gap-2 rounded-lg *:inline-flex *:items-center *:px-2 [&>*.active]:border-blue-500 [&>*.active]:border-2 [&>*.active]:font-semibold [&>*.active]:text-blue-500 *:rounded-lg">
 					<p className={trip_type == "One-Way Trip" ? "active" : ""}>One-Way</p>
 					<p className={trip_type == "Round Trip" ? "active" : ""}>
 						Round Trip
 					</p>
-				</div>
+				</div> */}
 			</div>
 
 			{/* Departure Time */}
 			<div className="space-y-3">
 				{availableTrips?.departure_trip.length ? (
 					availableTrips.departure_trip.map((item) => {
+						const available_seats = Number(item.trip_capacity) - Number(item.current_booked_seats);
 						const isAvailableSeatsExceeded =
-							total_passengers > item.available_seats.length;
+							total_passengers > available_seats
 						const isActive =
 							selectedTrip?.departure?.trip_code === item.trip_code;
 						return (
@@ -127,8 +128,8 @@ const SearchTrip = () => {
 									isActive
 										? "active"
 										: isAvailableSeatsExceeded
-										? "disabled"
-										: ""
+											? "disabled"
+											: ""
 								}
 								aria-disabled={isAvailableSeatsExceeded}
 								onClick={() => {
@@ -181,7 +182,7 @@ const SearchTrip = () => {
 													FULL
 												</p>
 												<p className="text-sm">
-													{item.available_seats.length} available seat(s)
+													{available_seats} available seat(s)
 												</p>
 											</>
 										) : (
@@ -214,8 +215,9 @@ const SearchTrip = () => {
 					</hgroup>
 					{availableTrips?.return_trip.length ? (
 						availableTrips.return_trip.map((item) => {
+							const available_seats = Number(item.trip_capacity) - Number(item.current_booked_seats);
 							const isAvailableSeatsExceeded =
-								total_passengers > item.available_seats.length;
+								total_passengers > available_seats;
 							const isActive =
 								selectedTrip?.return?.trip_code === item.trip_code;
 							return (
@@ -227,8 +229,8 @@ const SearchTrip = () => {
 										isActive
 											? "active"
 											: isAvailableSeatsExceeded
-											? "disabled"
-											: ""
+												? "disabled"
+												: ""
 									}
 									aria-disabled={isAvailableSeatsExceeded}
 									onClick={() => {
@@ -281,7 +283,7 @@ const SearchTrip = () => {
 														FULL
 													</p>
 													<p className="text-sm">
-														{item.available_seats.length} available seat(s)
+														{available_seats} available seat(s)
 													</p>
 												</>
 											) : (
