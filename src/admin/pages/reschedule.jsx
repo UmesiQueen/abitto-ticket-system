@@ -63,11 +63,7 @@ const RescheduleForm = () => {
 	const { currentUser } = React.useContext(ctx);
 	const { searchAvailableTrips } = useSearchTrip();
 	const { activeStep } = useStepper();
-	const { availableTrips } = React.useContext(BookingCTX);
-
-	React.useEffect(() => {
-		console.log(availableTrips, "trips")
-	}, [availableTrips])
+	const { setActiveStep } = React.useContext(BookingCTX);
 
 	const rescheduleSchema = yup.object().shape({
 		date: yup.string().required("New date is required."),
@@ -87,6 +83,7 @@ const RescheduleForm = () => {
 			arrival: currentUser.travel_to,
 			date: format(formData.date, "PP")
 		}
+		setActiveStep(0)
 		searchAvailableTrips(reqData);
 	});
 
@@ -137,7 +134,7 @@ const RescheduleForm = () => {
 			<div>
 				<form onSubmit={onSubmit} className="grid grid-cols-3 gap-5 mt-10">
 					<div className="flex flex-col w-full col-span-2">
-						<label className="text-xs md:text-sm !w-full flex flex-col  font-semibold">
+						<label className="text-xs md:text-sm !w-full flex flex-col">
 							Select new date
 							<Controller
 								control={control}
@@ -393,7 +390,7 @@ const Payment = () => {
 						</li>
 						<li>
 							<p>Surname</p>
-							<p>{bookingData.passenger1_surname}</p>
+							<p>{bookingData.passenger1_last_name}</p>
 						</li>
 						<li>
 							<p>Phone Number</p>
@@ -429,7 +426,7 @@ const Payment = () => {
 										<li>
 											<p>Surname</p>
 											<p>
-												{bookingData[`passenger${num}_surname`]}
+												{bookingData[`passenger${num}_last_name`]}
 											</p>
 										</li>
 										<li>
@@ -479,7 +476,8 @@ const Payment = () => {
 						placeholder="Enter trx ref"
 						type="text"
 						maxLength={35}
-						className="bg-white"
+						variant="white"
+						className="!border-blue-500"
 						autoComplete="off"
 						errors={errors}
 					/>
@@ -584,7 +582,32 @@ const Payment = () => {
 						<tbody>
 							<tr>
 								<td className="text-xs md:text-sm text-[#444444]">
-									Old Ticket Price
+									Ticket cost
+								</td>
+								<td className="text-xs md:text-sm text-[#444444]">
+									{formatValue({
+										value: String(
+											bookingData.departure_ticket_cost ?? 0
+										),
+										prefix: "₦",
+									})}
+									{" "}	x {bookingData.total_passengers}
+								</td>
+							</tr>
+							<tr>
+								<td className="text-xs md:text-sm text-[#444444]">
+									New total
+								</td>
+								<td className="font-medium text-base md:text-lg ">
+									₦
+									{formatValue({
+										value: String(total_ticket_cost),
+									})}
+								</td>
+							</tr>
+							<tr>
+								<td className="text-xs md:text-sm text-[#444444]">
+									Paid
 								</td>
 								<td className="text-xs md:text-sm text-[#444444]">
 									{formatValue({
@@ -596,33 +619,8 @@ const Payment = () => {
 								</td>
 							</tr>
 							<tr>
-								<td className="text-xs md:text-sm text-[#444444]">
-									New Ticket Price
-								</td>
-								<td className="text-xs md:text-sm text-[#444444]">
-									{formatValue({
-										value: String(
-											bookingData.departure_ticket_cost ?? 0
-										),
-										prefix: "₦",
-									})}
-									x {bookingData.total_passengers}
-								</td>
-							</tr>
-							<tr>
-								<td className="font-medium text-base md:text-lg">Total</td>
-								<td className="font-medium text-base md:text-lg">
-									₦
-									{formatValue({
-										value: String(total_ticket_cost),
-									})}
-								</td>
-							</tr>
-							<tr>
-								<td className="text-xs md:text-sm text-[#444444]">
-									Bal
-								</td>
-								<td className="text-xs md:text-sm text-[#444444]">
+								<td className="font-medium text-base md:text-lg">Bal.</td>
+								<td className="text-xs md:text-sm text-[#444444] font-semibold">
 									{formatValue({
 										value: String(ticket_balance),
 										prefix: "₦",

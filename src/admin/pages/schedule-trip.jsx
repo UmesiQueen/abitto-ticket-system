@@ -80,6 +80,7 @@ const ScheduleTrip = () => {
 			// departure: "",
 			// arrival: "",
 			//   time: "",
+			trip_capacity: "",
 			cost: "",
 			date: "",
 		};

@@ -431,7 +431,9 @@ const BookingDetails = () => {
 								{table.getRowModel().rows.map((row) => (
 									<TableRow
 										key={row.id}
-										onDoubleClick={() => navigate(`${row.original.ticket_id}`)}
+										onDoubleClick={() =>
+											navigate(`/backend/${adminProfile.account_type}/booking-details/${row.original.ticket_id}`)
+										}
 									>
 										{row.getVisibleCells().map((cell) => (
 											<TableCell key={cell.id} className="h-[77px]">
@@ -756,7 +758,7 @@ export const CustomerDetails = () => {
 									<p className="text-xs text-[#7F7F7F]">Trip Status</p>
 									<p
 										className={cn(
-											"rounded-lg w-20 mx-auto py-1 text-xs px-2 text-center font-semibold",
+											"rounded-lg min-w-20 mx-auto py-1 text-xs px-2 text-center font-semibold",
 											{
 												"text-green-500 bg-green-100":
 													currentUser?.trip_status === "Completed",

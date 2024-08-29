@@ -288,7 +288,7 @@ const CheckInTable = () => {
 										onDoubleClick={(event) => {
 											if (event.target.tagName !== "BUTTON")
 												navigate(
-													`/backend/${accountType}/booking-details/${row.original._id}`
+													`/backend/${accountType}/booking-details/${row.original.ticket_id}`
 												);
 										}}
 										data-state={row.getIsSelected() && "selected"}

@@ -68,23 +68,23 @@ const About = () => {
 				{/* about us */}
 				<section className="px-5 py-20 md:px-20 bg-white" id="about-us">
 					<div className="max-w-[1440px] mx-auto">
-						<div className=" text-center md:text-left flex flex-col md:flex-row justify-between md:gap-20 lg:gap-28">
-							<div className="basis-2/6 mb-10 md:mb-0 md:self-center">
+						<div className=" text-center md:text-left flex flex-col md:flex-row *:w-full *:grow justify-between md:gap-10">
+							<div className="mb-10 md:mb-0 md:self-center">
 								<img
 									src="https://i.ibb.co/8BLhcJw/about.jpg"
 									alt="about-us"
 									width={100}
 									height={100}
-									className="rounded-lg shadow-2xl w-full md:w-[500px] h-[300px] md:h-[400px] object-cover "
+									className="rounded-lg shadow-2xl w-full md:w-[450px] h-[300px] md:h-[400px] mx-auto object-cover border "
 								/>
 							</div>
-							<div className="flex-1">
-								<div className="space-y-5 lg:w-9/12">
-									<div className="flex items-center justify-center md:justify-start">
-										<span className=" h-3 w-3 mr-3 rounded-full bg-blue-500 " />
-										<h3 className="uppercase font-medium">About us</h3>
-									</div>
-									<p className="font-medium text-2xl ">
+							<div>
+								<div className="space-y-5 lg:w-10/12">
+									<h2 className="font-semibold text-lg md:text-xl lg:text-2xl inline-flex items-center justify-center md:justify-start w-full ">
+										<span className="h-3 w-3 mr-3 rounded-full bg-blue-500" />
+										About Us
+									</h2>
+									<p className="font-medium text-lg md:text-xl lg:text-2xl">
 										Welcome to Abitto, where innovation meets reliability in
 										public water travel.
 									</p>
@@ -94,8 +94,7 @@ const About = () => {
 										transportation experience. With cutting-edge technology and
 										unwavering safety protocols, we ensure every journey is
 										convenient and intelligent. Join Abitto, where every trip
-										showcases our dedication to excellence and your peace of
-										mind.
+										showcases our dedication to excellence and your peace of mind.
 									</p>
 									<Link
 										target="_blank"
@@ -421,7 +420,7 @@ const About = () => {
 							text="Get Started"
 							onClick={() => {
 								setTimeout(() => scrollToSection(services))
-								navigate("/#services");
+								navigate("/");
 							}}
 							className="w-40 mx-auto mt-5"
 						/>

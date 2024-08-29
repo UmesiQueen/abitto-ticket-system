@@ -59,7 +59,7 @@ const Home = () => {
 								text="Get Started"
 								onClick={() => {
 									setTimeout(() => scrollToSection(services));
-									navigate("/#services");
+									navigate("/");
 								}}
 								className="w-40 mx-auto md:mx-0"
 							/>
@@ -74,15 +74,15 @@ const Home = () => {
 				className="py-20 px-5 md:px-20 bg-blue-50"
 			>
 				<div className="max-w-[1440px] mx-auto">
-					<h2 className="font-semibold text-xl md:text-2xl mb-10 inline-flex items-center justify-center w-full ">
+					<h2 className="font-semibold text-lg md:text-xl lg:text-2xl mb-10 inline-flex items-center justify-center w-full ">
 						<span className="h-3 w-3 mr-3 rounded-full bg-blue-500" />
 						Our Services
 					</h2>
 					<div className="flex flex-wrap *:basis-72 *:grow gap-5">
-						<div className="bg-white rounded-[1.8rem] p-6 md:p-10 h-[15rem] md:h-[20rem]  hover:scale-[1.02] hover:shadow-md transition-all relative overflow-hidden ">
+						<div className="bg-white rounded-[1.8rem] p-6 md:p-8 h-[15rem] md:h-[20rem]  hover:scale-[1.02] hover:shadow-md transition-all relative overflow-hidden ">
 							{/* <img src={WaveSVG} alt="svg" className="absolute top-0 left-0 " /> */}
-							<div className=" flex flex-col gap-2 md:gap-5 h-full relative z-1">
-								<h3 className="text-xl md:text-2xl font-semibold text-blue-500">
+							<div className="flex flex-col gap-2 h-full relative z-1">
+								<h3 className="text-lg md:text-xl lg:text-2xl font-semibold text-blue-500">
 									Book a trip
 								</h3>
 								<p className="md:text-lg">
@@ -91,7 +91,7 @@ const Home = () => {
 								<div className="ml-auto mt-auto">
 									<Button
 										text={
-											<p className="inline-flex items-center gap-2 ">
+											<p className="inline-flex items-center gap-2">
 												Book a trip
 												<span>
 													<CaretIcon />
@@ -104,10 +104,10 @@ const Home = () => {
 								</div>
 							</div>
 						</div>
-						<div className="bg-white rounded-[1.8rem] p-6 md:p-10 h-[15rem] md:h-[20rem]  hover:scale-[1.02] hover:shadow-md transition-all relative overflow-hidden ">
+						<div className="bg-white rounded-[1.8rem] p-6 md:p-8 h-[15rem] md:h-[20rem]  hover:scale-[1.02] hover:shadow-md transition-all relative overflow-hidden ">
 							{/* <img src={WaveSVG} alt="svg" className="absolute top-0 left-0 " /> */}
-							<div className=" flex flex-col gap-2 md:gap-5 h-full relative z-1">
-								<h3 className="text-xl md:text-2xl font-semibold text-blue-500">
+							<div className=" flex flex-col gap-2 h-full relative z-1">
+								<h3 className="text-lg md:text-xl lg:text-2xl font-semibold text-blue-500">
 									Boat Rentals
 								</h3>
 								<p className="md:text-lg">
@@ -129,10 +129,10 @@ const Home = () => {
 								</div>
 							</div>
 						</div>
-						<div className="bg-white rounded-[1.8rem] p-6 md:p-10 h-[15rem] md:h-[20rem]  hover:scale-[1.02] hover:shadow-md transition-all relative overflow-hidden ">
+						<div className="bg-white rounded-[1.8rem] p-6 md:p-8 h-[15rem] md:h-[20rem]  hover:scale-[1.02] hover:shadow-md transition-all relative overflow-hidden ">
 							{/* <img src={WaveSVG} alt="svg" className="absolute top-0 left-0 " /> */}
-							<div className=" flex flex-col gap-2 md:gap-5 h-full relative z-1">
-								<h3 className="text-xl md:text-2xl font-semibold text-blue-500">
+							<div className=" flex flex-col gap-2 h-full relative z-1">
+								<h3 className="text-lg md:text-xl lg:text-2xl font-semibold text-blue-500">
 									Logistics
 								</h3>
 								<p className="md:text-lg">
@@ -160,23 +160,23 @@ const Home = () => {
 			{/* About us  */}
 			<section className="px-5 py-20 md:px-20 bg-white" id="about-us">
 				<div className="max-w-[1440px] mx-auto">
-					<div className=" text-center md:text-left flex flex-col md:flex-row justify-between md:gap-20 lg:gap-28">
-						<div className="basis-2/6 mb-10 md:mb-0 md:self-center">
+					<div className=" text-center md:text-left flex flex-col md:flex-row *:w-full *:grow justify-between md:gap-10">
+						<div className="mb-10 md:mb-0 md:self-center">
 							<img
 								src="https://i.ibb.co/8BLhcJw/about.jpg"
 								alt="about-us"
 								width={100}
 								height={100}
-								className="rounded-lg shadow-2xl w-full md:w-[500px] h-[300px] md:h-[400px] object-cover border "
+								className="rounded-lg shadow-2xl w-full md:w-[450px] h-[300px] md:h-[400px] mx-auto object-cover border "
 							/>
 						</div>
-						<div className="flex-1">
-							<div className="space-y-5 lg:w-9/12">
-								<h2 className="font-semibold text-xl md:text-2xl inline-flex items-center justify-center md:justify-start w-full ">
+						<div>
+							<div className="space-y-5 lg:w-10/12">
+								<h2 className="font-semibold text-lg md:text-xl lg:text-2xl inline-flex items-center justify-center md:justify-start w-full ">
 									<span className="h-3 w-3 mr-3 rounded-full bg-blue-500" />
 									About Us
 								</h2>
-								<p className="font-medium text-2xl ">
+								<p className="font-medium text-lg md:text-xl lg:text-2xl">
 									Welcome to Abitto, where innovation meets reliability in
 									public water travel.
 								</p>
@@ -258,7 +258,7 @@ const Home = () => {
 
 			<section className="py-20 px-5 md:px-20 bg-white">
 				<div className="max-w-[1440px] mx-auto">
-					<h2 className="font-semibold text-xl md:text-2xl  mb-7 inline-flex items-center justify-center w-full ">
+					<h2 className="font-semibold text-lg md:text-xl lg:text-2xl mb-7 inline-flex items-center justify-center w-full ">
 						<span className="h-3 w-3 mr-3 rounded-full bg-blue-500" />
 						Our Locations
 					</h2>
@@ -360,7 +360,7 @@ const Home = () => {
 			{/* faq */}
 			<section id="faq" ref={faq} className="py-20 px-5 md:px-20 bg-white">
 				<div className="max-w-[1440px] mx-auto">
-					<h2 className="font-semibold text-xl md:text-2xl mb-7 inline-flex items-center justify-center w-full ">
+					<h2 className="font-semibold text-lg md:text-xl lg:text-2xl mb-7 inline-flex items-center justify-center w-full ">
 						<span className=" h-3 w-3 mr-3 rounded-full bg-blue-500" />
 						Frequently Asked Questions (FAQs)
 					</h2>
