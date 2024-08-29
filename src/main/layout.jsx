@@ -68,10 +68,19 @@ const Navbar = () => {
 		if (isOpen) setOpen(false);
 	};
 
+	const isActive = (slug) => {
+		if (location.hash.length) {
+			if (slug.includes(location.hash))
+				return "active";
+			return;
+		}
+		if (location.pathname == slug) return "active";
+	}
+
 	return (
 		<nav
 			className={cn(
-				"fixed right-0 left-0 px-5 md:px-20 h-[67px] w-full text-white backdrop-blur-[3px] z-[3] bg-[#111111]/80",
+				"fixed right-0 left-0 px-5 md:px-20 min-h-[67px] w-full flex items-center text-white backdrop-blur-[3px] z-[3] bg-[#111111]/80",
 				{
 					"bg-transparent": ["/", "/about"].includes(location.pathname),
 					"bg-[#111111]/80": isOpen || scroll,
@@ -79,7 +88,7 @@ const Navbar = () => {
 			)}
 			ref={navRef}
 		>
-			<div className="max-w-[1440px] mx-auto h-full flex items-center justify-between">
+			<div className="max-w-[1440px] mx-auto h-full w-full flex flex-wrap items-center justify-between">
 				<Link to="/" onClick={closeNavbar}>
 					<img
 						alt="logo"
@@ -94,7 +103,7 @@ const Navbar = () => {
 				</div>
 				<ul
 					className={cn(
-						"top-[67px] md:top-0 right-0 left-0 absolute md:relative overflow-hidden flex flex-col md:flex-row shadow-lg md:shadow-none gap-x-6 md:bg-transparent h-screen md:h-fit bg-white text-black md:text-white transition-all duration-300 ease-in-out",
+						"top-[67px] md:top-0 right-0 left-0 absolute md:relative md:ml-auto overflow-hidden flex flex-col md:flex-row shadow-lg md:shadow-none gap-x-6 md:bg-transparent h-screen md:h-fit bg-white text-black md:text-white transition-all duration-300 ease-in-out",
 						{ "h-0 ": !isOpen }
 					)}
 				>
@@ -110,15 +119,8 @@ const Navbar = () => {
 						return (
 							<li
 								key={title}
-								data-state={
-									// TODO: FIGURE OUT THIS LOGIC FOR HASHES AND HOME
-									location.pathname == slug || location.hash == slug
-										? "active"
-										: ""
-								}
-								className={cn(
-									"hover:bg-gray-400/20 md:hover:bg-transparent md:hover:text-blue-500 font-normal data-[state=active]:font-bold text-center md:text-left transition-all duration-75 ease-in-out text-lg  md:text-base h-24 md:h-fit tracking-wide *:inline-flex *:items-center *:w-full *:h-full *:justify-center  ",
-								)}
+								data-state={isActive(slug)}
+								className="hover:bg-gray-400/20 md:hover:bg-transparent md:hover:text-blue-500 font-normal data-[state=active]:font-bold text-center md:text-left transition-all duration-75 ease-in-out text-lg  md:text-base h-20 md:h-fit tracking-wide *:inline-flex *:items-center *:w-full *:h-full *:justify-center"
 							>
 								<Link
 									to={slug}
@@ -161,7 +163,7 @@ const Footer = () => {
 							className="w-36 md:w-44"
 						/>
 					</Link>
-					<ul className="hidden md:flex gap-x-10 lg:gap-x-28 [&_a]:block [&_a]:mb-2 [&_a]:text-sm [&_a]:font-normal [&_h3]:font-medium [&_h3]:text-2xl [&_h3]:mb-5">
+					<ul className="hidden md:flex gap-x-10 lg:gap-x-20 [&_a]:block [&_a]:mb-2 [&_a]:text-sm [&_a]:font-normal [&_h3]:font-medium [&_h3]:text-2xl [&_h3]:mb-5">
 						<li>
 							<h3>Company</h3>
 							<Link to="/about">About Us</Link>
