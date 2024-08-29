@@ -45,14 +45,8 @@ export const useSearchTrip = () => {
 			.post("/ticket/available", requestData)
 			.then((res) => {
 				if (res.status == 200) {
-					const available_departure_seats = res.data.departure_ticket.length;
+					const available_departure_seats = res.data.available_seats;
 					if (available_departure_seats > total_passengers) {
-						if (isRoundTrip) {
-							const available_return_seats = res.data.return_ticket.length;
-							if (available_return_seats > total_passengers)
-								return mountPortalModal(<BookingWarningModal />);
-							return mountPortalModal(<UnAvailableModal type={"return"} />);
-						}
 						return mountPortalModal(<BookingWarningModal />);
 					}
 					return mountPortalModal(<UnAvailableModal type={"departure"} />);
