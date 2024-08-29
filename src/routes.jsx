@@ -25,7 +25,7 @@ import ScheduleTrip from "./admin/pages/schedule-trip";
 import RentalAdmin from "./admin/pages/rental";
 import Report from "./admin/pages/report";
 import Rental from "./main/pages/rental";
-import { TicketLoader } from "./components/TicketInvoice";
+import { CustomerDetailsLoader } from "./components/TicketInvoice";
 import { TripDetailsLoader } from "./admin/pages/trip-details";
 import { DataQueryLoader } from "./admin/layout";
 import RentalInvoice from "./components/RentalInvoice";
@@ -35,7 +35,7 @@ import { RentalInvoiceLoader } from "./components/RentalInvoice";
 import RentalDetails from "./admin/pages/rental-details";
 import PageNotFoundAdmin from "./admin/pages/page-not-found";
 import CheckIn from "./admin/pages/check-in";
-// import Reschedule from "./admin/pages/reschedule";
+import Reschedule from "./admin/pages/reschedule";
 import { RentDetail } from "./admin/pages/rental-details";
 import Feedback from "./main/pages/feedback";
 import FeedbackAdmin, { FeedbackDetails } from "./admin/pages/feedback";
@@ -74,11 +74,13 @@ export const router = createBrowserRouter(
 					<Route
 						path="booking-details/:bookingID"
 						element={<CustomerDetails />}
+						loader={CustomerDetailsLoader}
 					/>
-					{/* <Route
+					<Route
 						path="booking-details/:bookingID/reschedule"
 						element={<Reschedule />}
-					/> */}
+						loader={CustomerDetailsLoader}
+					/>
 					<Route path="rental-details" element={<RentalDetails />} />
 					<Route
 						path="rental-details/:rentalID"
@@ -109,7 +111,7 @@ export const router = createBrowserRouter(
 			<Route
 				path="ticket-invoice/:bookingID"
 				element={<TicketInvoice />}
-				loader={TicketLoader}
+				loader={CustomerDetailsLoader}
 			/>
 			<Route
 				path="rental-invoice/:rentalID"

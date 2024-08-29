@@ -6,7 +6,7 @@ import { GlobalCTX } from "@/contexts/GlobalContext";
 import Button from "@/components/custom/Button";
 import checkGIF from "@/assets/check.gif";
 
-const BookingSuccessModal = ({ id }) => {
+const BookingSuccessModal = ({ id, onClick = () => { } }) => {
 	const { handleReset } = React.useContext(BookingCTX);
 	const { unMountPortalModal } = React.useContext(GlobalCTX);
 	const { pathname } = useLocation();
@@ -42,7 +42,10 @@ const BookingSuccessModal = ({ id }) => {
 				text={"Continue"}
 				variant="outline"
 				className=" md:py-5 "
-				onClick={reset}
+				onClick={() => {
+					reset();
+					onClick();
+				}}
 			/>
 		</div>
 	);

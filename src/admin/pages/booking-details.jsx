@@ -21,7 +21,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLoaderData, useNavigate, } from "react-router-dom";
 import React from "react";
 import { format } from "date-fns";
 import {
@@ -50,6 +50,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Refresh } from "iconsax-react";
+import Button from "@/components/custom/Button";
 
 const BookingDetails = () => {
 	const navigate = useNavigate();
@@ -430,7 +431,7 @@ const BookingDetails = () => {
 								{table.getRowModel().rows.map((row) => (
 									<TableRow
 										key={row.id}
-										onDoubleClick={() => navigate(`${row.original._id}`)}
+										onDoubleClick={() => navigate(`${row.original.ticket_id}`)}
 									>
 										{row.getVisibleCells().map((cell) => (
 											<TableCell key={cell.id} className="h-[77px]">
@@ -518,11 +519,11 @@ const Pagination = ({ props: { table } }) => {
 
 export const CustomerDetails = () => {
 	const navigate = useNavigate();
-	const { bookingID } = useParams();
-	const { bookingQuery } = React.useContext(BookingCTX);
-	const { mountPortalModal } = React.useContext(GlobalCTX);
+	const currentUser = useLoaderData();
+	const { mountPortalModal, adminProfile } = React.useContext(GlobalCTX);
+	console.log(currentUser, "current");
 
-	const currentUser = bookingQuery.find((data) => data._id === bookingID);
+	const canReschedule = currentUser?.trip_status == "Upcoming" && ["dev", "salesperson"].includes(adminProfile.account_type)
 
 	return (
 		<div>
@@ -548,25 +549,16 @@ export const CustomerDetails = () => {
 									from our sales point.
 								</p>
 							</div>
-							{/* FIXME: ADMIN SHOULDN'T BE ABLE TO SEE THIS BUTTONS */}
-							{/* <div className="ml-auto flex gap-2">
-								<Button
-									text="Re-schedule Trip"
-									variant="outline"
-									className="text-nowrap h-10 ml-auto"
-									onClick={() => {
-										navigate(
-											`/salesperson/booking-details/reschedule/${bookingID}`
-										);
-									}}
-								/>
-								<ButtonUI
-									variant="destructive"
-									// onClick={handleCancel}
-								>
-									Cancel
-								</ButtonUI>
-							</div> */}
+							{canReschedule && <Button
+								text="Re-schedule"
+								variant="outline"
+								className="text-nowrap h-10 ml-auto"
+								onClick={() => {
+									navigate(
+										`reschedule`
+									);
+								}}
+							/>}
 						</div>
 
 						<div className="p-5 pb-20 space-y-6">
@@ -643,14 +635,14 @@ export const CustomerDetails = () => {
 											{currentUser?.travel_to}
 										</p>
 									</li>
-									<li>
+									{/* <li>
 										<p className="text-xs text-[#7F7F7F]">Seat No.</p>
 										<p className="text-base font-semibold">
 											{currentUser?.departure_seats.length
 												? humanize(currentUser?.departure_seats)
 												: "N/A"}
 										</p>
-									</li>
+									</li> */}
 								</ul>
 								<ul className="*:flex *:flex-col *:gap-1 flex gap-10 ">
 									<li>
@@ -682,14 +674,14 @@ export const CustomerDetails = () => {
 												{currentUser?.travel_from}
 											</p>
 										</li>
-										<li>
+										{/* <li>
 											<p className="text-xs text-[#7F7F7F]">Seat No.</p>
 											<p className="text-base font-semibold">
 												{currentUser?.return_seats.length
 													? humanize(currentUser?.return_seats)
 													: "N/A"}
 											</p>
-										</li>
+										</li> */}
 									</ul>
 									<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
 										<li>
@@ -839,12 +831,12 @@ export const CustomerDetails = () => {
 										<ClockIcon />
 										{currentUser?.departure_time}
 									</p>
-									<p>
+									{/* <p>
 										<ChairIcon />
 										{currentUser?.departure_seats.length
 											? humanize(currentUser?.departure_seats)
 											: "N/A"}
-									</p>
+									</p> */}
 								</div>
 							</div>
 							{currentUser?.trip_type === "Round Trip" && (
