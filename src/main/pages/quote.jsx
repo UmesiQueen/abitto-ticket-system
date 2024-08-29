@@ -35,7 +35,7 @@ const GetQuote = () => {
 		handleSubmit,
 		control,
 		formState: { errors, isSubmitted, defaultValues },
-		reset,
+		// reset,
 	} = useForm({
 		mode: "onSubmit",
 		resolver: yupResolver(shipmentDetailsSchema),
@@ -56,7 +56,7 @@ const GetQuote = () => {
 						weight: packageDetails.weight,
 						quantity: packageDetails.no_item,
 						cost_per_kg: cost,
-						handleReset
+						// handleReset
 					}}
 				/>
 			);
@@ -80,10 +80,10 @@ const GetQuote = () => {
 		}));
 	};
 
-	const handleReset = () => {
-		reset(defaultValue);
-		setPackageDetails(defaultValue);
-	}
+	// const handleReset = () => {
+	// 	reset(defaultValue);
+	// 	setPackageDetails(defaultValue);
+	// }
 
 
 	return (
@@ -219,12 +219,12 @@ const GetQuote = () => {
 export default GetQuote;
 
 const QuoteModal = ({
-	props: { weight, quantity, cost_per_kg, handleReset },
+	props: { weight, quantity, cost_per_kg },
 }) => {
 	const { unMountPortalModal } = React.useContext(GlobalCTX);
 
 	return (
-		<div className=" w-full max-w-[26rem] p-5 md:p-10 rounded-lg bg-white space-y-5 relative text-center">
+		<div className=" w-full max-w-[30rem] p-5 md:p-10 rounded-lg bg-white space-y-5 relative text-center">
 			<ButtonIcon
 				variant="ghost"
 				size="icon"
@@ -233,14 +233,16 @@ const QuoteModal = ({
 			>
 				<CancelSquareIcon />
 			</ButtonIcon>
-			<img src={PackageGIF} alt="package gif" className="mx-auto" />
+			<div className="min-h-32">
+				<img src={PackageGIF} alt="package gif" className="mx-auto" />
+			</div>
 			<hgroup>
 				<h2 className="font-bold text-xl md:text-2xl text-blue-500">
 					Shipment Cost Estimate
 				</h2>
 				<p className="text-sm md:text-base">
 					This is just an estimated cost of your shipment. Actual price may vary
-					after creating a shipment.
+					when you arrive at the terminal.
 				</p>
 			</hgroup>
 
@@ -274,12 +276,12 @@ const QuoteModal = ({
 					</tr>
 				</tbody>
 			</table>
-
+			<p className="text-sm md:text-base">Please visit our closest terminal to complete shipment.</p>
 			<Button
-				text="Continue"
+				text="Ok, I understand"
 				className="w-full"
 				onClick={() => {
-					handleReset();
+					// handleReset();
 					unMountPortalModal();
 				}}
 			/>
