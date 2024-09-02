@@ -23,6 +23,7 @@ const rescheduleSchema = yup.object().shape({
 	date: yup.string().required("Date field is required."),
 	time: yup.string().required("Time field is required."),
 	cost: yup.string().required("Ticket cost is required."),
+	trip_capacity: yup.string().required("Capacity is required."),
 });
 
 const RescheduleEditModal = () => {
