@@ -15,8 +15,24 @@ import {
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import LogoSVG from "@/assets/icons/abitto.svg";
 import Loader from "@/components/animation/Loader";
+import { InformationModal } from "@/admin/pages/information-box";
+import baseurl from "@/api";
 
 const MainLayout = () => {
+	const { setLiveMessage } = React.useContext(GlobalCTX);
+
+	React.useEffect(() => {
+		baseurl
+			.get("infobox/get")
+			.then((res) => {
+				if (res.status == 200) {
+					const data = res.data.infoBoxes
+					setLiveMessage(data.filter((message) => message.status == "Active")[0])
+				}
+			})
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
+
 	return (
 		<>
 			<div className="relative">
@@ -27,6 +43,7 @@ const MainLayout = () => {
 				<Footer />
 			</div>
 			<Loader />
+			<InformationModal />
 		</>
 	);
 };

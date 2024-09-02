@@ -13,13 +13,19 @@ const GlobalContext = ({ children }) => {
 	const [adminProfile, setAdminProfile] = React.useState(adminStore);
 	const [showModal, setShowModal] = React.useState(false);
 	const [modalContent, setModalContent] = React.useState();
-	const [live, setLive] = React.useState(true);
+	const [liveMessage, setLiveMessage] = React.useState({});
+	const [showLiveModal, setShowLiveModal] = React.useState(false);
 	const [currentFeedback, setCurrentFeedback] = React.useState({});
 
 	React.useEffect(() => {
 		if (Object.keys(adminProfile).length)
 			localStorage.setItem("admin", JSON.stringify(adminProfile));
 	}, [adminProfile]);
+
+	React.useEffect(() => {
+		if (Object.keys(liveMessage).length)
+			setShowLiveModal(true)
+	}, [liveMessage])
 
 	const mountPortalModal = (modalContent) => {
 		if (!showModal) {
@@ -57,8 +63,10 @@ const GlobalContext = ({ children }) => {
 		setModalContent,
 		mountPortalModal,
 		unMountPortalModal,
-		live,
-		setLive,
+		liveMessage,
+		setLiveMessage,
+		showLiveModal,
+		setShowLiveModal,
 		currentFeedback,
 		setCurrentFeedback,
 	};

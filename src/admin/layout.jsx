@@ -138,14 +138,14 @@ const ProtectedRoute = () => {
 			</div>,
 			["super-admin", "dev"],
 		],
-		// [
-		// 	"Information Box",
-		// 	`/backend/${accountType}/information`,
-		// 	<div key="1" className="scale-[.85] -ml-1">
-		// 		<Mailbox />
-		// 	</div>,
-		// 	["super-admin", "dev"],
-		// ],
+		[
+			"Information Box",
+			`/backend/${accountType}/information`,
+			<div key="1" className="scale-[.85] -ml-1">
+				<Mailbox />
+			</div>,
+			["super-admin", "dev"],
+		],
 		[
 			"Settings",
 			`/backend/${accountType}/settings`,
