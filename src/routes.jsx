@@ -49,6 +49,8 @@ import InformationBox, { InformationLoader } from "./admin/pages/information-box
 import LogisticsInvoice from "./components/LogisticInvoice";
 import { ShipmentLoader } from "./components/LogisticInvoice";
 import { PriceLoader } from "./admin/pages/pricing";
+import TermsAndConditions from "./main/pages/terms-and-conditions";
+import PrivacyPolicy from "./main/pages/privacy-policy";
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -60,6 +62,8 @@ export const router = createBrowserRouter(
 				<Route path="rental" element={<Rental />} loader={PriceLoader} />
 				<Route path="feedback" element={<Feedback />} />
 				<Route path="get-quote" element={<GetQuote />} />
+				<Route path="terms-conditions" element={<TermsAndConditions />} />
+				<Route path="privacy-policy" element={<PrivacyPolicy />} />
 			</Route>
 
 			<Route path="/backend" element={<AdminLayout />} loader={DataQueryLoader}>
