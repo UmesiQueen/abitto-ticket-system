@@ -542,7 +542,7 @@ export const InformationModal = () => {
 								<ButtonUI
 									variant="ghost"
 									size="icon"
-									className="bg-white rounded-full absolute -top-3 -right-3 p-2"
+									className="bg-white rounded-full absolute -top-3 -right-3 p-2 shadow-md"
 									onClick={() => { setShowLiveModal(false) }}
 								>
 									<CancelSquareIcon />
@@ -568,7 +568,7 @@ const PreviewModal = ({ url }) => {
 			<ButtonUI
 				variant="ghost"
 				size="icon"
-				className="bg-white rounded-full absolute -top-3 -right-3 p-2"
+				className="bg-white rounded-full absolute -top-3 -right-3 p-2 shadow-md"
 				onClick={unMountPortalModal}
 			>
 				<CancelSquareIcon />

@@ -25,7 +25,7 @@ const TermsAndConditions = () => {
     const [numPages, setNumPages] = React.useState();
     const [containerRef, setContainerRef] = React.useState(null);
     const [containerWidth, setContainerWidth] = React.useState();
-    const { setLoading } = React.useContext(GlobalCTX)
+    const { setLoading } = React.useContext(GlobalCTX);
 
     const onResize = React.useCallback((entries) => {
         const [entry] = entries;
@@ -42,9 +42,10 @@ const TermsAndConditions = () => {
     }
 
     return (
-        <>  <Helmet>
-            <title>Terms and Conditions | Abitto Ferry</title>
-        </Helmet>
+        <>
+            <Helmet>
+                <title>Terms and Conditions | Abitto Ferry</title>
+            </Helmet>
             <div className="pt-20 pb-4 min-h-[calc(100vh-70px)]" ref={setContainerRef}>
                 <Document file={termsPDF} onLoadSuccess={onDocumentLoadSuccess} loading={() => setLoading(true)} options={options} className="flex flex-col items-center">
                     {Array.from(new Array(numPages), (_el, index) => (
