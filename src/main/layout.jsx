@@ -26,8 +26,10 @@ const MainLayout = () => {
 			.get("infobox/get")
 			.then((res) => {
 				if (res.status == 200) {
-					const data = res.data.infoBoxes
-					setLiveMessage(data.filter((message) => message.status == "Active")[0])
+					const data = res.data.infoBoxes;
+					const activeMessage = data.filter((message) => message.status == "Active")[0];
+					if (activeMessage)
+						setLiveMessage(activeMessage)
 				}
 			})
 		// eslint-disable-next-line react-hooks/exhaustive-deps
