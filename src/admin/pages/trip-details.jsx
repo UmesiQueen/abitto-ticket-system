@@ -100,7 +100,7 @@ const TripDetails = () => {
 				<div>
 					<p className="text-[15px] font-semibold capitalize">
 						{capitalize(
-							`${row.original.passenger1_first_name} ${row.original.passenger1_last_name}`
+							`${row.original.passenger1_first_name} ${row.original.passenger1_surname}`
 						)}
 					</p>
 					<p className="italic  lowercase">{row.original.passenger1_email}</p>
