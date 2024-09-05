@@ -45,7 +45,7 @@ const PrivacyPolicy = () => {
         <>  <Helmet>
             <title>Privacy Policy | Abitto Ferry</title>
         </Helmet>
-            <div className="pt-20 pb-4 min-h-[calc(100vh-70px)]" ref={setContainerRef}>
+            <div className="pt-16 md:pt-20 md:pb-4 min-h-[calc(100vh-70px)]" ref={setContainerRef}>
                 <Document file={policyPDF} onLoadSuccess={onDocumentLoadSuccess} loading={() => setLoading(true)} options={options} className="flex flex-col items-center">
                     {Array.from(new Array(numPages), (_el, index) => (
                         <Page
