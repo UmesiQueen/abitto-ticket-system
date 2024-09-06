@@ -4,7 +4,6 @@ import { Helmet } from "react-helmet-async";
 import { FerryBoatIcon, UserGroupIcon, WalletIcon } from "@/assets/icons";
 import { formatValue } from "react-currency-input-field";
 import { BarChart } from "@tremor/react";
-import { BookingCTX } from "@/contexts/BookingContext";
 import baseurl from "@/api";
 import { toast } from "sonner";
 import { PieChart, pieArcLabelClasses } from "@mui/x-charts/PieChart";
@@ -63,6 +62,22 @@ const defaultValue = {
 	posBookingPaymentMethodUyo: [],
 	bankTransferBookingPaymentMethodUyo: [],
 	cashBookingPaymentMethodUyo: [],
+
+	rescheduledTripStatusAll: [],
+	missedTripStatusAll: [],
+	completedTripStatusAll: [],
+	upcomingTripStatusAll: [],
+	canceledTripStatusAll: [],
+	rescheduledTripStatusCalabar: [],
+	missedTripStatusCalabar: [],
+	completedTripStatusCalabar: [],
+	upcomingTripStatusCalabar: [],
+	canceledTripStatusCalabar: [],
+	rescheduledTripStatusUyo: [],
+	missedTripStatusUyo: [],
+	completedTripStatusUyo: [],
+	upcomingTripStatusUyo: [],
+	canceledTripStatusUyo: [],
 
 	rentRevenueAll: [],
 	rentRevenueCalabar: [],
@@ -125,7 +140,6 @@ const defaultValue = {
 }
 
 const Report = () => {
-	const { bookingQuery } = React.useContext(BookingCTX);
 	const { adminProfile } = React.useContext(GlobalCTX);
 	const isSuperAdmin = ["super-admin", "dev"].includes(
 		adminProfile.account_type
@@ -134,16 +148,8 @@ const Report = () => {
 		: false;
 	const [total, setTotal] = React.useState(defaultValue);
 	const [filteredTotal, setFilteredTotal] = React.useState(total);
-	const [bookingTotals, setBookingTotals] = React.useState({
-		totalCompletedTrips: 0,
-		totalUpcomingTrips: 0,
-		totalMissedTrips: 0,
-		totalRescheduledTrips: 0,
-		totalCanceledTrips: 0,
-	});
 	const [city, setCity] = React.useState("All");
 	const [filter, setFilter] = React.useState("all");
-	const [customFilter, setCustomFilter] = React.useState({ from: "", to: "" });
 
 	React.useEffect(() => {
 		if (!isSuperAdmin) setCity(capitalize(adminProfile.city));
@@ -176,7 +182,7 @@ const Report = () => {
 					canceledBookingPaymentStatusCalabar: formatDate(totals.calabar_payment_status_cancelled),
 					successBookingPaymentStatusUyo: formatDate(totals.uyo_payment_status_success),
 					pendingBookingPaymentStatusUyo: formatDate(totals.uyo_payment_status_pending),
-					canceledBookingPaymentStatusUyo: formatDate(totals.calabar_payment_status_cancelled),
+					canceledBookingPaymentStatusUyo: formatDate(totals.uyo_payment_status_cancelled),
 					paystackBookingPaymentMethodAll: formatDate(totals.total_payment_method_paystack),
 					posBookingPaymentMethodAll: formatDate(totals.total_payment_method_pos),
 					bankTransferBookingPaymentMethodAll: formatDate(totals.total_payment_method_bank_transfer),
@@ -189,6 +195,22 @@ const Report = () => {
 					posBookingPaymentMethodUyo: formatDate(totals.uyo_payment_method_pos),
 					bankTransferBookingPaymentMethodUyo: formatDate(totals.uyo_payment_method_bank_transfer),
 					cashBookingPaymentMethodUyo: formatDate(totals.uyo_payment_method_paystack),
+					rescheduledTripStatusAll: formatDate(totals.Total_Trip_Status_Rescheduled),
+					missedTripStatusAll: formatDate(totals.Total_Trip_Status_Missed),
+					completedTripStatusAll: formatDate(totals.Total_Trip_Status_Completed),
+					upcomingTripStatusAll: formatDate(totals.Total_Trip_Status_Upcoming),
+					canceledTripStatusAll: formatDate(totals.Total_Trip_Status_Cancelled),
+					rescheduledTripStatusCalabar: formatDate(totals.Calabar_Trip_Status_Rescheduled),
+					missedTripStatusCalabar: formatDate(totals.Calabar_Trip_Status_Missed),
+					completedTripStatusCalabar: formatDate(totals.Calabar_Trip_Status_Completed),
+					upcomingTripStatusCalabar: formatDate(totals.Calabar_Trip_Status_Upcoming),
+					canceledTripStatusCalabar: formatDate(totals.Calabar_Trip_Status_Cancelled),
+					rescheduledTripStatusUyo: formatDate(totals.Uyo_Trip_Status_Rescheduled),
+					missedTripStatusUyo: formatDate(totals.Uyo_Trip_Status_Missed),
+					completedTripStatusUyo: formatDate(totals.Uyo_Trip_Status_Completed),
+					upcomingTripStatusUyo: formatDate(totals.Uyo_Trip_Status_Upcoming),
+					canceledTripStatusUyo: formatDate(totals.Uyo_Trip_Status_Cancelled),
+
 					rentRevenueAll: formatDate(totals.total_rent_revenue),
 					rentRevenueCalabar: formatDate([...totals.calabar_rent_revenue, ...totals.within_rent_revenue]),
 					rentRevenueUyo: formatDate(totals.uyo_rent_revenue),
@@ -260,41 +282,16 @@ const Report = () => {
 	}, []);
 
 	React.useEffect(() => {
-		const filteredBooking =
-			city == "All"
-				? bookingQuery
-				: bookingQuery.filter((booking) => booking.travel_from.includes(city));
-
-		const totalCompletedTrips = filteredBooking.filter(
-			(booking) => booking.trip_status == "Completed"
-		).length;
-
-		const totalUpcomingTrips = filteredBooking.filter(
-			(booking) => booking.trip_status == "Upcoming"
-		).length;
-
-		const totalMissedTrips = filteredBooking.filter(
-			(booking) => booking.trip_status == "Missed"
-		).length;
-
-		const totalRescheduledTrips = filteredBooking.filter(
-			(booking) => booking.trip_status == "Rescheduled"
-		).length;
-
-		const totalCanceledTrips = filteredBooking.filter(
-			(booking) => booking.trip_status == "Canceled"
-		).length;
-
-		if (total.tripsAll.length > 0)
-			setBookingTotals({
-				totalCompletedTrips,
-				totalUpcomingTrips,
-				totalRescheduledTrips,
-				totalCanceledTrips,
-				totalMissedTrips,
-			});
+		if (filter == "all") {
+			return setFilteredTotal(total)
+		}
+		if (filter == "custom") {
+			return;
+		}
+		const result = filterBy();
+		return filterData(result)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [bookingQuery, city, total]);
+	}, [filter, total])
 
 	const formatDate = (data) => {
 		return data.map((record) => ({
@@ -303,19 +300,9 @@ const Report = () => {
 		}));
 	};
 
-	React.useEffect(() => {
-		if (filter == "all") {
-			return setFilteredTotal(total)
-		}
-		return filterData()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [filter, total])
-
-
-	const filterData = () => {
+	const filterData = (result) => {
 		setTimeout(() => {
 			const filteredTotal = {};
-			const result = filterBy();
 			const datesArray = result.map((date) => format(date, "PP"));
 			[total].map((data) => {
 				const keys = Object.keys(data);
@@ -356,11 +343,6 @@ const Report = () => {
 					start: startOfYear(currentDate),
 					end: currentDate
 				});
-			case "custom":
-				return eachDayOfInterval({
-					start: customFilter.from,
-					end: customFilter.to
-				});
 			default:
 				return [];
 		}
@@ -383,7 +365,11 @@ const Report = () => {
 	});
 
 	const onSubmit = handleSubmit((formData) => {
-		setCustomFilter({ from: formData.to, to: formData.from });
+		const result = eachDayOfInterval({
+			start: formData.from,
+			end: formData.to
+		});
+		filterData(result);
 	});
 
 	const getTotal = (arr, type) => {
@@ -463,7 +449,7 @@ const Report = () => {
 									<SelectItem value="1month">This Month</SelectItem>
 									<SelectItem value="1year">Last 1 Year</SelectItem>
 									<SelectItem value="all">All Time</SelectItem>
-									{/* <SelectItem value="custom">Custom</SelectItem> */}
+									<SelectItem value="custom">Custom</SelectItem>
 								</SelectGroup>
 							</SelectContent>
 						</Select>
@@ -698,11 +684,11 @@ const Report = () => {
 					<div className="col-start-7 col-span-6 row-start-6 row-span-2 bg-white rounded-lg p-5 ">
 						<TripStatusPieChart
 							props={{
-								completed: bookingTotals.totalCompletedTrips,
-								canceled: bookingTotals.totalCanceledTrips,
-								upcoming: bookingTotals.totalUpcomingTrips,
-								missed: bookingTotals.totalMissedTrips,
-								rescheduled: bookingTotals.totalRescheduledTrips,
+								completed: getTotal(filteredTotal[`completedTripStatus${city}`], "count"),
+								canceled: getTotal(filteredTotal[`canceledTripStatus${city}`], "count"),
+								upcoming: getTotal(filteredTotal[`upcomingTripStatus${city}`], "count"),
+								missed: getTotal(filteredTotal[`missedTripStatus${city}`], "count"),
+								rescheduled: getTotal(filteredTotal[`rescheduledTripStatus${city}`], "count"),
 							}}
 						/>
 					</div>
