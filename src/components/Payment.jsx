@@ -14,6 +14,11 @@ import { Button as IconButton } from "./ui/button";
 import { useStepper } from "@/hooks/useStepper";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { useSearchTrip } from "@/hooks/useSearchTrip";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Link } from "react-router-dom"
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 
 const Payment = () => {
 	const { loading, formData, handleReset } = React.useContext(BookingCTX);
@@ -25,8 +30,22 @@ const Payment = () => {
 		Number(formData.bookingDetails.total_passengers);
 	const { checkAvailability } = useSearchTrip();
 
+	const {
+		handleSubmit,
+		setValue,
+		clearErrors,
+		formState: { errors }
+	} = useForm({
+		resolver: yupResolver(yup.object().shape({
+			checked: yup.string().required("Please check this box to proceed.")
+		}))
+	})
+	const onSubmit = handleSubmit(({ checked }) => {
+		if (checked) checkAvailability()
+	})
+
 	return (
-		<div className="p-5 md:p-12 !bg-white mx-auto flex flex-col gap-2">
+		<form onSubmit={onSubmit} className="p-5 md:p-12 !bg-white mx-auto flex flex-col gap-2">
 			<div className="flex gap-5 justify-between items-center">
 				<img
 					alt="logo"
@@ -122,6 +141,7 @@ const Payment = () => {
 
 				{/* customer details */}
 				<button
+					type="button"
 					onClick={() => {
 						mountPortalModal(<PassengerDetailsModal />);
 					}}
@@ -201,14 +221,31 @@ const Payment = () => {
 					</strong>
 				</p>
 				<p>
-					{/* <strong>Customer Support Information</strong> <br /> */}
-					After booking, if you encounter any issues, kindly reach out to our customer service at <a href="tel:+2349045591897" className="underline">+2349045591897</a>.
+					After booking, If you encounter any issues, kindly reach out to our customer service at <a href="tel:+2349045591897" className="underline">+2349045591897</a>.
 				</p>
+			</div>
+
+			<div className="flex gap-2 items-center mt-5">
+				<Checkbox
+					className={errors.checked && "border-red-500"}
+					onCheckedChange={(value) => {
+						setValue("checked", value ? true : "")
+						if (value) clearErrors()
+					}} />
+				<div className="relative">
+					<p className="text-xs md:text-sm">I have read and accept the <Link target="_blank" to="/terms-conditions" className="text-blue-500 underline hover:text-blue-700">Term of Agreement</Link> and <Link target="_blank" to="/privacy-policy" className="text-blue-500 underline hover:text-blue-700">Privacy Policy</Link>.</p>
+					{errors.checked && (
+						<p className="text-[10px] text-red-700 absolute -bottom-4 left-0 ">
+							{errors.checked.message}
+						</p>
+					)}
+				</div>
+
 			</div>
 
 			<div className="my-5 md:mt-8 md:mb-0 space-y-5">
 				<Button
-					onClick={checkAvailability}
+					type="submit"
 					id="paystack_btn"
 					loading={loading}
 					text={"Pay with paystack"}
@@ -226,10 +263,11 @@ const Payment = () => {
 					text="Back"
 					id="payment_next_btn"
 					variant="outline"
+					type="button"
 					className="w-full md:py-6"
 				/>
 			</div>
-		</div>
+		</form>
 	);
 };
 
