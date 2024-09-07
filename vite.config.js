@@ -1,16 +1,6 @@
-import { defineConfig, loadEnv, normalizePath } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import * as path from "path";
-import { viteStaticCopy } from 'vite-plugin-static-copy';
-import { createRequire } from 'node:module';
-
-const require = createRequire(import.meta.url);
-const cMapsDir = normalizePath(
-	path.join(path.dirname(require.resolve('pdfjs-dist/package.json')), 'cmaps'),
-);
-const standardFontsDir = normalizePath(
-	path.join(path.dirname(require.resolve('pdfjs-dist/package.json')), 'standard_fonts'),
-);
 
 // https://vitejs.dev/config/
 
@@ -21,13 +11,7 @@ export default defineConfig(({ command, mode }) => {
 
 	return {
 		// vite config
-		plugins: [react(), viteStaticCopy({
-			targets: [
-				{ src: cMapsDir, dest: '' },
-				{ src: standardFontsDir, dest: '' },
-			],
-		}),
-		],
+		plugins: [react()],
 		resolve: {
 			// eslint-disable-next-line no-undef
 			alias: [{ find: "@", replacement: path.resolve(__dirname, "src") }],
