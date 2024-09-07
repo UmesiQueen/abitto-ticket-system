@@ -179,7 +179,6 @@ const Report = () => {
 		baseurl
 			.get("/booking/getnewmonthly")
 			.then((res) => {
-				console.log(res.data)
 				const totals = res.data;
 				setTotal({
 					bookingRevenueAll: formatDate(totals.Revenue),
