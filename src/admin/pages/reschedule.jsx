@@ -428,7 +428,7 @@ const Payment = () => {
 										<li>
 											<p>Surname</p>
 											<p>
-												{bookingData[`passenger${num}_surname`]}
+												{bookingData[`passenger${num}_last_name`]}
 											</p>
 										</li>
 										<li>

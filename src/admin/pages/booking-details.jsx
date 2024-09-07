@@ -92,7 +92,7 @@ const BookingDetails = () => {
 			id: "fullName",
 			header: "fullName",
 			accessorFn: (row) =>
-				`${row.passenger1_first_name} ${row.passenger1_surname}`,
+				`${row.passenger1_first_name} ${row.passenger1_last_name}`,
 		},
 		{
 			accessorKey: "customer",
@@ -102,7 +102,7 @@ const BookingDetails = () => {
 					<p className="text-[15px] font-semibold capitalize">
 						{truncate(
 							capitalize(
-								` ${row.original.passenger1_surname} ${row.original.passenger1_first_name}`
+								` ${row.original.passenger1_last_name} ${row.original.passenger1_first_name}`
 							),
 							{ length: 25 }
 						)}
@@ -572,7 +572,7 @@ export const CustomerDetails = () => {
 								</li>
 								<li>
 									<p className="text-xs text-[#7F7F7F]">Customer Name</p>
-									<p className="text-base font-semibold capitalize">{`${currentUser?.passenger1_first_name} ${currentUser?.passenger1_surname}`}</p>
+									<p className="text-base font-semibold capitalize">{`${currentUser?.passenger1_first_name} ${currentUser?.passenger1_last_name}`}</p>
 								</li>
 								<li>
 									<p className="text-xs text-[#7F7F7F]">Phone</p>
@@ -945,7 +945,7 @@ const CustomerDetailsModal = ({ props: { currentUser } }) => {
 						</li>
 						<li>
 							<p>Surname</p>
-							<p className="capitalize">{currentUser.passenger1_surname}</p>
+							<p className="capitalize">{currentUser.passenger1_last_name}</p>
 						</li>
 						<li>
 							<p>Phone Number</p>
@@ -976,7 +976,7 @@ const CustomerDetailsModal = ({ props: { currentUser } }) => {
 										<li>
 											<p>Surname</p>
 											<p className="capitalize">
-												{currentUser[`passenger${num}_surname`]}
+												{currentUser[`passenger${num}_last_name`]}
 											</p>
 										</li>
 										<li>

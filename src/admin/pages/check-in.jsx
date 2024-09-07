@@ -139,7 +139,7 @@ const CheckInTable = () => {
 			id: "fullName",
 			header: "fullName",
 			accessorFn: (row) =>
-				`${row.passenger1_first_name} ${row.passenger1_surname}`,
+				`${row.passenger1_first_name} ${row.passenger1_last_name}`,
 		},
 		{
 			accessorKey: "customer",
@@ -149,7 +149,7 @@ const CheckInTable = () => {
 					<p className="text-[15px] font-semibold capitalize">
 						{truncate(
 							capitalize(
-								` ${row.original.passenger1_surname} ${row.original.passenger1_first_name}`
+								` ${row.original.passenger1_last_name} ${row.original.passenger1_first_name}`
 							),
 							{ length: 25 }
 						)}

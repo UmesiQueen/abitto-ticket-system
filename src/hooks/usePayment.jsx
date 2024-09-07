@@ -42,7 +42,7 @@ export const usePayment = () => {
 			amount: total_ticket_cost * 100,
 			email: formData.passengerDetails?.passenger1_email,
 			firstname: formData.passengerDetails?.passenger1_first_name,
-			lastname: formData.passengerDetails?.passenger1_surname,
+			lastname: formData.passengerDetails?.passenger1_last_name,
 			phone: formData.passengerDetails?.passenger1_phone_number,
 			onSuccess(res) {
 				handleOnlineRequest({

@@ -168,7 +168,7 @@ const TicketInvoice = () => {
 										<span className="text-xs text-gray-500 font-normal">
 											Full name:
 										</span>{" "}
-										<span className="capitalize">{`${currentUser.passenger1_first_name} ${currentUser.passenger1_surname}`}</span>
+										<span className="capitalize">{`${currentUser.passenger1_first_name} ${currentUser.passenger1_last_name}`}</span>
 									</li>
 									<li>
 										<span className="text-xs text-gray-500 font-normal">
@@ -200,7 +200,7 @@ const TicketInvoice = () => {
 															Full name:
 														</span>{" "}
 														<span className="capitalize">
-															{`${currentUser[`passenger${num}_first_name`]} ${currentUser[`passenger${num}_surname`]
+															{`${currentUser[`passenger${num}_first_name`]} ${currentUser[`passenger${num}_last_name`]
 																}`}
 														</span>
 													</li>
