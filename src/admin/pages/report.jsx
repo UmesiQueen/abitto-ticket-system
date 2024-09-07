@@ -162,7 +162,7 @@ const defaultValue = {
 }
 
 const Report = () => {
-	const { adminProfile, setLoading } = React.useContext(GlobalCTX);
+	const { adminProfile } = React.useContext(GlobalCTX);
 	const isSuperAdmin = ["super-admin", "dev"].includes(
 		adminProfile.account_type
 	)

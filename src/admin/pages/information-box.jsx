@@ -335,9 +335,10 @@ const InformationBox = () => {
 	const deleteRequest = (data) => {
 		setLoader(true)
 		baseurl
-			.delete("/infobox/delete", data)
+			.patch("/infobox/delete", { message_id: data.message_id })
 			.then((res) => {
 				if (res.status == 200) {
+					handleReset();
 					setModalContent(
 						<SuccessModal
 							header="Deleted Successfully"
@@ -416,7 +417,7 @@ const InformationBox = () => {
 								onClick={() => mountPortalModal(<PreviewModal url={preview} />)}
 							>
 								{preview.length ?
-									<img src={preview} alt="notice" className="" />
+									<img src={preview} alt="notice" />
 									: ""
 								}
 							</div>
@@ -573,8 +574,8 @@ const PreviewModal = ({ url }) => {
 			>
 				<CancelSquareIcon />
 			</ButtonUI>
-			<div className="max-w-[600px] aspect-auto ">
-				<img src={url} alt="notice" className="w-full h-full" />
+			<div className="w-[700px] h-[500px] flex ">
+				<img src={url} alt="notice" className="w-full h-full object-fit" />
 			</div>
 		</div>
 	)
