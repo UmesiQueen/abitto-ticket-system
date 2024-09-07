@@ -137,10 +137,32 @@ const defaultValue = {
 	posLogisticsPaymentMethodUyo: [],
 	bankTransferLogisticsPaymentMethodUyo: [],
 	cashLogisticsPaymentMethodUyo: [],
+
+	othersCategoryAll: [],
+	foodCategoryAll: [],
+	electronicsCategoryAll: [],
+	clothesCategoryAll: [],
+	documentsCategoryAll: [],
+	healthCategoryAll: [],
+	jewelriesCategoryAll: [],
+	othersCategoryCalabar: [],
+	foodCategoryCalabar: [],
+	electronicsCategoryCalabar: [],
+	clothesCategoryCalabar: [],
+	documentsCategoryCalabar: [],
+	healthCategoryCalabar: [],
+	jewelriesCategoryCalabar: [],
+	othersCategoryUyo: [],
+	foodCategoryUyo: [],
+	electronicsCategoryUyo: [],
+	clothesCategoryUyo: [],
+	documentsCategoryUyo: [],
+	healthCategoryUyo: [],
+	jewelriesCategoryUyo: [],
 }
 
 const Report = () => {
-	const { adminProfile } = React.useContext(GlobalCTX);
+	const { adminProfile, setLoading } = React.useContext(GlobalCTX);
 	const isSuperAdmin = ["super-admin", "dev"].includes(
 		adminProfile.account_type
 	)
@@ -152,11 +174,12 @@ const Report = () => {
 	const [filter, setFilter] = React.useState("all");
 
 	React.useEffect(() => {
+		// setLoading(true);
 		if (!isSuperAdmin) setCity(capitalize(adminProfile.city));
 		baseurl
 			.get("/booking/getnewmonthly")
 			.then((res) => {
-				// console.log(res.data)
+				console.log(res.data)
 				const totals = res.data;
 				setTotal({
 					bookingRevenueAll: formatDate(totals.Revenue),
@@ -226,6 +249,9 @@ const Report = () => {
 					successRentalPaymentStatusCalabar: formatDate(totals.Calabar_Rent_Payment_Status_Success),
 					pendingRentalPaymentStatusCalabar: formatDate(totals.Calabar_Rent_Payment_Status_Pending),
 					canceledRentalPaymentStatusCalabar: formatDate(totals.Calabar_Rent_Payment_Status_Canceled),
+					// successRentalPaymentStatusCalabar: formatDate([...totals.Calabar_Rent_Payment_Status_Success, ...totals.Within_Rent_Payment_Status_Success]),
+					// pendingRentalPaymentStatusCalabar: formatDate([...totals.Calabar_Rent_Payment_Status_Pending, ...totals.Within_Rent_Payment_Status_Pending]),
+					// canceledRentalPaymentStatusCalabar: formatDate([...totals.Calabar_Rent_Payment_Status_Canceled, ...totals.Within_Rent_Payment_Status_Canceled]),
 					successRentalPaymentStatusUyo: formatDate(totals.Uyo_Rent_Payment_Status_Success),
 					pendingRentalPaymentStatusUyo: formatDate(totals.Uyo_Rent_Payment_Status_Pending),
 					canceledRentalPaymentStatusUyo: formatDate(totals.Uyo_Rent_Payment_Status_Canceled),
@@ -234,18 +260,18 @@ const Report = () => {
 					rentalCountUyo: formatDate([...totals.Uyo_Rent_Medium_Offline, ...totals.Uyo_Rent_Medium_Online]),
 					rentalCountWithinMarina: formatDate([...totals.Within_Rent_Medium_Offline, ...totals.Within_Rent_Medium_Online]),
 
-					paystackRentalPaymentMethodAll: [],
-					posRentalPaymentMethodAll: [],
-					bankTransferRentalPaymentMethodAll: [],
-					cashRentalPaymentMethodAll: [],
-					paystackRentalPaymentMethodCalabar: [],
-					posRentalPaymentMethodCalabar: [],
-					bankTransferRentalPaymentMethodCalabar: [],
-					cashRentalPaymentMethodCalabar: [],
-					paystackRentalPaymentMethodUyo: [],
-					posRentalPaymentMethodUyo: [],
-					bankTransferRentalPaymentMethodUyo: [],
-					cashRentalPaymentMethodUyo: [],
+					paystackRentalPaymentMethodAll: formatDate(totals.Total_Rent_Payment_Method_Paystack),
+					posRentalPaymentMethodAll: formatDate(totals.Total_Rent_Payment_Method_POS),
+					bankTransferRentalPaymentMethodAll: formatDate(totals.Total_Rent_Payment_Method_Bank_Transfer),
+					cashRentalPaymentMethodAll: formatDate(totals.Total_Rent_Payment_Method_Cash),
+					paystackRentalPaymentMethodCalabar: formatDate([...totals.Calabar_Rent_Payment_Method_Paystack, ...totals.Within_Rent_Payment_Method_Paystack]),
+					posRentalPaymentMethodCalabar: formatDate([...totals.Calabar_Rent_Payment_Method_POS, ...totals.Within_Rent_Payment_Method_POS]),
+					bankTransferRentalPaymentMethodCalabar: formatDate([...totals.Calabar_Rent_Payment_Method_Bank_Transfer, ...totals.Within_Rent_Payment_Method_Bank_Transfer]),
+					cashRentalPaymentMethodCalabar: formatDate([...totals.Calabar_Rent_Payment_Method_Cash, ...totals.Within_Rent_Payment_Method_Cash]),
+					paystackRentalPaymentMethodUyo: formatDate(totals.Uyo_Rent_Payment_Method_Paystack),
+					posRentalPaymentMethodUyo: formatDate(totals.Uyo_Rent_Payment_Method_POS),
+					bankTransferRentalPaymentMethodUyo: formatDate(totals.Uyo_Rent_Payment_Method_Bank_Transfer),
+					cashRentalPaymentMethodUyo: formatDate(totals.Uyo_Rent_Payment_Method_Cash),
 
 					logisticsRevenueAll: formatDate(totals.Total_Logistics_Revenue),
 					logisticsRevenueCalabar: formatDate(totals.Calabar_Logistics_Revenue),
@@ -266,6 +292,28 @@ const Report = () => {
 					posLogisticsPaymentMethodUyo: formatDate(totals.Uyo_Logistics_Payment_Method_POS),
 					bankTransferLogisticsPaymentMethodUyo: formatDate(totals.Uyo_Logistics_Payment_Method_Bank_Transfer),
 					cashLogisticsPaymentMethodUyo: formatDate(totals.Uyo_Logistics_Payment_Method_Cash),
+
+					othersCategoryAll: formatDate(totals.Total_Categories_Others_Count),
+					foodCategoryAll: formatDate(totals.Total_Categories_Food_Count),
+					electronicsCategoryAll: formatDate(totals.Total_Categories_Electronics_Count),
+					clothesCategoryAll: formatDate(totals.Total_Categories_Clothes_Count),
+					documentsCategoryAll: formatDate(totals.Total_Categories_Documents_Count),
+					healthCategoryAll: formatDate(totals.Total_Categories_Health_Count),
+					jewelriesCategoryAll: formatDate(totals.Total_Categories_Jeweries_Count),
+					othersCategoryCalabar: formatDate(totals.Calabar_Categories_Others_Count),
+					foodCategoryCalabar: formatDate(totals.Calabar_Categories_Food_Count),
+					electronicsCategoryCalabar: formatDate(totals.Calabar_Categories_Electronics_Count),
+					clothesCategoryCalabar: formatDate(totals.Calabar_Categories_Clothes_Count),
+					documentsCategoryCalabar: formatDate(totals.Calabar_Categories_Documents_Count),
+					healthCategoryCalabar: formatDate(totals.Calabar_Categories_Health_Count),
+					jewelriesCategoryCalabar: formatDate(totals.Calabar_Categories_Jeweries_Count),
+					othersCategoryUyo: formatDate(totals.Uyo_Categories_Others_Count),
+					foodCategoryUyo: formatDate(totals.Uyo_Categories_Food_Count),
+					electronicsCategoryUyo: formatDate(totals.Uyo_Categories_Electronics_Count),
+					clothesCategoryUyo: formatDate(totals.Uyo_Categories_Clothes_Count),
+					documentsCategoryUyo: formatDate(totals.Uyo_Categories_Documents_Count),
+					healthCategoryUyo: formatDate(totals.Uyo_Categories_Health_Count),
+					jewelriesCategoryUyo: formatDate(totals.Uyo_Categories_Jeweries_Count),
 				});
 			})
 			.catch((error) => {
@@ -278,6 +326,7 @@ const Report = () => {
 						"Error occurred while fetching dashboard data. Refresh page."
 					);
 			});
+		// .finally(() => setLoading(false));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -962,7 +1011,19 @@ const Report = () => {
 						</div>
 					</div>
 					<div className="row-span-3 row-start-1 col-start-9 col-span-4 bg-white rounded-lg p-5">
-						<div className="rounded-lg border p-5 space-y-5 mx-auto h-full" />
+						<CategoryPieChart
+							props={{
+								food: getTotal(filteredTotal[`foodCategory${city}`], "count"),
+								electronics: getTotal(filteredTotal[`electronicsCategory${city}`], "count"),
+								documents: getTotal(filteredTotal[`documentsCategory${city}`], "count"),
+								clothes: getTotal(filteredTotal[`clothesCategory${city}`], "count"),
+								jewelries: getTotal(filteredTotal[`jewelriesCategory${city}`], "count"),
+								health: getTotal(filteredTotal[`healthCategory${city}`], "count"),
+								others: getTotal(filteredTotal[`othersCategory${city}`], "count"),
+							}}
+
+						/>
+
 					</div>
 					<div className="row-span-2 row-start-4 col-start-9 col-span-4 bg-white rounded-lg p-5 h-full w-full">
 						<LogisticsPaymentMethodPieChart
@@ -1178,8 +1239,8 @@ const TripStatusPieChart = ({
 }) => {
 	const data = [
 		{ label: "Upcoming", value: upcoming, color: "#071952" },
-		{ label: "Completed", value: completed, color: "#134B70" },
 		{ label: "Canceled", value: canceled, color: "#AA0000" },
+		{ label: "Completed", value: completed, color: "#134B70" },
 		{ label: "Missed", value: missed, color: "#3366CC" },
 		{ label: "Rescheduled", value: rescheduled, color: "#E8D2A6" },
 	];
@@ -1233,17 +1294,103 @@ const TripStatusPieChart = ({
 					<li className=" text-[#7F7F7F] before:content-[''] before:px-3 before:rounded-full before:bg-[#071952] before:mr-3 text-nowrap">
 						Upcoming
 					</li>
-					<li className=" text-[#7F7F7F] before:content-[''] before:px-3 before:rounded-full before:bg-[#134B70] before:mr-3 text-nowrap">
-						Completed
-					</li>
 					<li className=" text-[#7F7F7F] before:content-[''] before:px-3 before:rounded-full before:bg-[#AA0000] before:mr-3 text-nowrap">
 						Canceled
+					</li>
+					<li className=" text-[#7F7F7F] before:content-[''] before:px-3 before:rounded-full before:bg-[#134B70] before:mr-3 text-nowrap">
+						Completed
 					</li>
 					<li className=" text-[#7F7F7F] before:content-[''] before:px-3 before:rounded-full before:bg-[#E8D2A6] before:mr-3 text-nowrap">
 						Rescheduled
 					</li>
 					<li className=" text-[#7F7F7F] before:content-[''] before:px-3 before:rounded-full before:bg-[#3366CC] before:mr-3 text-nowrap">
 						Missed
+					</li>
+				</ul>
+			</div>
+		</div>
+	);
+};
+
+const CategoryPieChart = ({
+	props: { food, electronics, documents, clothes, jewelries, health, others },
+}) => {
+	const data = [
+		{ label: "Food", value: food, color: "#708871" },
+		{ label: "Clothes", value: clothes, color: "#3366CC" },
+		{ label: "Documents", value: documents, color: "#603F26" },
+		{ label: "Health", value: health, color: "#071952" },
+		{ label: "others", value: others, color: "#E8D2A6" },
+		{ label: "Electronics", value: electronics, color: "#AA0000" },
+		{ label: "Jewelries", value: jewelries, color: "#7FA1C3" },
+
+	];
+
+	const sizing = {
+		width: 300,
+		height: 210,
+		legend: { hidden: true },
+	};
+	const TOTAL = data.map((item) => item.value).reduce((a, b) => a + b, 0);
+
+	const getArcLabel = (params) => {
+		const percent = params.value / TOTAL;
+		return `${(percent * 100).toFixed(0)}%`;
+	};
+
+	return (
+		<div className="border rounded-lg p-5 ">
+			<h3 className="font-semibold">Categories</h3>
+			<div className="max-w-[450px] font-poppins mx-auto">
+				<PieChart
+					series={[
+						{
+							innerRadius: 30,
+							outerRadius: 105,
+							paddingAngle: 0,
+							cornerRadius: 5,
+							startAngle: -180,
+							endAngle: 180,
+							cx: 150,
+							cy: 100,
+							data,
+							arcLabel: getArcLabel,
+						},
+					]}
+					sx={{
+						[`& .${pieArcLabelClasses.root}`]: {
+							fill: "white",
+							fontSize: 14,
+							fontWeight: 500,
+						},
+						"& .MuiChartsLegend-series text": {
+							fontFamily:
+								"Poppins, Roboto, Helvetica, Arial, sans-serif !important",
+						},
+					}}
+					{...sizing}
+				/>
+				<ul className="flex flex-wrap gap-2 mt-5">
+					<li className=" text-[#7F7F7F] before:content-[''] before:px-3 before:rounded-full before:bg-[#708871] before:mr-3 ">
+						Food
+					</li>
+					<li className=" text-[#7F7F7F] before:content-[''] before:px-3 before:rounded-full before:bg-[#3366CC] before:mr-3">
+						Clothes
+					</li>
+					<li className=" text-[#7F7F7F] before:content-[''] before:px-3 before:rounded-full before:bg-[#603F26] before:mr-3">
+						Documents
+					</li>
+					<li className=" text-[#7F7F7F] before:content-[''] before:px-3 before:rounded-full before:bg-[#071952] before:mr-3 ">
+						Health Products
+					</li>
+					<li className=" text-[#7F7F7F] before:content-[''] before:px-3 before:rounded-full before:bg-[#E8D2A6] before:mr-3 text-nowrap">
+						Others
+					</li>
+					<li className=" text-[#7F7F7F] before:content-[''] before:px-3 before:rounded-full before:bg-[#AA0000] before:mr-3 text-nowrap">
+						Electronics/Gadgets
+					</li>
+					<li className=" text-[#7F7F7F] before:content-[''] before:px-3 before:rounded-full before:bg-[#7FA1C3] before:mr-3 ">
+						Jewelries/Accessories
 					</li>
 				</ul>
 			</div>
