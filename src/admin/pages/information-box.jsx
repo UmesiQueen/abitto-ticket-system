@@ -247,10 +247,12 @@ const InformationBox = () => {
 	const handleUpdateMessage = (data, action) => {
 		const options = {
 			deactivate: {
+				header: "Are you sure you want to deactivate this message?",
 				severity: "delete",
 				status: "Inactive"
 			},
 			activate: {
+				header: "Are you sure you want to activate this message?",
 				severity: "warning",
 				status: "Active"
 			}
@@ -258,7 +260,7 @@ const InformationBox = () => {
 
 		mountPortalModal(
 			<ConfirmationModal props={{
-				header: "Are you sure you want to deactivate this message?",
+				header: options[action].header,
 				handleRequest: () => {
 					updateRequest(data, options[action].status)
 				},

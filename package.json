@@ -1,7 +1,7 @@
 {
 	"name": "abitto-ticket-system",
 	"private": true,
-	"version": "0.0.0",
+	"version": "1.0.0",
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
@@ -37,7 +37,6 @@
 		"@wojtekmaj/react-hooks": "^1.21.0",
 		"axios": "^1.6.8",
 		"class-variance-authority": "^0.7.0",
-		"classnames": "^2.5.1",
 		"clsx": "^2.1.1",
 		"date-fns": "^3.6.0",
 		"dayjs": "^1.11.11",
@@ -58,8 +57,6 @@
 		"react-hook-form": "^7.51.3",
 		"react-number-format": "^5.4.0",
 		"react-paginate": "^8.2.0",
-		"react-pdf": "^9.1.0",
-		"react-quill": "^2.0.0",
 		"react-router-dom": "^6.23.0",
 		"react-spinners": "^0.13.8",
 		"react-to-print": "^2.15.1",
