@@ -165,7 +165,7 @@ const Payment = () => {
 						</li>
 						<li>
 							<p>Surname</p>
-							<p>{formData.passengerDetails.passenger1_surname}</p>
+							<p>{formData.passengerDetails.passenger1_last_name}</p>
 						</li>
 						<li>
 							<p>Phone Number</p>
@@ -201,7 +201,7 @@ const Payment = () => {
 										<li>
 											<p>Surname</p>
 											<p>
-												{formData.passengerDetails[`passenger${num}_surname`]}
+												{formData.passengerDetails[`passenger${num}_last_name`]}
 											</p>
 										</li>
 										<li>

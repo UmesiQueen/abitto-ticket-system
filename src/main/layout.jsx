@@ -15,8 +15,26 @@ import {
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import LogoSVG from "@/assets/icons/abitto.svg";
 import Loader from "@/components/animation/Loader";
+import { InformationModal } from "@/admin/pages/information-box";
+import baseurl from "@/api";
 
 const MainLayout = () => {
+	const { setLiveMessage } = React.useContext(GlobalCTX);
+
+	React.useEffect(() => {
+		baseurl
+			.get("infobox/get")
+			.then((res) => {
+				if (res.status == 200) {
+					const data = res.data.infoBoxes;
+					const activeMessage = data.filter((message) => message.status == "Active")[0];
+					if (activeMessage)
+						setLiveMessage(activeMessage)
+				}
+			})
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
+
 	return (
 		<>
 			<div className="relative">
@@ -27,6 +45,7 @@ const MainLayout = () => {
 				<Footer />
 			</div>
 			<Loader />
+			<InformationModal />
 		</>
 	);
 };
@@ -150,6 +169,8 @@ const Navbar = () => {
 };
 
 const Footer = () => {
+	const { faq, scrollToSection } = React.useContext(GlobalCTX);
+
 	return (
 		<footer className="bg-[#111111] px-5 py-10 md:px-10 lg:px-20 text-white ">
 			<div className="max-w-[1440px] mx-auto">
@@ -167,14 +188,13 @@ const Footer = () => {
 						<li>
 							<h3>Company</h3>
 							<Link to="/about">About Us</Link>
-							<a>Terms of Service</a>
+							<Link to="/#faq" onClick={() => setTimeout(() => scrollToSection(faq))}>FAQ</Link>
 						</li>
-						<li>
+						{/* <li>
 							<h3>Resources</h3>
-							{/* <a>FAQ</a> */}
 							<a>Career</a>
 							<a>Videos</a>
-						</li>
+						</li> */}
 						<li>
 							<h3>Contact Us</h3>
 							<a
@@ -183,7 +203,21 @@ const Footer = () => {
 							>
 								info.abittoferryservices@gmail.com
 							</a>
-							<a>Twitter Support</a>
+							<ul className="flex items-center gap-5 *:inline-flex *:items-center">
+								<li>
+									<Link
+										target="_blank"
+										to="https://www.instagram.com/abittoglobal/?igsh=NjB5dXpnZnI5ejFs"
+									>
+										<InstagramIcon />
+									</Link>
+								</li>
+								<li>
+									<Link target="_blank" to="https://web.facebook.com/abittoglobal/">
+										<FacebookIcon />
+									</Link>
+								</li>
+							</ul>
 						</li>
 					</ul>
 					<ul className="md:hidden mt-10 mb-20 [&_a]:block [&_a]:mb-2 [&_a]:text-sm [&_a]:font-normal">
@@ -205,30 +239,7 @@ const Footer = () => {
 								</AccordionSummary>
 								<AccordionDetails sx={{ marginX: "20px" }}>
 									<Link to="/about">About Us</Link>
-									<a>Terms of Service</a>
-								</AccordionDetails>
-							</Accordion>
-						</li>
-						<li>
-							<Accordion
-								sx={{
-									background: "transparent",
-									color: "white",
-									boxShadow: "unset",
-								}}
-							>
-								<AccordionSummary
-									expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
-									sx={{ fontWeight: 500 }}
-									aria-controls="panel2-content"
-									id="panel2-header"
-								>
-									Resources
-								</AccordionSummary>
-								<AccordionDetails sx={{ marginX: "20px" }}>
-									{/* <a>FAQ</a> */}
-									<a>Career</a>
-									<a>Videos</a>
+									<Link to="/#faq" onClick={() => setTimeout(() => scrollToSection(faq))}>FAQ</Link>
 								</AccordionDetails>
 							</Accordion>
 						</li>
@@ -255,36 +266,26 @@ const Footer = () => {
 									>
 										info.abittoferryservices@gmail.com
 									</a>
-									<a>Twitter Support</a>
+									<ul className="flex items-center gap-5 *:inline-flex *:items-center">
+										<li>
+											<Link
+												target="_blank"
+												to="https://www.instagram.com/abittoglobal/?igsh=NjB5dXpnZnI5ejFs"
+											>
+												<InstagramIcon />
+											</Link>
+										</li>
+										<li>
+											<Link target="_blank" to="https://web.facebook.com/abittoglobal/">
+												<FacebookIcon />
+											</Link>
+										</li>
+									</ul>
 								</AccordionDetails>
 							</Accordion>
 						</li>
 					</ul>
 				</div>
-				<ul className="flex items-center gap-3 *:w-10 *:inline-flex *:justify-center">
-					<li>
-						<Link
-							target="_blank"
-							to="https://www.instagram.com/abittoglobal/?igsh=NjB5dXpnZnI5ejFs"
-						>
-							<InstagramIcon />
-						</Link>
-					</li>
-					<li>
-						<Link target="_blank" to="https://web.facebook.com/abittoglobal/">
-							<FacebookIcon />
-						</Link>
-					</li>
-					{/*
-          <li>
-            <Link target="_blank" to="https://twitter.com/AbittoGlobal">
-              <TwitterIcon />
-            </Link>
-          </li>
-          <li>
-            <LinkedinIcon />
-          </li> */}
-				</ul>
 				<hr className="my-7" />
 				<div className="flex flex-col-reverse  gap-4 md:flex-row md:justify-between md:space-y-0">
 					<p className="text-xs mt-5 md:text-sm md:mt-0">
@@ -297,10 +298,10 @@ const Footer = () => {
 							All-in Technologies
 						</a>
 					</p>
-					<ul className="md:flex gap-8 space-y-4 md:space-y-0">
-						<li>Privacy</li>
-						<li>Terms of Agreement</li>
-						<li>Licenses</li>
+					<ul className="md:flex gap-8 space-y-4 md:space-y-0 text-sm md:text-base">
+						<li><Link to="/privacy-policy">Privacy Policy</Link></li>
+						<li><Link to="/terms-conditions">Terms of Agreement</Link></li>
+						{/* <li>Licenses</li> */}
 					</ul>
 				</div>
 			</div>

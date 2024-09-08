@@ -522,9 +522,9 @@ const Pagination = ({ props: { table } }) => {
 export const CustomerDetails = () => {
 	const navigate = useNavigate();
 	const currentUser = useLoaderData();
-	const { mountPortalModal } = React.useContext(GlobalCTX);
+	const { mountPortalModal, adminProfile } = React.useContext(GlobalCTX);
 
-	// const canReschedule = currentUser?.trip_status == "Upcoming" && ["dev", "salesperson"].includes(adminProfile.account_type)
+	const canReschedule = currentUser?.trip_status == "Upcoming" && ["dev", "salesperson"].includes(adminProfile.account_type)
 
 	return (
 		<div>
@@ -550,7 +550,7 @@ export const CustomerDetails = () => {
 									from our sales point.
 								</p>
 							</div>
-							{/* {canReschedule && <Button
+							{canReschedule && <Button
 								text="Re-schedule"
 								variant="outline"
 								className="text-nowrap h-10 ml-auto"
@@ -559,7 +559,7 @@ export const CustomerDetails = () => {
 										`reschedule`
 									);
 								}}
-							/>} */}
+							/>}
 						</div>
 
 						<div className="p-5 pb-20 space-y-6">

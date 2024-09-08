@@ -23,6 +23,7 @@ const rescheduleSchema = yup.object().shape({
 	date: yup.string().required("Date field is required."),
 	time: yup.string().required("Time field is required."),
 	cost: yup.string().required("Ticket cost is required."),
+	trip_capacity: yup.string().required("Capacity is required."),
 });
 
 const RescheduleEditModal = () => {
@@ -48,12 +49,13 @@ const RescheduleEditModal = () => {
 	});
 
 	const onSubmit = handleSubmit((formData) => {
-		const { time, cost, ...otherFormData } = formData;
+		const { time, cost, trip_capacity, ...otherFormData } = formData;
 		const formValues = {
 			time: format(addHours(time, 0), "p"),
 			ticket_cost: formatCost(cost),
-			...otherFormData,
 			...otherDetails,
+			...otherFormData,
+			trip_capacity: Number(trip_capacity),
 		};
 
 		setModalContent(

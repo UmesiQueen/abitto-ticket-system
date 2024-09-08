@@ -93,7 +93,7 @@ const RescheduleForm = () => {
 				<ul className="w-full [&_h4]:uppercase [&_h4]:text-gray-400 [&_h4]:text-xs [&_p]:text-white [&_p]:text-sm flex flex-wrap *:grow px-2 items-center gap-5 md:justify-around md:divide-x-2 h-full md:[&_li:not(:first-of-type)]:pl-5 *:space-y-1">
 					<li>
 						<h4>Customer name</h4>
-						<p className="capitalize">{capitalize(`${currentUser?.passenger1_first_name} ${currentUser?.passenger1_last_name}`)}</p>
+						<p className="capitalize">{capitalize(`${currentUser?.passenger1_first_name} ${currentUser?.last_name}`)}</p>
 					</li>
 					<li>
 						<h4>Route</h4>
@@ -341,7 +341,7 @@ const Payment = () => {
 	const { onPrevClick } = useStepper();
 	const { rescheduleBooking } = useUpdate();
 	const total_ticket_cost = Number(bookingData.departure_ticket_cost) * Number(bookingData.total_passengers);
-	const ticket_balance = Number(total_ticket_cost) - Number(currentUser.total_ticket_cost);
+	const ticket_balance = (Number(total_ticket_cost) * 50) / 100;
 	const paymentSchema = yup.object().shape({
 		payment_status: yup.string().required("This field is required."),
 		payment_method: yup.string().required("This field is required."),
@@ -392,7 +392,7 @@ const Payment = () => {
 						</li>
 						<li>
 							<p>Surname</p>
-							<p>{bookingData.passenger1_last_name}</p>
+							<p>{bookingData.last_name}</p>
 						</li>
 						<li>
 							<p>Phone Number</p>
@@ -584,7 +584,30 @@ const Payment = () => {
 						<tbody>
 							<tr>
 								<td className="text-xs md:text-sm text-[#444444]">
-									Ticket cost
+									Old ticket
+								</td>
+								<td className="text-xs md:text-sm text-[#444444]">
+									{formatValue({
+										value: String(currentUser.departure_ticket_cost),
+										prefix: "₦",
+									})}
+									{" "}	x {currentUser.total_passengers}
+								</td>
+							</tr>
+							<tr>
+								<td className="text-xs md:text-sm text-[#444444]">
+									Total
+								</td>
+								<td className="text-xs md:text-sm text-[#444444]">
+									{formatValue({
+										value: String(currentUser.total_ticket_cost),
+										prefix: "₦",
+									})}
+								</td>
+							</tr>
+							<tr className="border-t">
+								<td className="text-xs md:text-sm text-[#444444]">
+									New ticket
 								</td>
 								<td className="text-xs md:text-sm text-[#444444]">
 									{formatValue({
@@ -598,36 +621,23 @@ const Payment = () => {
 							</tr>
 							<tr>
 								<td className="text-xs md:text-sm text-[#444444]">
-									New total
+									Total
 								</td>
-								<td className="font-medium text-base md:text-lg ">
+								<td className="font-medium text-[#444444]">
 									₦
 									{formatValue({
 										value: String(total_ticket_cost),
-									})}
+									})} {" "}<span className="font-normal text-sm"> / 50%</span>
 								</td>
 							</tr>
+
 							<tr>
-								<td className="text-xs md:text-sm text-[#444444]">
-									Paid
-								</td>
-								<td className="text-xs md:text-sm text-[#444444]">
-									{formatValue({
-										value: String(
-											currentUser.total_ticket_cost ?? 0
-										),
-										prefix: "₦",
-									})}
-								</td>
-							</tr>
-							<tr>
-								<td className="font-medium text-base md:text-lg">Bal.</td>
-								<td className="text-xs md:text-sm text-[#444444] font-semibold">
+								<td className="font-medium text-base md:text-lg">Balance</td>
+								<td className="font-semibold">
 									{formatValue({
 										value: String(ticket_balance),
 										prefix: "₦",
 									})}
-
 								</td>
 							</tr>
 						</tbody>

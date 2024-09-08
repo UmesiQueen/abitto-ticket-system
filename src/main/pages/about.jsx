@@ -300,12 +300,12 @@ const About = () => {
 					</div>
 				</section>
 
-				{/* Our locations */}
+				{/* Our Terminals */}
 				<section className="py-20 px-5 md:px-20 bg-white">
 					<div className="max-w-[1440px] mx-auto">
 						<h2 className="font-semibold text-xl  mb-7 inline-flex items-center justify-center w-full ">
 							<span className="h-3 w-3 mr-3 rounded-full bg-blue-500" />
-							Our Locations
+							Our Terminals
 						</h2>
 						<div className="flex flex-col lg:flex-row gap-10 *:md:shadow-lg *:grow *:w-full">
 							{/* Calabar */}

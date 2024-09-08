@@ -1,6 +1,8 @@
 import React from "react";
-// import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import { createPortal } from "react-dom";
+import { useLoaderData, useRevalidator } from "react-router-dom";
+import Modal from "@mui/material/Modal";
 import {
 	flexRender,
 	getCoreRowModel,
@@ -18,46 +20,68 @@ import {
 import { PaginationEllipsis } from "@/components/ui/pagination";
 import ReactPaginate from "react-paginate";
 import { Button as ButtonUI } from "@/components/ui/button";
-import { CaretIcon } from "@/assets/icons";
+import { CaretIcon, CancelSquareIcon, DeleteIcon } from "@/assets/icons";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { cn } from "@/lib/utils";
-// import { Textarea } from "@/components/ui/textarea";
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
 import { v4 as uuid } from "uuid";
 import baseurl from "@/api";
-import { Add, AddCircle } from "iconsax-react";
-// import ConfirmationModal from "@/components/modals/confirmation";
-// import { GlobalCTX } from "@/contexts/GlobalContext";
-
-const ctx = React.createContext();
+import ConfirmationModal from "@/components/modals/confirmation";
+import { GlobalCTX } from "@/contexts/GlobalContext";
+import { UploadIcon } from "lucide-react";
+import { useForm } from "react-hook-form";
+import axios from "axios";
+import { toast } from "sonner";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import SuccessModal from "@/components/modals/success";
+import UploadPhoto from "@/assets/images/photo.png"
 
 const InformationBox = () => {
-	// const navigate = useNavigate();
-	const { setCurrentPageIndex } = React.useContext(BookingCTX);
-	const [dataQuery, setDataQuery] = React.useState([]);
-	const [title, setTitle] = React.useState("");
-	const [content, setContent] = React.useState('')
+	const { setCurrentPageIndex, setLoading: setLoader } = React.useContext(BookingCTX);
+	const { mountPortalModal, setModalContent } = React.useContext(GlobalCTX);
+	const dataQuery = useLoaderData();
+	const { revalidate } = useRevalidator();
+	const [imageFile, setImageFile] = React.useState("");
+	const [preview, setPreview] = React.useState("");
 	const [pagination, setPagination] = React.useState({
 		pageIndex: 0,
 		pageSize: 10,
 	});
 
+	const infoSchema = yup.object().shape({
+		title: yup.string().required("Title is required."),
+		message: yup.string().required("Select an Image to upload")
+	})
+
+	const {
+		register,
+		handleSubmit,
+		setValue,
+		clearErrors,
+		reset,
+		formState: { errors }
+	} = useForm({
+		resolver: yupResolver(infoSchema),
+	})
+
 	React.useEffect(() => {
-		baseurl
-			.get("infobox/get")
-			.then((res) => setDataQuery(res.data.infoBoxes))
-			.catch((err) => console.error(err))
-	}, [])
+		if (preview) {
+			clearErrors("message")
+			setValue("message", preview)
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [preview])
 
 	const columns = [
 		{
 			header: "S/N",
 			cell: ({ row }) => Number(row.id) + 1,
+			width: 150
 		},
 		{
 			header: "Title",
 			cell: ({ row }) => row.original.title,
+			width: 200
 		},
 		{
 			id: "status",
@@ -78,23 +102,50 @@ const InformationBox = () => {
 					</div>
 				);
 			},
+			width: 150
 		},
 		{
 			id: "actions",
 			header: <div className="text-center">Actions</div>,
 			cell: ({ row }) => (
-				<div className="mx-auto w-fit">
+				<div className="inline-flex justify-end w-full gap-5">
+					{
+						row.original.status == "Active" ?
+							<ButtonUI
+								type="button"
+								variant="secondary"
+								className="text-xs bg-red-50 hover:bg-red-100"
+								onClick={() => handleUpdateMessage(row.original, "deactivate")}
+							>
+								Deactivate
+							</ButtonUI> : <ButtonUI
+								type="button"
+								variant="secondary"
+								className="text-xs bg-green-50 hover:bg-green-100"
+								onClick={() => handleUpdateMessage(row.original, "activate")}
+							>
+								Activate
+							</ButtonUI>
+					}
+
 					<ButtonUI
 						type="button"
-						className="h-8 text-xs"
-						onClick={() => {
-							handleEditClick(row.original);
-						}}
+						variant="secondary"
+						className="text-xs"
+						onClick={() => setPreview(row.original.message)}
 					>
-						Edit
+						Preview
+					</ButtonUI>
+					<ButtonUI
+						variant="destructive"
+						size="icon"
+						onClick={() => handleDelete(row.original)}
+					>
+						<DeleteIcon />
 					</ButtonUI>
 				</div>
 			),
+			width: 200
 		},
 	];
 
@@ -110,17 +161,202 @@ const InformationBox = () => {
 		},
 	});
 
-	const handleEditClick = (data) => {
-		const { title, message } = data
-		setContent(message);
-		setTitle(title);
+	const handleImageUpload = (event) => {
+		const file = event?.target.files[0];
+		if (file) {
+			setImageFile(event);
+			setPreview(URL.createObjectURL(file));
+		}
+	};
+
+	const onSubmit = handleSubmit(async (formData) => {
+		mountPortalModal(
+			<ConfirmationModal props={{
+				header: "Are you sure you want to upload this message?",
+				handleRequest: () => {
+					handleUploadMessage(formData)
+				},
+			}} />
+		)
+	})
+
+	const handleUploadMessage = async (formData) => {
+		setLoader(true)
+		const file = imageFile.target.files[0];
+		const cloudinaryData = new FormData();
+		cloudinaryData.append("file", file);
+		cloudinaryData.append("upload_preset", "mettsotz");
+
+		const response = await axios
+			.post(
+				"https://api.cloudinary.com/v1_1/queen-dev/image/upload",
+				cloudinaryData
+			)
+			.then((res) => {
+				return res.data.url;
+			})
+			.catch(() => {
+				toast.error("Failed to upload message. Try Again.");
+				setLoader(false);
+				return false;
+			});
+
+		if (response) {
+			const message_id = `M-${uuid().slice(0, 6)}`;
+			const formValues = {
+				message_id,
+				title: formData.title,
+				message: response,
+				status: "Inactive"
+			}
+			baseurl
+				.post("/infobox/new", formValues)
+				.then((res) => {
+					if (res.status == 200) {
+						handleReset()
+						setModalContent(
+							<SuccessModal
+								header="Upload Successful"
+								text="You have successfully uploaded a new message. Click the activate button to live this message."
+							/>
+						);
+					}
+				})
+				.catch((error) => {
+					if (
+						!error.code === "ERR_NETWORK" ||
+						!error.code === "ERR_INTERNET_DISCONNECTED" ||
+						!error.code === "ECONNABORTED"
+					)
+						toast.error("Failed to upload message. Try Again.");
+				})
+				.finally(() => {
+					setLoader(false);
+				});
+
+		}
 	}
 
-	const ctxValues = {
-		title,
-		setTitle,
-		content,
-		setContent,
+	const handleReset = () => {
+		reset();
+		setPreview("");
+		setImageFile("");
+		revalidate();
+	}
+
+	const handleUpdateMessage = (data, action) => {
+		const options = {
+			deactivate: {
+				header: "Are you sure you want to deactivate this message?",
+				severity: "delete",
+				status: "Inactive"
+			},
+			activate: {
+				header: "Are you sure you want to activate this message?",
+				severity: "warning",
+				status: "Active"
+			}
+		}
+
+		mountPortalModal(
+			<ConfirmationModal props={{
+				header: options[action].header,
+				handleRequest: () => {
+					updateRequest(data, options[action].status)
+				},
+				severity: options[action].severity
+			}} />
+		)
+	}
+
+	const updateRequest = (data, action) => {
+		setLoader(true)
+		const formValues = {
+			...data,
+			status: action
+		}
+
+		const options = {
+			Active: {
+				header: "Activation Successful",
+				text: "Users will now see the message you uploaded.",
+				error: "Failed to activate message. Try Again."
+			},
+			Inactive: {
+				header: "Deactivation Successful",
+				text: "Users will no longer see the previously uploaded message.",
+				error: "Failed to deactivate message. Try Again."
+			}
+		}
+
+		if (action == "Active") {
+			const isActive = dataQuery.filter((message) => message.status == "Active").length
+			if (isActive) {
+				setLoader(false);
+				toast.warning("A message is currently active. Please deactivate to upload a new one.")
+				return;
+			}
+		}
+
+		baseurl
+			.patch("/infobox/update", formValues)
+			.then((res) => {
+				if (res.status == 200) {
+					handleReset();
+					setModalContent(
+						<SuccessModal
+							header={options[action].header}
+							text={options[action].text}
+						/>
+					);
+				}
+			})
+			.catch((error) => {
+				if (
+					!error.code === "ERR_NETWORK" ||
+					!error.code === "ERR_INTERNET_DISCONNECTED" ||
+					!error.code === "ECONNABORTED"
+				)
+					toast.error(options[action].error);
+			})
+			.finally(() => setLoader(false));
+	}
+
+	const handleDelete = (data) => {
+		mountPortalModal(
+			<ConfirmationModal props={{
+				header: "Are you sure you want to delete this record?",
+				handleRequest: () => {
+					deleteRequest(data)
+				},
+				severity: "delete"
+			}} />
+		)
+	}
+
+	const deleteRequest = (data) => {
+		setLoader(true)
+		baseurl
+			.patch("/infobox/delete", { message_id: data.message_id })
+			.then((res) => {
+				if (res.status == 200) {
+					handleReset();
+					setModalContent(
+						<SuccessModal
+							header="Deleted Successfully"
+							text="You have successfully deleted a message record."
+						/>
+					);
+				}
+			})
+			.catch((error) => {
+				if (
+					!error.code === "ERR_NETWORK" ||
+					!error.code === "ERR_INTERNET_DISCONNECTED" ||
+					!error.code === "ECONNABORTED"
+				)
+					toast.error("Failed to delete message. Try Again.");
+			}).finally(() => setLoader(false))
 	}
 
 	return (
@@ -128,10 +364,68 @@ const InformationBox = () => {
 			<Helmet>
 				<title>Information Box | Admin</title>
 			</Helmet>
-			<ctx.Provider value={ctxValues}>
-				<div className="bg-white p-5 rounded-lg mb-10 ">
-					<Editor />
-				</div>
+			<section >
+				<form onSubmit={onSubmit} className="bg-white p-5 rounded-lg mb-10 ">
+					<div className="flex justify-center mb-5">
+						<div className="w-1/2 relative">
+							<input
+								type="text"
+								{...register("title")}
+								className="h-10 border-black/50 outline-none w-full font-bold p-2"
+								placeholder="Title"
+							/>
+							{errors?.title && (
+								<p className="text-xs text-red-700 font-medium absolute px-2 -bottom-4 ">
+									{errors?.title.message}
+								</p>
+							)}
+						</div>
+						<ButtonUI
+							type="submit"
+							className="inline-flex gap-2 items-center ml-auto bg-green-800 hover:bg-green-900"
+						>
+							<UploadIcon />
+							Upload Image
+						</ButtonUI>
+					</div>
+					<div className="flex *:w-full *:grow items-stretch h-[500px]">
+						<div className={cn("shadow-lg border-2 border-dashed p-2 rounded-lg flex justify-center items-center", {
+							"bg-red-50/50 border-red-500": errors.message
+						})}>
+							<input className="hidden" {...register("message")} />
+							<div className="text-center">
+								<img src={UploadPhoto} alt="upload" width={100} height={100} className="mx-auto" />
+								<p>Upload image or file</p>
+								{errors?.message && (
+									<p className="text-xs text-red-700 font-medium mt-2">
+										{errors?.message.message}
+									</p>
+								)}
+								<label className="mt-10 text-sm text-white bg-blue-500 font-medium inline-flex items-center justify-center mx-auto h-10 w-40 rounded-lg cursor-pointer hover:bg-blue-700">
+									Browse files
+									<input
+										type="file"
+										className="hidden"
+										accept=".jpg, .jpeg, .png"
+										onChange={handleImageUpload}
+									/>
+								</label>
+							</div>
+						</div>
+						<div className="p-2 relative ">
+							<p className="absolute top-1/2 left-1/2 translate-x-[-50%] font-medium">Previews will show here</p>
+							<div
+								className="overflow-scroll no-scrollbar relative h-full flex items-center justify-center"
+								onClick={() => mountPortalModal(<PreviewModal url={preview} />)}
+							>
+								{preview.length ?
+									<img src={preview} alt="notice" />
+									: ""
+								}
+							</div>
+						</div>
+					</div>
+				</form>
 				<div className="bg-white rounded-lg p-5">
 					<Table>
 						<TableHeader>
@@ -224,91 +518,82 @@ const InformationBox = () => {
 						/>
 					</div>
 				</div>
-			</ctx.Provider>
+			</section>
 		</>
 	);
 };
 
 export default InformationBox;
 
-function Editor() {
-	// const { mountPortalModal } = React.useContext(GlobalCTX);
-	const { title, setTitle, content, setContent } = React.useContext(ctx);
-	// Quill modules configuration
-	const modules = {
-		toolbar: [
-			[{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
-			[{ size: [] }],
-			['bold', 'italic', 'underline', 'strike'],
-			[{ 'color': [] }, { 'background': [] }],
-			[{ 'list': 'ordered' }, { 'list': 'bullet' },
-			{ 'indent': '-1' }, { 'indent': '+1' }, { 'align': [] }],
-			['link', 'image', 'video'],
-			['clean'],
-		],
-		clipboard: {
-			// toggle to add extra line breaks when pasting HTML:
-			matchVisual: false,
-		}
-	};
-
-	const handleSaveClick = () => {
-		const message_id = `M-${uuid().slice(0, 6)}`;
-		const formData = {
-			message_id,
-			title,
-			message: content,
-			status: "Inactive"
-		}
-		console.log(formData, "form")
-		baseurl.post("/infobox/new", formData).then((res) => console.log(res)).catch((error) => console.error(error));
-	}
-
-	const handleCreateClick = () => {
-		setContent("");
-		setTitle("");
-	}
+export const InformationModal = () => {
+	const { showLiveModal, liveMessage, setShowLiveModal } = React.useContext(GlobalCTX);
 
 	return (
-		<div>
-			<div className="flex *:w-full *:grow mb-5">
-				<input
-					type="text"
-					className="border-b h-10 border-black/50 outline-none font-bold"
-					value={title}
-					placeholder="Title"
-					onChange={(e) => {
-						const value = e.target.value;
-						setTitle(value)
-					}}
-				/>
-				<div className="flex justify-end items-center gap-2 *:w-24 *:h-8 *:text-xs">
-					<ButtonUI onClick={handleCreateClick} className="" variant="secondary" > <Add /> Create  </ButtonUI>
-					<ButtonUI onClick={handleSaveClick}>Save</ButtonUI>
-				</div>
-			</div>
-			<div className="flex *:w-full *:grow items-stretch h-[500px]">
-				<ReactQuill
-					className="h-[calc(100%-67px)]"
-					theme='snow'
-					formats={['header', 'font', 'size', 'bold', 'italic', 'underline', 'strike', 'list', 'bullet', 'indent', 'link', 'image', 'video', "align", "color"]}
-					placeholder="Write something amazing..."
-					modules={modules}
-					onChange={(event) => {
-						setContent(event);
-					}} // Handle text editor content changes
-					value={content} // Set the value of the text editor in content
-				/>
-				<div className="shadow-lg border p-2 overflow-y-scroll no-scrollbar">
-					<div dangerouslySetInnerHTML={{ __html: content }} />
-				</div>
-			</div>
-		</div>
+		<>
+			{showLiveModal &&
+				createPortal(
+					<Modal
+						open={showLiveModal}
+						aria-labelledby="modal-portal"
+						sx={{
+							overflow: "scroll",
+						}}
+						className="no-scrollbar"
+					>
+						<div className=" py-20 md:my-0 min-h-screen md:h-full flex justify-center items-center px-5">
+							<div className="relative">
+								<ButtonUI
+									variant="ghost"
+									size="icon"
+									className="bg-white rounded-full absolute -top-3 -right-3 p-2 shadow-md"
+									onClick={() => { setShowLiveModal(false) }}
+								>
+									<CancelSquareIcon />
+								</ButtonUI>
+								<div className="max-w-[600px] md:w-[600px] aspect-auto">
+									<img src={liveMessage?.message} alt="notice" className="w-full h-full" />
+								</div>
+							</div>
+						</div>
+					</Modal>,
+					document.body
+				)}
+		</>
 	);
 }
 
-const PromptModal = () => {
+// eslint-disable-next-line react/prop-types
+const PreviewModal = ({ url }) => {
+	const { unMountPortalModal } = React.useContext(GlobalCTX);
+
 	return (
-		<></>
+		<div className="flex justify-center items-center relative">
+			<ButtonUI
+				variant="ghost"
+				size="icon"
+				className="bg-white rounded-full absolute -top-3 -right-3 p-2 shadow-md"
+				onClick={unMountPortalModal}
+			>
+				<CancelSquareIcon />
+			</ButtonUI>
+			<div className="w-[700px] h-[500px] flex ">
+				<img src={url} alt="notice" className="w-full h-full object-fit" />
+			</div>
+		</div>
 	)
+}
+
+export const InformationLoader = async () => {
+	try {
+		const response = await baseurl.get("infobox/get");
+		return response.data.infoBoxes;
+	} catch (error) {
+		if (
+			!error.code === "ERR_NETWORK" ||
+			!error.code === "ERR_INTERNET_DISCONNECTED" ||
+			!error.code === "ECONNABORTED"
+		)
+			toast.error("Error occurred while retrieving uploaded messages.");
+		return [];
+	}
 }

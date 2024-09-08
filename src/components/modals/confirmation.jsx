@@ -32,7 +32,7 @@ const ConfirmationModal = ({
 					text="Cancel"
 					variant="outline"
 					className={cn("w-56", {
-						" !text-black hover:!text-blue-700 border-black":
+						" !text-black/50 hover:!text-blue-700 border-black/50":
 							severity == "delete",
 					})}
 					onClick={unMountPortalModal}

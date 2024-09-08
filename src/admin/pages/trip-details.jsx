@@ -233,7 +233,7 @@ const TripDetails = () => {
 							</p>
 							<p>
 								<strong>Capacity:</strong>
-								0
+								{selectedTrip?.trip_capacity}
 							</p>
 							<p>
 								<strong>Ticket Cost:</strong>

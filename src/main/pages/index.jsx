@@ -260,7 +260,7 @@ const Home = () => {
 				<div className="max-w-[1440px] mx-auto">
 					<h2 className="font-semibold text-lg md:text-xl lg:text-2xl mb-7 inline-flex items-center justify-center w-full ">
 						<span className="h-3 w-3 mr-3 rounded-full bg-blue-500" />
-						Our Locations
+						Our Terminals
 					</h2>
 					<div className="flex flex-col lg:flex-row gap-10 *:md:shadow-lg *:grow *:w-full">
 						{/* Calabar */}

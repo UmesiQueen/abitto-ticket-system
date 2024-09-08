@@ -38,7 +38,7 @@ const PassengerDetails = () => {
 			...(isChecked
 				? {
 					passenger1_first_name: formData_.passenger1_first_name,
-					passenger1_surname: formData_.passenger1_surname,
+					passenger1_last_name: formData_.passenger1_last_name,
 					passenger1_phone_number: formData_.passenger1_phone_number,
 					passenger1_email: formData_.passenger1_email,
 				}
@@ -146,7 +146,7 @@ const PassengerDetails = () => {
 									handlechange={handleChange}
 								/>
 								<InputField
-									{...register("passenger1_surname")}
+									{...register("passenger1_last_name")}
 									label="Surname"
 									placeholder="Enter surname"
 									type="text"
@@ -236,7 +236,7 @@ const PassengerDetails = () => {
 															handlechange={handleChange}
 														/>
 														<InputField
-															{...register(`${currentPassenger}_surname`)}
+															{...register(`${currentPassenger}_last_name`)}
 															label="Surname"
 															placeholder="Enter surname"
 															type="text"
