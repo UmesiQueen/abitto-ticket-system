@@ -93,7 +93,7 @@ const RescheduleForm = () => {
 				<ul className="w-full [&_h4]:uppercase [&_h4]:text-gray-400 [&_h4]:text-xs [&_p]:text-white [&_p]:text-sm flex flex-wrap *:grow px-2 items-center gap-5 md:justify-around md:divide-x-2 h-full md:[&_li:not(:first-of-type)]:pl-5 *:space-y-1">
 					<li>
 						<h4>Customer name</h4>
-						<p className="capitalize">{capitalize(`${currentUser?.passenger1_first_name} ${currentUser?.surname}`)}</p>
+						<p className="capitalize">{capitalize(`${currentUser?.passenger1_first_name} ${currentUser?.last_name}`)}</p>
 					</li>
 					<li>
 						<h4>Route</h4>
@@ -392,7 +392,7 @@ const Payment = () => {
 						</li>
 						<li>
 							<p>Surname</p>
-							<p>{bookingData.surname}</p>
+							<p>{bookingData.last_name}</p>
 						</li>
 						<li>
 							<p>Phone Number</p>
