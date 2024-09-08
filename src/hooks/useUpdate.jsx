@@ -52,7 +52,7 @@ export const useUpdate = () => {
 		}
 		const rescheduleData = {
 			...newDetails,
-			ticket_id: `${prevDetails.ticket_id.slice(0, 3)}${uuid().slice(0, 2)}`,
+			ticket_id: `${prevDetails.ticket_id.slice(0, 6)}${uuid().slice(0, 2)}`,
 			medium: "Offline",
 			trxRef: newDetails.transaction_ref,
 			booked_by: `${adminProfile.first_name}(${adminProfile.account_type})`,
