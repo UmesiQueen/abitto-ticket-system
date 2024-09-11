@@ -1,6 +1,6 @@
 import React from "react";
 import PaystackPop from "@paystack/inline-js";
-import baseurl from "@/api";
+import axiosInstance from "@/api";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { toast } from "sonner";
 import { GlobalCTX } from "@/contexts/GlobalContext";
@@ -88,7 +88,7 @@ export const usePayment = () => {
 
 		if (isSuccess) setLoading(true);
 
-		baseurl
+		axiosInstance
 			.post("/booking/newbooking", requestData)
 			.then((res) => {
 				if ((res.status == 200) & isSuccess) {
@@ -133,7 +133,7 @@ export const usePayment = () => {
 			trip_status: data.check_in ? "Completed" : "Upcoming",
 		};
 
-		baseurl
+		axiosInstance
 			.post("/booking/newbooking", requestData)
 			.then((res) => {
 				if (res.status == 200) {
@@ -198,7 +198,7 @@ export const usePayment = () => {
 
 		const isSuccess = payment_status === "Success";
 
-		baseurl
+		axiosInstance
 			.post("/rent/createrent", requestData)
 			.then((res) => {
 				if (res.status == 200 && isSuccess) {
@@ -234,7 +234,7 @@ export const usePayment = () => {
 			trxRef: transaction_ref,
 		};
 
-		baseurl
+		axiosInstance
 			.post("/rent/createrent", requestData)
 			.then((res) => {
 				if (res.status == 200) {
@@ -262,7 +262,7 @@ export const usePayment = () => {
 			created_by: `${adminProfile.first_name}(${adminProfile.account_type})`,
 		};
 
-		baseurl
+		axiosInstance
 			.post("/logistics/new", requestData)
 			.then((res) => {
 				if (res.status == 200) {

@@ -23,7 +23,7 @@ import { capitalize } from "lodash";
 // import { GlobalCTX } from "@/contexts/GlobalContext";
 import { PaginationEllipsis } from "@/components/ui/pagination";
 import ReactPaginate from "react-paginate";
-import baseurl from "@/api";
+import axiosInstance from "@/api";
 import { formatValue } from "react-currency-input-field";
 import { v4 as uuid } from "uuid";
 import { BookingCTX } from "@/contexts/BookingContext";
@@ -54,7 +54,7 @@ const Customers = () => {
 
 	React.useEffect(() => {
 		setLoading(true);
-		baseurl
+		axiosInstance
 			.get("/booking/customerdetails")
 			.then((res) => {
 				if (res.status == 200) {
@@ -197,9 +197,9 @@ const Customers = () => {
 											{header.isPlaceholder
 												? null
 												: flexRender(
-														header.column.columnDef.header,
-														header.getContext()
-												  )}
+													header.column.columnDef.header,
+													header.getContext()
+												)}
 										</TableHead>
 									);
 								})}

@@ -1,6 +1,6 @@
 // import React from 'react'
 import React from "react";
-import baseurl from "@/api";
+import axiosInstance from "@/api";
 import { format } from "date-fns";
 import { formatValue } from "react-currency-input-field";
 import { Button } from "@/components/ui/button";
@@ -252,7 +252,7 @@ export default RentalInvoice;
 
 export const RentalInvoiceLoader = async ({ params }) => {
 	try {
-		const response = await baseurl.post("/rent/ticketId", {
+		const response = await axiosInstance.post("/rent/ticketId", {
 			ticket_id: params.rentalID,
 		});
 		return response.data.rent;

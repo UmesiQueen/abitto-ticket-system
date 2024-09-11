@@ -29,7 +29,7 @@ import { BookingCTX } from "@/contexts/BookingContext";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { formatValue } from "react-currency-input-field";
-import baseurl from "@/api";
+import axiosInstance from "@/api";
 import { toast } from "sonner";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import ConfirmationModal from "@/components/modals/confirmation";
@@ -47,7 +47,7 @@ const LogisticsDetails = () => {
 
 	React.useEffect(() => {
 		setLoading(true);
-		baseurl.get("logistics/get").then((res) => {
+		axiosInstance.get("logistics/get").then((res) => {
 			if (res.status == 200) {
 				const resData = res.data.logistics;
 				setDataQuery(resData)

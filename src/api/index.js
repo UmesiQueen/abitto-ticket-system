@@ -3,7 +3,7 @@ import { toast } from "sonner";
 
 const API_BASE_URL = process.env.ABITTO_BASE_URL;
 
-const baseurl = axios.create({
+const axiosInstance = axios.create({
 	baseURL: API_BASE_URL,
 	headers: {
 		//  Authorization: `<Your Auth Token>`,
@@ -13,7 +13,7 @@ const baseurl = axios.create({
 });
 
 // Add a response interceptor
-baseurl.interceptors.response.use(
+axiosInstance.interceptors.response.use(
 	(response) => {
 		// Return the response if it is successful
 		return response;
@@ -42,4 +42,4 @@ baseurl.interceptors.response.use(
 	}
 );
 
-export default baseurl;
+export default axiosInstance;

@@ -6,7 +6,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import Button from "@/components/custom/Button";
 import Rating from "@mui/material/Rating";
-import baseurl from "@/api";
+import axiosInstance from "@/api";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import SuccessModal from "@/components/modals/success";
 import { TextareaAutosize } from '@mui/base';
@@ -72,7 +72,7 @@ const Feedback = () => {
 			star_rating: starRating,
 		};
 
-		baseurl
+		axiosInstance
 			.post("feedback/new", formValues)
 			.then((res) => {
 				if (res.status == 200) {

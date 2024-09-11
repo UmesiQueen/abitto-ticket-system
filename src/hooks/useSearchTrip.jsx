@@ -2,7 +2,7 @@ import React from "react";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { toast } from "sonner";
-import baseurl from "@/api";
+import axiosInstance from "@/api";
 import { useStepper } from "@/hooks/useStepper";
 import BookingWarningModal, { UnAvailableModal } from "@/components/modals/book.warning";
 
@@ -13,7 +13,7 @@ export const useSearchTrip = () => {
 
 	const searchAvailableTrips = (reqData) => {
 		setLoading(true);
-		baseurl
+		axiosInstance
 			.post("/ticket/query", reqData)
 			.then((res) => {
 				onNextClick();
@@ -39,7 +39,7 @@ export const useSearchTrip = () => {
 		}
 		const { total_passengers } = formData.bookingDetails;
 
-		baseurl
+		axiosInstance
 			.post("/ticket/available", requestData)
 			.then((res) => {
 				if (res.status == 200) {

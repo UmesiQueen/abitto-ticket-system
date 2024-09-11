@@ -31,7 +31,7 @@ import { CaretIcon, CalendarIcon } from "@/assets/icons";
 import SelectField from "@/components/custom/SelectField";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { Refresh } from "iconsax-react";
-import baseurl from "@/api";
+import axiosInstance from "@/api";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { toast } from "sonner";
 import {
@@ -202,7 +202,7 @@ const JourneyTable = () => {
 
 	React.useEffect(() => {
 		setLoading(true),
-			baseurl
+			axiosInstance
 				.get("/ticket/get")
 				.then((res) => {
 					if (res.status == 200) {

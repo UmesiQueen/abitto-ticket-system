@@ -1,5 +1,5 @@
 import React from "react";
-import baseurl from "@/api";
+import axiosInstance from "@/api";
 import { format } from "date-fns";
 import { formatValue } from "react-currency-input-field";
 import { Button } from "@/components/ui/button";
@@ -336,7 +336,7 @@ export default TicketInvoice;
 // Post: query booking detail by bookingId
 export const CustomerDetailsLoader = async ({ params }) => {
 	try {
-		const response = await baseurl.post("/booking/querynew", {
+		const response = await axiosInstance.post("/booking/querynew", {
 			ticket_id: params.bookingID,
 		});
 		return response.data.booking;

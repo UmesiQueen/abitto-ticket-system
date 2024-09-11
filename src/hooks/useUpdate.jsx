@@ -1,5 +1,5 @@
 import React from "react";
-import baseurl from "@/api";
+import axiosInstance from "@/api";
 import { toast } from "sonner";
 import SuccessModal from "@/components/modals/success";
 import { BookingCTX } from "@/contexts/BookingContext";
@@ -21,7 +21,7 @@ export const useUpdate = () => {
 			ticket_id,
 		};
 
-		baseurl
+		axiosInstance
 			.patch("/booking/update", formValues)
 			.then((res) => {
 				if (res.status == 200)
@@ -59,12 +59,12 @@ export const useUpdate = () => {
 			trip_status: newDetails.check_in ? "Completed" : "Upcoming",
 		}
 
-		baseurl
+		axiosInstance
 			.post("booking/reschedule", updatePrev)
 			.then((res) => {
 				if (res.status == 200) {
 					// book new ticket here
-					baseurl
+					axiosInstance
 						.post("/booking/newbooking", rescheduleData)
 						.then((res) => {
 							if (res.status == 200) {
@@ -100,7 +100,7 @@ export const useUpdate = () => {
 	const updateShipmentStatus = (reqData, onSuccess) => {
 		const { shipment_status } = reqData;
 		setLoading(true);
-		baseurl.patch("logistics/update", reqData)
+		axiosInstance.patch("logistics/update", reqData)
 			.then((res) => {
 				if (res.status == 200)
 					setModalContent(
@@ -128,7 +128,7 @@ export const useUpdate = () => {
 
 	const updatePrices = (reqData, onSuccess) => {
 		setLoading(true);
-		baseurl.patch("price/edit", reqData)
+		axiosInstance.patch("price/edit", reqData)
 			.then((res) => {
 				if (res.status == 200)
 					setModalContent(

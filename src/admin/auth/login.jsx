@@ -7,7 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import baseurl from "@/api";
+import axiosInstance from "@/api";
 
 const schema = yup.object().shape({
 	email: yup
@@ -31,7 +31,7 @@ const Login = () => {
 
 	const onSubmit = handleSubmit((formData) => {
 		setLoading(true);
-		baseurl
+		axiosInstance
 			.post("/user/login", formData)
 			.then((res) => {
 				if (res.status == 200) {

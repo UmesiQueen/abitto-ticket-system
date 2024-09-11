@@ -29,7 +29,7 @@ import { Helmet } from "react-helmet-async";
 import { toast } from "sonner";
 import Loader from "@/components/animation/Loader";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import baseurl from "@/api";
+import axiosInstance from "@/api";
 import { Feedback, PriceChange } from "@mui/icons-material";
 import Logo from "@/assets/logo2.svg";
 import { Mailbox } from "lucide-react";
@@ -275,7 +275,7 @@ export default AdminLayout;
 
 export const DataQueryLoader = async () => {
 	try {
-		const response = await baseurl.get("/booking/queryall");
+		const response = await axiosInstance.get("/booking/queryall");
 		return response.data.bookings.reverse();
 	} catch (error) {
 		if (

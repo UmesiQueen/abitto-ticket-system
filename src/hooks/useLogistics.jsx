@@ -1,7 +1,7 @@
 
 import React from 'react'
 import { BookingCTX } from '@/contexts/BookingContext'
-import baseurl from '@/api'
+import axiosInstance from '@/api'
 import { toast } from 'sonner'
 
 export const useLogistics = () => {
@@ -9,7 +9,7 @@ export const useLogistics = () => {
 
     const getLogisticsCost = (onSuccess) => {
         setLoading(true);
-        baseurl
+        axiosInstance
             .get("/price/get")
             .then((res) => {
                 if (res.status == 200) {

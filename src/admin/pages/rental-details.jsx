@@ -41,7 +41,7 @@ import {
 import SelectField from "@/components/custom/SelectField";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { Refresh } from "iconsax-react";
-import baseurl from "@/api";
+import axiosInstance from "@/api";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { toast } from "sonner";
 import { capitalize, truncate } from "lodash";
@@ -194,7 +194,7 @@ const RentalTable = () => {
 
 	React.useEffect(() => {
 		setLoading(true);
-		baseurl
+		axiosInstance
 			.get("/rent/getAllRents")
 			.then((res) => {
 				if (res.status == 200) {
@@ -402,9 +402,9 @@ const RentalTable = () => {
 											{header.isPlaceholder
 												? null
 												: flexRender(
-														header.column.columnDef.header,
-														header.getContext()
-												  )}
+													header.column.columnDef.header,
+													header.getContext()
+												)}
 										</TableHead>
 									);
 								})}
