@@ -14,7 +14,7 @@ const PrivacyPolicy = () => {
                         and protect your personal data when you use our services, website,
                         or mobile applications.
                     </p>
-                    <ol className=" *:list-decimal px-5 space-y-8">
+                    <ol className=" *:list-decimal *:marker:font-semibold *:marker:text-lg *:md:marker:text-xl px-5 space-y-8">
                         <li>
                             <h2>Data Collection</h2>
                             <ul className="*:list-disc ml-5 md:ml-10 space-y-3">
