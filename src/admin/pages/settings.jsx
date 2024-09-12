@@ -98,63 +98,71 @@ const EditProfile = () => {
 		},
 	});
 
+	function isValidUrl(url) {
+		// Regular expression for URL validation
+		const urlRegex = /^(?:(?:https?|ftp):\/\/)?(?:www\.)?[a-z0-9-]+(?:\.[a-z0-9-]+)+[^\s]*$/i;
+		// Test the given URL against the regex
+		return urlRegex.test(url);
+	}
+
 	const onSubmit = handleSubmit((formData) => {
-		EditProfileRequest(formData);
+		setLoading(true);
+		isValidUrl(formData.profile_picture) ?
+			handleEditProfileRequest(formData, false)
+			: uploadToCloudinary(formData)
 	});
 
-	const EditProfileRequest = async (formData) => {
-		setLoading(true);
+	const handleEditProfileRequest = (formData, response) => {
+		axiosInstance
+			.post("/user/editprofile", {
+				...formData,
+				...(response && { profile_picture: response })
+			})
+			.then((res) => {
+				const user = res.data.user;
+				setAdminProfile((prev) => ({
+					...prev,
+					email: user.email,
+					first_name: user.first_name,
+					last_name: user.last_name,
+					profile_picture: user.profile_picture,
+					gender: user.gender,
+					city: user.city,
+				}));
+				toast.success("Profile successfully updated.");
+			})
+			.catch((error) => {
+				if (
+					!error.code === "ERR_NETWORK" ||
+					!error.code === "ERR_INTERNET_DISCONNECTED" ||
+					!error.code === "ECONNABORTED"
+				)
+					toast.error("Error occurred while updating profile.");
+			})
+			.finally(() => setLoading(false));
+	};
+
+	const uploadToCloudinary = (formData) => {
 		const file = formData.profile_picture[0];
 		const cloudinaryData = new FormData();
 		cloudinaryData.append("file", file);
 		cloudinaryData.append("upload_preset", "mettsotz");
 
-		const response = await axios
+		axios
 			.post(
 				"https://api.cloudinary.com/v1_1/queen-dev/image/upload",
 				cloudinaryData
 			)
 			.then((res) => {
-				return res.data.url;
+				const data = res.data.url;
+				handleEditProfileRequest(formData, data);
 			})
 			.catch(() => {
 				toast.error("Failed to upload profile picture to cloudinary");
 				setLoading(false);
-				return false;
 			});
+	}
 
-		if (response) {
-			await axiosInstance
-				.post("/user/editprofile", {
-					...formData,
-					profile_picture: response,
-				})
-				.then((res) => {
-					const user = res.data.user;
-					setAdminProfile((prev) => ({
-						...prev,
-						email: user.email,
-						first_name: user.first_name,
-						last_name: user.last_name,
-						profile_picture: user.profile_picture,
-						gender: user.gender,
-						city: user.city,
-					}));
-					toast.success("Profile successfully updated.");
-				})
-				.catch((error) => {
-					if (
-						!error.code === "ERR_NETWORK" ||
-						!error.code === "ERR_INTERNET_DISCONNECTED" ||
-						!error.code === "ECONNABORTED"
-					)
-						toast.error("Error occurred while updating profile.");
-				})
-				.finally(() => {
-					setLoading(false);
-				});
-		}
-	};
 
 	return (
 		<>
