@@ -13,6 +13,7 @@ const BookingContext = ({ children }) => {
 		checkIn: 0,
 		journeyList: 0,
 		feedback: 0,
+		logistics: 0
 	});
 	const [activeStep, setActiveStep] = React.useState(0);
 	const [formData, setFormData] = React.useState({
@@ -39,10 +40,11 @@ const BookingContext = ({ children }) => {
 	const [rentalData, setRentalData] = React.useState({});
 	const { pathname } = useLocation();
 	const [customersData, setCustomersData] = React.useState([]);
-	const [filtering, setFiltering] = React.useState();
+	const [filtering, setFiltering] = React.useState("");
 
 	React.useEffect(() => {
 		handleReset();
+		setSearchParams({})
 	}, [pathname]);
 
 	React.useEffect(() => {
@@ -119,7 +121,7 @@ const BookingContext = ({ children }) => {
 		setCustomersData,
 		filtering,
 		setFiltering,
-		resetSelectField: () => {},
+		resetSelectField: () => { },
 	};
 
 	return (

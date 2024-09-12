@@ -38,18 +38,29 @@ const ProtectedRoute = () => {
 	const navigate = useNavigate();
 	const matches = useMediaQuery("(min-width:1240px)");
 	const { adminProfile } = React.useContext(GlobalCTX);
-	const { setBookingQuery, filtering, setFiltering } =
+	const { setBookingQuery, setFiltering } =
 		React.useContext(BookingCTX);
 	const { pathname } = useLocation();
 	const dataQuery = useLoaderData();
 	const accountType = adminProfile.account_type;
 	const searchBarVisibility = [
 		`/backend/${accountType}/booking-details`,
+		`/backend/${accountType}/booking-details/`,
 		`/backend/${accountType}/rental-details`,
+		`/backend/${accountType}/rental-details/`,
 		`/backend/${accountType}/create/check-in`,
+		`/backend/${accountType}/create/check-in/`,
 		`/backend/${accountType}/customers`,
-		// `/backend/${accountType}/logistics`,
+		`/backend/${accountType}/customers/`,
+		`/backend/${accountType}/logistics`,
+		`/backend/${accountType}/logistics/`,
 	].includes(pathname);
+	const [filterValue, setFilterValue] = React.useState("");
+
+	React.useEffect(() => {
+		if (filterValue)
+			setTimeout(() => { setFiltering(filterValue) }, 500)
+	}, [filterValue, setFiltering])
 
 	React.useEffect(() => {
 		const terminals = adminProfile.terminal.map((location) =>
@@ -66,6 +77,7 @@ const ProtectedRoute = () => {
 
 	React.useEffect(() => {
 		setFiltering("");
+		setFilterValue("")
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [pathname]);
 
@@ -161,7 +173,7 @@ const ProtectedRoute = () => {
 	};
 
 	const handleChange = (event) => {
-		setFiltering(event.target.value);
+		setFilterValue(event.target.value);
 	};
 
 	return (
@@ -222,7 +234,7 @@ const ProtectedRoute = () => {
 								<SearchIcon />
 								<input
 									onChange={handleChange}
-									value={filtering}
+									value={filterValue}
 									type="text"
 									className="bg-transparent w-full focus:outline-none py-1"
 									placeholder="Search by booking Id or name"

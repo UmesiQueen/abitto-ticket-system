@@ -5,6 +5,8 @@ import {
 	flexRender,
 	getCoreRowModel,
 	getPaginationRowModel,
+	getFilteredRowModel,
+	getSortedRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
 import {
@@ -37,9 +39,11 @@ import { useUpdate } from "@/hooks/useUpdate";
 
 const LogisticsDetails = () => {
 	const navigate = useNavigate();
-	const { setCurrentPageIndex } = React.useContext(BookingCTX);
+	const { setCurrentPageIndex, filtering, setFiltering, currentPageIndex } = React.useContext(BookingCTX);
 	const { setLoading } = React.useContext(GlobalCTX);
 	const [dataQuery, setDataQuery] = React.useState([]);
+	const [columnFilters, setColumnFilters] = React.useState([]);
+	const [pageCount, setPageCount] = React.useState(0);
 	const [pagination, setPagination] = React.useState({
 		pageIndex: 0,
 		pageSize: 10,
@@ -65,11 +69,35 @@ const LogisticsDetails = () => {
 		}).finally(() => setLoading(false))
 	}, [])
 
+	React.useEffect(() => {
+		if (dataQuery.length)
+			setPageCount(Math.ceil(dataQuery.length / pagination.pageSize));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [dataQuery]);
+
+	React.useEffect(() => {
+		table.setPageIndex(currentPageIndex.logistics);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	React.useEffect(() => {
+		if (columnFilters.length || filtering.length) {
+			setPageCount(
+				Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
+			);
+			setCurrentPageIndex((prev) => ({
+				...prev,
+				logistics: 0,
+			}));
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [columnFilters, filtering]);
+
 	const columns = [
-		{
-			header: "S/N",
-			cell: ({ row }) => Number(row.id) + 1,
-		},
+		// {
+		// 	header: "S/N",
+		// 	cell: ({ row }) => Number(row.id) + 1,
+		// },
 		{
 			accessorKey: "shipment_id",
 			header: "Shipment ID",
@@ -79,23 +107,25 @@ const LogisticsDetails = () => {
 			accessorKey: "departure",
 			header: "Departure",
 			cell: ({ row }) => row.getValue("departure"),
+			enableGlobalFilter: false,
 		},
 		{
 			accessorKey: "arrival",
 			header: "Arrival",
 			cell: ({ row }) => row.getValue("arrival"),
+			enableGlobalFilter: false,
 		},
 		{
 			accessorKey: "category",
 			header: "Category",
 			cell: ({ row }) => row.getValue("category"),
+			enableGlobalFilter: false,
 		},
 		{
 			accessorKey: "createdAt",
 			header: "Created On",
-			cell: ({ row }) => format(new Date(row.getValue("createdAt").split("T")[0]), "PPP")
-
-
+			cell: ({ row }) => format(new Date(row.getValue("createdAt").split("T")[0]), "PP"),
+			enableGlobalFilter: false,
 		},
 		{
 			accessorKey: "shipment_status",
@@ -117,6 +147,16 @@ const LogisticsDetails = () => {
 					</div>
 				);
 			},
+			enableGlobalFilter: false,
+		},
+		{
+			id: "dateTime",
+			accessorKey: "dateTime",
+			header: "DateTime",
+			accessorFn: (row) => {
+				const dateTime = new Date(row.createdAt);
+				return dateTime;
+			},
 		},
 	];
 
@@ -124,11 +164,28 @@ const LogisticsDetails = () => {
 		data: dataQuery,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
+		onColumnFiltersChange: setColumnFilters,
 		getPaginationRowModel: getPaginationRowModel(),
+		getSortedRowModel: getSortedRowModel(),
+		getFilteredRowModel: getFilteredRowModel(),
 		onPaginationChange: setPagination,
-		pageCount: Math.ceil(dataQuery.length / pagination.pageSize),
+		onGroupingChange: setFiltering,
+		pageCount,
 		state: {
 			pagination,
+			columnFilters,
+			columnVisibility: {
+				dateTime: false,
+			},
+			globalFilter: filtering,
+		},
+		initialState: {
+			sorting: [
+				{
+					id: "dateTime",
+					desc: true, // sort by name in descending order by default
+				},
+			],
 		},
 	});
 
@@ -211,10 +268,11 @@ const LogisticsDetails = () => {
 							table.setPageIndex(val.selected);
 							setCurrentPageIndex((prev) => ({
 								...prev,
-								feedback: val.selected,
+								logistics: val.selected,
 							}));
 						}}
-						initialPage={0}
+						initialPage={currentPageIndex.logistics}
+						forcePage={currentPageIndex.logistics}
 						pageRangeDisplayed={3}
 						pageCount={table.getPageCount()}
 						previousLabel={

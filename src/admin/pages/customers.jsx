@@ -9,7 +9,6 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-// import { useNavigate } from "react-router-dom";
 import {
 	flexRender,
 	getCoreRowModel,
@@ -20,7 +19,6 @@ import {
 } from "@tanstack/react-table";
 import { Button as ButtonUI } from "@/components/ui/button";
 import { capitalize } from "lodash";
-// import { GlobalCTX } from "@/contexts/GlobalContext";
 import { PaginationEllipsis } from "@/components/ui/pagination";
 import ReactPaginate from "react-paginate";
 import axiosInstance from "@/api";
@@ -47,6 +45,7 @@ const Customers = () => {
 		fullName: false,
 	});
 	const [rowSelection, setRowSelection] = React.useState({});
+	const [pageCount, setPageCount] = React.useState(0);
 	const [pagination, setPagination] = React.useState({
 		pageIndex: 0,
 		pageSize: 7,
@@ -98,6 +97,25 @@ const Customers = () => {
 			.finally(() => setLoading(false));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	React.useEffect(() => {
+		if (customersData.length)
+			setPageCount(Math.ceil(customersData.length / pagination.pageSize));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [customersData]);
+
+	React.useEffect(() => {
+		if (columnFilters.length || filtering.length) {
+			setPageCount(
+				Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
+			);
+			setCurrentPageIndex((prev) => ({
+				...prev,
+				customers: 0,
+			}));
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [columnFilters, filtering]);
 
 	const columns = [
 		{
@@ -164,7 +182,7 @@ const Customers = () => {
 		onRowSelectionChange: setRowSelection,
 		onPaginationChange: setPagination,
 		onGroupingChange: setFiltering,
-		pageCount: Math.ceil(customersData.length / pagination.pageSize),
+		pageCount,
 		state: {
 			sorting,
 			columnFilters,
@@ -263,6 +281,7 @@ const Customers = () => {
 							}));
 						}}
 						initialPage={currentPageIndex.customers}
+						forcePage={currentPageIndex.customers}
 						pageRangeDisplayed={3}
 						pageCount={table.getPageCount()}
 						previousLabel={
