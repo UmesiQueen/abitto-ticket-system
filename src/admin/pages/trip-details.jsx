@@ -34,7 +34,7 @@ import Logo from "@/assets/logo.svg";
 import RescheduleEditModal from "@/components/modals/reschedule.edit";
 import ConfirmationModal from "@/components/modals/confirmation";
 import { useScheduleTrip } from "@/hooks/useScheduleTrip";
-import baseurl from "@/api";
+import axiosInstance from "@/api";
 import { useReactToPrint } from "react-to-print";
 // import { humanize } from "@/lib/utils";
 import { formatValue } from "react-currency-input-field";
@@ -376,7 +376,7 @@ export default TripDetails;
 //  Post: query trip detail by trip_code
 export const TripDetailsLoader = async ({ params }) => {
 	try {
-		const response = await baseurl.post("/ticket/tripcode", {
+		const response = await axiosInstance.post("/ticket/tripcode", {
 			trip_code: params.tripCode,
 		});
 		return response.data.ticket;

@@ -1,6 +1,6 @@
 import React from "react";
 import { useRevalidator } from "react-router-dom";
-import baseurl from "@/api";
+import axiosInstance from "@/api";
 import { toast } from "sonner";
 import SuccessModal from "@/components/modals/success";
 import { BookingCTX } from "@/contexts/BookingContext";
@@ -14,7 +14,7 @@ export const useScheduleTrip = () => {
 	const scheduleRequest = (handleReset, formValues) => {
 		setLoading(true);
 
-		baseurl
+		axiosInstance
 			.post("/ticket/create", formValues)
 			.then((res) => {
 				if (res.status == 200) {
@@ -43,7 +43,7 @@ export const useScheduleTrip = () => {
 
 	const rescheduleRequest = (formValues) => {
 		setLoading(true);
-		baseurl
+		axiosInstance
 			.post("/ticket/update", formValues)
 			.then((res) => {
 				if (res.status == 200) {
@@ -72,7 +72,7 @@ export const useScheduleTrip = () => {
 
 	const cancelRequest = (formValues) => {
 		setLoading(true);
-		baseurl
+		axiosInstance
 			.post("/ticket/update", formValues)
 			.then((res) => {
 				if (res.status == 200) {

@@ -16,13 +16,13 @@ import { GlobalCTX } from "@/contexts/GlobalContext";
 import LogoSVG from "@/assets/icons/abitto.svg";
 import Loader from "@/components/animation/Loader";
 import { InformationModal } from "@/admin/pages/information-box";
-import baseurl from "@/api";
+import axiosInstance from "@/api";
 
 const MainLayout = () => {
 	const { setLiveMessage } = React.useContext(GlobalCTX);
 
 	React.useEffect(() => {
-		baseurl
+		axiosInstance
 			.get("infobox/get")
 			.then((res) => {
 				if (res.status == 200) {

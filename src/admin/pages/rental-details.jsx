@@ -40,8 +40,7 @@ import {
 } from "@/assets/icons";
 import SelectField from "@/components/custom/SelectField";
 import { BookingCTX } from "@/contexts/BookingContext";
-import { Refresh } from "iconsax-react";
-import baseurl from "@/api";
+import axiosInstance from "@/api";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { toast } from "sonner";
 import { capitalize, truncate } from "lodash";
@@ -182,9 +181,15 @@ const SearchForm = () => {
 
 const RentalTable = () => {
 	const { adminProfile, setLoading } = React.useContext(GlobalCTX);
-	const { searchParams, setSearchParams, currentPageIndex } =
+	const { searchParams, setSearchParams, currentPageIndex, filtering, setCurrentPageIndex } =
 		React.useContext(BookingCTX);
-	const [rowSelection, setRowSelection] = React.useState({});
+	const [sorting, setSorting] = React.useState([]);
+	const [columnFilters, setColumnFilters] = React.useState([]);
+	const [columnVisibility, setColumnVisibility] = React.useState({
+		fullName: false,
+		rental_date: false,
+	});
+	const [pageCount, setPageCount] = React.useState(0);
 	const [pagination, setPagination] = React.useState({
 		pageIndex: 0,
 		pageSize: 7,
@@ -194,7 +199,7 @@ const RentalTable = () => {
 
 	React.useEffect(() => {
 		setLoading(true);
-		baseurl
+		axiosInstance
 			.get("/rent/getAllRents")
 			.then((res) => {
 				if (res.status == 200) {
@@ -207,9 +212,7 @@ const RentalTable = () => {
 							const city = rental.departure.split(",")[1].trim().toLowerCase();
 							return terminals.includes(city);
 						})
-						.filter((rentals) => rentals.email !== "preciousdmicah@gmail.com");
-					// FIXME::DELETE THIS CONDITION
-					setRentalData(sortedRentals);
+					setRentalData(sortedRentals.reverse());
 				}
 			})
 			.catch((error) => {
@@ -243,10 +246,29 @@ const RentalTable = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [searchParams]);
 
+	React.useEffect(() => {
+		if (columnFilters.length || filtering.length) {
+			setPageCount(
+				Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
+			);
+			setCurrentPageIndex((prev) => ({
+				...prev,
+				rentals: 0,
+			}));
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [columnFilters, filtering]);
+
+	React.useEffect(() => {
+		if (rentalData.length)
+			setPageCount(Math.ceil(rentalData.length / pagination.pageSize));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [rentalData]);
+
 	const columns = [
 		{
 			accessorKey: "ticket_id",
-			header: "Ticket ID",
+			header: "Rental ID",
 			cell: ({ row }) => (
 				<p className="uppercase">#{row.getValue("ticket_id")}</p>
 			),
@@ -264,11 +286,20 @@ const RentalTable = () => {
 					</p>
 				</div>
 			),
+			enableGlobalFilter: false,
+		},
+		{
+			accessorKey: "fullName",
+			id: "fullName",
+			header: "fullName",
+			accessorFn: (row) =>
+				`${row.first_name} ${row.surname}`,
 		},
 		{
 			accessorKey: "phone_number",
 			header: "Phone number",
 			cell: ({ row }) => row.getValue("phone_number"),
+			enableGlobalFilter: false,
 		},
 		{
 			accessorKey: "rent_type",
@@ -277,6 +308,7 @@ const RentalTable = () => {
 			cell: ({ row }) => (
 				<p className="capitalize">{row.getValue("rent_type")}</p>
 			),
+			enableGlobalFilter: false,
 		},
 		{
 			accessorKey: "date_time",
@@ -292,10 +324,7 @@ const RentalTable = () => {
 			accessorKey: "rental_date",
 			header: "Date",
 			id: "rental_date",
-			accessorFn: (row) =>
-				new Date(row.rental_date) == "Invalid Date"
-					? format(new Date("09-08-2024"), "P")
-					: format(new Date(row.rental_date), "P"),
+			accessorFn: (row) => format(new Date(row.rental_date), "P"),
 		},
 		{
 			accessorKey: "duration",
@@ -303,6 +332,7 @@ const RentalTable = () => {
 			cell: ({ row }) => (
 				<p>{row.original?.rental_duration ?? "Single trip"}</p>
 			),
+			enableGlobalFilter: false,
 		},
 		{
 			accessorKey: "payment_status",
@@ -336,25 +366,28 @@ const RentalTable = () => {
 					})}
 				</div>
 			),
+			enableGlobalFilter: false,
 		},
 	];
 
 	const table = useReactTable({
-		data: rentalData.reverse(),
+		data: rentalData,
 		columns,
+		onSortingChange: setSorting,
+		onColumnFiltersChange: setColumnFilters,
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
 		getSortedRowModel: getSortedRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
-		onRowSelectionChange: setRowSelection,
+		onColumnVisibilityChange: setColumnVisibility,
 		onPaginationChange: setPagination,
-		pageCount: Math.ceil(rentalData.length / pagination.pageSize),
+		pageCount,
 		state: {
-			rowSelection,
 			pagination,
-			columnVisibility: {
-				rental_date: false,
-			},
+			columnVisibility,
+			sorting,
+			columnFilters,
+			globalFilter: filtering,
 		},
 	});
 
@@ -367,8 +400,8 @@ const RentalTable = () => {
 		<div>
 			{Object.keys(searchParams).length ? (
 				<div className="flex justify-between items-center mt-14 mb-5">
-					<div className="inline-flex gap-1">
-						<h2 className="font-semibold">Rental search results </h2>
+					<div className="inline-flex gap-1 items-center">
+						<h2 className="font-semibold">Search results for </h2>
 						<p className="divide-x divide-black flex gap-2 [&>*:not(:first-of-type)]:pl-2">
 							(
 							{searchParams?.rent_type && (
@@ -378,15 +411,15 @@ const RentalTable = () => {
 						</p>
 					</div>
 
-					<ButtonUI
-						className="inline-flex gap-1 ml-5"
+					<Button
+						className="h-10 text-sm"
 						onClick={() => {
 							table.resetColumnFilters(true);
 							setSearchParams({});
 						}}
-					>
-						<Refresh /> Reset
-					</ButtonUI>
+						text="Reset filters"
+						variant="outline"
+					/>
 				</div>
 			) : (
 				<h2 className="font-semibold mt-14 mb-5">All Rentals</h2>
@@ -402,9 +435,9 @@ const RentalTable = () => {
 											{header.isPlaceholder
 												? null
 												: flexRender(
-														header.column.columnDef.header,
-														header.getContext()
-												  )}
+													header.column.columnDef.header,
+													header.getContext()
+												)}
 										</TableHead>
 									);
 								})}
@@ -446,7 +479,7 @@ const RentalTable = () => {
 
 				<div className="flex items-center gap-8  p-4">
 					<p className="font-medium text-sm">
-						{table.getFilteredRowModel().rows.length} Trip results.
+						{table.getFilteredRowModel().rows.length} Rental results.
 					</p>
 					<ReactPaginate
 						breakLabel={<PaginationEllipsis />}
@@ -467,6 +500,7 @@ const RentalTable = () => {
 								rentals: val.selected,
 							});
 						}}
+						forcePage={currentPageIndex.rentals}
 						initialPage={currentPageIndex.rentals}
 						pageRangeDisplayed={3}
 						pageCount={table.getPageCount()}

@@ -12,6 +12,13 @@ function isValidFileType(fileName, fileType) {
   );
 }
 
+function isValidUrl(url) {
+  // Regular expression for URL validation
+  const urlRegex = /^(?:(?:https?|ftp):\/\/)?(?:www\.)?[a-z0-9-]+(?:\.[a-z0-9-]+)+[^\s]*$/i;
+  // Test the given URL against the regex
+  return urlRegex.test(url);
+}
+
 const editProfileSchema = yup.object().shape({
   first_name: yup
     .string()
@@ -42,8 +49,13 @@ const editProfileSchema = yup.object().shape({
     .trim(),
   profile_picture: yup
     .mixed()
-    .test("is-valid-type", "Not a valid image type", ([value]) => {
-      return value ? isValidFileType(value.name.toLowerCase(), "image") : true;
+    .test("is-valid-type", "Not a valid image type", (value) => {
+      let result;
+      if (value) {
+        result = isValidUrl(value) ? true :
+          isValidFileType(value[0]?.name.toLowerCase(), "image") ? true : false
+      }
+      return result;
     })
     // .test("is-valid-size", "Max allowed size is 2MB", ([value]) => {
     //   console.log(value.size > MAX_FILE_SIZE, "value size");
@@ -66,9 +78,9 @@ const passwordSchema = yup.object().shape({
     .when("currentPassword", ([currentPassword], field) =>
       currentPassword
         ? field.notOneOf(
-            [yup.ref("currentPassword")],
-            "Current and New Password cannot be the same."
-          )
+          [yup.ref("currentPassword")],
+          "Current and New Password cannot be the same."
+        )
         : field
     ),
   confirmPassword: yup

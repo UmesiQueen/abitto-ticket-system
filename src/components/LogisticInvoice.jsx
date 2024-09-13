@@ -1,5 +1,5 @@
 import React from "react";
-import baseurl from "@/api";
+import axiosInstance from "@/api";
 import { format } from "date-fns";
 import { formatValue } from "react-currency-input-field";
 import { Button } from "@/components/ui/button";
@@ -208,7 +208,7 @@ export default LogisticsInvoice;
 // Post: query booking detail by shipmentID
 export const ShipmentLoader = async ({ params }) => {
     try {
-        const response = await baseurl.post("/logistics/query", {
+        const response = await axiosInstance.post("/logistics/query", {
             shipment_id: params.shipmentID,
         });
         return response.data.logistics;

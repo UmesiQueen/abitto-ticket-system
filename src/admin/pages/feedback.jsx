@@ -23,7 +23,7 @@ import { BookingCTX } from "@/contexts/BookingContext";
 import { format } from "date-fns";
 import Rating from "@mui/material/Rating";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import baseurl from "@/api";
+import axiosInstance from "@/api";
 import { toast } from "sonner";
 import { capitalize } from "lodash";
 
@@ -39,7 +39,7 @@ const FeedbackAdmin = () => {
 
 	React.useEffect(() => {
 		setLoading(true),
-			baseurl
+			axiosInstance
 				.get("/feedback/get")
 				.then((res) => {
 					if (res.status == 200) {

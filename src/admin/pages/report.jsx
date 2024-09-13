@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { FerryBoatIcon, UserGroupIcon, WalletIcon } from "@/assets/icons";
 import { formatValue } from "react-currency-input-field";
 import { BarChart } from "@tremor/react";
-import baseurl from "@/api";
+import axiosInstance from "@/api";
 import { toast } from "sonner";
 import { PieChart, pieArcLabelClasses } from "@mui/x-charts/PieChart";
 import {
@@ -176,7 +176,7 @@ const Report = () => {
 	React.useEffect(() => {
 		// setLoading(true);
 		if (!isSuperAdmin) setCity(capitalize(adminProfile.city));
-		baseurl
+		axiosInstance
 			.get("/booking/getnewmonthly")
 			.then((res) => {
 				const totals = res.data;

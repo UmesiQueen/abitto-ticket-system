@@ -6,7 +6,7 @@ const TermsAndConditions = () => {
             </div>
             <div className="px-5 mt-10 mb-20 text-justify">
                 <section className="max-w-[1000px] mx-auto space-y-8 [&_h2]:mb-3 md:[&_h2]:mb-5 md:text-lg [&_h2]:font-semibold [&_h2]:text-lg  md:[&_h2]:text-xl">
-                    <ol className=" *:list-decimal px-5 space-y-8">
+                    <ol className=" *:list-decimal *:marker:font-semibold  *:marker:text-lg  *:md:marker:text-xl px-5 space-y-8">
                         <li>
                             <h2>Acceptance of Terms</h2>
                             <p className="sm:ml-5">By purchasing a ticket and boarding any of our ferries, you agree to abide by these Terms and Conditions. These Terms and Conditions apply to all passengers and are non-negotiable. </p>

@@ -49,7 +49,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { Refresh } from "iconsax-react";
 import Button from "@/components/custom/Button";
 
 const BookingDetails = () => {
@@ -61,6 +60,7 @@ const BookingDetails = () => {
 		setFiltering,
 		searchParams,
 		setSearchParams,
+		setCurrentPageIndex
 	} = React.useContext(BookingCTX);
 	const { adminProfile } = React.useContext(GlobalCTX);
 	const isColumnVisible =
@@ -170,7 +170,7 @@ const BookingDetails = () => {
 		},
 		{
 			accessorKey: "total_passengers",
-			header: "Passengers",
+			header: <div className="text-center">Passengers</div>,
 			cell: ({ row }) => <p className="text-center">{row.getValue("total_passengers")}</p>,
 			enableGlobalFilter: false,
 		},
@@ -235,12 +235,17 @@ const BookingDetails = () => {
 	}, [bookingQuery]);
 
 	React.useEffect(() => {
-		if (columnFilters.length)
+		if (columnFilters.length || filtering.length) {
 			setPageCount(
 				Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
 			);
+			setCurrentPageIndex((prev) => ({
+				...prev,
+				booking: 0,
+			}));
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [columnFilters]);
+	}, [columnFilters, filtering]);
 
 	React.useEffect(() => {
 		table.setPageIndex(currentPageIndex.booking);
@@ -266,121 +271,108 @@ const BookingDetails = () => {
 
 			<h1 className="text-lg font-semibold mb-10">Booking Details</h1>
 			<SearchForm />
-			<div className="my-10 flex gap-5 justify-end">
-				{/* <div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg">
-					<span className="px-4 text-nowrap text-sm font-semibold bg-white h-full inline-flex items-center rounded-l-lg">
-						Trip type
-					</span>
-					<Select
-						defaultValue="#"
-						value={table.getColumn("trip_type")?.getFilterValue() ?? "#"}
-						onValueChange={(value) => {
-							if (value === "#") {
-								return table.getColumn("trip_type")?.setFilterValue("");
-							}
-							table.getColumn("trip_type")?.setFilterValue(value);
+			<div className="my-10 flex gap-5 justify-between flex-wrap items-center">
+				{(columnFilters.length) ?
+					<Button
+						variant="outline"
+						className="!h-8 !text-sm"
+						onClick={() => {
+							table.resetColumnFilters(true);
+							setSearchParams({});
 						}}
-					>
-						<SelectTrigger className="w-[170px] grow rounded-none rounded-r-lg border-0 border-l px-5 focus:ring-0 focus:ring-offset-0 bg-white">
-							<SelectValue />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectGroup>
-								<SelectItem value="#">Both trip types</SelectItem>
-								<SelectItem value="One-Way Trip">One-Way Trip</SelectItem>
-								<SelectItem value="Round Trip">Round Trip</SelectItem>
-							</SelectGroup>
-						</SelectContent>
-					</Select>
-				</div> */}
-				<div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg">
-					<span className="px-4 text-nowrap text-sm font-semibold bg-white h-full inline-flex items-center rounded-l-lg">
-						Medium
-					</span>
-					<Select
-						defaultValue="#"
-						value={table.getColumn("medium")?.getFilterValue() ?? "#"}
-						onValueChange={(value) => {
-							if (value === "#") {
-								return table.getColumn("medium")?.setFilterValue("");
-							}
-							table.getColumn("medium")?.setFilterValue(value);
-						}}
-					>
-						<SelectTrigger className="w-[170px] grow rounded-none rounded-r-lg border-0 border-l px-5 focus:ring-0 focus:ring-offset-0 bg-white">
-							<SelectValue />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectGroup>
-								<SelectItem value="#">Both mediums</SelectItem>
-								<SelectItem value="Online">Online</SelectItem>
-								<SelectItem value="Offline">Offline</SelectItem>
-							</SelectGroup>
-						</SelectContent>
-					</Select>
-				</div>
-				<div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg">
-					<span className="px-4 text-nowrap text-sm font-semibold bg-white h-full inline-flex items-center rounded-l-lg">
-						Payment status
-					</span>
-					<Select
-						defaultValue="#"
-						value={table.getColumn("payment_status")?.getFilterValue() ?? "#"}
-						onValueChange={(value) => {
-							if (value === "#") {
-								return table.getColumn("payment_status")?.setFilterValue("");
-							}
-							table.getColumn("payment_status")?.setFilterValue(value);
-						}}
-					>
-						<SelectTrigger className="w-[170px] grow rounded-none rounded-r-lg border-0 border-l px-5 focus:ring-0 focus:ring-offset-0 bg-white">
-							<SelectValue />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectGroup>
-								<SelectItem value="#">All Passengers</SelectItem>
-								<SelectItem value="Success">Success</SelectItem>
-								<SelectItem value="Canceled">Canceled</SelectItem>
-								<SelectItem value="Pending">Pending</SelectItem>
-							</SelectGroup>
-						</SelectContent>
-					</Select>
-				</div>
-				<div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg">
-					<span className="px-4 text-nowrap text-sm font-semibold bg-white h-full inline-flex items-center rounded-l-lg">
-						Trip status
-					</span>
-					<Select
-						defaultValue="#"
-						value={table.getColumn("trip_status")?.getFilterValue() ?? "#"}
-						onValueChange={(value) => {
-							if (value === "#") {
-								return table.getColumn("trip_status")?.setFilterValue("");
-							}
-							table.getColumn("trip_status")?.setFilterValue(value);
-						}}
-					>
-						<SelectTrigger className="w-[170px] grow rounded-none rounded-r-lg border-0 border-l px-5 focus:ring-0 focus:ring-offset-0 bg-white">
-							<SelectValue />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectGroup>
-								<SelectItem value="#">All Passengers</SelectItem>
-								<SelectItem value="Completed">Completed</SelectItem>
-								<SelectItem value="Upcoming">Upcoming</SelectItem>
-								<SelectItem value="Rescheduled">Rescheduled</SelectItem>
-								<SelectItem value="Canceled">Canceled</SelectItem>
-								<SelectItem value="Missed">Missed</SelectItem>
-							</SelectGroup>
-						</SelectContent>
-					</Select>
+						text="Reset filters"
+					/> : ""}
+
+				<div className="flex gap-5 justify-end ml-auto">
+					<div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg">
+						<span className="px-4 text-nowrap text-sm font-semibold bg-white h-full inline-flex items-center rounded-l-lg">
+							Medium
+						</span>
+						<Select
+							defaultValue="#"
+							value={table.getColumn("medium")?.getFilterValue() ?? "#"}
+							onValueChange={(value) => {
+								if (value === "#") {
+									return table.getColumn("medium")?.setFilterValue("");
+								}
+								table.getColumn("medium")?.setFilterValue(value);
+							}}
+						>
+							<SelectTrigger className="w-[170px] grow rounded-none rounded-r-lg border-0 border-l px-5 focus:ring-0 focus:ring-offset-0 bg-white">
+								<SelectValue />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectGroup>
+									<SelectItem value="#">Both mediums</SelectItem>
+									<SelectItem value="Online">Online</SelectItem>
+									<SelectItem value="Offline">Offline</SelectItem>
+								</SelectGroup>
+							</SelectContent>
+						</Select>
+					</div>
+					<div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg">
+						<span className="px-4 text-nowrap text-sm font-semibold bg-white h-full inline-flex items-center rounded-l-lg">
+							Payment status
+						</span>
+						<Select
+							defaultValue="#"
+							value={table.getColumn("payment_status")?.getFilterValue() ?? "#"}
+							onValueChange={(value) => {
+								if (value === "#") {
+									return table.getColumn("payment_status")?.setFilterValue("");
+								}
+								table.getColumn("payment_status")?.setFilterValue(value);
+							}}
+						>
+							<SelectTrigger className="w-[170px] grow rounded-none rounded-r-lg border-0 border-l px-5 focus:ring-0 focus:ring-offset-0 bg-white">
+								<SelectValue />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectGroup>
+									<SelectItem value="#">All Passengers</SelectItem>
+									<SelectItem value="Success">Success</SelectItem>
+									<SelectItem value="Canceled">Canceled</SelectItem>
+									<SelectItem value="Pending">Pending</SelectItem>
+								</SelectGroup>
+							</SelectContent>
+						</Select>
+					</div>
+					<div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg">
+						<span className="px-4 text-nowrap text-sm font-semibold bg-white h-full inline-flex items-center rounded-l-lg">
+							Trip status
+						</span>
+						<Select
+							defaultValue="#"
+							value={table.getColumn("trip_status")?.getFilterValue() ?? "#"}
+							onValueChange={(value) => {
+								if (value === "#") {
+									return table.getColumn("trip_status")?.setFilterValue("");
+								}
+								table.getColumn("trip_status")?.setFilterValue(value);
+							}}
+						>
+							<SelectTrigger className="w-[170px] grow rounded-none rounded-r-lg border-0 border-l px-5 focus:ring-0 focus:ring-offset-0 bg-white">
+								<SelectValue />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectGroup>
+									<SelectItem value="#">All Passengers</SelectItem>
+									<SelectItem value="Completed">Completed</SelectItem>
+									<SelectItem value="Upcoming">Upcoming</SelectItem>
+									<SelectItem value="Rescheduled">Rescheduled</SelectItem>
+									<SelectItem value="Canceled">Canceled</SelectItem>
+									<SelectItem value="Missed">Missed</SelectItem>
+								</SelectGroup>
+							</SelectContent>
+						</Select>
+					</div>
 				</div>
 			</div>
 
 			{Object.keys(searchParams).length ? (
 				<div className="flex items-center mb-5">
 					<div className="inline-flex gap-1">
-						<h2 className="font-semibold">Booking search results </h2>
+						<h2 className="font-semibold">Search results for </h2>
 						<p className="divide-x divide-black flex gap-2 [&>*:not(:first-of-type)]:pl-2">
 							({" "}
 							{searchParams?.departure && (
@@ -389,18 +381,6 @@ const BookingDetails = () => {
 							{searchParams?.date && <span>{searchParams.date}</span>})
 						</p>
 					</div>
-
-					<ButtonUI
-						size="icon"
-						variant="ghost"
-						className="inline-flex gap-1 ml-5"
-						onClick={() => {
-							table.resetColumnFilters(true);
-							setSearchParams({});
-						}}
-					>
-						<Refresh />
-					</ButtonUI>
 				</div>
 			) : (
 				<h2 className="font-semibold mb-5">All Bookings</h2>
@@ -498,6 +478,7 @@ const Pagination = ({ props: { table } }) => {
 					booking: val.selected,
 				}));
 			}}
+			forcePage={currentPageIndex.booking}
 			initialPage={currentPageIndex.booking}
 			pageRangeDisplayed={3}
 			pageCount={pageCount}
@@ -524,7 +505,7 @@ export const CustomerDetails = () => {
 	const currentUser = useLoaderData();
 	const { mountPortalModal, adminProfile } = React.useContext(GlobalCTX);
 
-	const canReschedule = currentUser?.trip_status == "Upcoming" && ["dev", "salesperson"].includes(adminProfile.account_type)
+	const canReschedule = currentUser?.trip_status == "Upcoming" && ["dev", "super-admin"].includes(adminProfile.account_type)
 
 	return (
 		<div>

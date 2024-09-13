@@ -24,7 +24,7 @@ import { CaretIcon, CancelSquareIcon, DeleteIcon } from "@/assets/icons";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { cn } from "@/lib/utils";
 import { v4 as uuid } from "uuid";
-import baseurl from "@/api";
+import axiosInstance from "@/api";
 import ConfirmationModal from "@/components/modals/confirmation";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { UploadIcon } from "lucide-react";
@@ -209,7 +209,7 @@ const InformationBox = () => {
 				message: response,
 				status: "Inactive"
 			}
-			baseurl
+			axiosInstance
 				.post("/infobox/new", formValues)
 				.then((res) => {
 					if (res.status == 200) {
@@ -298,7 +298,7 @@ const InformationBox = () => {
 			}
 		}
 
-		baseurl
+		axiosInstance
 			.patch("/infobox/update", formValues)
 			.then((res) => {
 				if (res.status == 200) {
@@ -336,7 +336,7 @@ const InformationBox = () => {
 
 	const deleteRequest = (data) => {
 		setLoader(true)
-		baseurl
+		axiosInstance
 			.patch("/infobox/delete", { message_id: data.message_id })
 			.then((res) => {
 				if (res.status == 200) {
@@ -585,7 +585,7 @@ const PreviewModal = ({ url }) => {
 
 export const InformationLoader = async () => {
 	try {
-		const response = await baseurl.get("infobox/get");
+		const response = await axiosInstance.get("infobox/get");
 		return response.data.infoBoxes;
 	} catch (error) {
 		if (

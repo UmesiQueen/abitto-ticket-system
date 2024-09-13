@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import baseurl from "@/api";
+import axiosInstance from "@/api";
 import { Helmet } from "react-helmet-async";
 import { toast } from "sonner";
 import { MapIcon, PhoneIcon, CaretIcon, BoatIcon } from "@/assets/icons";
@@ -491,7 +491,7 @@ const ContactForm = () => {
 
 	const onSubmit = handleSubmit((formData) => {
 		setLoading(true);
-		baseurl
+		axiosInstance
 			.post("/email/contact", formData)
 			.then((res) => {
 				if (res.status == 200) {

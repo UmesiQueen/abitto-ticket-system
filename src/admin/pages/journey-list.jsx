@@ -31,7 +31,7 @@ import { CaretIcon, CalendarIcon } from "@/assets/icons";
 import SelectField from "@/components/custom/SelectField";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { Refresh } from "iconsax-react";
-import baseurl from "@/api";
+import axiosInstance from "@/api";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { toast } from "sonner";
 import {
@@ -191,7 +191,6 @@ const JourneyTable = () => {
 	const { setLoading, adminProfile } = React.useContext(GlobalCTX);
 	const { searchParams, setSearchParams, setCurrentPageIndex } =
 		React.useContext(BookingCTX);
-	const [rowSelection, setRowSelection] = React.useState({});
 	const [columnFilters, setColumnFilters] = React.useState([]);
 	const [pageCount, setPageCount] = React.useState(0);
 	const [pagination, setPagination] = React.useState({
@@ -202,7 +201,7 @@ const JourneyTable = () => {
 
 	React.useEffect(() => {
 		setLoading(true),
-			baseurl
+			axiosInstance
 				.get("/ticket/get")
 				.then((res) => {
 					if (res.status == 200) {
@@ -304,7 +303,7 @@ const JourneyTable = () => {
 			header: "DateTime",
 			accessorFn: (row) => {
 				const dateTime = new Date(`${row.date} ${row.time}`);
-				return format(dateTime, "Pp");
+				return dateTime;
 			},
 		},
 	];
@@ -317,11 +316,9 @@ const JourneyTable = () => {
 		getPaginationRowModel: getPaginationRowModel(),
 		getSortedRowModel: getSortedRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
-		onRowSelectionChange: setRowSelection,
 		onPaginationChange: setPagination,
 		pageCount,
 		state: {
-			rowSelection,
 			columnFilters,
 			pagination,
 			columnVisibility: {
@@ -357,7 +354,7 @@ const JourneyTable = () => {
 			{Object.keys(searchParams).length ? (
 				<div className="flex items-center mt-16 mb-5">
 					<div className="inline-flex gap-1">
-						<h2 className="font-semibold">Trip search results </h2>
+						<h2 className="font-semibold">Search results for </h2>
 						<p className="divide-x divide-black flex gap-2 [&>*:not(:first-of-type)]:pl-2">
 							({" "}
 							{searchParams?.departure && (

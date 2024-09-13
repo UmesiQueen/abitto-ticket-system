@@ -9,7 +9,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { cn } from "@/lib/utils";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import ConfirmationModal from "@/components/modals/confirmation";
-import baseurl from "@/api";
+import axiosInstance from "@/api";
 import { toast } from "sonner";
 import { useUpdate } from "@/hooks/useUpdate";
 
@@ -238,7 +238,7 @@ EditableInput.displayName = EditableInput;
 
 export const PriceLoader = async () => {
 	try {
-		const response = await baseurl.get("/price/get");
+		const response = await axiosInstance.get("/price/get");
 		const resData = response.data.prices.map((item) => ({ [item.trip_name]: item.cost }));
 		const result = Object.assign({}, ...resData);
 		return result;
