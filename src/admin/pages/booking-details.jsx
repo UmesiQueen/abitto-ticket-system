@@ -272,7 +272,7 @@ const BookingDetails = () => {
 			<h1 className="text-lg font-semibold mb-10">Booking Details</h1>
 			<SearchForm />
 			<div className="my-10 flex gap-5 justify-between flex-wrap items-center">
-				{(columnFilters.length || filtering.length) ?
+				{(columnFilters.length) ?
 					<Button
 						variant="outline"
 						className="!h-8 !text-sm"

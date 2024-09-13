@@ -58,8 +58,7 @@ const ProtectedRoute = () => {
 	const [filterValue, setFilterValue] = React.useState("");
 
 	React.useEffect(() => {
-		if (filterValue)
-			setTimeout(() => { setFiltering(filterValue) }, 500)
+		setTimeout(() => { setFiltering(filterValue) }, 500)
 	}, [filterValue, setFiltering])
 
 	React.useEffect(() => {
