@@ -265,7 +265,7 @@ export const BookingForm = ({ tab }) => {
 					/>
 				</div>
 			</div>
-			<Button text="Search available trip" type="submit" className="w-full !h-12" />
+			<Button text="Continue" type="submit" className="w-full !h-12" />
 		</form>
 	);
 };
