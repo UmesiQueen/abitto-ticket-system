@@ -18,7 +18,7 @@ import { CustomerDetails } from "./admin/pages/booking-details";
 import TicketInvoice from "./components/TicketInvoice";
 import MainLayout from "./main/layout";
 import About from "./main/pages/about";
-import BookTicket from "./admin/pages/book-ticket";
+import BookTicket, { AdminTripDetails, AdminPayment } from "./admin/pages/book-ticket";
 import TripDetails from "./admin/pages/trip-details";
 import Create from "./admin/pages/create";
 import ScheduleTrip from "./admin/pages/schedule-trip";
@@ -78,7 +78,12 @@ export const router = createBrowserRouter(
 				<Route path="/backend/:accountType">
 					<Route path="dashboard" element={<Report />} />
 					<Route path="create" element={<Create />} />
-					<Route path="create/book-ticket" element={<BookTicket />} />
+					<Route path="create/book-ticket" element={<BookTicket />} >
+						<Route index element={<AdminTripDetails />} />
+						<Route path="available-trips" element={<SearchTrip />} />
+						<Route path="passenger-details" element={<PassengerDetails />} />
+						<Route path="payment" element={<AdminPayment />} />
+					</Route>
 					<Route path="create/check-in" element={<CheckIn />} />
 					<Route path="create/rental" element={<RentalAdmin />} loader={PriceLoader} />
 					<Route path="create/logistics" element={<Logistics />} />

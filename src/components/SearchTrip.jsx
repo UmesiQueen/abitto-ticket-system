@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMutation } from '@tanstack/react-query'
 import axiosInstance from "@/api";
+import { customError } from "@/lib/utils";
 
 const SearchTrip = () => {
 	const {
@@ -20,12 +21,14 @@ const SearchTrip = () => {
 		setSelectedTrip,
 		setFormData,
 	} = React.useContext(BookingCTX);
-	const { setLoading } = React.useContext(GlobalCTX);
+	const { setLoading, adminProfile } = React.useContext(GlobalCTX);
 	const [totalCost, setTotalCost] = React.useState(0);
 	const [isDisabled, setIsDisabled] = React.useState(true);
 	const navigate = useNavigate()
 	const { setActiveStep } = useStepper();
-	const { search } = useLocation();
+	const { search, pathname } = useLocation();
+	const isAdmin = pathname.includes("/backend");
+	const { account_type } = adminProfile
 
 	const searchParams = new URLSearchParams(search.split("?")[1]);
 	const searchObj = {}
@@ -44,13 +47,7 @@ const SearchTrip = () => {
 			setAvailableTrips(data);
 		},
 		onError: (error) => {
-			if (
-				!error.code === "ERR_NETWORK" ||
-				!error.code === "ERR_INTERNET_DISCONNECTED" ||
-				!error.code === "ECONNABORTED"
-			)
-				toast.error("Unable to retrieve available trips. Please try again.");
-
+			customError(error, "Unable to retrieve available trips. Please try again.")
 		},
 	});
 
@@ -100,11 +97,12 @@ const SearchTrip = () => {
 				departure_trip_code: selectedTrip.departure.trip_code,
 			},
 		}));
-		navigate(`/booking/passenger-details?cid=${formData.ticket_id}`)
+		if (isAdmin)
+			return navigate(`/backend/${account_type}/create/book-ticket/passenger-details?cid=${formData.ticket_id}`)
+		return navigate(`/booking/passenger-details?cid=${formData.ticket_id}`)
 	};
 
 	const handleReturn = () => {
-		navigate("/booking")
 		setSelectedTrip({
 			departure: {},
 			return: {},
@@ -113,10 +111,13 @@ const SearchTrip = () => {
 			departure_trip: [],
 			return_trip: [],
 		});
+		if (isAdmin)
+			return navigate(`/backend/${account_type}/create/book-ticket`)
+		return navigate("/booking")
 	};
 
 	return (
-		<section className="space-y-10 px-3 md:px-0">
+		<section className="space-y-10 px-3 md:px-8">
 			<div className="flex flex-col-reverse md:flex-row gap-5 justify-between md:items-center">
 				<hgroup>
 					<h2 className="font-semibold md:text-lg">Select Departure Time</h2>

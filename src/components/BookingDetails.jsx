@@ -79,8 +79,11 @@ export const BookingForm = () => {
 			},
 			...(!prev?.ticket_id && { ticket_id: uuid().slice(0, 6) }),
 		}));
+
 		const date = format(formData_.departure_date, "PP");
-		navigate(`available-trips?departure=${formData_.travel_from}&arrival=${formData_.travel_to}&passengers=${total_passengers}&date=${date}`)
+		if (pathname.includes("/backend"))
+			return navigate(`/backend/${adminProfile.account_type}/create/book-ticket/available-trips?departure=${formData_.travel_from}&arrival=${formData_.travel_to}&passengers=${total_passengers}&date=${date}`)
+		return navigate(`available-trips?departure=${formData_.travel_from}&arrival=${formData_.travel_to}&passengers=${total_passengers}&date=${date}`)
 	};
 
 	const handleChange = (e) => {

@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -17,19 +16,18 @@ import {
 } from "@/assets/icons";
 import { BookingCTX } from "@/contexts/BookingContext";
 import Button from "@/components/custom/Button";
-import { useStepper } from "@/hooks/useStepper";
 import SelectField from "@/components/custom/SelectField";
 import InputField from "@/components/custom/InputField";
 import { usePayment } from "@/hooks/usePayment";
 import { Button as ButtonIcon } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Outlet } from "react-router-dom";
 import { BookingForm } from "@/components/BookingDetails";
-import SearchTrip from "@/components/SearchTrip";
-import PassengerDetails from "@/components/PassengerDetails";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { GlobalCTX } from "@/contexts/GlobalContext";
+import BookingSuccessModal from "@/components/modals/book.success";
 
 const BookTicket = () => {
-	const { activeStep } = useStepper();
 	const navigate = useNavigate();
 
 	return (
@@ -44,21 +42,7 @@ const BookTicket = () => {
 					</ButtonIcon>
 					<h1 className="font-semibold text-lg">Salespoint Terminal</h1>
 				</div>
-				<>
-					{activeStep === 0 ? (
-						<TripDetails />
-					) : activeStep === 1 ? (
-						<div className="px-5">
-							<SearchTrip />
-						</div>
-					) : activeStep === 2 ? (
-						<PassengerDetails />
-					) : activeStep === 3 ? (
-						<Payment />
-					) : (
-						""
-					)}
-				</>
+				<Outlet />
 			</div>
 		</>
 	);
@@ -66,62 +50,33 @@ const BookTicket = () => {
 
 export default BookTicket;
 
-const TripDetails = () => {
-	// const { formData } = React.useContext(BookingCTX);
-	// const StyledTabsTrigger = ({ children, value, ...props }) => {
-	// 	return (
-	// 		<TabsTrigger
-	// 			value={value}
-	// 			className="data-[state=active]:bg-blue-500 data-[state=active]:text-white data-[state=active]:rounded-lg py-3 transition-all duration-200 ease-in-out"
-	// 			{...props}
-	// 		>
-	// 			{children}
-	// 		</TabsTrigger>
-	// 	);
-	// };
-
+export const AdminTripDetails = () => {
 	return (
 		<section className="bg-white p-10 my-8 rounded-lg">
-			<Tabs
-				defaultValue={"One-Way Trip"}
-				className="w-full"
-			>
-				<div className="flex justify-between">
-					<hgroup>
-						<h2 className="text-blue-500 text-base font-semibold">
-							Trip Details
-						</h2>
-						<p className="text-sm">Please fill in customers trip details</p>
-					</hgroup>
-					{/* <TabsList className="h-14 gap-2 w-fit">
-						<StyledTabsTrigger value="One-Way Trip">
-							One-Way Trip
-						</StyledTabsTrigger>
-						<StyledTabsTrigger value="Round Trip">Round Trip</StyledTabsTrigger>
-					</TabsList> */}
-				</div>
-				<TabsContent value="One-Way Trip">
-					<BookingForm tab="One-Way Trip" />
-				</TabsContent>
-				<TabsContent value="Round Trip">
-					<BookingForm tab="Round Trip" />
-				</TabsContent>
-			</Tabs>
+			<div className="flex justify-between">
+				<hgroup>
+					<h2 className="text-blue-500 text-base font-semibold">
+						Trip Details
+					</h2>
+					<p className="text-sm">Please fill in customers trip details</p>
+				</hgroup>
+			</div>
+			<BookingForm />
 		</section>
 	);
 };
 
-const Payment = () => {
+export const AdminPayment = () => {
 	const { formData, loading } = React.useContext(BookingCTX);
-	const { onPrevClick } = useStepper();
+	const { mountPortalModal, setLoading, adminProfile } = React.useContext(GlobalCTX);
 	const { offlinePayment } = usePayment();
+	const queryClient = useQueryClient()
+	const navigate = useNavigate()
 	const total_ticket_cost =
-		(Number(formData.bookingDetails.departure_ticket_cost) +
-			Number(formData.bookingDetails?.return_ticket_cost ?? 0)) *
+		Number(formData.bookingDetails.departure_ticket_cost) *
 		Number(formData.bookingDetails.total_passengers);
 
 	const paymentSchema = yup.object().shape({
-		payment_status: yup.string().required("This field is required."),
 		payment_method: yup.string().required("This field is required."),
 		transaction_ref: yup
 			.string()
@@ -143,9 +98,28 @@ const Payment = () => {
 		},
 	});
 
+	const { isPending, ...mutation } = useMutation({
+		mutationKey: ["createOfflineBooking"],
+		mutationFn: (data) => {
+			return offlinePayment(data)
+		},
+		onSuccess: (id) => {
+			queryClient.invalidateQueries('bookings');
+			mountPortalModal(<BookingSuccessModal id={id} />);
+		},
+	})
+
+	React.useEffect(() => {
+		setLoading(isPending)
+	}, [isPending, setLoading])
+
 	const onSubmit = handleSubmit((formData) => {
-		offlinePayment(formData);
+		mutation.mutateAsync(formData)
 	});
+
+	const handlePrev = () => {
+		navigate(`/backend/${adminProfile.account_type}/create/book-ticket/passenger-details?cid=${formData.ticket_id}`)
+	}
 
 	return (
 		<div className="flex gap-5">
@@ -228,20 +202,12 @@ const Payment = () => {
 				) : (
 					""
 				)}
-				<div className="mt-20 py-8 h-36  grid grid-cols-2 gap-5">
+				<div className="mt-20 py-8 h-36 grid grid-cols-3 gap-5">
 					<SelectField
 						{...register("payment_method")}
 						label="Payment Method"
 						placeholder="Select payment method"
 						options={["POS", "Bank Transfer", "Cash"]}
-						errors={errors}
-						className="bg-white"
-					/>
-					<SelectField
-						{...register("payment_status")}
-						label="Payment Status"
-						placeholder="Select payment status"
-						options={["Success", "Canceled", "Pending"]}
 						errors={errors}
 						className="bg-white"
 					/>
@@ -271,9 +237,9 @@ const Payment = () => {
 					</div>
 				</div>
 
-				<div className="flex gap-5 mt-36">
+				<div className="flex gap-5">
 					<Button
-						onClick={onPrevClick}
+						onClick={handlePrev}
 						variant="outline"
 						text="Back"
 						className="w-40"
@@ -334,32 +300,11 @@ const Payment = () => {
 							</p>
 						</div>
 					</div>
-					{formData.bookingDetails.trip_type === "Round Trip" && (
-						<div>
-							<h5 className="font-semibold text-sm mb-1">Return Details</h5>
-							<div className="flex flex-wrap gap-x-4 gap-y-1 text-[#1E1E1E] text-xs font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
-								<p>
-									<CalendarIcon />
-									{format(new Date(formData.bookingDetails?.return_date), "PP")}
-								</p>
-								<p>
-									<ClockIcon />
-									{formData.bookingDetails?.return_time}
-								</p>
-							</div>
-						</div>
-					)}
 				</div>
 
 				<div className="border-y-2 border-dashed py-2">
 					<table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] ">
 						<tbody>
-							<tr>
-								<td className="text-xs md:text-sm text-[#444444]">
-									Ride Insurance
-								</td>
-								<td className="text-xs md:text-sm text-[#444444]">₦0</td>
-							</tr>
 							<tr>
 								<td className="text-xs md:text-sm text-[#444444]">
 									Ticket Price
@@ -371,17 +316,7 @@ const Payment = () => {
 										),
 										prefix: "₦",
 									})}
-									{formData.bookingDetails.trip_type === "Round Trip" && (
-										<>
-											{" + "}
-											{formatValue({
-												value: String(
-													formData.bookingDetails.return_ticket_cost
-												),
-												prefix: "₦",
-											})}
-										</>
-									)}{" "}
+									{" "}
 									x {formData.bookingDetails.total_passengers}
 								</td>
 							</tr>

@@ -48,7 +48,9 @@ const Payment = () => {
 	})
 
 	const onSubmit = handleSubmit(({ checked }) => {
-		if (checked) checkAvailability()
+		// if (checked) checkAvailability()
+		if (checked)
+			navigate("/booking/confirmation?reference=c2ri1bevay")
 	})
 
 	const handlePrev = () => {

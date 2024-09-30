@@ -13,12 +13,12 @@ import { format } from "date-fns";
 import { useNavigate, useLocation, Navigate } from "react-router-dom";
 
 const PassengerDetails = () => {
-	const { loading, setLoading } = React.useContext(GlobalCTX);
+	const { loading, setLoading, adminProfile } = React.useContext(GlobalCTX);
 	const { setChecked, isChecked, formData, setFormData } =
 		React.useContext(BookingCTX);
-	const { onPrevClick, onNextClick, setActiveStep } = useStepper();
+	const { setActiveStep } = useStepper();
 	const navigate = useNavigate()
-	const { search } = useLocation();
+	const { search, pathname } = useLocation();
 	const adults_number = formData.bookingDetails?.adults_number;
 
 	const searchParams = new URLSearchParams(search.split("?")[1]);
@@ -61,8 +61,9 @@ const PassengerDetails = () => {
 				passengerDetails: formValues,
 			}));
 			setLoading(false);
-			onNextClick();
-			navigate(`/booking/payment?cid=${formData.ticket_id}`)
+			if (pathname.includes("/backend"))
+				return navigate(`/backend/${adminProfile.account_type}/create/book-ticket/payment?cid=${formData.ticket_id}`)
+			return navigate(`/booking/payment?cid=${formData.ticket_id}`)
 		}, 650);
 	});
 
@@ -80,8 +81,9 @@ const PassengerDetails = () => {
 	};
 
 	const handlePrev = () => {
-		onPrevClick();
-		navigate(`/booking/available-trips?departure=${formData.bookingDetails.travel_from}&arrival=${formData.bookingDetails.travel_to}&passengers=${formData.bookingDetails.total_passengers}&date=${format(formData.bookingDetails.departure_date, "PP")}`)
+		if (pathname.includes("/backend"))
+			return navigate(`/backend/${adminProfile.account_type}/create/book-ticket/available-trips?departure=${formData.bookingDetails.travel_from}&arrival=${formData.bookingDetails.travel_to}&passengers=${formData.bookingDetails.total_passengers}&date=${format(formData.bookingDetails.departure_date, "PP")}`)
+		return navigate(`/booking/available-trips?departure=${formData.bookingDetails.travel_from}&arrival=${formData.bookingDetails.travel_to}&passengers=${formData.bookingDetails.total_passengers}&date=${format(formData.bookingDetails.departure_date, "PP")}`)
 	}
 
 	if (ticket_id !== formData?.ticket_id) return (<Navigate to="/booking" />)
