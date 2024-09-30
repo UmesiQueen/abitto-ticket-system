@@ -9,28 +9,35 @@ import { GlobalCTX } from "@/contexts/GlobalContext";
 import Button from "@/components/custom/Button";
 import { useStepper } from "@/hooks/useStepper";
 import InputField from "@/components/custom/InputField";
-// import SeatSelection from "@/components/SeatSelection";
 import { format } from "date-fns";
+import { useNavigate, useLocation, Navigate } from "react-router-dom";
 
 const PassengerDetails = () => {
 	const { loading, setLoading } = React.useContext(GlobalCTX);
 	const { setChecked, isChecked, formData, setFormData } =
 		React.useContext(BookingCTX);
-	const { onPrevClick, onNextClick } = useStepper();
+	const { onPrevClick, onNextClick, setActiveStep } = useStepper();
+	const navigate = useNavigate()
+	const { search } = useLocation();
 	const adults_number = formData.bookingDetails?.adults_number;
+
+	const searchParams = new URLSearchParams(search.split("?")[1]);
+	const ticket_id = searchParams.get("cid");
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	React.useEffect(() => {
+		setActiveStep(2)
+	}, [])
 
 	const {
 		register,
 		handleSubmit,
-		// setValue,
 		formState: { errors },
 	} = useForm({
 		mode: "onChange",
 		resolver: yupResolver(passengerDetailsSchema),
 		context: { adultPassengers: adults_number, isChecked },
-		defaultValues: {
-			...formData.passengerDetails,
-		},
+		defaultValues: formData.passengerDetails
 	});
 
 	const onSubmit = handleSubmit((formData_) => {
@@ -55,13 +62,9 @@ const PassengerDetails = () => {
 			}));
 			setLoading(false);
 			onNextClick();
+			navigate(`/booking/payment?cid=${formData.ticket_id}`)
 		}, 650);
 	});
-
-	// const handleSeatSelection = (e) => {
-	// 	const tab = e.target.name.split("_")[0];
-	// 	mountPortalModal(<SeatSelection props={{ tab, setValue }} />);
-	// };
 
 	const handleChange = (e) => {
 		const { value, name } = e.target;
@@ -75,6 +78,13 @@ const PassengerDetails = () => {
 			};
 		});
 	};
+
+	const handlePrev = () => {
+		onPrevClick();
+		navigate(`/booking/available-trips?departure=${formData.bookingDetails.travel_from}&arrival=${formData.bookingDetails.travel_to}&passengers=${formData.bookingDetails.total_passengers}&date=${format(formData.bookingDetails.departure_date, "PP")}`)
+	}
+
+	if (ticket_id !== formData?.ticket_id) return (<Navigate to="/booking" />)
 
 	return (
 		<>
@@ -104,15 +114,6 @@ const PassengerDetails = () => {
 							- {formData.bookingDetails?.departure_time}
 						</p>
 					</li>
-					{formData.bookingDetails?.trip_type === "Round Trip" && (
-						<li>
-							<h4> Return Date & Time</h4>
-							<p>
-								{format(new Date(formData.bookingDetails?.return_date), "PP")} -{" "}
-								{formData.bookingDetails?.return_time}
-							</p>
-						</li>
-					)}
 					<li>
 						<h4>Adult</h4>
 						<p>{formData.bookingDetails?.adults_number}</p>
@@ -171,29 +172,6 @@ const PassengerDetails = () => {
 									errors={errors}
 									handlechange={handleChange}
 								/>
-
-								{/* <div className="flex gap-5 w-full">
-									<InputField
-										{...register("departure_seats")}
-										label="Departure Seat"
-										placeholder="Select departure seat(s)"
-										type="text"
-										readOnly="readonly"
-										value={formData.seatDetails?.departure_seats ?? ""}
-										onClick={handleSeatSelection}
-									/>
-									{formData.bookingDetails?.trip_type === "Round Trip" && (
-										<InputField
-											{...register("return_seats")}
-											label="Return Seat"
-											placeholder="Select return seat(s)"
-											type="text"
-											readOnly="readonly"
-											value={formData.seatDetails?.return_seats ?? ""}
-											onClick={handleSeatSelection}
-										/>
-									)}
-								</div> */}
 							</div>
 						</div>
 						{adults_number > 1 && (
@@ -217,7 +195,7 @@ const PassengerDetails = () => {
 											const currentPassenger = `passenger${i + 2}`;
 											return (
 												<div
-													key={i}
+													key={currentPassenger}
 													className="space-y-5 flex-grow basis-[400px]"
 												>
 													<h4 className="font-medium text-sm">
@@ -273,7 +251,7 @@ const PassengerDetails = () => {
 							<Button
 								text="Back"
 								variant="outline"
-								onClick={onPrevClick}
+								onClick={handlePrev}
 								className="w-full md:w-40"
 							/>
 							<Button

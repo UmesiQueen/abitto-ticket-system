@@ -15,5 +15,5 @@ export const useStepper = () => {
     setActiveStep(0);
   };
 
-  return { onPrevClick, onNextClick, activeStep, handleReset };
+  return { onPrevClick, onNextClick, activeStep, handleReset, setActiveStep };
 };

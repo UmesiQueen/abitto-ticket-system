@@ -15,20 +15,26 @@ import { useStepper } from "@/hooks/useStepper";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { useSearchTrip } from "@/hooks/useSearchTrip";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Link } from "react-router-dom"
+import { Link, useLocation, Navigate, useNavigate } from "react-router-dom"
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
 const Payment = () => {
-	const { loading, formData, handleReset } = React.useContext(BookingCTX);
+	const { loading, formData } = React.useContext(BookingCTX);
 	const { mountPortalModal } = React.useContext(GlobalCTX);
-	const { onPrevClick } = useStepper();
+	const { onPrevClick, setActiveStep } = useStepper();
 	const total_ticket_cost =
-		(Number(formData.bookingDetails.departure_ticket_cost) +
-			Number(formData.bookingDetails?.return_ticket_cost ?? 0)) *
+		Number(formData.bookingDetails.departure_ticket_cost) *
 		Number(formData.bookingDetails.total_passengers);
 	const { checkAvailability } = useSearchTrip();
+	const { search } = useLocation();
+	const navigate = useNavigate();
+	const searchParams = new URLSearchParams(search.split("?")[1]);
+	const ticket_id = searchParams.get("cid");
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	React.useEffect(() => { setActiveStep(3) }, [])
 
 	const {
 		handleSubmit,
@@ -40,9 +46,17 @@ const Payment = () => {
 			checked: yup.string().required("Please check this box to proceed.")
 		}))
 	})
+
 	const onSubmit = handleSubmit(({ checked }) => {
 		if (checked) checkAvailability()
 	})
+
+	const handlePrev = () => {
+		onPrevClick();
+		navigate(`/booking/passenger-details?cid=${formData.ticket_id}`)
+	}
+
+	if (ticket_id !== formData?.ticket_id) return (<Navigate to="/booking" />)
 
 	return (
 		<form onSubmit={onSubmit} className="p-5 md:p-12 !bg-white mx-auto flex flex-col gap-2">
@@ -157,12 +171,6 @@ const Payment = () => {
 			<div className="border-y-2 border-dashed py-3 md:mt-5">
 				<table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] ">
 					<tbody>
-						{/* <tr>
-              <td className="text-xs md:text-sm text-[#444444]">
-                Ride Insurance
-              </td>
-              <td className="text-xs md:text-sm text-[#444444]">₦0</td>
-            </tr> */}
 						<tr>
 							<td className="text-xs md:text-sm text-[#444444]">
 								Ticket Price
@@ -172,15 +180,7 @@ const Payment = () => {
 									value: String(formData.bookingDetails.departure_ticket_cost),
 									prefix: "₦",
 								})}
-								{formData.bookingDetails.trip_type === "Round Trip" && (
-									<>
-										{" + "}
-										{formatValue({
-											value: String(formData.bookingDetails.return_ticket_cost),
-											prefix: "₦",
-										})}
-									</>
-								)}{" "}
+								{" "}
 								x {formData.bookingDetails.total_passengers}
 							</td>
 						</tr>
@@ -225,22 +225,20 @@ const Payment = () => {
 				</p>
 			</div>
 
-			<div className="flex gap-2 items-center mt-5">
+			<div className="flex gap-2 items-center mt-5 relative">
 				<Checkbox
+					id="checkbox"
 					className={errors.checked && "border-red-500"}
 					onCheckedChange={(value) => {
 						setValue("checked", value ? true : "")
 						if (value) clearErrors()
 					}} />
-				<div className="relative">
-					<p className="text-xs md:text-sm">I have read and accept the <Link target="_blank" to="/terms-conditions" className="text-blue-500 underline hover:text-blue-700">Term of Agreement</Link> and <Link target="_blank" to="/privacy-policy" className="text-blue-500 underline hover:text-blue-700">Privacy Policy</Link>.</p>
-					{errors.checked && (
-						<p className="text-[10px] text-red-700 absolute -bottom-4 left-0 ">
-							{errors.checked.message}
-						</p>
-					)}
-				</div>
-
+				<label htmlFor="checkbox" className="text-xs md:text-sm">I have read and accept the <Link target="_blank" to="/terms-conditions" className="text-blue-500 underline hover:text-blue-700">Term of Agreement</Link> and <Link target="_blank" to="/privacy-policy" className="text-blue-500 underline hover:text-blue-700">Privacy Policy</Link>.</label>
+				{errors.checked && (
+					<p className="text-[10px] text-red-700 absolute -bottom-4 left-6 ">
+						{errors.checked.message}
+					</p>
+				)}
 			</div>
 
 			<div className="my-5 md:mt-8 md:mb-0 space-y-5">
@@ -252,14 +250,7 @@ const Payment = () => {
 					className="uppercase w-full md:py-6"
 				/>
 				<Button
-					onClick={(event) => {
-						const text = event.target.innerHTML;
-						text == "Back"
-							? onPrevClick()
-							: text == "Clear"
-								? handleReset()
-								: "";
-					}}
+					onClick={handlePrev}
 					text="Back"
 					id="payment_next_btn"
 					variant="outline"

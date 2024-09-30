@@ -8,19 +8,13 @@ export const bookingDetailsSchema = yup.object().shape({
     .when("travel_from", (travel_from, schema) =>
       travel_from[0]
         ? schema.notOneOf(
-            [yup.ref("travel_from")],
-            "Departure and arrival cannot be the same."
-          )
+          [yup.ref("travel_from")],
+          "Departure and arrival cannot be the same."
+        )
         : schema
     ),
   departure_date: yup.string().required("Departure date is required."),
-  return_date: yup
-    .string()
-    .when("$roundTrip", (isRoundTrip, field) =>
-      isRoundTrip[0]
-        ? field.required("Return date is required.")
-        : field.notRequired()
-    ),
+  return_date: yup.string().notRequired(),
   adults_number: yup
     .number()
     .required("No of adults is required.")

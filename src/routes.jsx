@@ -51,13 +51,22 @@ import { ShipmentLoader } from "./components/LogisticInvoice";
 import { PriceLoader } from "./admin/pages/pricing";
 import TermsAndConditions from "./main/pages/terms-and-conditions";
 import PrivacyPolicy from "./main/pages/privacy-policy";
+import PassengerDetails from "@/components/PassengerDetails";
+import BookingDetail from "@/components/BookingDetails";
+import Payment from "@/components/Payment";
+import SearchTrip from "@/components/SearchTrip";
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
 		<Route path="/" element={<App />}>
 			<Route element={<MainLayout />}>
 				<Route index element={<Home />} />
-				<Route path="booking" element={<Booking />} />
+				<Route path="booking" element={<Booking />} >
+					<Route index element={<BookingDetail />} />
+					<Route path="available-trips" element={<SearchTrip />} />
+					<Route path="passenger-details" element={<PassengerDetails />} />
+					<Route path="payment" element={<Payment />} />
+				</Route>
 				<Route path="about" element={<About />} />
 				<Route path="rental" element={<Rental />} loader={PriceLoader} />
 				<Route path="feedback" element={<Feedback />} />

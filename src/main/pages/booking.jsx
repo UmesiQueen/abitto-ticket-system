@@ -1,53 +1,31 @@
 // import React from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { Helmet } from "react-helmet-async";
+import { Outlet } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import { useStepper } from "@/hooks/useStepper";
-import PassengerDetails from "@/components/PassengerDetails";
-import BookingDetails from "@/components/BookingDetails";
-import Payment from "@/components/Payment";
-import SearchTrip from "@/components/SearchTrip";
+
 
 const Booking = () => {
-  // const { activeStep, onNextClick, onPrevClick } = useStepper();
-  const { activeStep } = useStepper();
-
   return (
     <>
       <Helmet>
         <title>Booking | Abitto Ferry</title>
       </Helmet>
-      <div>
-        <div className="px-2 py-32 mx-auto relative ">
-          <MaterialUIStepper />
-          <Box
-            sx={{
-              maxWidth: "1000px",
-              width: "100%",
-              marginX: "auto",
-            }}
-          >
-            {activeStep === 0 ? (
-              <BookingDetails />
-            ) : activeStep === 1 ? (
-              <SearchTrip />
-            ) : activeStep === 2 ? (
-              <PassengerDetails />
-            ) : activeStep === 3 ? (
-              <Payment />
-            ) : (
-              ""
-            )}
-          </Box>
-
-          {/* <div className="flex gap-2 justify-center *:bg-blue-500 text-white mt-2 *:px-2">
-            <button onClick={onPrevClick}>Prev</button>
-            <button onClick={onNextClick}>Next</button>
-          </div> */}
-        </div>
+      <div className="px-2 py-32 mx-auto relative ">
+        <MaterialUIStepper />
+        <Box
+          sx={{
+            maxWidth: "1000px",
+            width: "100%",
+            marginX: "auto",
+          }}
+        >
+          <Outlet />
+        </Box>
       </div>
     </>
   );
@@ -87,9 +65,9 @@ const MaterialUIStepper = () => {
                   color: "#243244",
                 },
                 "& .MuiSvgIcon-root.MuiStepIcon-root.Mui-completed, & .MuiSvgIcon-root.MuiStepIcon-root.Mui-active":
-                  {
-                    color: "#3366CC",
-                  },
+                {
+                  color: "#3366CC",
+                },
               }}
             >
               <StepLabel

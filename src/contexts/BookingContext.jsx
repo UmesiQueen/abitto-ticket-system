@@ -1,9 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { useLocation } from "react-router-dom";
 
 export const BookingCTX = React.createContext();
 
+const storedSession = JSON.parse(sessionStorage.getItem('cus_info'));
 const BookingContext = ({ children }) => {
 	const [bookingQuery, setBookingQuery] = React.useState([]);
 	const [currentPageIndex, setCurrentPageIndex] = React.useState({
@@ -16,7 +16,7 @@ const BookingContext = ({ children }) => {
 		logistics: 0
 	});
 	const [activeStep, setActiveStep] = React.useState(0);
-	const [formData, setFormData] = React.useState({
+	const [formData, setFormData] = React.useState(storedSession ?? {
 		bookingDetails: {},
 		passengerDetails: {},
 		seatDetails: {},
@@ -36,24 +36,24 @@ const BookingContext = ({ children }) => {
 	});
 	const [isChecked, setChecked] = React.useState(false);
 	const [searchParams, setSearchParams] = React.useState({});
-	const [tripDetails, setTripDetails] = React.useState();
+	const [tripDetails, setTripDetails] = React.useState({});
 	const [rentalData, setRentalData] = React.useState({});
-	const { pathname } = useLocation();
 	const [customersData, setCustomersData] = React.useState([]);
 	const [filtering, setFiltering] = React.useState("");
 
 	React.useEffect(() => {
-		handleReset();
-		setSearchParams({})
-	}, [pathname]);
+		if (Object.keys(formData?.bookingDetails).length)
+			sessionStorage.setItem("cus_info", JSON.stringify(formData))
+	}, [formData]);
 
-	React.useEffect(() => {
-		window.scrollTo({
-			top: 0,
-			behavior: "smooth",
-		});
-	}, [activeStep]);
+	// React.useEffect(() => {
+	// 	// check if pathname does not include booking 
+	// handleReset();
+	// 	setSearchParams({})
+	// }, [pathname]);
 
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
 		if (Object.keys(formData.seatDetails).length) {
 			setSeatSelected({
