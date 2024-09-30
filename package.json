@@ -32,6 +32,7 @@
 		"@radix-ui/react-toggle": "^1.1.0",
 		"@radix-ui/react-toggle-group": "^1.1.0",
 		"@remixicon/react": "^4.2.0",
+		"@tanstack/react-query": "^5.56.2",
 		"@tanstack/react-table": "^8.17.3",
 		"@tremor/react": "^3.17.2",
 		"@wojtekmaj/react-hooks": "^1.21.0",
@@ -70,6 +71,7 @@
 	},
 	"devDependencies": {
 		"@tailwindcss/forms": "^0.5.7",
+		"@tanstack/eslint-plugin-query": "^5.57.2",
 		"@types/react": "^18.2.66",
 		"@types/react-dom": "^18.2.22",
 		"@vitejs/plugin-react": "^4.2.1",
