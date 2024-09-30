@@ -19,20 +19,20 @@ import {
 	Link,
 	useLocation,
 	useParams,
-	useLoaderData,
 } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import Avatar from "@mui/material/Avatar";
 import React from "react";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { Helmet } from "react-helmet-async";
-import { toast } from "sonner";
 import Loader from "@/components/animation/Loader";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import axiosInstance from "@/api";
 import { Feedback, PriceChange } from "@mui/icons-material";
 import Logo from "@/assets/logo2.svg";
 import { Mailbox } from "lucide-react";
+import { customError } from "@/lib/utils";
 
 const ProtectedRoute = () => {
 	const navigate = useNavigate();
@@ -41,7 +41,6 @@ const ProtectedRoute = () => {
 	const { setBookingQuery, setFiltering } =
 		React.useContext(BookingCTX);
 	const { pathname } = useLocation();
-	const dataQuery = useLoaderData();
 	const accountType = adminProfile.account_type;
 	const searchBarVisibility = [
 		`/backend/${accountType}/booking-details`,
@@ -61,19 +60,33 @@ const ProtectedRoute = () => {
 		setTimeout(() => { setFiltering(filterValue) }, 500)
 	}, [filterValue, setFiltering])
 
-	React.useEffect(() => {
-		const terminals = adminProfile.terminal.map((location) =>
-			location.split(",")[1].trim().toLowerCase()
-		);
-		// Filter records based on the terminal
-		const sortedQuery = dataQuery.filter((booking) => {
-			const city = booking.travel_from.split(",")[1].trim().toLowerCase();
-			return terminals.includes(city);
-		});
-		setBookingQuery(sortedQuery);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [dataQuery]);
+	const { data, isSuccess } = useQuery({
+		queryKey: ["bookings"],
+		queryFn: async () => {
+			try {
+				const response = await axiosInstance.get("/booking/queryall");
+				const dataQuery = response.data.bookings.reverse();
+				const terminals = adminProfile.terminal.map((location) =>
+					location.split(",")[1].trim().toLowerCase()
+				);
+				// Filter records based on the terminal
+				const sortedQuery = dataQuery.filter((booking) => {
+					const city = booking.travel_from.split(",")[1].trim().toLowerCase();
+					return terminals.includes(city);
+				});
+				return sortedQuery;
+			}
+			catch (error) {
+				customError(error, "Error while retrieving all bookings.")
+			}
+		},
+	})
 
+	React.useEffect(() => {
+		if (isSuccess) setBookingQuery(data)
+	}, [isSuccess, data, setBookingQuery])
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
 		setFiltering("");
 		setFilterValue("")
@@ -194,30 +207,27 @@ const ProtectedRoute = () => {
 					</div>
 					<nav className="pt-6 pb-2 px-5 mx-auto overflow-scroll no-scrollbar">
 						<ul>
-							{menuItems.map(([title, url, icon, auth]) => {
-								const isAuth = auth.includes(accountType);
-								return (
-									<>
-										{isAuth && (
-											<li key={title}>
-												<NavLink
-													to={url}
-													className="[&.active]:bg-blue-500 px-5 md:min-w-44 py-3 rounded-xl hover:bg-gray-700/90 mb-2 transition-all ease-in-out cursor-pointer flex items-center gap-2 [&>.title]:hidden  w-fit md:w-full md:[&>.title]:block"
-												>
-													<span className="text-[#f1f1f1]">{icon}</span>
-													<span className="font-medium text-sm hidden md:block">
-														{title}
-													</span>
-												</NavLink>
-											</li>
-										)}
-									</>
-								);
-							})}
+							{menuItems.filter((item) => item[3].includes(accountType))
+								.map(([title, url, icon]) => {
+									return (
+										<li key={title}>
+											<NavLink
+												to={url}
+												className="[&.active]:bg-blue-500 px-5 md:min-w-44 py-3 rounded-xl hover:bg-gray-700/90 mb-2 transition-all ease-in-out cursor-pointer flex items-center gap-2 [&>.title]:hidden  w-fit md:w-full md:[&>.title]:block"
+											>
+												<span className="text-[#f1f1f1]">{icon}</span>
+												<span className="font-medium text-sm hidden md:block">
+													{title}
+												</span>
+											</NavLink>
+										</li>
+									);
+								})}
 						</ul>
 					</nav>
 					<div className="pt-2 mt-auto">
 						<button
+							type="button"
 							className="px-10 w-full text-sm py-3 border-t mt-auto flex items-center gap-2 hover:bg-gray-900/80 "
 							onClick={handleLogout}
 						>
@@ -283,19 +293,3 @@ const AdminLayout = () => {
 };
 
 export default AdminLayout;
-
-export const DataQueryLoader = async () => {
-	try {
-		const response = await axiosInstance.get("/booking/queryall");
-		return response.data.bookings.reverse();
-	} catch (error) {
-		if (
-			!error.code === "ERR_NETWORK" ||
-			!error.code === "ERR_INTERNET_DISCONNECTED" ||
-			!error.code === "ECONNABORTED"
-		) {
-			toast.error("Could not retrieve booking details. Refresh page.");
-		}
-		return [];
-	}
-};

@@ -27,7 +27,6 @@ import Report from "./admin/pages/report";
 import Rental from "./main/pages/rental";
 import { CustomerDetailsLoader } from "./components/TicketInvoice";
 import { TripDetailsLoader } from "./admin/pages/trip-details";
-import { DataQueryLoader } from "./admin/layout";
 import RentalInvoice from "./components/RentalInvoice";
 import { RentalInvoiceLoader } from "./components/RentalInvoice";
 // import { CustomerLoader } from "./admin/pages/customers";
@@ -75,7 +74,7 @@ export const router = createBrowserRouter(
 				<Route path="privacy-policy" element={<PrivacyPolicy />} />
 			</Route>
 
-			<Route path="/backend" element={<AdminLayout />} loader={DataQueryLoader}>
+			<Route path="/backend" element={<AdminLayout />} >
 				<Route path="/backend/:accountType">
 					<Route path="dashboard" element={<Report />} />
 					<Route path="create" element={<Create />} />
