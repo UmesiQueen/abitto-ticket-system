@@ -6,7 +6,6 @@ import {
 	InformationCircleIcon,
 	CalendarIcon,
 	ClockIcon,
-	ChairIcon,
 	UsersIcon,
 	PrinterIcon,
 	Boat2Icon,
@@ -35,7 +34,7 @@ import {
 import { Button as ButtonUI } from "@/components/ui/button";
 import { formatValue } from "react-currency-input-field";
 import { capitalize, truncate } from "lodash";
-import { cn, humanize } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { PaginationEllipsis } from "@/components/ui/pagination";
 import ReactPaginate from "react-paginate";
 import { BookingCTX } from "@/contexts/BookingContext";
@@ -64,13 +63,13 @@ const BookingDetails = () => {
 	} = React.useContext(BookingCTX);
 	const { adminProfile } = React.useContext(GlobalCTX);
 	const isColumnVisible =
-		adminProfile.account_type == "dev" ||
-		adminProfile.account_type == "super-admin";
+		adminProfile.account_type === "dev" ||
+		adminProfile.account_type === "super-admin";
 	const [sorting, setSorting] = React.useState([]);
 	const [columnFilters, setColumnFilters] = React.useState([]);
 	const [columnVisibility, setColumnVisibility] = React.useState({
 		fullName: false,
-		departure: isColumnVisible ? true : false,
+		departure: isColumnVisible,
 		date: false,
 	});
 	const [pageCount, setPageCount] = React.useState(0);
@@ -114,13 +113,6 @@ const BookingDetails = () => {
 			),
 			enableGlobalFilter: false,
 		},
-		// {
-		// 	accessorKey: "trip_type",
-		// 	id: "trip_type",
-		// 	header: "Type",
-		// 	cell: ({ row }) => <div>{row.original.trip_type}</div>,
-		// 	enableGlobalFilter: false,
-		// },
 		{
 			accessorKey: "travel_from",
 			header: "Departure",
@@ -228,12 +220,14 @@ const BookingDetails = () => {
 		},
 	});
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
 		if (bookingQuery.length)
 			setPageCount(Math.ceil(bookingQuery.length / pagination.pageSize));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [bookingQuery]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
 		if (columnFilters.length || filtering.length) {
 			setPageCount(
@@ -247,11 +241,13 @@ const BookingDetails = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [columnFilters, filtering]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
 		table.setPageIndex(currentPageIndex.booking);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
 		if (searchParams) {
 			table.getColumn("departure").setFilterValue(searchParams?.departure);
@@ -505,12 +501,12 @@ export const CustomerDetails = () => {
 	const currentUser = useLoaderData();
 	const { mountPortalModal, adminProfile } = React.useContext(GlobalCTX);
 
-	const canReschedule = currentUser?.trip_status == "Upcoming" && ["dev", "super-admin"].includes(adminProfile.account_type)
+	const canReschedule = currentUser?.trip_status === "Upcoming" && ["dev", "super-admin"].includes(adminProfile.account_type)
 
 	return (
 		<div>
 			<div className="flex gap-1 items-center mb-5 py-2">
-				<button onClick={() => navigate(-1)}>
+				<button type="button" onClick={() => navigate(-1)}>
 					<CircleArrowLeftIcon />
 				</button>
 				<h1 className="text-base font-semibold">Booking Details</h1>
@@ -535,11 +531,7 @@ export const CustomerDetails = () => {
 								text="Re-schedule"
 								variant="outline"
 								className="text-nowrap h-10 ml-auto"
-								onClick={() => {
-									navigate(
-										`reschedule`
-									);
-								}}
+								onClick={() => navigate("reschedule")}
 							/>}
 						</div>
 
@@ -591,6 +583,7 @@ export const CustomerDetails = () => {
 								{currentUser?.passenger2_first_name && (
 									<li className="self-center text-sm">
 										<button
+											type="button"
 											className="text-blue-500 hover:text-blue-700 underline"
 											onClick={() => {
 												mountPortalModal(
@@ -617,14 +610,6 @@ export const CustomerDetails = () => {
 											{currentUser?.travel_to}
 										</p>
 									</li>
-									{/* <li>
-										<p className="text-xs text-[#7F7F7F]">Seat No.</p>
-										<p className="text-base font-semibold">
-											{currentUser?.departure_seats.length
-												? humanize(currentUser?.departure_seats)
-												: "N/A"}
-										</p>
-									</li> */}
 								</ul>
 								<ul className="*:flex *:flex-col *:gap-1 flex gap-10 ">
 									<li>
@@ -641,46 +626,6 @@ export const CustomerDetails = () => {
 									</li>
 								</ul>
 							</div>
-							{currentUser?.trip_type === "Round Trip" && (
-								<div className=" space-y-6 border-l-8 border-orange-800 pl-3 -ml-5">
-									<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
-										<li>
-											<p className="text-xs text-[#7F7F7F]">Return From</p>
-											<p className="text-base font-semibold">
-												{currentUser?.travel_to}
-											</p>
-										</li>
-										<li>
-											<p className="text-xs text-[#7F7F7F]">Return To</p>
-											<p className="text-base font-semibold">
-												{currentUser?.travel_from}
-											</p>
-										</li>
-										{/* <li>
-											<p className="text-xs text-[#7F7F7F]">Seat No.</p>
-											<p className="text-base font-semibold">
-												{currentUser?.return_seats.length
-													? humanize(currentUser?.return_seats)
-													: "N/A"}
-											</p>
-										</li> */}
-									</ul>
-									<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
-										<li>
-											<p className="text-xs text-[#7F7F7F]">Return Date</p>
-											<p className="text-base font-semibold">
-												{format(currentUser?.return_date, "PPPP")}
-											</p>
-										</li>
-										<li>
-											<p className="text-xs text-[#7F7F7F]">Return Time</p>
-											<p className="text-base font-semibold">
-												{currentUser?.return_time}
-											</p>
-										</li>
-									</ul>
-								</div>
-							)}
 							<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
 								<li>
 									<p className="text-xs text-[#7F7F7F] ">Booking Medium</p>
@@ -813,43 +758,12 @@ export const CustomerDetails = () => {
 										<ClockIcon />
 										{currentUser?.departure_time}
 									</p>
-									{/* <p>
-										<ChairIcon />
-										{currentUser?.departure_seats.length
-											? humanize(currentUser?.departure_seats)
-											: "N/A"}
-									</p> */}
 								</div>
 							</div>
-							{currentUser?.trip_type === "Round Trip" && (
-								<div>
-									<h5 className="font-semibold text-sm mb-1">Return Details</h5>
-									<div className="flex flex-wrap gap-x-4 gap-y-1 text-[#1E1E1E] text-xs font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
-										<p>
-											<CalendarIcon />
-											{format(new Date(currentUser?.return_date), "PP")}
-										</p>
-										<p>
-											<ClockIcon />
-											{currentUser?.return_time}
-										</p>
-										<p>
-											<ChairIcon />
-											{currentUser?.return_seats.length
-												? humanize(currentUser?.return_seats)
-												: "N/A"}
-										</p>
-									</div>
-								</div>
-							)}
 						</div>
 						<div className="border-y-2 border-dashed py-2">
 							<table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] ">
 								<tbody>
-									{/* <tr>
-										<td className="text-xs text-[#444444]">Ride Insurance</td>
-										<td className="text-xs text-[#444444]">₦0</td>
-									</tr> */}
 									<tr>
 										<td className="text-xs text-[#444444]">Ticket Price</td>
 										<td className="text-xs text-[#444444]">
@@ -858,17 +772,7 @@ export const CustomerDetails = () => {
 													value: String(currentUser.departure_ticket_cost ?? 0),
 													prefix: "₦",
 												})}
-												{currentUser.trip_type === "Round Trip" && (
-													<>
-														{" + "}
-														{formatValue({
-															value: String(
-																currentUser.return_ticket_cost ?? 0
-															),
-															prefix: "₦",
-														})}
-													</>
-												)}{" "}
+												{" "}
 												x {currentUser.total_passengers}
 											</span>
 										</td>
@@ -886,6 +790,7 @@ export const CustomerDetails = () => {
 							</table>
 						</div>
 						<button
+							type="button"
 							className=" bg-blue-500 w-full py-3 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white flex justify-center gap-2 mx-auto rounded-lg "
 							onClick={() => {
 								navigate(`/ticket-invoice/${currentUser.ticket_id}`);

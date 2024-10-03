@@ -28,6 +28,7 @@ export const customError = (error, customMsg) => {
   if (
     error.code !== "ERR_NETWORK" ||
     error.code !== "ERR_INTERNET_DISCONNECTED" ||
-    error.code !== "ECONNABORTED"
+    error.code !== "ECONNABORTED" ||
+    error.code !== "ERR_CANCELED"
   ) { toast.error(customMsg); }
 }

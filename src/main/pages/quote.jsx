@@ -80,12 +80,6 @@ const GetQuote = () => {
 		}));
 	};
 
-	// const handleReset = () => {
-	// 	reset(defaultValue);
-	// 	setPackageDetails(defaultValue);
-	// }
-
-
 	return (
 		<>
 			<Helmet>
@@ -105,7 +99,7 @@ const GetQuote = () => {
 						<div className="grid grid-c0ols-1 md:grid-cols-2 gap-5">
 							<SelectField
 								{...register("departure")}
-								defaultValues={defaultValues["departure"]}
+								defaultValues={defaultValues.departure}
 								label="Departure"
 								placeholder="Select Departure Terminal"
 								options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
@@ -115,7 +109,7 @@ const GetQuote = () => {
 							/>
 							<SelectField
 								{...register("arrival")}
-								defaultValues={defaultValues["arrival"]}
+								defaultValues={defaultValues.arrival}
 								label="Arrival"
 								placeholder="Select Arrival Terminal"
 								options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
@@ -127,7 +121,7 @@ const GetQuote = () => {
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 							<SelectField
 								{...register("category")}
-								defaultValues={defaultValues["category"]}
+								defaultValues={defaultValues.category}
 								label="Category"
 								placeholder="Select Item Category"
 								options={[
@@ -145,7 +139,7 @@ const GetQuote = () => {
 							/>
 							<InputField
 								{...register("no_item")}
-								defaultValues={defaultValues["no_item"]}
+								defaultValues={defaultValues.no_item}
 								label="No. of item"
 								placeholder="Enter no. of item"
 								type="number"
@@ -157,7 +151,7 @@ const GetQuote = () => {
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 							<InputField
 								{...register("weight")}
-								defaultValues={defaultValues["weight"]}
+								defaultValues={defaultValues.weight}
 								label="Weight(kg)"
 								placeholder="Enter weight of item"
 								type="number"
@@ -167,7 +161,7 @@ const GetQuote = () => {
 							/>
 							{/* NumericFormat Input Field */}
 							<div className="flex flex-col w-full">
-								<label className="text-xs md:text-sm !w-full flex gap-2 md:gap-3 flex-col">
+								<label htmlFor="value" className="text-xs md:text-sm !w-full flex gap-2 md:gap-3 flex-col">
 									Value(NGN)
 									<Controller
 										control={control}

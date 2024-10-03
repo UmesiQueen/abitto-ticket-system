@@ -12,7 +12,6 @@ import SuccessModal from "@/components/modals/success";
 import { TextareaAutosize } from '@mui/base';
 import { toast } from "sonner";
 
-
 const feedbackSchema = yup.object().shape({
 	first_name: yup
 		.string()
@@ -75,7 +74,7 @@ const Feedback = () => {
 		axiosInstance
 			.post("feedback/new", formValues)
 			.then((res) => {
-				if (res.status == 200) {
+				if (res.status === 200) {
 					mountPortalModal(
 						<SuccessModal
 							header="We have received your feedback"
@@ -106,8 +105,8 @@ const Feedback = () => {
 	const getTitle = (feedback) => {
 		const title = feedback.includes("compliment") ? "Compliment" :
 			feedback.includes("suggestion") ? "Suggestion" :
-				feedback.includes("complaint") ? "Complaint" :
-					feedback.includes("information") ? "Information" :
+				feedback.includes("complaint") ? "Issue" :
+					feedback.includes("information") ? "Question" :
 						"Other";
 
 		return title;
@@ -131,9 +130,9 @@ const Feedback = () => {
 						label="Choose the option that best suits your request"
 						placeholder="Select a title option"
 						options={[
-							"Are you making a compliment?",
+							"Are you giving a compliment?",
 							"Are you making a suggestion?",
-							"Are you making a complaint?",
+							"Are you reporting a complaint?",
 							"Are you requesting information?",
 							"Other "
 						]}
@@ -150,7 +149,7 @@ const Feedback = () => {
 					/>
 
 					<div className="space-y-3">
-						<label className="text-xs md:text-sm">Comment</label>
+						<label htmlFor="comment" className="text-xs md:text-sm">Comment</label>
 						<TextareaAutosize
 							{...register("comment")}
 							aria-label="comment textarea"
