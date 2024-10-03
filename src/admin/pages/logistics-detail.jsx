@@ -29,18 +29,18 @@ import {
 } from "@/assets/icons";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+import { cn, customError } from "@/lib/utils";
 import { formatValue } from "react-currency-input-field";
 import axiosInstance from "@/api";
-import { toast } from "sonner";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import ConfirmationModal from "@/components/modals/confirmation";
 import { useUpdate } from "@/hooks/useUpdate";
+import { Loader2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 const LogisticsDetails = () => {
 	const navigate = useNavigate();
 	const { setCurrentPageIndex, filtering, setFiltering, currentPageIndex } = React.useContext(BookingCTX);
-	const { setLoading } = React.useContext(GlobalCTX);
 	const [dataQuery, setDataQuery] = React.useState([]);
 	const [columnFilters, setColumnFilters] = React.useState([]);
 	const [pageCount, setPageCount] = React.useState(0);
@@ -49,37 +49,38 @@ const LogisticsDetails = () => {
 		pageSize: 10,
 	});
 
-	React.useEffect(() => {
-		setLoading(true);
-		axiosInstance.get("logistics/get").then((res) => {
-			if (res.status == 200) {
-				const resData = res.data.logistics;
-				setDataQuery(resData)
+	const { data, isSuccess, isPending } = useQuery({
+		queryKey: ["logistics"],
+		queryFn: async () => {
+			try {
+				const response = await axiosInstance.get("logistics/get");
+				return response.data.logistics;
 			}
-		}).catch((error) => {
-			if (
-				!error.code === "ERR_NETWORK" ||
-				!error.code === "ERR_INTERNET_DISCONNECTED" ||
-				!error.code === "ECONNABORTED"
-			) {
-				toast.error(
-					"Error occurred while fetching feedback. Refresh page."
-				);
+			catch (error) {
+				customError(error, "Error occurred while fetching logistics. Refresh page.")
+				return []
 			}
-		}).finally(() => setLoading(false))
-	}, [])
+		}
+	})
 
+	React.useEffect(() => {
+		if (isSuccess) setDataQuery(data);
+	}, [data, isSuccess])
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
 		if (dataQuery.length)
 			setPageCount(Math.ceil(dataQuery.length / pagination.pageSize));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dataQuery]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
 		table.setPageIndex(currentPageIndex.logistics);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
 		if (columnFilters.length || filtering.length) {
 			setPageCount(
@@ -94,10 +95,6 @@ const LogisticsDetails = () => {
 	}, [columnFilters, filtering]);
 
 	const columns = [
-		// {
-		// 	header: "S/N",
-		// 	cell: ({ row }) => Number(row.id) + 1,
-		// },
 		{
 			accessorKey: "shipment_id",
 			header: "Shipment ID",
@@ -241,7 +238,7 @@ const LogisticsDetails = () => {
 									colSpan={columns.length}
 									className="h-24 text-center"
 								>
-									No results.
+									{isPending ? <p className="inline-flex gap-2 items-center">Fetching data  <Loader2 className="animate-spin" /></p> : "No results."}
 								</TableCell>
 							</TableRow>
 						)}
@@ -312,7 +309,7 @@ export const ShipmentDetails = () => {
 			</Helmet>
 			<div>
 				<div className="flex gap-1 items-center mb-5 py-2">
-					<button onClick={() => navigate(-1)}>
+					<button type="button" onClick={() => navigate(-1)}>
 						<CircleArrowLeftIcon />
 					</button>
 					<h1 className="text-base font-semibold">Shipment Details</h1>
@@ -334,7 +331,7 @@ export const ShipmentDetails = () => {
 									</p>
 								</div>
 								<div className="ml-auto">
-									{currentShipment?.shipment_status == "Origin" ?
+									{currentShipment?.shipment_status === "Origin" ?
 										<Button
 											onClick={() => {
 												mountPortalModal(
@@ -344,7 +341,7 @@ export const ShipmentDetails = () => {
 													}} />)
 											}}
 										>Arrived</Button> :
-										currentShipment?.shipment_status == "Arrived" ?
+										currentShipment?.shipment_status === "Arrived" ?
 											<Button
 												onClick={() => {
 													mountPortalModal(
@@ -397,6 +394,7 @@ export const ShipmentDetails = () => {
 										<p className="text-base font-semibold">
 											{currentShipment?.description.length ?
 												<button
+													type="button"
 													className="text-blue-500 hover:text-blue-700 text-sm underline"
 													onClick={() => {
 														mountPortalModal(
@@ -660,6 +658,7 @@ export const ShipmentDetails = () => {
 								</table>
 							</div>
 							<button
+								type="button"
 								className=" bg-blue-500 w-full py-3 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white flex justify-center gap-2 mx-auto rounded-lg "
 								onClick={() => {
 									navigate(`/logistics-invoice/${currentShipment.shipment_id}`);

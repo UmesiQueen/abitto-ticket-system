@@ -11,7 +11,7 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 import ReactPaginate from "react-paginate";
-import { cn } from "@/lib/utils";
+import { cn, customError } from "@/lib/utils";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -33,7 +33,6 @@ import { BookingCTX } from "@/contexts/BookingContext";
 import { Refresh } from "iconsax-react";
 import axiosInstance from "@/api";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import { toast } from "sonner";
 import {
 	Select,
 	SelectContent,
@@ -42,6 +41,8 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { useQuery } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 
 const JourneyList = () => {
 	return (
@@ -73,7 +74,7 @@ const searchSchema = yup
 			),
 		date: yup.string(),
 	})
-	.test("require at least one field", function ({ departure, date }) {
+	.test("require at least one field", ({ departure, date }) => {
 		const a = !!(departure || date); // At least one must be non-empty
 
 		if (!a) {
@@ -129,19 +130,17 @@ export const SearchForm = () => {
 		>
 			<div className="flex gap-5 w-full ">
 				{["super-admin", "dev"].includes(accountType) && (
-					<>
-						<SelectField
-							{...register("departure")}
-							label="Departure"
-							placeholder="Select Departure Terminal"
-							options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
-							errors={errors}
-							formState={isSubmitted}
-						/>
-					</>
+					<SelectField
+						{...register("departure")}
+						label="Departure"
+						placeholder="Select Departure Terminal"
+						options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
+						errors={errors}
+						formState={isSubmitted}
+					/>
 				)}
 				<div className="flex flex-col w-full">
-					<label className="text-xs md:text-sm !w-full flex flex-col ">
+					<label htmlFor="date" className="text-xs md:text-sm !w-full flex flex-col ">
 						Choose Date
 						<Controller
 							control={control}
@@ -187,8 +186,7 @@ export const SearchForm = () => {
 
 const JourneyTable = () => {
 	const navigate = useNavigate();
-	// const journeyList = useLoaderData();
-	const { setLoading, adminProfile } = React.useContext(GlobalCTX);
+	const { adminProfile } = React.useContext(GlobalCTX);
 	const { searchParams, setSearchParams, setCurrentPageIndex } =
 		React.useContext(BookingCTX);
 	const [columnFilters, setColumnFilters] = React.useState([]);
@@ -199,36 +197,31 @@ const JourneyTable = () => {
 	});
 	const [journeyList, setJourneyList] = React.useState([]);
 
+	const { data, isSuccess, isPending } = useQuery({
+		queryKey: ["journeyList"],
+		queryFn: async () => {
+			try {
+				const response = await axiosInstance.get("/ticket/get");
+				const terminals = adminProfile.terminal.map((location) =>
+					location.split(",")[1].trim().toLowerCase()
+				);
+				// Filter records based on the terminal
+				const sortedJourneyList = response.data.tickets.filter((list) => {
+					const city = list.departure.split(",")[1].trim().toLowerCase();
+					return terminals.includes(city);
+				});
+				return sortedJourneyList;
+			}
+			catch (error) {
+				customError(error, "Error occurred while fetching journey list. \n Refresh page.")
+				return []
+			}
+		}
+	})
+
 	React.useEffect(() => {
-		setLoading(true),
-			axiosInstance
-				.get("/ticket/get")
-				.then((res) => {
-					if (res.status == 200) {
-						const terminals = adminProfile.terminal.map((location) =>
-							location.split(",")[1].trim().toLowerCase()
-						);
-						// Filter records based on the terminal
-						const sortedJourneyList = res.data.tickets.filter((list) => {
-							const city = list.departure.split(",")[1].trim().toLowerCase();
-							return terminals.includes(city);
-						});
-						setJourneyList(sortedJourneyList);
-					}
-				})
-				.catch((error) => {
-					if (
-						!error.code === "ERR_NETWORK" ||
-						!error.code === "ERR_INTERNET_DISCONNECTED" ||
-						!error.code === "ECONNABORTED"
-					)
-						toast.error(
-							"Error occurred while fetching journey list. Refresh page."
-						);
-				})
-				.finally(() => setLoading(false));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+		if (isSuccess) setJourneyList(data);
+	}, [data, isSuccess])
 
 	React.useEffect(() => {
 		if (searchParams) {
@@ -273,7 +266,7 @@ const JourneyTable = () => {
 			id: "trip_status",
 			header: <div className="text-center">Trip Status</div>,
 			cell: ({ row }) => {
-				let status = row.original.trip_status;
+				const status = row.original.trip_status;
 				return (
 					<div
 						className={cn(
@@ -335,12 +328,14 @@ const JourneyTable = () => {
 		},
 	});
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
 		if (journeyList.length)
 			setPageCount(Math.ceil(journeyList.length / pagination.pageSize));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [journeyList]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
 		if (columnFilters.length)
 			setPageCount(
@@ -453,7 +448,7 @@ const JourneyTable = () => {
 									colSpan={columns.length}
 									className="h-24 text-center"
 								>
-									No results.
+									{isPending ? <p className="inline-flex gap-2 items-center">Fetching data  <Loader2 className="animate-spin" /></p> : "No results."}
 								</TableCell>
 							</TableRow>
 						)}

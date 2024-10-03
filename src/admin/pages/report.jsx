@@ -5,7 +5,6 @@ import { FerryBoatIcon, UserGroupIcon, WalletIcon } from "@/assets/icons";
 import { formatValue } from "react-currency-input-field";
 import { BarChart } from "@tremor/react";
 import axiosInstance from "@/api";
-import { toast } from "sonner";
 import { PieChart, pieArcLabelClasses } from "@mui/x-charts/PieChart";
 import {
 	Select,
@@ -24,6 +23,9 @@ import { Controller, useForm } from "react-hook-form";
 import Button from "@/components/custom/Button";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { customError } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 
 const defaultValue = {
 	bookingRevenueAll: [],
@@ -163,24 +165,39 @@ const defaultValue = {
 
 const Report = () => {
 	const { adminProfile } = React.useContext(GlobalCTX);
-	const isSuperAdmin = ["super-admin", "dev"].includes(
+	const isSuperAdmin = !!["super-admin", "dev"].includes(
 		adminProfile.account_type
-	)
-		? true
-		: false;
+	);
 	const [total, setTotal] = React.useState(defaultValue);
 	const [filteredTotal, setFilteredTotal] = React.useState(total);
 	const [city, setCity] = React.useState("All");
 	const [filter, setFilter] = React.useState("all");
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
-		// setLoading(true);
 		if (!isSuperAdmin) setCity(capitalize(adminProfile.city));
-		axiosInstance
-			.get("/booking/getnewmonthly")
-			.then((res) => {
-				const totals = res.data;
-				setTotal({
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	React.useEffect(() => {
+		if (filter === "all") {
+			return setFilteredTotal(total)
+		}
+		if (filter === "custom") {
+			return;
+		}
+		const result = filterBy();
+		return filterData(result)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [filter, total])
+
+	const { data, isSuccess, isPending } = useQuery({
+		queryKey: ["report"],
+		queryFn: async () => {
+			try {
+				const response = await axiosInstance.get("/booking/getnewmonthly");
+				const totals = response.data;
+				return {
 					bookingRevenueAll: formatDate(totals.Revenue),
 					bookingRevenueCalabar: formatDate(totals.Calabar_revenue),
 					bookingRevenueUyo: formatDate(totals.Uyo_revenue),
@@ -313,33 +330,18 @@ const Report = () => {
 					documentsCategoryUyo: formatDate(totals.Uyo_Categories_Documents_Count),
 					healthCategoryUyo: formatDate(totals.Uyo_Categories_Health_Count),
 					jewelriesCategoryUyo: formatDate(totals.Uyo_Categories_Jeweries_Count),
-				});
-			})
-			.catch((error) => {
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error(
-						"Error occurred while fetching dashboard data. Refresh page."
-					);
-			});
-		// .finally(() => setLoading(false));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+				};
+			}
+			catch (error) {
+				customError(error, "Error occurred while fetching dashboard data. Refresh page.");
+				return defaultValue;
+			}
+		}
+	})
 
 	React.useEffect(() => {
-		if (filter == "all") {
-			return setFilteredTotal(total)
-		}
-		if (filter == "custom") {
-			return;
-		}
-		const result = filterBy();
-		return filterData(result)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [filter, total])
+		if (isSuccess) setTotal(data)
+	}, [data, isSuccess])
 
 	const formatDate = (data) => {
 		return data.map((record) => ({
@@ -431,7 +433,7 @@ const Report = () => {
 				<title>Report | Admin</title>
 			</Helmet>
 			<div className="flex items-center justify-between my-5">
-				<h1 className="text-lg font-semibold">Dashboard Overview</h1>
+				<h1 className="text-lg font-semibold inline-flex items-center gap-2">Dashboard Overview {isPending && <Loader2 className="animate-spin" />}</h1>
 				{isSuperAdmin && (
 					<div>
 						<ToggleGroup
@@ -439,7 +441,7 @@ const Report = () => {
 							defaultValue="All"
 							value={city}
 							onValueChange={(value) => {
-								if (value == "") {
+								if (value === "") {
 									setCity("All");
 									return;
 								}
@@ -513,7 +515,7 @@ const Report = () => {
 						</p>
 					</div>
 				</div>
-				{filter == "custom" && (
+				{filter === "custom" && (
 					<form onSubmit={onSubmit} className="flex items-center mt-5">
 						<div className="relative">
 							<div className="flex items-center">

@@ -34,7 +34,7 @@ const ScheduleTrip = () => {
 	} = useForm({
 		mode: "onSubmit",
 		resolver: yupResolver(scheduleTripSchema),
-		context: { date: dateOptions.length ? true : false },
+		context: { date: dateOptions.length ?? false },
 	});
 
 	const onSubmit = handleSubmit((formData) => {
@@ -77,9 +77,6 @@ const ScheduleTrip = () => {
 
 	const handleReset = () => {
 		const defaultValues = {
-			// departure: "",
-			// arrival: "",
-			//   time: "",
 			trip_capacity: "",
 			cost: "",
 			date: "",
@@ -138,7 +135,7 @@ const ScheduleTrip = () => {
 				<div className="grid grid-cols-3 gap-6">
 					{/* Time Field */}
 					<div className="flex flex-col w-full">
-						<label className="text-xs md:text-sm w-full flex gap-2 md:gap-3 flex-col relative">
+						<label htmlFor="time" className="text-xs md:text-sm w-full flex gap-2 md:gap-3 flex-col relative">
 							Time
 							<Controller
 								control={control}
@@ -177,7 +174,7 @@ const ScheduleTrip = () => {
 
 					{/* NumericFormat Input Field */}
 					<div className="flex flex-col w-full">
-						<label className="text-xs md:text-sm !w-full flex gap-2 md:gap-3 flex-col">
+						<label htmlFor="time" className="text-xs md:text-sm !w-full flex gap-2 md:gap-3 flex-col">
 							Ticket Cost
 							<Controller
 								control={control}
@@ -221,7 +218,7 @@ const ScheduleTrip = () => {
 				{/* Date Field */}
 				<div className="flex gap-3">
 					<div className="flex flex-col w-full">
-						<label className="text-xs md:text-sm !w-full flex flex-col ">
+						<label htmlFor="date" className="text-xs md:text-sm !w-full flex flex-col ">
 							Select Trip Days
 							<Controller
 								control={control}
@@ -267,9 +264,9 @@ const ScheduleTrip = () => {
 				</div>
 				{dateOptions.length ? (
 					<ul className="flex gap-2">
-						{dateOptions.map((date, index) => (
+						{dateOptions.map((date) => (
 							<li
-								key={index}
+								key={date}
 								className="border border-blue-500/60 bg-blue-50 rounded-lg inline-flex gap-1 items-center text-xs p-2 px-3 font-semibold"
 							>
 								{date}

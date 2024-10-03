@@ -25,12 +25,11 @@ import axiosInstance from "@/api";
 import { formatValue } from "react-currency-input-field";
 import { v4 as uuid } from "uuid";
 import { BookingCTX } from "@/contexts/BookingContext";
-import { toast } from "sonner";
-import { GlobalCTX } from "@/contexts/GlobalContext";
+import { useQuery } from "@tanstack/react-query";
+import { customError } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
 
 const Customers = () => {
-	// const navigate = useNavigate();
-	const { setLoading } = React.useContext(GlobalCTX);
 	const {
 		customersData,
 		setCustomersData,
@@ -51,59 +50,58 @@ const Customers = () => {
 		pageSize: 7,
 	});
 
+	const { data, isSuccess, isPending } = useQuery({
+		queryKey: ["customers"],
+		queryFn: async () => {
+			try {
+				const response = await axiosInstance.get("/booking/customerdetails");
+				const { customerDetails } = response.data;
+				const customersData_ = Object.entries(customerDetails).map(
+					([email, data]) => {
+						const {
+							details: { first_name, last_name, phone_number },
+							bookings,
+						} = data;
+
+						const total_spent = bookings
+							.map((booking) => Number(booking.totalTicketCost ?? 0))
+							.reduce((a, c) => a + c, 0);
+
+						return {
+							_id: `CUS_${uuid().slice(0, 10)}`,
+							email,
+							first_name,
+							last_name,
+							phone_number,
+							total_spent,
+							total_trips: bookings.length,
+							bookings,
+						};
+					}
+				);
+				return customersData_;
+			}
+			catch (error) {
+				customError(error, "Error occurred while fetching customers. Refresh page.")
+				return []
+			}
+		}
+	})
+
 	React.useEffect(() => {
-		setLoading(true);
-		axiosInstance
-			.get("/booking/customerdetails")
-			.then((res) => {
-				if (res.status == 200) {
-					const response = res.data.customerDetails;
-					const customersData_ = Object.entries(response).map(
-						([email, data]) => {
-							const {
-								details: { first_name, last_name, phone_number },
-								bookings,
-							} = data;
+		if (isSuccess) setCustomersData(data);
+	}, [data, isSuccess, setCustomersData])
 
-							const total_spent = bookings
-								.map((booking) => Number(booking.totalTicketCost ?? 0))
-								.reduce((a, c) => a + c, 0);
 
-							return {
-								_id: `CUS_${uuid().slice(0, 10)}`,
-								email,
-								first_name,
-								last_name,
-								phone_number,
-								total_spent,
-								total_trips: bookings.length,
-								bookings,
-							};
-						}
-					);
-					setCustomersData(customersData_);
-				}
-			})
-			.catch((error) => {
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error(
-						"Error occurred while fetching customers data. Refresh page."
-					);
-			})
-			.finally(() => setLoading(false));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
 		if (customersData.length)
 			setPageCount(Math.ceil(customersData.length / pagination.pageSize));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [customersData]);
 
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
 		if (columnFilters.length || filtering.length) {
 			setPageCount(
@@ -193,6 +191,7 @@ const Customers = () => {
 		},
 	});
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
 		table.setPageIndex(currentPageIndex.customers);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -249,7 +248,7 @@ const Customers = () => {
 									colSpan={columns.length}
 									className="h-24 text-center"
 								>
-									No results.
+									{isPending ? <p className="inline-flex gap-2 items-center">Fetching data  <Loader2 className="animate-spin" /></p> : "No results."}
 								</TableCell>
 							</TableRow>
 						)}

@@ -1,15 +1,17 @@
 import React from "react";
 import { useRevalidator } from "react-router-dom";
 import axiosInstance from "@/api";
-import { toast } from "sonner";
 import SuccessModal from "@/components/modals/success";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
+import { customError } from "@/lib/utils";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const useScheduleTrip = () => {
 	const { unMountPortalModal, setModalContent } = React.useContext(GlobalCTX);
 	const { setLoading } = React.useContext(BookingCTX);
 	const { revalidate } = useRevalidator();
+	const queryClient = useQueryClient();
 
 	const scheduleRequest = (handleReset, formValues) => {
 		setLoading(true);
@@ -17,7 +19,8 @@ export const useScheduleTrip = () => {
 		axiosInstance
 			.post("/ticket/create", formValues)
 			.then((res) => {
-				if (res.status == 200) {
+				if (res.status === 200) {
+					queryClient.invalidateQueries('journeyList');
 					setModalContent(
 						<SuccessModal
 							header="Creation Successful"
@@ -28,12 +31,7 @@ export const useScheduleTrip = () => {
 				}
 			})
 			.catch((error) => {
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error("Failed to create new trip. Please try again.");
+				customError(error, "Failed to create new trip. Please try again.");
 				unMountPortalModal();
 			})
 			.finally(() => {
@@ -46,7 +44,8 @@ export const useScheduleTrip = () => {
 		axiosInstance
 			.post("/ticket/update", formValues)
 			.then((res) => {
-				if (res.status == 200) {
+				if (res.status === 200) {
+					queryClient.invalidateQueries('journeyList');
 					setModalContent(
 						<SuccessModal
 							header="Update Successful"
@@ -57,12 +56,7 @@ export const useScheduleTrip = () => {
 				}
 			})
 			.catch((error) => {
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error("Failed to reschedule trip. Please try again.");
+				customError(error, "Failed to reschedule trip. Please try again.");
 				unMountPortalModal();
 			})
 			.finally(() => {
@@ -75,7 +69,8 @@ export const useScheduleTrip = () => {
 		axiosInstance
 			.post("/ticket/update", formValues)
 			.then((res) => {
-				if (res.status == 200) {
+				if (res.status === 200) {
+					queryClient.invalidateQueries('journeyList');
 					setModalContent(
 						<SuccessModal
 							header="Cancelation Successful"
@@ -86,12 +81,7 @@ export const useScheduleTrip = () => {
 				}
 			})
 			.catch((error) => {
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error("Failed to cancel trip. Please try again.");
+				customError(error, "Failed to cancel trip. Please try again.");
 				unMountPortalModal();
 			})
 			.finally(() => {

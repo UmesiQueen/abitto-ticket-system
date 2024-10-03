@@ -11,7 +11,7 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 import ReactPaginate from "react-paginate";
-import { cn } from "@/lib/utils";
+import { cn, customError } from "@/lib/utils";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -42,9 +42,10 @@ import SelectField from "@/components/custom/SelectField";
 import { BookingCTX } from "@/contexts/BookingContext";
 import axiosInstance from "@/api";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import { toast } from "sonner";
 import { capitalize, truncate } from "lodash";
 import { formatValue } from "react-currency-input-field";
+import { useQuery } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 
 const RentalDetails = () => {
 	return (
@@ -67,7 +68,7 @@ const searchSchema = yup
 		date: yup.string(),
 		rent_type: yup.string(),
 	})
-	.test("require at least one field", function ({ date, rent_type }) {
+	.test("require at least one field", ({ date, rent_type }) => {
 		const a = !!(date || rent_type); // At least one must be non-empty
 		if (!a) {
 			return new yup.ValidationError(
@@ -121,21 +122,19 @@ const SearchForm = () => {
 		>
 			<div className="flex gap-5 w-full ">
 				{["super-admin", "dev"].includes(adminProfile.account_type) && (
-					<>
-						<SelectField
-							{...register("rent_type")}
-							label="Select Package"
-							placeholder="Select Rental Package"
-							options={["Within Marina", "Calabar to Uyo", "Uyo to Calabar"]}
-							errors={errors}
-							formState={isSubmitted}
-						/>
-					</>
+					<SelectField
+						{...register("rent_type")}
+						label="Select Package"
+						placeholder="Select Rental Package"
+						options={["Within Marina", "Calabar to Uyo", "Uyo to Calabar"]}
+						errors={errors}
+						formState={isSubmitted}
+					/>
 				)}
 
 				{/* date field */}
 				<div className="flex flex-col w-full">
-					<label className="text-xs md:text-sm !w-full flex flex-col ">
+					<label htmlFor="date" className="text-xs md:text-sm !w-full flex flex-col ">
 						Choose Date
 						<Controller
 							control={control}
@@ -180,7 +179,7 @@ const SearchForm = () => {
 };
 
 const RentalTable = () => {
-	const { adminProfile, setLoading } = React.useContext(GlobalCTX);
+	const { adminProfile } = React.useContext(GlobalCTX);
 	const { searchParams, setSearchParams, currentPageIndex, filtering, setCurrentPageIndex } =
 		React.useContext(BookingCTX);
 	const [sorting, setSorting] = React.useState([]);
@@ -197,38 +196,35 @@ const RentalTable = () => {
 	const [rentalData, setRentalData] = React.useState([]);
 	const navigate = useNavigate();
 
-	React.useEffect(() => {
-		setLoading(true);
-		axiosInstance
-			.get("/rent/getAllRents")
-			.then((res) => {
-				if (res.status == 200) {
-					const terminals = adminProfile.terminal.map((location) =>
-						location.split(",")[1].trim().toLowerCase()
-					);
-					// Filter records based on the terminal
-					const sortedRentals = res.data.rents
-						.filter((rental) => {
-							const city = rental.departure.split(",")[1].trim().toLowerCase();
-							return terminals.includes(city);
-						})
-					setRentalData(sortedRentals.reverse());
-				}
-			})
-			.catch((error) => {
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error(
-						"Error occurred while fetching rental data. Refresh page."
-					);
-			})
-			.finally(() => setLoading(false));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	const { data, isSuccess, isPending } = useQuery({
+		queryKey: ["rentals"],
+		queryFn: async () => {
+			try {
+				const response = await axiosInstance.get("/rent/getAllRents")
+				const terminals = adminProfile.terminal.map((location) =>
+					location.split(",")[1].trim().toLowerCase()
+				);
+				// Filter records based on the terminal
+				const sortedRentals = response.data.rents
+					.filter((rental) => {
+						const city = rental.departure.split(",")[1].trim().toLowerCase();
+						return terminals.includes(city);
+					})
+				return sortedRentals.reverse()
+			}
+			catch (error) {
+				customError(error, "Error occurred while fetching rental data. Refresh page.");
+				return []``
+			}
+		}
+	})
 
+	React.useEffect(() => {
+		if (isSuccess) setRentalData(data)
+	}, [isSuccess, data])
+
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
 		table.setPageIndex(currentPageIndex.rentals);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -246,6 +242,7 @@ const RentalTable = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [searchParams]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
 		if (columnFilters.length || filtering.length) {
 			setPageCount(
@@ -259,6 +256,7 @@ const RentalTable = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [columnFilters, filtering]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
 		if (rentalData.length)
 			setPageCount(Math.ceil(rentalData.length / pagination.pageSize));
@@ -338,7 +336,7 @@ const RentalTable = () => {
 			accessorKey: "payment_status",
 			header: <div className="text-center">Status</div>,
 			cell: ({ row }) => {
-				let status = row.getValue("payment_status");
+				const status = row.getValue("payment_status");
 				return (
 					<div
 						className={cn(
@@ -391,6 +389,7 @@ const RentalTable = () => {
 		},
 	});
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
 		table.setPageIndex(currentPageIndex.rentals);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -470,7 +469,7 @@ const RentalTable = () => {
 									colSpan={columns.length}
 									className="h-24 text-center"
 								>
-									No results.
+									{isPending ? <p className="inline-flex gap-2 items-center">Fetching data  <Loader2 className="animate-spin" /></p> : "No results."}
 								</TableCell>
 							</TableRow>
 						)}
@@ -532,7 +531,7 @@ export const RentDetail = () => {
 	return (
 		<div>
 			<div className="flex gap-1 items-center mb-5 py-2">
-				<button onClick={() => navigate(-1)}>
+				<button type="button" onClick={() => navigate(-1)}>
 					<CircleArrowLeftIcon />
 				</button>
 				<h1 className="text-base font-semibold">Rental Details</h1>
@@ -772,6 +771,7 @@ export const RentDetail = () => {
 							</table>
 						</div>
 						<button
+							type="button"
 							className=" bg-blue-500 w-56 py-3 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white flex justify-center gap-2 mx-auto rounded-lg "
 							onClick={() => {
 								navigate(`/rental-invoice/${currentRental.ticket_id}`);

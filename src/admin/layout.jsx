@@ -78,6 +78,7 @@ const ProtectedRoute = () => {
 			}
 			catch (error) {
 				customError(error, "Error while retrieving all bookings.")
+				return [];
 			}
 		},
 	})
@@ -114,14 +115,14 @@ const ProtectedRoute = () => {
 			</div>,
 			["super-admin", "dev"],
 		],
-		// [
-		// 	"Manage Prices",
-		// 	`/backend/${accountType}/pricing`,
-		// 	<div key="1" className="scale-[.85] -ml-1">
-		// 		<PriceChange />
-		// 	</div>,
-		// 	["super-admin", "dev"],
-		// ],
+		[
+			"Manage Prices",
+			`/backend/${accountType}/pricing`,
+			<div key="1" className="scale-[.85] -ml-1">
+				<PriceChange />
+			</div>,
+			["super-admin", "dev"],
+		],
 		[
 			"Journey List",
 			`/backend/${accountType}/journey-list`,
