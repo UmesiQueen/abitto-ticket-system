@@ -8,9 +8,8 @@ import { useStepper } from "@/hooks/useStepper";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useMutation } from '@tanstack/react-query'
-import axiosInstance from "@/api";
-import { customError } from "@/lib/utils";
+import { useMutation } from '@tanstack/react-query';
+import { useSearchTrip } from "@/hooks/useSearchTrip";
 
 const SearchTrip = () => {
 	const {
@@ -26,6 +25,7 @@ const SearchTrip = () => {
 	const [isDisabled, setIsDisabled] = React.useState(true);
 	const navigate = useNavigate()
 	const { setActiveStep } = useStepper();
+	const { searchAvailableTrips } = useSearchTrip()
 	const { search, pathname } = useLocation();
 	const isAdmin = pathname.includes("/backend");
 	const { account_type } = adminProfile
@@ -39,15 +39,11 @@ const SearchTrip = () => {
 
 	const { isPending, ...mutation } = useMutation({
 		mutationKey: "availableTrips",
-		mutationFn: async (reqData) => {
-			const response = await axiosInstance.post("/ticket/query", reqData);
-			return response.data
+		mutationFn: (reqData) => {
+			return searchAvailableTrips(reqData);
 		},
 		onSuccess: (data) => {
 			setAvailableTrips(data);
-		},
-		onError: (error) => {
-			customError(error, "Unable to retrieve available trips. Please try again.")
 		},
 	});
 
@@ -126,99 +122,101 @@ const SearchTrip = () => {
 			</div>
 
 			{/* Departure Time */}
-			<div className="space-y-3">
-				{availableTrips?.departure_trip.length ? (
-					availableTrips.departure_trip.map((item) => {
-						const available_seats = Number(item.trip_capacity) - Number(item.current_booked_seats);
-						const isAvailableSeatsExceeded =
-							total_passengers > available_seats
-						const isActive =
-							selectedTrip?.departure?.trip_code === item.trip_code;
-						return (
-							<div
-								tabIndex={isAvailableSeatsExceeded ? "-1" : "0"}
-								key={item.trip_code}
-								data-state={
-									isActive
-										? "active"
-										: isAvailableSeatsExceeded
-											? "disabled"
-											: ""
-								}
-								aria-disabled={isAvailableSeatsExceeded}
-								onClick={() => {
-									handleCheck(
-										"departure",
-										!isActive,
-										item,
-										isAvailableSeatsExceeded
-									);
-								}}
-								onKeyDown={(event) => {
-									event.preventDefault();
-									if (event.key === "Enter" || event.key === " ") {
+			<div className="min-h-20">
+				{!isPending && <div className="space-y-3">
+					{availableTrips?.departure_trip.length ? (
+						availableTrips.departure_trip.map((item) => {
+							const available_seats = Number(item.trip_capacity) - Number(item.current_booked_seats);
+							const isAvailableSeatsExceeded =
+								total_passengers > available_seats
+							const isActive =
+								selectedTrip?.departure?.trip_code === item.trip_code;
+							return (
+								<div
+									tabIndex={isAvailableSeatsExceeded ? "-1" : "0"}
+									key={item.trip_code}
+									data-state={
+										isActive
+											? "active"
+											: isAvailableSeatsExceeded
+												? "disabled"
+												: ""
+									}
+									aria-disabled={isAvailableSeatsExceeded}
+									onClick={() => {
 										handleCheck(
 											"departure",
 											!isActive,
 											item,
 											isAvailableSeatsExceeded
 										);
-									}
-								}}
-								className="grid overflow-hidden grid-cols-4 md:grid-cols-7 rounded-lg border border-gray-400 md:border-none  min-h-32 *:bg-white [&>*]:data-[state=active]:bg-blue-50 data-[state=active]:shadow-lg *:py-2 transition-all duration-150 ease-in-out  [&>*]:data-[state=disabled]:bg-red-100 [&>*]:data-[state=disabled]:border-red-700 "
-							>
-								<div className="px-5 md:px-8 col-span-2 md:col-span-2 flex-grow flex flex-col justify-center items-center rounded-tl-lg md:rounded-lg text-center">
-									<p className="font-bold">{item.time}</p>
-									<p className="text-gray-500 text-sm md:text-base ">
-										{item.departure.includes("Uyo")
-											? "Nwaniba, Uyo"
-											: item.departure}
-									</p>
-									<p className="text-gray-500 text-sm md:text-base ">
-										{item.date}
-									</p>
-								</div>
-								<div className="px-6 col-span-2 md:col-span-2 flex flex-col justify-center items-center md:rounded-lg border-l md:border-l-2  border-gray-400">
-									<p className="text-sm">Price(NGN)</p>
-									<p className="md:text-lg font-semibold">
-										{formatValue({
-											value: String(item.ticket_cost),
-											prefix: "₦",
-										})}
-									</p>
-								</div>
-								<div className="px-6 row-start-2 md:row-span-1 col-span-3 md:col-span-2 col-start-1 flex flex-col justify-center rounded-bl-lg  md:rounded-lg items-center border-t md:border-t-0 md:border-l-2 border-gray-400">
-									<p className="text-sm">Status</p>
-									<div className="text-center">
-										{isAvailableSeatsExceeded ? (
-											<>
-												<p className="font-semibold uppercase text-red-700">
-													FULL
-												</p>
-												<p className="text-sm">
-													{available_seats} available seat(s)
-												</p>
-											</>
-										) : (
-											<p className="font-semibold uppercase">AVAILABLE</p>
-										)}
+									}}
+									onKeyDown={(event) => {
+										event.preventDefault();
+										if (event.key === "Enter" || event.key === " ") {
+											handleCheck(
+												"departure",
+												!isActive,
+												item,
+												isAvailableSeatsExceeded
+											);
+										}
+									}}
+									className="grid overflow-hidden grid-cols-4 md:grid-cols-7 rounded-lg border border-gray-400 md:border-none  min-h-32 *:bg-white [&>*]:data-[state=active]:bg-blue-50 data-[state=active]:shadow-lg *:py-2 transition-all duration-150 ease-in-out  [&>*]:data-[state=disabled]:bg-red-100 [&>*]:data-[state=disabled]:border-red-700 cursor-pointer"
+								>
+									<div className="px-5 md:px-8 col-span-2 md:col-span-2 flex-grow flex flex-col justify-center items-center rounded-tl-lg md:rounded-lg text-center">
+										<p className="font-bold">{item.time}</p>
+										<p className="text-gray-500 text-sm md:text-base ">
+											{item.departure.includes("Uyo")
+												? "Nwaniba, Uyo"
+												: item.departure}
+										</p>
+										<p className="text-gray-500 text-sm md:text-base ">
+											{item.date}
+										</p>
+									</div>
+									<div className="px-6 col-span-2 md:col-span-2 flex flex-col justify-center items-center md:rounded-lg border-l md:border-l-2  border-gray-400">
+										<p className="text-sm">Price(NGN)</p>
+										<p className="md:text-lg font-semibold">
+											{formatValue({
+												value: String(item.ticket_cost),
+												prefix: "₦",
+											})}
+										</p>
+									</div>
+									<div className="px-6 row-start-2 md:row-span-1 col-span-3 md:col-span-2 col-start-1 flex flex-col justify-center rounded-bl-lg  md:rounded-lg items-center border-t md:border-t-0 md:border-l-2 border-gray-400">
+										<p className="text-sm">Status</p>
+										<div className="text-center">
+											{isAvailableSeatsExceeded ? (
+												<>
+													<p className="font-semibold uppercase text-red-700">
+														FULL
+													</p>
+													<p className="text-sm">
+														{available_seats} available seat(s)
+													</p>
+												</>
+											) : (
+												<p className="font-semibold uppercase">AVAILABLE</p>
+											)}
+										</div>
+									</div>
+									<div className="px-6 row-start-2 md:row-start-1 md:row-span-1 col-start-4 md:col-start-7 rounded-br-lg md:rounded-lg flex items-center justify-center border-l border-t md:border-t-0 md:border-l-2  border-gray-400">
+										<Checkbox
+											tabIndex={-1}
+											className="data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
+											checked={isActive}
+										/>
 									</div>
 								</div>
-								<div className="px-6 row-start-2 md:row-start-1 md:row-span-1 col-start-4 md:col-start-7 rounded-br-lg md:rounded-lg flex items-center justify-center border-l border-t md:border-t-0 md:border-l-2  border-gray-400">
-									<Checkbox
-										tabIndex={-1}
-										className="data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
-										checked={isActive}
-									/>
-								</div>
-							</div>
-						);
-					})
-				) : (
-					<div className="flex flex-col justify-center items-center min-h-40 text-center text-lg">
-						<p>There are no available departure trips for this date.</p>
-					</div>
-				)}
+							);
+						})
+					) : (
+						<div className="flex flex-col justify-center items-center min-h-40 text-center text-lg">
+							<p>There are no available trips for this date.</p>
+						</div>
+					)}
+				</div>}
 			</div>
 
 			<div className="grid grid-cols-1 md:grid-cols-7 gap-y-5 min-h-32">

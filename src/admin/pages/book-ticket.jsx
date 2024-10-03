@@ -20,7 +20,7 @@ import SelectField from "@/components/custom/SelectField";
 import InputField from "@/components/custom/InputField";
 import { usePayment } from "@/hooks/usePayment";
 import { Button as ButtonIcon } from "@/components/ui/button";
-import { useNavigate, Outlet } from "react-router-dom";
+import { useNavigate, Outlet, useLocation, Navigate } from "react-router-dom";
 import { BookingForm } from "@/components/BookingDetails";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -71,7 +71,10 @@ export const AdminPayment = () => {
 	const { mountPortalModal, setLoading, adminProfile } = React.useContext(GlobalCTX);
 	const { offlinePayment } = usePayment();
 	const queryClient = useQueryClient()
-	const navigate = useNavigate()
+	const navigate = useNavigate();
+	const { search } = useLocation();
+	const searchParams = new URLSearchParams(search.split("?")[1]);
+	const ticket_id = searchParams.get("cid");
 	const total_ticket_cost =
 		Number(formData.bookingDetails.departure_ticket_cost) *
 		Number(formData.bookingDetails.total_passengers);
@@ -105,7 +108,8 @@ export const AdminPayment = () => {
 		},
 		onSuccess: (id) => {
 			queryClient.invalidateQueries('bookings');
-			mountPortalModal(<BookingSuccessModal id={id} />);
+			mountPortalModal(
+				<BookingSuccessModal id={id} onclick={() => navigate(`/backend/${adminProfile.account_type}/create/book-ticket`)} />);
 		},
 	})
 
@@ -120,6 +124,8 @@ export const AdminPayment = () => {
 	const handlePrev = () => {
 		navigate(`/backend/${adminProfile.account_type}/create/book-ticket/passenger-details?cid=${formData.ticket_id}`)
 	}
+
+	if (ticket_id !== formData?.ticket_id) return (<Navigate to={`/backend/${adminProfile.account_type}/create/book-ticket`} />)
 
 	return (
 		<div className="flex gap-5">

@@ -4,16 +4,17 @@ import axiosInstance from "@/api";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { toast } from "sonner";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import BookingSuccessModal, { LogisticsSuccessModal } from "@/components/modals/book.success";
+import { LogisticsSuccessModal } from "@/components/modals/book.success";
 import { v4 as uuid } from "uuid";
-import { sampleSize } from "lodash";
 import { RentalSuccessModal } from "@/components/modals/book.success";
 import BookingFailedModal, {
 	BookingRequestFailedModal,
 } from "@/components/modals/book.failure";
+import { customError } from "@/lib/utils";
+import { useSearchTrip } from "./useSearchTrip";
 
 export const usePayment = () => {
-	const { formData, rentalData, selectedTrip } = React.useContext(BookingCTX);
+	const { formData, rentalData, setLoading: loader } = React.useContext(BookingCTX);
 	const {
 		mountPortalModal,
 		setModalContent,
@@ -21,110 +22,64 @@ export const usePayment = () => {
 		adminProfile,
 		setLoading,
 	} = React.useContext(GlobalCTX);
-	const { bookingDetails, passengerDetails, seatDetails, ticket_id } = formData;
+	const { bookingDetails, passengerDetails, ticket_id } = formData;
+	const { checkAvailability } = useSearchTrip();
 	const total_ticket_cost =
-		(Number(formData.bookingDetails.departure_ticket_cost) +
-			Number(formData.bookingDetails?.return_ticket_cost ?? 0)) *
-		Number(formData.bookingDetails.total_passengers);
+		Number(formData.bookingDetails?.departure_ticket_cost) *
+		Number(formData.bookingDetails?.total_passengers);
 
-	const randomSeats = (type) => {
-		const availableSeats = selectedTrip[type]?.available_seats;
-		return sampleSize(availableSeats, formData.bookingDetails.total_passengers);
+
+	const randomSeats = (availableSeats, total_passengers) => {
+		const seatsArray = Array.from({ length: availableSeats }, (_, i) =>
+			`${Math.floor(i / 4) + 1}${String.fromCharCode(97 + (i % 4))}`);
+
+		return seatsArray.slice(-total_passengers); // Select the last 'total_passengers' elements
 	};
 
-	const onlinePayment = () => {
-		setShowModal(false);
-		const paystack = new PaystackPop();
-
-		paystack.newTransaction({
-			key: "pk_live_b25d12c8f8e8a5b151d6015b71ae2e99d1e4e243", // abitto
-			// key: "pk_test_5d5cd21c077f1395d701366d2880665b3e9fb0f5",
-			amount: total_ticket_cost * 100,
-			email: formData.passengerDetails?.passenger1_email,
-			firstname: formData.passengerDetails?.passenger1_first_name,
-			lastname: formData.passengerDetails?.passenger1_last_name,
-			phone: formData.passengerDetails?.passenger1_phone_number,
-			onSuccess(res) {
-				handleOnlineRequest({
-					payment_status: "Success",
-					trxRef: res.trxref,
-					trip_status: "Upcoming",
-				});
-			},
-			onCancel() {
-				handleOnlineRequest({
-					payment_status: "Canceled",
-					trxRef: "N/A",
-					trip_status: "Canceled",
-				});
-				setShowModal(true);
-				setModalContent(<BookingFailedModal />);
-			},
-		});
-	};
-
-	const handleOnlineRequest = (props) => {
-		const isSuccess = props.payment_status == "Success";
-
+	const onlinePayment = async () => {
 		const requestData = {
 			...bookingDetails,
 			...passengerDetails,
-			departure_seats: isSuccess
-				? seatDetails?.departure_seats ?? randomSeats("departure")
-				: [],
 			total_ticket_cost,
-			...(bookingDetails.trip_type == "Round Trip" && {
-				return_seats: isSuccess
-					? seatDetails?.return_seats ?? randomSeats("return")
-					: [],
-			}),
 			ticket_id: `${ticket_id}${uuid().slice(0, 2)}`,
-			...props,
 			medium: "Online",
 			payment_method: "Paystack",
 			booked_by: "Customer",
 			check_in: false,
+			payment_status: "Pending",
+			trxRef: "N/A",
+			trip_status: "Upcoming",
 		};
 
-		if (isSuccess) setLoading(true);
-
-		axiosInstance
-			.post("/booking/newbooking", requestData)
-			.then((res) => {
-				if ((res.status == 200) & isSuccess) {
-					const ticket_id = res.data.booking.ticket_id;
-					setModalContent(<BookingSuccessModal id={ticket_id} />);
+		const isAvailable = await checkAvailability();
+		if (isAvailable)
+			try {
+				const response = await axiosInstance
+					.post("/booking/test",
+						{
+							...requestData,
+							departure_seats: randomSeats(isAvailable, bookingDetails.total_passengers),
+						})
+				if (response) {
+					const { authorization_url } = response.data.payment
+					window.location.href = authorization_url;
 				}
-			})
-			.catch(() => {
-				if (isSuccess) {
-					document.getElementById("paystack_btn").disabled = true;
-					document.getElementById("payment_next_btn").innerHTML = "Clear";
-					setModalContent(<BookingRequestFailedModal header="Booking" />);
-				}
-			})
-			.finally(() => {
-				setShowModal(true);
-				setLoading(false);
-			});
-	};
+			}
+			catch (error) {
+				customError(error, "Payment initialization failed. Try Again.")
+			}
+			finally {
+				loader(false)
+			}
+	}
 
-	const offlinePayment = (data) => {
-		setLoading(true);
+	const offlinePayment = async (data) => {
 		const requestData = {
 			...bookingDetails,
 			...passengerDetails,
-			departure_seats:
-				seatDetails?.departure_seats ??
-				randomSeats("departure", data.payment_status),
-			...(bookingDetails.trip_type == "Round Trip" && {
-				return_seats:
-					seatDetails?.return_seats ??
-					randomSeats("return", data.payment_status),
-			}),
 			ticket_id: `${ticket_id}${uuid().slice(0, 2)}`,
 			total_ticket_cost,
-			payment_status: data.payment_status,
+			payment_status: "Success",
 			payment_method: data.payment_method,
 			medium: "Offline",
 			trxRef: data.transaction_ref,
@@ -133,25 +88,21 @@ export const usePayment = () => {
 			trip_status: data.check_in ? "Completed" : "Upcoming",
 		};
 
-		axiosInstance
-			.post("/booking/newbooking", requestData)
-			.then((res) => {
-				if (res.status == 200) {
-					const ticket_id = res.data.booking.ticket_id;
-					mountPortalModal(<BookingSuccessModal id={ticket_id} />);
-				}
-			})
-			.catch((error) => {
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error("Booking not confirmed. Please try again.");
-			})
-			.finally(() => {
-				setLoading(false);
-			});
+		const isAvailable = await checkAvailability();
+		if (isAvailable)
+			try {
+				const res = await axiosInstance.post("/booking/newbooking", {
+					...requestData,
+					departure_seats: randomSeats(isAvailable, bookingDetails.total_passengers),
+				})
+				return res.data.booking.ticket_id
+			}
+			catch (error) {
+				customError(error, "Booking not confirmed. Please try again.")
+			}
+			finally {
+				loader(false)
+			}
 	};
 
 	const onlineRentalPayment = () => {
@@ -201,7 +152,7 @@ export const usePayment = () => {
 		axiosInstance
 			.post("/rent/createrent", requestData)
 			.then((res) => {
-				if (res.status == 200 && isSuccess) {
+				if (res.status === 200 && isSuccess) {
 					const ticket_id = res.data.rent.ticket_id;
 					setModalContent(<RentalSuccessModal id={ticket_id} />);
 				}
@@ -237,18 +188,13 @@ export const usePayment = () => {
 		axiosInstance
 			.post("/rent/createrent", requestData)
 			.then((res) => {
-				if (res.status == 200) {
+				if (res.status === 200) {
 					const ticket_id = res.data.rent.ticket_id;
 					mountPortalModal(<RentalSuccessModal id={ticket_id} />);
 				}
 			})
 			.catch((error) => {
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error("Error occurred while creating new rental.");
+				customError(error, "Error occurred while creating new rental.")
 			})
 			.finally(() => setLoading(false));
 	};
@@ -265,7 +211,7 @@ export const usePayment = () => {
 		axiosInstance
 			.post("/logistics/new", requestData)
 			.then((res) => {
-				if (res.status == 200) {
+				if (res.status === 200) {
 					const id = res.data.logistics.shipment_id;
 					mountPortalModal(<LogisticsSuccessModal props={{ id, handleReset }} />);
 				}

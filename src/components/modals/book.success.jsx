@@ -1,18 +1,20 @@
 /* eslint-disable react/prop-types */
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import Button from "@/components/custom/Button";
 import checkGIF from "@/assets/check.gif";
 
-const BookingSuccessModal = ({ id, onClick = () => { } }) => {
+const BookingSuccessModal = ({ id, onclick = () => { } }) => {
 	const { handleReset } = React.useContext(BookingCTX);
 	const { unMountPortalModal } = React.useContext(GlobalCTX);
 	const { pathname } = useLocation();
+	const navigate = useNavigate()
 
 	const reset = () => {
 		unMountPortalModal();
+		sessionStorage.removeItem("cus_info");
 		handleReset();
 	};
 
@@ -27,24 +29,27 @@ const BookingSuccessModal = ({ id, onClick = () => { } }) => {
 			<p className="font-normal text-xs text-[#454545] px-10 mb-5">
 				Please check your email for important ticket details.
 			</p>
-			<Link to={`/ticket-invoice/${id}`}>
-				<Button
-					text={
-						String(pathname).includes("/backend")
-							? "Print Ticket"
-							: "Download Ticket"
-					}
-					className="md:py-5 w-full mb-5"
-					onClick={reset}
-				/>
-			</Link>
+
+			<Button
+				text={
+					String(pathname).includes("/backend")
+						? "Print Ticket"
+						: "Download Ticket"
+				}
+				className="md:py-5 w-full mb-5"
+				onClick={() => {
+					// initiate and redirect to a downloaded pdf here
+					navigate(`/ticket-invoice/${id}`);
+					setTimeout(() => reset())
+				}}
+			/>
 			<Button
 				text={"Continue"}
 				variant="outline"
 				className=" md:py-5 "
 				onClick={() => {
 					reset();
-					onClick();
+					onclick();
 				}}
 			/>
 		</div>

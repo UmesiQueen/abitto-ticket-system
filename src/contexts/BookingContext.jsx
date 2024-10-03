@@ -19,13 +19,8 @@ const BookingContext = ({ children }) => {
 	const [formData, setFormData] = React.useState(storedSession ?? {
 		bookingDetails: {},
 		passengerDetails: {},
-		seatDetails: {},
 	});
 	const [loading, setLoading] = React.useState(false);
-	const [seatSelected, setSeatSelected] = React.useState({
-		departure: [],
-		return: [],
-	});
 	const [availableTrips, setAvailableTrips] = React.useState({
 		departure_trip: [],
 		return_trip: [],
@@ -52,32 +47,11 @@ const BookingContext = ({ children }) => {
 	// 	setSearchParams({})
 	// }, [pathname]);
 
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	React.useEffect(() => {
-		if (Object.keys(formData.seatDetails).length) {
-			setSeatSelected({
-				departure: [],
-				return: [],
-			});
-			setFormData((prev) => ({
-				...prev,
-				seatDetails: {},
-			}));
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [formData.bookingDetails?.total_passengers]);
-
 	const handleReset = () => {
 		setActiveStep(0);
 		setFormData({
 			bookingDetails: {},
 			passengerDetails: {},
-			seatDetails: {},
-		});
-		setSeatSelected({
-			departure: [],
-			return: [],
 		});
 		setAvailableTrips({
 			departure_trip: [],
@@ -98,8 +72,6 @@ const BookingContext = ({ children }) => {
 		setLoading,
 		activeStep,
 		setActiveStep,
-		seatSelected,
-		setSeatSelected,
 		isChecked,
 		setChecked,
 		handleReset,

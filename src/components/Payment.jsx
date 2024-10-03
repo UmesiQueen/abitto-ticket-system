@@ -13,25 +13,25 @@ import Button from "@/components/custom/Button";
 import { Button as IconButton } from "./ui/button";
 import { useStepper } from "@/hooks/useStepper";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import { useSearchTrip } from "@/hooks/useSearchTrip";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Link, useLocation, Navigate, useNavigate } from "react-router-dom"
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { usePayment } from "@/hooks/usePayment";
 
 const Payment = () => {
 	const { loading, formData } = React.useContext(BookingCTX);
 	const { mountPortalModal } = React.useContext(GlobalCTX);
 	const { onPrevClick, setActiveStep } = useStepper();
-	const total_ticket_cost =
-		Number(formData.bookingDetails.departure_ticket_cost) *
-		Number(formData.bookingDetails.total_passengers);
-	const { checkAvailability } = useSearchTrip();
+	const { onlinePayment } = usePayment()
 	const { search } = useLocation();
 	const navigate = useNavigate();
 	const searchParams = new URLSearchParams(search.split("?")[1]);
 	const ticket_id = searchParams.get("cid");
+	const total_ticket_cost =
+		Number(formData.bookingDetails.departure_ticket_cost) *
+		Number(formData.bookingDetails.total_passengers);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => { setActiveStep(3) }, [])
@@ -48,9 +48,7 @@ const Payment = () => {
 	})
 
 	const onSubmit = handleSubmit(({ checked }) => {
-		// if (checked) checkAvailability()
-		if (checked)
-			navigate("/booking/confirmation?reference=c2ri1bevay")
+		if (checked) onlinePayment()
 	})
 
 	const handlePrev = () => {
