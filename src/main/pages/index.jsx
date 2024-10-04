@@ -21,7 +21,7 @@ import SuccessModal from "@/components/modals/success";
 import EmblaCarousel from "@/components/embla-carousel/EmblaCarousel";
 
 const Home = () => {
-	const { contact, faq, services, scrollToSection, } = React.useContext(GlobalCTX);
+	const { contact, faq, services, scrollToSection, terminals } = React.useContext(GlobalCTX);
 	const navigate = useNavigate();
 
 	return (
@@ -256,7 +256,7 @@ const Home = () => {
 			{/* Client Testimonials */}
 			<TestimonialsCarousel />
 
-			<section className="py-20 px-5 md:px-20 bg-white">
+			<section id="terminals" ref={terminals} className="py-20 px-5 md:px-20 bg-white">
 				<div className="max-w-[1440px] mx-auto">
 					<h2 className="font-semibold text-lg md:text-xl lg:text-2xl mb-7 inline-flex items-center justify-center w-full ">
 						<span className="h-3 w-3 mr-3 rounded-full bg-blue-500" />
@@ -280,7 +280,7 @@ const Home = () => {
 									<span>
 										<BoatIcon />
 									</span>
-									<p className="font-medium">Calabar ferry Terminal</p>
+									<p className="font-medium">Calabar Ferry Terminal</p>
 								</li>
 								<li>
 									<Link
@@ -324,7 +324,7 @@ const Home = () => {
 									<span>
 										<BoatIcon />
 									</span>
-									<p className="font-medium">Uyo ferry Terminal</p>
+									<p className="font-medium">Uyo Ferry Terminal</p>
 								</li>
 								<li>
 									<Link
@@ -494,7 +494,7 @@ const ContactForm = () => {
 		axiosInstance
 			.post("/email/contact", formData)
 			.then((res) => {
-				if (res.status == 200) {
+				if (res.status === 200) {
 					mountPortalModal(
 						<SuccessModal
 							header="Request sent successfully."
