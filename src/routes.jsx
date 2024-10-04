@@ -9,13 +9,11 @@ import Home from "./main/pages";
 import Booking from "./main/pages/booking";
 import PageNotFound from "./main/pages/404";
 import AdminLayout from "./admin/layout";
-import BookingDetails from "./admin/pages/booking-details";
+import BookingDetails, { CustomerDetailsLoader, CustomerDetails } from "./admin/pages/booking-details";
 import Customers from "./admin/pages/customers";
 import JourneyList from "./admin/pages/journey-list";
 import Settings from "./admin/pages/settings";
 import Login from "./admin/auth/login";
-import { CustomerDetails } from "./admin/pages/booking-details";
-import TicketInvoice from "./components/TicketInvoice";
 import MainLayout from "./main/layout";
 import About from "./main/pages/about";
 import BookTicket, { AdminTripDetails, AdminPayment } from "./admin/pages/book-ticket";
@@ -25,7 +23,6 @@ import ScheduleTrip from "./admin/pages/schedule-trip";
 import RentalAdmin from "./admin/pages/rental";
 import Report from "./admin/pages/report";
 import Rental from "./main/pages/rental";
-import { CustomerDetailsLoader } from "./components/TicketInvoice";
 import { TripDetailsLoader } from "./admin/pages/trip-details";
 import RentalInvoice from "./components/RentalInvoice";
 import { RentalInvoiceLoader } from "./components/RentalInvoice";
@@ -43,17 +40,16 @@ import LogisticsDetails, {
 	ShipmentDetails,
 } from "./admin/pages/logistics-detail";
 import GetQuote from "./main/pages/quote";
-// import Pricing from "./admin/pages/pricing";
-import InformationBox, { InformationLoader } from "./admin/pages/information-box";
-import LogisticsInvoice from "./components/LogisticInvoice";
-import { ShipmentLoader } from "./components/LogisticInvoice";
-import { PriceLoader } from "./admin/pages/pricing";
+import Pricing, { PriceLoader } from "./admin/pages/pricing";
+import InformationBox from "./admin/pages/information-box";
+import LogisticsInvoice, { ShipmentLoader } from "./components/LogisticInvoice";
 import TermsAndConditions from "./main/pages/terms-and-conditions";
 import PrivacyPolicy from "./main/pages/privacy-policy";
 import PassengerDetails from "@/components/PassengerDetails";
 import BookingDetail from "@/components/BookingDetails";
 import Payment from "@/components/Payment";
 import SearchTrip from "@/components/SearchTrip";
+import BookingConfirmation from "./main/pages/booking-confirmation";
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -66,6 +62,7 @@ export const router = createBrowserRouter(
 					<Route path="passenger-details" element={<PassengerDetails />} />
 					<Route path="payment" element={<Payment />} />
 				</Route>
+				<Route path="booking/confirmation" element={<BookingConfirmation />} />
 				<Route path="about" element={<About />} />
 				<Route path="rental" element={<Rental />} loader={PriceLoader} />
 				<Route path="feedback" element={<Feedback />} />
@@ -116,20 +113,14 @@ export const router = createBrowserRouter(
 					<Route path="settings" element={<Settings />} />
 					<Route path="feedback" element={<FeedbackAdmin />} />
 					<Route path="feedback/:feedbackID" element={<FeedbackDetails />} />
-					<Route path="logistics" element={<LogisticsDetails />} loader={PriceLoader} />
+					<Route path="logistics" element={<LogisticsDetails />} />
 					<Route path="logistics/:shipmentID" element={<ShipmentDetails />} loader={ShipmentLoader} />
-					{/* <Route path="pricing" element={<Pricing />} loader={PriceLoader} /> */}
-					<Route path="information" element={<InformationBox />} loader={InformationLoader} />
+					<Route path="pricing" element={<Pricing />} />
+					<Route path="information" element={<InformationBox />} />
 					<Route path="pageNotFound" element={<PageNotFoundAdmin />} />
 				</Route>
-
 			</Route>
 
-			<Route
-				path="ticket-invoice/:bookingID"
-				element={<TicketInvoice />}
-				loader={CustomerDetailsLoader}
-			/>
 			<Route
 				path="rental-invoice/:rentalID"
 				element={<RentalInvoice />}
