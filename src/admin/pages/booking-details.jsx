@@ -34,7 +34,7 @@ import {
 import { Button as ButtonUI } from "@/components/ui/button";
 import { formatValue } from "react-currency-input-field";
 import { capitalize, truncate } from "lodash";
-import { cn } from "@/lib/utils";
+import { cn, customError } from "@/lib/utils";
 import { PaginationEllipsis } from "@/components/ui/pagination";
 import ReactPaginate from "react-paginate";
 import { BookingCTX } from "@/contexts/BookingContext";
@@ -49,6 +49,9 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import Button from "@/components/custom/Button";
+import { useReactToPrint } from "react-to-print";
+import TicketInvoice from "@/components/TicketInvoice";
+import axiosInstance from "@/api";
 
 const BookingDetails = () => {
 	const navigate = useNavigate();
@@ -500,6 +503,12 @@ export const CustomerDetails = () => {
 	const navigate = useNavigate();
 	const currentUser = useLoaderData();
 	const { mountPortalModal, adminProfile } = React.useContext(GlobalCTX);
+	const componentRef = React.useRef();
+
+	const handlePrint = useReactToPrint({
+		content: () => componentRef.current,
+		documentTitle: `Abitto Ticket - ${currentUser?.ticket_id}`,
+	});
 
 	const canReschedule = currentUser?.trip_status === "Upcoming" && ["dev", "super-admin"].includes(adminProfile.account_type)
 
@@ -512,295 +521,293 @@ export const CustomerDetails = () => {
 				<h1 className="text-base font-semibold">Booking Details</h1>
 			</div>
 			{currentUser ? (
-				<div className="flex gap-5 items-start">
-					<div className="bg-white rounded-lg overflow-hidden basis-8/12">
-						<div className="bg-blue-50 flex gap-3 p-5 ">
-							<div className="bg-white rounded-lg p-2 ">
-								<TickIcon />
+				<>
+					<div className="flex gap-5 items-start">
+						<div className="bg-white rounded-lg overflow-hidden basis-8/12">
+							<div className="bg-blue-50 flex gap-3 p-5 ">
+								<div className="bg-white rounded-lg p-2 ">
+									<TickIcon />
+								</div>
+								<div>
+									<h2 className="text-blue-500 text-sm font-semibold">
+										Booking Confirmed!
+									</h2>
+									<p className="text-[10px]">
+										Great news! The ferry trip has been successfully confirmed
+										from our sales point.
+									</p>
+								</div>
+								{canReschedule && <Button
+									text="Re-schedule"
+									variant="outline"
+									className="text-nowrap h-10 ml-auto"
+									onClick={() => navigate("reschedule")}
+								/>}
 							</div>
-							<div>
-								<h2 className="text-blue-500 text-sm font-semibold">
-									Booking Confirmed!
-								</h2>
-								<p className="text-[10px]">
-									Great news! The ferry trip has been successfully confirmed
-									from our sales point.
-								</p>
-							</div>
-							{canReschedule && <Button
-								text="Re-schedule"
-								variant="outline"
-								className="text-nowrap h-10 ml-auto"
-								onClick={() => navigate("reschedule")}
-							/>}
-						</div>
-
-						<div className="p-5 pb-20 space-y-6">
-							<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Booking ID</p>
-									<p className="text-base font-semibold uppercase">
-										#{currentUser?.ticket_id}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Customer Name</p>
-									<p className="text-base font-semibold capitalize">{`${currentUser?.passenger1_first_name} ${currentUser?.passenger1_last_name}`}</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Phone</p>
-									<p className="text-base font-semibold">
-										{currentUser?.passenger1_phone_number}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Email</p>
-									<p className="text-base font-semibold">
-										{currentUser?.passenger1_email}
-									</p>
-								</li>
-							</ul>
-							<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
-								<li>
-									<p className="text-xs text-[#7F7F7F] ">Type</p>
-									<p className="text-base font-semibold">
-										{currentUser?.trip_type}
-									</p>
-								</li>
-
-								<li>
-									<p className="text-xs text-[#7F7F7F]">No. of Adult</p>
-									<p className="text-base font-semibold">
-										{currentUser?.adults_number}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">No. of Children</p>
-									<p className="text-base font-semibold">
-										{currentUser?.children_number ?? 0}
-									</p>
-								</li>
-								{currentUser?.passenger2_first_name && (
-									<li className="self-center text-sm">
-										<button
-											type="button"
-											className="text-blue-500 hover:text-blue-700 underline"
-											onClick={() => {
-												mountPortalModal(
-													<CustomerDetailsModal props={{ currentUser }} />
-												);
-											}}
-										>
-											View other passenger details {">"}
-										</button>
-									</li>
-								)}
-							</ul>
-							<div className=" space-y-6 border-l-8 border-green-800 pl-3 -ml-5">
+							<div className="p-5 pb-20 space-y-6">
 								<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
 									<li>
-										<p className="text-xs text-[#7F7F7F]">Departure From</p>
-										<p className="text-base font-semibold">
-											{currentUser?.travel_from}
+										<p className="text-xs text-[#7F7F7F]">Booking ID</p>
+										<p className="text-base font-semibold uppercase">
+											#{currentUser?.ticket_id}
 										</p>
 									</li>
 									<li>
-										<p className="text-xs text-[#7F7F7F]">Departure To</p>
+										<p className="text-xs text-[#7F7F7F]">Customer Name</p>
+										<p className="text-base font-semibold capitalize">{`${currentUser?.passenger1_first_name} ${currentUser?.passenger1_last_name}`}</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">Phone</p>
 										<p className="text-base font-semibold">
-											{currentUser?.travel_to}
+											{currentUser?.passenger1_phone_number}
+										</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">Email</p>
+										<p className="text-base font-semibold">
+											{currentUser?.passenger1_email}
 										</p>
 									</li>
 								</ul>
-								<ul className="*:flex *:flex-col *:gap-1 flex gap-10 ">
+								<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
 									<li>
-										<p className="text-xs text-[#7F7F7F]">Departure Date</p>
+										<p className="text-xs text-[#7F7F7F] ">Type</p>
 										<p className="text-base font-semibold">
-											{format(currentUser?.departure_date, "PPPP")}
+											{currentUser?.trip_type}
 										</p>
 									</li>
 									<li>
-										<p className="text-xs text-[#7F7F7F]">Departure Time</p>
+										<p className="text-xs text-[#7F7F7F]">No. of Adult</p>
 										<p className="text-base font-semibold">
-											{currentUser?.departure_time}
+											{currentUser?.adults_number}
+										</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">No. of Children</p>
+										<p className="text-base font-semibold">
+											{currentUser?.children_number ?? 0}
+										</p>
+									</li>
+									{currentUser?.passenger2_first_name && (
+										<li className="self-center text-sm">
+											<button
+												type="button"
+												className="text-blue-500 hover:text-blue-700 underline"
+												onClick={() => {
+													mountPortalModal(
+														<CustomerDetailsModal props={{ currentUser }} />
+													);
+												}}
+											>
+												View other passenger details {">"}
+											</button>
+										</li>
+									)}
+								</ul>
+								<div className=" space-y-6 border-l-8 border-green-800 pl-3 -ml-5">
+									<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
+										<li>
+											<p className="text-xs text-[#7F7F7F]">Departure From</p>
+											<p className="text-base font-semibold">
+												{currentUser?.travel_from}
+											</p>
+										</li>
+										<li>
+											<p className="text-xs text-[#7F7F7F]">Departure To</p>
+											<p className="text-base font-semibold">
+												{currentUser?.travel_to}
+											</p>
+										</li>
+									</ul>
+									<ul className="*:flex *:flex-col *:gap-1 flex gap-10 ">
+										<li>
+											<p className="text-xs text-[#7F7F7F]">Departure Date</p>
+											<p className="text-base font-semibold">
+												{format(currentUser?.departure_date, "PPPP")}
+											</p>
+										</li>
+										<li>
+											<p className="text-xs text-[#7F7F7F]">Departure Time</p>
+											<p className="text-base font-semibold">
+												{currentUser?.departure_time}
+											</p>
+										</li>
+									</ul>
+								</div>
+								<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
+									<li>
+										<p className="text-xs text-[#7F7F7F] ">Booking Medium</p>
+										<p className="text-base font-semibold">
+											{currentUser?.medium}
+										</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">Payment Method</p>
+										<p className="text-base font-semibold">
+											{currentUser?.payment_method}
+										</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">Payment Status</p>
+										<p
+											className={cn(
+												"text-center font-semibold rounded-lg py-1 px-2 text-xs",
+												{
+													"text-green-500 bg-green-100":
+														currentUser?.payment_status === "Success",
+													"text-[#E78913] bg-[#F8DAB6]":
+														currentUser?.payment_status === "Pending",
+													"text-[#F00000] bg-[#FAB0B0]":
+														currentUser?.payment_status === "Canceled",
+												}
+											)}
+										>
+											{currentUser?.payment_status}
+										</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">
+											Transaction Reference
+										</p>
+										<p className="text-base font-semibold">
+											{currentUser?.trxRef}
+										</p>
+									</li>
+								</ul>
+								<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
+									<li>
+										<p className="text-xs text-[#7F7F7F]">Booked on</p>
+										<p className="text-base font-semibold">
+											{format(currentUser.created_at, "PPPPpppp").split("GMT", 1)}
+										</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">Booked By</p>
+										<p className="text-base font-semibold">
+											{currentUser?.booked_by}
+										</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">Trip Status</p>
+										<p
+											className={cn(
+												"rounded-lg min-w-20 mx-auto py-1 text-xs px-2 text-center font-semibold",
+												{
+													"text-green-500 bg-green-100":
+														currentUser?.trip_status === "Completed",
+													"text-[#E78913] bg-[#F8DAB6]":
+														currentUser?.trip_status === "Upcoming",
+													"text-[#F00000] bg-[#FAB0B0]":
+														currentUser?.trip_status === "Canceled",
+													"text-black bg-slate-500/50 ":
+														currentUser?.trip_status === "Rescheduled",
+													"text-purple-900 bg-purple-300/30 ":
+														currentUser?.trip_status === "Missed",
+												}
+											)}
+										>
+											{currentUser?.trip_status}
 										</p>
 									</li>
 								</ul>
 							</div>
-							<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
-								<li>
-									<p className="text-xs text-[#7F7F7F] ">Booking Medium</p>
-									<p className="text-base font-semibold">
-										{currentUser?.medium}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Payment Method</p>
-									<p className="text-base font-semibold">
-										{currentUser?.payment_method}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Payment Status</p>
-									<p
-										className={cn(
-											"text-center font-semibold rounded-lg py-1 px-2 text-xs",
-											{
-												"text-green-500 bg-green-100":
-													currentUser?.payment_status === "Success",
-												"text-[#E78913] bg-[#F8DAB6]":
-													currentUser?.payment_status === "Pending",
-												"text-[#F00000] bg-[#FAB0B0]":
-													currentUser?.payment_status === "Canceled",
-											}
-										)}
-									>
-										{currentUser?.payment_status}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">
-										Transaction Reference
-									</p>
-									<p className="text-base font-semibold">
-										{currentUser?.trxRef}
-									</p>
-								</li>
-							</ul>
-							<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Booked on</p>
-									<p className="text-base font-semibold">
-										{format(currentUser.created_at, "PPPPpppp").split("GMT", 1)}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Booked By</p>
-									<p className="text-base font-semibold">
-										{currentUser?.booked_by}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Trip Status</p>
-									<p
-										className={cn(
-											"rounded-lg min-w-20 mx-auto py-1 text-xs px-2 text-center font-semibold",
-											{
-												"text-green-500 bg-green-100":
-													currentUser?.trip_status === "Completed",
-												"text-[#E78913] bg-[#F8DAB6]":
-													currentUser?.trip_status === "Upcoming",
-												"text-[#F00000] bg-[#FAB0B0]":
-													currentUser?.trip_status === "Canceled",
-												"text-black bg-slate-500/50 ":
-													currentUser?.trip_status === "Rescheduled",
-												"text-purple-900 bg-purple-300/30 ":
-													currentUser?.trip_status === "Missed",
-											}
-										)}
-									>
-										{currentUser?.trip_status}
-									</p>
-								</li>
-							</ul>
 						</div>
-					</div>
-
-					<div className="bg-white rounded-lg basis-4/12 p-5 flex flex-col gap-6">
-						<div>
-							<h3 className="text-blue-500 font-semibold  text-base md:text-xl ">
-								Abitto Ferry Terminal
-							</h3>
-							<p className="text-[#8E98A8] text-sm inline-flex items-center gap-1">
-								Non-refundable <InformationCircleIcon />
-							</p>
-							<p className="font-medium text-xs text-right">
-								Booking ID: #
-								<span className="uppercase">{currentUser?.ticket_id}</span>
-							</p>
-						</div>
-
-						<div>
-							<h4 className="font-semibold mb-1">Terminals</h4>
-							<p className="text-xs mb-1">
-								<span className="font-semibold text-sm text-gray-500">
-									From:
-								</span>{" "}
-								{currentUser?.travel_from}
-							</p>
-							<p className="text-xs mb-1">
-								<span className="font-semibold text-sm  text-gray-500">
-									To:
-								</span>{" "}
-								{currentUser?.travel_to}
-							</p>
-
-							<div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[#1E1E1E] text-xs font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
-								<p>
-									<Boat2Icon />
-									{currentUser?.trip_type}
-								</p>
-								<p>
-									<UsersIcon /> {currentUser?.total_passengers} passenger(s)
-								</p>
-							</div>
-						</div>
-						<div className="flex flex-wrap gap-x-5 gap-y-3">
+						<div className="bg-white rounded-lg basis-4/12 p-5 flex flex-col gap-6">
 							<div>
-								<h5 className="font-semibold text-sm mb-1">
-									Departure Details
-								</h5>
-								<div className="flex flex-wrap gap-x-4 gap-y-1 text-[#1E1E1E] text-xs font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
+								<h3 className="text-blue-500 font-semibold  text-base md:text-xl ">
+									Abitto Ferry Terminal
+								</h3>
+								<p className="text-[#8E98A8] text-sm inline-flex items-center gap-1">
+									Non-refundable <InformationCircleIcon />
+								</p>
+								<p className="font-medium text-xs text-right">
+									Booking ID: #
+									<span className="uppercase">{currentUser?.ticket_id}</span>
+								</p>
+							</div>
+							<div>
+								<h4 className="font-semibold mb-1">Terminals</h4>
+								<p className="text-xs mb-1">
+									<span className="font-semibold text-sm text-gray-500">
+										From:
+									</span>{" "}
+									{currentUser?.travel_from}
+								</p>
+								<p className="text-xs mb-1">
+									<span className="font-semibold text-sm  text-gray-500">
+										To:
+									</span>{" "}
+									{currentUser?.travel_to}
+								</p>
+								<div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[#1E1E1E] text-xs font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
 									<p>
-										<CalendarIcon />
-										{format(currentUser?.departure_date, "PP")}
+										<Boat2Icon />
+										{currentUser?.trip_type}
 									</p>
 									<p>
-										<ClockIcon />
-										{currentUser?.departure_time}
+										<UsersIcon /> {currentUser?.total_passengers} passenger(s)
 									</p>
 								</div>
 							</div>
-						</div>
-						<div className="border-y-2 border-dashed py-2">
-							<table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] ">
-								<tbody>
-									<tr>
-										<td className="text-xs text-[#444444]">Ticket Price</td>
-										<td className="text-xs text-[#444444]">
-											<span className="block text-sm">
+							<div className="flex flex-wrap gap-x-5 gap-y-3">
+								<div>
+									<h5 className="font-semibold text-sm mb-1">
+										Departure Details
+									</h5>
+									<div className="flex flex-wrap gap-x-4 gap-y-1 text-[#1E1E1E] text-xs font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
+										<p>
+											<CalendarIcon />
+											{format(currentUser?.departure_date, "PP")}
+										</p>
+										<p>
+											<ClockIcon />
+											{currentUser?.departure_time}
+										</p>
+									</div>
+								</div>
+							</div>
+							<div className="border-y-2 border-dashed py-2">
+								<table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] ">
+									<tbody>
+										<tr>
+											<td className="text-xs text-[#444444]">Ticket Price</td>
+											<td className="text-xs text-[#444444]">
+												<span className="block text-sm">
+													{formatValue({
+														value: String(currentUser.departure_ticket_cost ?? 0),
+														prefix: "₦",
+													})}
+													{" "}
+													x {currentUser.total_passengers}
+												</span>
+											</td>
+										</tr>
+										<tr>
+											<td className="font-medium text-base">Total</td>
+											<td className="font-medium text-base">
+												₦
 												{formatValue({
-													value: String(currentUser.departure_ticket_cost ?? 0),
-													prefix: "₦",
+													value: String(currentUser?.total_ticket_cost),
 												})}
-												{" "}
-												x {currentUser.total_passengers}
-											</span>
-										</td>
-									</tr>
-									<tr>
-										<td className="font-medium text-base">Total</td>
-										<td className="font-medium text-base">
-											₦
-											{formatValue({
-												value: String(currentUser?.total_ticket_cost),
-											})}
-										</td>
-									</tr>
-								</tbody>
-							</table>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<button
+								type="button"
+								className=" bg-blue-500 w-full py-3 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white flex justify-center gap-2 mx-auto rounded-lg "
+								onClick={handlePrint}
+							>
+								<PrinterIcon />
+								Print
+							</button>
 						</div>
-						<button
-							type="button"
-							className=" bg-blue-500 w-full py-3 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white flex justify-center gap-2 mx-auto rounded-lg "
-							onClick={() => {
-								navigate(`/ticket-invoice/${currentUser.ticket_id}`);
-							}}
-						>
-							<PrinterIcon />
-							Print
-						</button>
 					</div>
-				</div>
+					<div className="hidden">
+						<TicketInvoice props={{ currentUser }} ref={componentRef} />
+					</div>
+				</>
 			) : (
 				<p className="ml-10">No Result</p>
 			)}
@@ -885,3 +892,15 @@ const CustomerDetailsModal = ({ props: { currentUser } }) => {
 		</div>
 	);
 };
+
+export const CustomerDetailsLoader = async ({ params }) => {
+	try {
+		const response = await axiosInstance.post("/booking/querynew", {
+			ticket_id: params.bookingID,
+		});
+		return response.data.booking;
+	} catch (error) {
+		customError(error, "Error occurred while retrieving ticket invoice.");
+		return null;
+	}
+}
