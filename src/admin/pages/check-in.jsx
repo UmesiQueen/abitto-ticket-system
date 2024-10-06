@@ -101,8 +101,8 @@ const CheckInTable = () => {
 	const [columnFilters, setColumnFilters] = React.useState([]);
 	const [columnVisibility, setColumnVisibility] = React.useState({
 		fullName: false,
-		departure: accountType == "dev" ? true : false,
-		phone_number: accountType != "dev" ? true : false,
+		departure: accountType === "dev",
+		phone_number: accountType !== "dev",
 	});
 	const [rowSelection, setRowSelection] = React.useState({});
 	const [pagination, setPagination] = React.useState({
@@ -115,7 +115,7 @@ const CheckInTable = () => {
 		const result = bookingQuery.filter((booking) => {
 			const bookedDate = format(new Date(booking.departure_date), "P");
 			const currentDate = format(new Date().toISOString().split("T")[0], "P");
-			return bookedDate === currentDate && booking.payment_status == "Success";
+			return bookedDate === currentDate && booking.payment_status === "Success";
 		});
 		setDailyBookingQuery(result);
 	}, [bookingQuery]);
@@ -204,7 +204,7 @@ const CheckInTable = () => {
 			header: <div className="text-center">Action</div>,
 			cell: ({ row }) => (
 				<Button
-					disabled={row.original.check_in ? true : false}
+					disabled={!!row.original.check_in}
 					onClick={() => handleCheckIn(row.original.ticket_id)}
 					className="check-btn px-2 h-8 !text-xs mx-auto !border-[#85AD33] !bg-[#85AD33] hover:!bg-[#5E7B24] hover:!border-[#5E7B24] disabled:!bg-[#C2C2C2] disabled:!border-[#C2C2C2]"
 					text="Check-in"
@@ -239,6 +239,7 @@ const CheckInTable = () => {
 		},
 	});
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
 		table.setPageIndex(currentPageIndex.checkIn);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -248,7 +249,7 @@ const CheckInTable = () => {
 		mountPortalModal(
 			<ConfirmationModal
 				props={{
-					header: "Do you want to check-in this passenger?",
+					header: "Check-in passenger?",
 					handleRequest: () => {
 						checkInPassenger(ticket_id);
 					},

@@ -465,7 +465,7 @@ export const RentalForm = () => {
 // 								<ClockIcon />
 // 								{rentalData?.rental_time}
 // 								{rentalData?.rental_duration
-// 									? ` - ${getArrivalDateTime()}`
+// 								/	? ` - ${getArrivalDateTime()}`
 // 									: ""}
 // 							</p>
 // 						</div>
@@ -603,9 +603,9 @@ export const RentalForm = () => {
 // 						onClick={(event) => {
 // 							const text = event.target.innerHTML;
 // 							text === "Back"
-// 								? onPrevClick()
+// 							/	? onPrevClick()
 // 								: text === "Clear"
-// 									? handleReset()
+// 							/		? handleReset()
 // 									: "";
 // 						}}
 // 					/>

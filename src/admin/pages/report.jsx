@@ -433,7 +433,7 @@ const Report = () => {
 				<title>Report | Admin</title>
 			</Helmet>
 			<div className="flex items-center justify-between my-5">
-				<h1 className="text-lg font-semibold inline-flex items-center gap-2">Dashboard Overview {isPending && <Loader2 className="animate-spin" />}</h1>
+				<h1 className="text-lg font-semibold inline-flex items-center gap-2">Dashboard Overview {isPending && <Loader2 className="animate-spin" size={20} />}</h1>
 				{isSuperAdmin && (
 					<div>
 						<ToggleGroup

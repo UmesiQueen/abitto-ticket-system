@@ -57,7 +57,7 @@ const ScheduleTrip = () => {
 		mountPortalModal(
 			<ConfirmationModal
 				props={{
-					header: "Are you sure you want to add this changes?",
+					header: "Schedule new trip",
 					handleRequest: () => {
 						scheduleRequest(handleReset, formValues);
 					},

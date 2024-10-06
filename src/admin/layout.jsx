@@ -76,7 +76,6 @@ const ProtectedRoute = () => {
 					return terminals.includes(city);
 				});
 
-				console.log(sortedQuery, "sortedQuery")
 				return sortedQuery;
 			}
 			catch (error) {

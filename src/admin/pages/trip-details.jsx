@@ -65,8 +65,8 @@ const TripDetails = () => {
 		if (tripDetails) {
 			const sortedQuery = bookingQuery.filter(
 				(booking) =>
-					booking.departure_trip_code == tripDetails.trip_code &&
-					booking.payment_status == "Success" &&
+					booking.departure_trip_code === tripDetails.trip_code &&
+					booking.payment_status === "Success" &&
 					booking.check_in
 			);
 			setCurrentDataQuery(sortedQuery);
@@ -160,7 +160,7 @@ const TripDetails = () => {
 		mountPortalModal(
 			<ConfirmationModal
 				props={{
-					header: "Are you sure you want to delete Journey List?",
+					header: "Delete journey list",
 					handleRequest: () => {
 						cancelRequest({
 							...tripDetails,
@@ -266,7 +266,7 @@ const TripDetails = () => {
 							)}
 						>
 							{["dev", "super-admin"].includes(accountType) &&
-								selectedTrip?.trip_status == "Upcoming" && (
+								selectedTrip?.trip_status === "Upcoming" && (
 									<>
 										<Button
 											text="Edit Journey Details"

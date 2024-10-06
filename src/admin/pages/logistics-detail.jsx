@@ -336,7 +336,7 @@ export const ShipmentDetails = () => {
 											onClick={() => {
 												mountPortalModal(
 													<ConfirmationModal props={{
-														header: "Are you sure this shipment has arrived your terminal and you have notified the receiver?",
+														header: "Shipment arrived? Please notify receiver",
 														handleRequest: () => { updateShipmentStatus({ shipment_id: currentShipment?.shipment_id, shipment_status: "Arrived" }, () => { revalidate() }) }
 													}} />)
 											}}
@@ -346,7 +346,7 @@ export const ShipmentDetails = () => {
 												onClick={() => {
 													mountPortalModal(
 														<ConfirmationModal props={{
-															header: "Have you confirmed the receiver of this parcel?",
+															header: "Confirm receiver",
 															handleRequest: () => { updateShipmentStatus({ shipment_id: currentShipment?.shipment_id, shipment_status: "Collected" }, () => { revalidate() }) }
 														}} />)
 												}}

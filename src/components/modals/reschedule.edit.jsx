@@ -61,7 +61,7 @@ const RescheduleEditModal = () => {
 		setModalContent(
 			<ConfirmationModal
 				props={{
-					header: "Are you sure you want to reschedule trip?",
+					header: "Reschedule trip",
 					handleRequest: () => {
 						rescheduleRequest(formValues);
 					},
@@ -97,7 +97,7 @@ const RescheduleEditModal = () => {
 				<div className="grid grid-cols-2 gap-5">
 					{/* time */}
 					<div className="flex flex-col w-full">
-						<label className="font-semibold text-xs md:text-sm w-full flex gap-2 md:gap-3 flex-col relative">
+						<label htmlFor="time" className="font-semibold text-xs md:text-sm w-full flex gap-2 md:gap-3 flex-col relative">
 							Select new time
 							<Controller
 								control={control}
@@ -142,7 +142,7 @@ const RescheduleEditModal = () => {
 
 					{/* date */}
 					<div className="flex flex-col w-full">
-						<label className="font-semibold text-xs md:text-sm !w-full flex flex-col ">
+						<label htmlFor="date" className="font-semibold text-xs md:text-sm !w-full flex flex-col ">
 							Select new date
 							<Controller
 								control={control}
@@ -183,7 +183,7 @@ const RescheduleEditModal = () => {
 
 					{/* NumericFormat Input Field */}
 					<div className="flex flex-col w-full">
-						<label className="font-semibold text-xs md:text-sm w-full flex flex-col">
+						<label htmlFor="cost" className="font-semibold text-xs md:text-sm w-full flex flex-col">
 							Enter new ticket cost
 							<Controller
 								control={control}
@@ -228,7 +228,7 @@ const RescheduleEditModal = () => {
 					</div>
 				</div>
 				<Button
-					disabled={isDirty ? false : true}
+					disabled={!isDirty}
 					type="submit"
 					text="Continue"
 					className="w-full mt-8 !h-12"

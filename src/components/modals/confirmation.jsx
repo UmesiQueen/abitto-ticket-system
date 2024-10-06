@@ -23,12 +23,12 @@ const ConfirmationModal = ({
 			<IconButton
 				variant="ghost"
 				size="icon"
-				className="absolute top-0 right-0"
+				className="absolute top-0 right-0 scale-[.8]"
 				onClick={unMountPortalModal}
 			>
 				<CancelSquareIcon />
 			</IconButton>
-			<h2 className="font-bold text-lg">{header}</h2>
+			<h2 className="font-bold text-lg text-black/90">{header}</h2>
 			<div className={cn("p-3 text-sm inline-flex gap-1", variant[severity])}>
 				<Warning2 />
 				<p>

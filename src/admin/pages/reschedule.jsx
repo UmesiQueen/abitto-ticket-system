@@ -45,9 +45,9 @@ const Reschedule = () => {
 				{
 					currentUser ?
 						<>
-							{activeStep == 0 || activeStep == 1 ?
+							{activeStep === 0 || activeStep === 1 ?
 								<RescheduleForm />
-								: activeStep == 2
+								: activeStep === 2
 									? <Payment /> : ""}
 						</>
 						: <p className="ml-10">No Result</p>
@@ -63,7 +63,7 @@ const RescheduleForm = () => {
 	const { currentUser } = React.useContext(ctx);
 	const { searchAvailableTrips } = useSearchTrip();
 	const { activeStep } = useStepper();
-	const { setActiveStep } = React.useContext(BookingCTX);
+	const { setActiveStep, setAvailableTrips } = React.useContext(BookingCTX);
 
 	const rescheduleSchema = yup.object().shape({
 		date: yup.string().required("New date is required."),
@@ -77,14 +77,15 @@ const RescheduleForm = () => {
 		resolver: yupResolver(rescheduleSchema),
 	});
 
-	const onSubmit = handleSubmit((formData) => {
+	const onSubmit = handleSubmit(async (formData) => {
 		const reqData = {
 			departure: currentUser.travel_from,
 			arrival: currentUser.travel_to,
 			date: format(formData.date, "PP")
 		}
 		setActiveStep(0)
-		searchAvailableTrips(reqData);
+		const response = await searchAvailableTrips(reqData);
+		setAvailableTrips(response)
 	});
 
 	return (
@@ -134,7 +135,7 @@ const RescheduleForm = () => {
 			<div>
 				<form onSubmit={onSubmit} className="grid grid-cols-3 gap-5 mt-10">
 					<div className="flex flex-col w-full col-span-2">
-						<label className="text-xs md:text-sm !w-full flex flex-col">
+						<label htmlFor="date" className="text-xs md:text-sm !w-full flex flex-col">
 							Select new date
 							<Controller
 								control={control}
@@ -176,7 +177,7 @@ const RescheduleForm = () => {
 						type="submit"
 					/>
 				</form>
-				{activeStep == 1 && <RescheduleSelection />}
+				{activeStep === 1 && <RescheduleSelection />}
 			</div>
 		</section>
 	);
@@ -239,7 +240,6 @@ const RescheduleSelection = () => {
 							selectedTrip?.departure?.trip_code === item.trip_code;
 						return (
 							<div
-								role="button"
 								tabIndex={isAvailableSeatsExceeded ? "-1" : "0"}
 								key={item.trip_code}
 								data-state={
@@ -329,7 +329,7 @@ const RescheduleSelection = () => {
 				text="Reschedule"
 				className="w-full"
 				onClick={handleReschedule}
-				disabled={!isDisabled ? true : false}
+				disabled={!isDisabled}
 			/>
 		</div>
 	)
@@ -562,21 +562,6 @@ const Payment = () => {
 							</p>
 						</div>
 					</div>
-					{bookingData.trip_type === "Round Trip" && (
-						<div>
-							<h5 className="font-semibold text-sm mb-1">Return Details</h5>
-							<div className="flex flex-wrap gap-x-4 gap-y-1 text-[#1E1E1E] text-xs font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
-								<p>
-									<CalendarIcon />
-									{format(new Date(bookingData?.return_date), "PP")}
-								</p>
-								<p>
-									<ClockIcon />
-									{bookingData?.return_time}
-								</p>
-							</div>
-						</div>
-					)}
 				</div>
 
 				<div className="border-y-2 border-dashed py-2">
