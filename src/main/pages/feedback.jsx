@@ -10,7 +10,7 @@ import axiosInstance from "@/api";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import SuccessModal from "@/components/modals/success";
 import { TextareaAutosize } from '@mui/base';
-import { toast } from "sonner";
+import { customError } from "@/lib/utils";
 
 const feedbackSchema = yup.object().shape({
 	first_name: yup
@@ -84,15 +84,7 @@ const Feedback = () => {
 				}
 			})
 			.catch((error) => {
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				) {
-					toast.error("Bad Request.", {
-						description: "Could not send feedback. Please try again."
-					});
-				}
+				customError(error, "'Bad Request.', { description: 'Could not send feedback. Please try again.'}");
 			})
 			.finally(() => setLoading(false));
 	});

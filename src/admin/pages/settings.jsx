@@ -20,6 +20,7 @@ import { BookingCTX } from "@/contexts/BookingContext";
 import axios from "axios";
 import axiosInstance from "@/api";
 import { isValidUrl } from "@/lib/utils";
+import { customError } from "@/lib/utils";
 
 const Settings = () => {
 	return (
@@ -132,12 +133,7 @@ const EditProfile = () => {
 				toast.success("Profile successfully updated.");
 			})
 			.catch((error) => {
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error("Error occurred while updating profile.");
+				customError(error, "Error occurred while updating profile.");
 			})
 			.finally(() => setLoading(false));
 	};
@@ -316,12 +312,7 @@ const ChangePassword = () => {
 			.catch((error) => {
 				if (error.code === "ERR_BAD_REQUEST")
 					toast.error("Old password is incorrect.");
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error("Error occurred while changing password.Try again.");
+				customError(error, "Error occurred while changing password.Try again.");
 			})
 			.finally(() => {
 				setLoading(false);

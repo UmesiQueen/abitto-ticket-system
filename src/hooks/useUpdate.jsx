@@ -7,6 +7,7 @@ import { GlobalCTX } from "@/contexts/GlobalContext";
 import BookingSuccessModal from "@/components/modals/book.success";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuid } from "uuid"
+import { customError } from "@/lib/utils";
 
 export const useUpdate = () => {
 	const { unMountPortalModal, setModalContent, mountPortalModal, adminProfile } = React.useContext(GlobalCTX);
@@ -24,7 +25,7 @@ export const useUpdate = () => {
 		axiosInstance
 			.patch("/booking/update", formValues)
 			.then((res) => {
-				if (res.status == 200)
+				if (res.status === 200)
 					setModalContent(
 						<SuccessModal
 							header="Check-in Successful"
@@ -34,12 +35,7 @@ export const useUpdate = () => {
 			})
 			.catch((error) => {
 				unMountPortalModal();
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error("Error occurred while checking-in. Try again.");
+				customError(error, "Error occurred while checking-in. Try again.");
 			})
 			.finally(() => setLoading(false));
 	};
@@ -62,16 +58,16 @@ export const useUpdate = () => {
 		axiosInstance
 			.post("booking/reschedule", updatePrev)
 			.then((res) => {
-				if (res.status == 200) {
+				if (res.status === 200) {
 					// book new ticket here
 					axiosInstance
 						.post("/booking/newbooking", rescheduleData)
 						.then((res) => {
-							if (res.status == 200) {
+							if (res.status === 200) {
 								const ticket_id = res.data.booking.ticket_id;
 								mountPortalModal(<BookingSuccessModal
 									id={ticket_id}
-									onClick={() => { navigate(`/backend/${adminProfile.account_type}/booking-details/${ticket_id}`) }}
+									onclick={() => navigate(`/backend/${adminProfile.account_type}/booking-details/${ticket_id}`)}
 								/>);
 							}
 						})
@@ -85,12 +81,7 @@ export const useUpdate = () => {
 						})
 				}
 			}).catch((error) => {
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error("Error occurred while Rescheduling. Please try again.");
+				customError(error, "Error occurred while Rescheduling. Please try again.");
 
 			}).finally(() => setLoading(false))
 	};
@@ -102,13 +93,13 @@ export const useUpdate = () => {
 		setLoading(true);
 		axiosInstance.patch("logistics/update", reqData)
 			.then((res) => {
-				if (res.status == 200)
+				if (res.status === 200)
 					setModalContent(
 						<SuccessModal
 							header={`Shipment status updated to '${shipment_status}'`}
-							text={shipment_status == "Arrived"
+							text={shipment_status === "Arrived"
 								? "You have confirmed that this shipment has arrived your terminal. Please notify receiver for collection."
-								: shipment_status == "Collected"
+								: shipment_status === "Collected"
 									? "You have confirmed that this shipment has been collected."
 									: "Unknown Request."}
 							onclick={onSuccess}
@@ -116,12 +107,7 @@ export const useUpdate = () => {
 					);
 			})
 			.catch((error) => {
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error("Error occurred while updating shipment status. Try again.");
+				customError(error, "Error occurred while updating shipment status. Try again.");
 			})
 			.finally(() => setLoading(false));
 	}
@@ -130,7 +116,7 @@ export const useUpdate = () => {
 		setLoading(true);
 		axiosInstance.patch("price/edit", reqData)
 			.then((res) => {
-				if (res.status == 200)
+				if (res.status === 200)
 					setModalContent(
 						<SuccessModal
 							header="Prices Update Successful"
@@ -140,12 +126,7 @@ export const useUpdate = () => {
 					);
 			})
 			.catch((error) => {
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error("Error occurred while updating price. Try again.");
+				customError(error, "Error occurred while updating price. Try again.");
 			})
 			.finally(() => setLoading(false));
 	}

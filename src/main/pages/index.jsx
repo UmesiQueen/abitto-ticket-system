@@ -3,11 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import axiosInstance from "@/api";
 import { Helmet } from "react-helmet-async";
-import { toast } from "sonner";
+import { customError } from "@/lib/utils";
 import { MapIcon, PhoneIcon, CaretIcon, BoatIcon } from "@/assets/icons";
 import { marinaMap, timberMap } from "@/assets/images";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-// import FadeInBackgroundTransition from "@/components/animation/FadeIn";
 import Button from "@/components/custom/Button";
 import HeroGIF from "@/assets/hero.gif";
 import CountUp from "react-countup";
@@ -505,12 +504,7 @@ const ContactForm = () => {
 				}
 			})
 			.catch((error) => {
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error("Request failed. Please try again later.");
+				customError(error, "Request failed. Please try again later.");
 			})
 			.finally(() => {
 				setLoading(false);

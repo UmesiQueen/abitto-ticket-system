@@ -2,7 +2,6 @@ import React from "react";
 import PaystackPop from "@paystack/inline-js";
 import axiosInstance from "@/api";
 import { BookingCTX } from "@/contexts/BookingContext";
-import { toast } from "sonner";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { LogisticsSuccessModal } from "@/components/modals/book.success";
 import { v4 as uuid } from "uuid";
@@ -217,12 +216,7 @@ export const usePayment = () => {
 				}
 			})
 			.catch((error) => {
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error("Error occurred while creating new shipment.");
+				customError(error, "Error occurred while creating new shipment.");
 			})
 			.finally(() => setLoading(false));
 	}
