@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import BookingContext from "./BookingContext";
+import Cookies from 'js-cookie';
 
 export const GlobalCTX = React.createContext();
 
@@ -17,6 +18,13 @@ const GlobalContext = ({ children }) => {
 	const [liveMessage, setLiveMessage] = React.useState({});
 	const [showLiveModal, setShowLiveModal] = React.useState(false);
 	const [currentFeedback, setCurrentFeedback] = React.useState({});
+
+	const access_token = Cookies.get('access_token');
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	React.useEffect(() => {
+		if (!access_token) localStorage.removeItem("admin")
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
 	React.useEffect(() => {
 		if (Object.keys(adminProfile).length)

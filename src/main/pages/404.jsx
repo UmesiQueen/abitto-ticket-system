@@ -2,12 +2,13 @@ import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { GlobalCTX } from "@/contexts/GlobalContext";
+import Cookies from 'js-cookie';
 
 const PageNotFound = () => {
 	const { adminProfile } = React.useContext(GlobalCTX);
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
-	const isAuth = JSON.parse(localStorage.getItem("access token"));
+	const isAuth = Cookies.get('access_token');
 	const navigateTo = (account_type) => {
 		switch (account_type) {
 			case "super-admin":
@@ -37,6 +38,7 @@ const PageNotFound = () => {
 					Page Not Found.
 				</h1>
 				<button
+					type="button"
 					onClick={() => navigate(returnPath)}
 					className=" bg-green-500 py-3 px-6 font-semibold text-sm  hover:bg-green-700 transition-all duration-150 ease-in-out hover:scale-[1.05] text-white mt-5"
 				>

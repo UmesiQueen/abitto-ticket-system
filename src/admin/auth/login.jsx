@@ -8,7 +8,8 @@ import { GlobalCTX } from "@/contexts/GlobalContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import axiosInstance from "@/api";
-import { customError } from "@/lib/utils";
+// import { customError } from "@/lib/utils";
+import Cookies from 'js-cookie';
 
 const schema = yup.object().shape({
 	email: yup
@@ -48,15 +49,17 @@ const Login = () => {
 						city: user.city,
 						terminal: user.terminal,
 					});
-					localStorage.setItem("access_token", JSON.stringify(token));
-					return navigate(navigateTo(user.account_type));
+					Cookies.set('access_token', token, {
+						expires: 1, secure: true, sameSite: 'strict'
+					});
+					setTimeout(() => navigate(navigateTo(user.account_type)), 200);
 				}
 			})
 			.catch((error) => {
-				if (error.code === "ERR_BAD_REQUEST")
-					toast.error("Email or password is incorrect.");
+				if (error.code === "ERR_BAD_REQUEST") {
+					return toast.error("Email or password is incorrect.");
+				}
 
-				customError(error, "Unknown Error occurred!");
 			})
 			.finally(() => setLoading(false));
 	});

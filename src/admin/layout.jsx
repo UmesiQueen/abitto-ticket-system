@@ -33,6 +33,7 @@ import { Feedback, PriceChange } from "@mui/icons-material";
 import Logo from "@/assets/logo2.svg";
 import { Mailbox } from "lucide-react";
 import { customError } from "@/lib/utils";
+import Cookies from 'js-cookie';
 
 const ProtectedRoute = () => {
 	const navigate = useNavigate();
@@ -74,6 +75,8 @@ const ProtectedRoute = () => {
 					const city = booking.travel_from.split(",")[1].trim().toLowerCase();
 					return terminals.includes(city);
 				});
+
+				console.log(sortedQuery, "sortedQuery")
 				return sortedQuery;
 			}
 			catch (error) {
@@ -180,7 +183,7 @@ const ProtectedRoute = () => {
 	];
 
 	const handleLogout = () => {
-		localStorage.removeItem("access token");
+		Cookies.remove('access_token');
 		localStorage.removeItem("admin");
 		navigate("login");
 	};
@@ -287,7 +290,7 @@ const AdminLayout = () => {
 	const { adminProfile } = React.useContext(GlobalCTX);
 	const { accountType } = useParams();
 	const account_type = adminProfile.account_type;
-	const accessToken = JSON.parse(localStorage.getItem("access token")) ?? "";
+	const accessToken = Cookies.get('access_token');
 	const isAuth = accessToken && String(accountType).includes(account_type);
 
 	return <>{isAuth ? <ProtectedRoute /> : <Navigate to="/login" />}</>;

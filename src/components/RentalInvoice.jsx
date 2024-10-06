@@ -16,11 +16,12 @@ import {
 } from "@/assets/icons";
 import { Timelapse } from "@mui/icons-material";
 import { toast } from "sonner";
+import Cookies from 'js-cookie';
 
 const RentalInvoice = () => {
 	const navigate = useNavigate();
 	const currentUser = useLoaderData();
-	const isAuth = JSON.parse(localStorage.getItem("access token"));
+	const isAuth = Cookies.get('access_token');
 	const componentRef = React.useRef();
 
 	const handlePrint = useReactToPrint({
