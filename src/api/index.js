@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import axios from "axios";
 import { toast } from "sonner";
 
@@ -11,6 +12,29 @@ const axiosInstance = axios.create({
 		timeout: 10000,
 	},
 });
+
+// // Variable to store the cancel token of the last request
+// let cancelTokenSource = null;
+
+// // Add a request interceptor to handle cancel tokens
+// axiosInstance.interceptors.request.use((config) => {
+// 	// Cancel the previous request if there is one
+// 	if (cancelTokenSource) {
+// 		cancelTokenSource.cancel('Request canceled due to new request.');
+// 	}
+
+// 	// Create a new cancel token for the current request
+// 	cancelTokenSource = axios.CancelToken.source();
+
+// 	// Attach the cancel token to the request config
+// 	config.cancelToken = cancelTokenSource.token;
+
+// 	return config;
+// }, (error) => {
+// 	// Handle other errors
+// 	return Promise.reject(error);
+// });
+
 
 // Add a response interceptor
 axiosInstance.interceptors.response.use(
@@ -34,9 +58,12 @@ axiosInstance.interceptors.response.use(
 		) {
 			// Display a global error message for timeout
 			toast.error(
-				"Network error. Please check your internet connection and try again."
+				"Network error", { description: "Please check your internet connection and try again." }
 			);
 		}
+		// if (axios.isCancel(error)) {
+		// 	//do stuff
+		// }
 		// Handle other errors
 		return Promise.reject(error);
 	}

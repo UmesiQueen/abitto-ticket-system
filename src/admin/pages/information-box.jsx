@@ -1,7 +1,6 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { createPortal } from "react-dom";
-import { useLoaderData, useRevalidator } from "react-router-dom";
 import Modal from "@mui/material/Modal";
 import {
 	flexRender,
@@ -22,7 +21,7 @@ import ReactPaginate from "react-paginate";
 import { Button as ButtonUI } from "@/components/ui/button";
 import { CaretIcon, CancelSquareIcon, DeleteIcon } from "@/assets/icons";
 import { BookingCTX } from "@/contexts/BookingContext";
-import { cn } from "@/lib/utils";
+import { cn, customError } from "@/lib/utils";
 import { v4 as uuid } from "uuid";
 import axiosInstance from "@/api";
 import ConfirmationModal from "@/components/modals/confirmation";
@@ -35,12 +34,14 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import SuccessModal from "@/components/modals/success";
 import UploadPhoto from "@/assets/images/photo.png"
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 
 const InformationBox = () => {
 	const { setCurrentPageIndex, setLoading: setLoader } = React.useContext(BookingCTX);
 	const { mountPortalModal, setModalContent } = React.useContext(GlobalCTX);
-	const dataQuery = useLoaderData();
-	const { revalidate } = useRevalidator();
+	const [dataQuery, setDataQuery] = React.useState([]);
+	const queryClient = useQueryClient();
 	const [imageFile, setImageFile] = React.useState("");
 	const [preview, setPreview] = React.useState("");
 	const [pagination, setPagination] = React.useState({
@@ -48,9 +49,33 @@ const InformationBox = () => {
 		pageSize: 10,
 	});
 
+	const { data, isSuccess, isPending } = useQuery({
+		queryKey: ["infoBox"],
+		queryFn: InformationLoader
+	})
+
+	React.useEffect(() => {
+		if (isSuccess) setDataQuery(data);
+	}, [data, isSuccess])
+
+	const validFileExtensions =
+		["jpg", "png", "jpeg", "svg", "webp"];
+
+	function isValidFileType(fileName, fileType) {
+		return (
+			fileName &&
+			validFileExtensions[fileType].indexOf(fileName.split(".").pop()) > -1
+		);
+	}
+
 	const infoSchema = yup.object().shape({
 		title: yup.string().required("Title is required."),
-		message: yup.string().required("Select an Image to upload")
+		message: yup
+			.mixed()
+			.required("Select an Image to upload")
+			.test("is-valid-type", "Not a valid image type", ([value]) => {
+				return (value) ? isValidFileType(value[0]?.name.toLowerCase(), "image") : false
+			})
 	})
 
 	const {
@@ -69,8 +94,7 @@ const InformationBox = () => {
 			clearErrors("message")
 			setValue("message", preview)
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [preview])
+	}, [clearErrors, preview, setValue])
 
 	const columns = [
 		{
@@ -106,11 +130,11 @@ const InformationBox = () => {
 		},
 		{
 			id: "actions",
-			header: <div className="text-center">Actions</div>,
+			header: <div className="text-right pr-10">Actions</div>,
 			cell: ({ row }) => (
 				<div className="inline-flex justify-end w-full gap-5">
 					{
-						row.original.status == "Active" ?
+						row.original.status === "Active" ?
 							<ButtonUI
 								type="button"
 								variant="secondary"
@@ -172,7 +196,7 @@ const InformationBox = () => {
 	const onSubmit = handleSubmit(async (formData) => {
 		mountPortalModal(
 			<ConfirmationModal props={{
-				header: "Are you sure you want to upload this message?",
+				header: "Upload this message?",
 				handleRequest: () => {
 					handleUploadMessage(formData)
 				},
@@ -212,7 +236,7 @@ const InformationBox = () => {
 			axiosInstance
 				.post("/infobox/new", formValues)
 				.then((res) => {
-					if (res.status == 200) {
+					if (res.status === 200) {
 						handleReset()
 						setModalContent(
 							<SuccessModal
@@ -241,18 +265,18 @@ const InformationBox = () => {
 		reset();
 		setPreview("");
 		setImageFile("");
-		revalidate();
+		queryClient.invalidateQueries("infoBox");
 	}
 
 	const handleUpdateMessage = (data, action) => {
 		const options = {
 			deactivate: {
-				header: "Are you sure you want to deactivate this message?",
+				header: "Deactivate this message?",
 				severity: "delete",
 				status: "Inactive"
 			},
 			activate: {
-				header: "Are you sure you want to activate this message?",
+				header: "Activate this message?",
 				severity: "warning",
 				status: "Active"
 			}
@@ -289,8 +313,8 @@ const InformationBox = () => {
 			}
 		}
 
-		if (action == "Active") {
-			const isActive = dataQuery.filter((message) => message.status == "Active").length
+		if (action === "Active") {
+			const isActive = dataQuery.filter((message) => message.status === "Active").length
 			if (isActive) {
 				setLoader(false);
 				toast.warning("A message is currently active. Please deactivate to upload a new one.")
@@ -301,7 +325,7 @@ const InformationBox = () => {
 		axiosInstance
 			.patch("/infobox/update", formValues)
 			.then((res) => {
-				if (res.status == 200) {
+				if (res.status === 200) {
 					handleReset();
 					setModalContent(
 						<SuccessModal
@@ -312,12 +336,7 @@ const InformationBox = () => {
 				}
 			})
 			.catch((error) => {
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error(options[action].error);
+				customError(error, options[action].error);
 			})
 			.finally(() => setLoader(false));
 	}
@@ -325,7 +344,7 @@ const InformationBox = () => {
 	const handleDelete = (data) => {
 		mountPortalModal(
 			<ConfirmationModal props={{
-				header: "Are you sure you want to delete this record?",
+				header: "Delete this record?",
 				handleRequest: () => {
 					deleteRequest(data)
 				},
@@ -339,7 +358,7 @@ const InformationBox = () => {
 		axiosInstance
 			.patch("/infobox/delete", { message_id: data.message_id })
 			.then((res) => {
-				if (res.status == 200) {
+				if (res.status === 200) {
 					handleReset();
 					setModalContent(
 						<SuccessModal
@@ -350,12 +369,7 @@ const InformationBox = () => {
 				}
 			})
 			.catch((error) => {
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error("Failed to delete message. Try Again.");
+				customError(error, "Failed to delete message. Try Again.");
 			}).finally(() => setLoader(false))
 	}
 
@@ -393,15 +407,18 @@ const InformationBox = () => {
 							"bg-red-50/50 border-red-500": errors.message
 						})}>
 							<input className="hidden" {...register("message")} />
-							<div className="text-center">
+							<div className="text-center min-h-56 flex flex-col gap-2">
 								<img src={UploadPhoto} alt="upload" width={100} height={100} className="mx-auto" />
-								<p>Upload image or file</p>
+								<p>Choose image to upload</p>
 								{errors?.message && (
-									<p className="text-xs text-red-700 font-medium mt-2">
+									<p className="text-xs text-red-700 font-medium">
 										{errors?.message.message}
 									</p>
 								)}
-								<label className="mt-10 text-sm text-white bg-blue-500 font-medium inline-flex items-center justify-center mx-auto h-10 w-40 rounded-lg cursor-pointer hover:bg-blue-700">
+								{
+									imageFile && <p className=" italic text-sm bg-blue-50 py-1 border border-dashed ">{imageFile.target.files[0].name}</p>
+								}
+								<label className="mt-auto text-sm text-white bg-blue-500 font-medium inline-flex items-center justify-center mx-auto h-10 w-40 rounded-lg cursor-pointer hover:bg-blue-700">
 									Browse files
 									<input
 										type="file"
@@ -417,6 +434,7 @@ const InformationBox = () => {
 							<div
 								className="overflow-scroll no-scrollbar relative h-full flex items-center justify-center"
 								onClick={() => mountPortalModal(<PreviewModal url={preview} />)}
+								onKeyDown={() => mountPortalModal(<PreviewModal url={preview} />)}
 							>
 								{preview.length ?
 									<img src={preview} alt="notice" />
@@ -469,7 +487,7 @@ const InformationBox = () => {
 										colSpan={columns.length}
 										className="h-24 text-center"
 									>
-										No results.
+										{isPending ? <p className="inline-flex gap-2 items-center">Fetching data  <Loader2 className="animate-spin" /></p> : "No results."}
 									</TableCell>
 								</TableRow>
 							)}
@@ -540,17 +558,17 @@ export const InformationModal = () => {
 						}}
 						className="no-scrollbar"
 					>
-						<div className=" py-20 md:my-0 min-h-screen md:h-full flex justify-center items-center px-5">
-							<div className="relative">
-								<ButtonUI
-									variant="ghost"
-									size="icon"
-									className="bg-white rounded-full absolute -top-3 -right-3 p-2 shadow-md"
-									onClick={() => { setShowLiveModal(false) }}
-								>
-									<CancelSquareIcon />
-								</ButtonUI>
-								<div className="max-w-[600px] md:w-[600px] aspect-auto">
+						<div className="py-20 md:py-0 min-h-screen md:h-full flex justify-center items-center px-5">
+							<div className="w-full max-w-[calc(100vw-100px)] h-full max-h-[calc(100vh-100px)] flex justify-center ">
+								<div className="h-full w-fit relative">
+									<ButtonUI
+										variant="ghost"
+										size="icon"
+										className="bg-white rounded-full absolute -top-3 -right-3 p-2 shadow-md"
+										onClick={() => { setShowLiveModal(false) }}
+									>
+										<CancelSquareIcon />
+									</ButtonUI>
 									<img src={liveMessage?.message} alt="notice" className="w-full h-full" />
 								</div>
 							</div>
@@ -567,33 +585,28 @@ const PreviewModal = ({ url }) => {
 	const { unMountPortalModal } = React.useContext(GlobalCTX);
 
 	return (
-		<div className="flex justify-center items-center relative">
-			<ButtonUI
-				variant="ghost"
-				size="icon"
-				className="bg-white rounded-full absolute -top-3 -right-3 p-2 shadow-md"
-				onClick={unMountPortalModal}
-			>
-				<CancelSquareIcon />
-			</ButtonUI>
-			<div className="w-[700px] h-[500px] flex ">
-				<img src={url} alt="notice" className="w-full h-full object-fit" />
+		<div className="py-12 w-full max-w-[calc(100vw-100px)] min-h-[700px] max-h-[calc(100vh-96px)] flex justify-center">
+			<div className="h-full w-fit relative">
+				<ButtonUI
+					variant="ghost"
+					size="icon"
+					className="bg-white rounded-full absolute -top-3 -right-3  p-2 shadow-md"
+					onClick={unMountPortalModal}
+				>
+					<CancelSquareIcon />
+				</ButtonUI>
+				<img src={url} alt="notice" className="w-fit h-full" />
 			</div>
 		</div>
 	)
 }
 
-export const InformationLoader = async () => {
+const InformationLoader = async () => {
 	try {
 		const response = await axiosInstance.get("infobox/get");
 		return response.data.infoBoxes;
 	} catch (error) {
-		if (
-			!error.code === "ERR_NETWORK" ||
-			!error.code === "ERR_INTERNET_DISCONNECTED" ||
-			!error.code === "ECONNABORTED"
-		)
-			toast.error("Error occurred while retrieving uploaded messages.");
+		customError(error, "Error occurred while retrieving uploaded messages.");
 		return [];
 	}
 }

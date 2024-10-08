@@ -34,7 +34,7 @@ const RentalAdmin = () => {
 				<title>Rental | Admin</title>
 			</Helmet>
 			<div className="bg-white min-h-[calc(100vh-150px)] p-10">
-				{activeStep == 0 ? (
+				{activeStep === 0 ? (
 					<div className="flex items-start">
 						<ButtonIcon
 							size="icon"
@@ -47,9 +47,9 @@ const RentalAdmin = () => {
 							<RentalSelection rentalCosts={rentalCosts} />
 						</div>
 					</div>
-				) : activeStep == 1 ? (
+				) : activeStep === 1 ? (
 					<RentalForm />
-				) : activeStep == 2 ? (
+				) : activeStep === 2 ? (
 					<RentalSummary />
 				) : (
 					""

@@ -28,7 +28,7 @@ const BookingConfirmation = () => {
         queryKey: ["verify"],
         queryFn: async () => {
             try {
-                const response = await axiosInstance.get("/paystack/verify", { "reference": "c2ri1bevay" })
+                const response = await axiosInstance.get("/paystack/verify", { reference: searchObj.reference })
                 const { status } = response.data;
                 if (status) {
                     // get ticket id from verification response

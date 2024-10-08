@@ -1,16 +1,15 @@
 /* eslint-disable react/prop-types */
 import React from "react";
-import { useLoaderData, useRevalidator } from "react-router-dom";
+import { useRevalidator } from "react-router-dom";
 import { Button as ButtonUI } from "@/components/ui/button";
 import Button from "@/components/custom/Button";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { cn } from "@/lib/utils";
+import { cn, customError } from "@/lib/utils";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import ConfirmationModal from "@/components/modals/confirmation";
 import axiosInstance from "@/api";
-import { toast } from "sonner";
 import { useUpdate } from "@/hooks/useUpdate";
 
 const pricingSchema = yup.object().shape({
@@ -21,16 +20,15 @@ const pricingSchema = yup.object().shape({
 });
 
 const Pricing = () => {
-	const prices = useLoaderData();
 	const { revalidate, state } = useRevalidator();
 	const { mountPortalModal } = React.useContext(GlobalCTX);
-	const [cost, setCost] = React.useState(prices);
+	const [cost, setCost] = React.useState({
+		within_marina: 0,
+		calabar_to_uyo: 0,
+		uyo_to_calabar: 0,
+		logistics: 0
+	});
 	const { updatePrices } = useUpdate();
-
-	React.useEffect(() => {
-		if (Object.keys(prices).length)
-			setCost(prices)
-	}, [prices])
 
 	const {
 		register,
@@ -42,9 +40,9 @@ const Pricing = () => {
 		defaultValues: cost
 	});
 
-	React.useEffect(() => {
-		console.log(defaultValues, "default")
-	}, [isSubmitted])
+	// React.useEffect(() => {
+	// 	console.log(defaultValues, "default")
+	// }, [isSubmitted])
 
 	const onSubmit = handleSubmit((formData) => {
 		const reqData = Object.entries(formData).map(([key, value]) => ({
@@ -54,7 +52,7 @@ const Pricing = () => {
 		mountPortalModal(
 			<ConfirmationModal
 				props={{
-					header: "Are you sure you want to update these prices?",
+					header: "Update these prices?",
 					handleRequest: () => updatePrices(reqData, () => { revalidate() })
 				}}
 			/>
@@ -99,7 +97,7 @@ const Pricing = () => {
 							<td>1</td>
 							<td>Within Marina</td>
 							<EditableInput
-								defaultValue={cost["within_marina"]}
+								defaultValue={cost.within_marina}
 								{...register("within_marina")}
 								error={errors}
 								formState={{ isSubmitted, state }}
@@ -110,7 +108,7 @@ const Pricing = () => {
 							<td>2</td>
 							<td>Calabar to Uyo</td>
 							<EditableInput
-								defaultValue={defaultValues["calabar_to_uyo"]}
+								defaultValue={defaultValues.calabar_to_uyo}
 								{...register("calabar_to_uyo")}
 								error={errors}
 								formState={{ isSubmitted, state }}
@@ -121,7 +119,7 @@ const Pricing = () => {
 							<td>3</td>
 							<td>Uyo to Calabar</td>
 							<EditableInput
-								defaultValue={defaultValues["uyo_to_calabar"]}
+								defaultValue={defaultValues.uyo_to_calabar}
 								{...register("uyo_to_calabar")}
 								error={errors}
 								formState={{ isSubmitted, state }}
@@ -154,7 +152,7 @@ const Pricing = () => {
 							<td>1</td>
 							<td>Both Terminals</td>
 							<EditableInput
-								defaultValue={defaultValues["logistics"]}
+								defaultValue={defaultValues.logistics}
 								{...register("logistics")}
 								error={errors}
 								formState={{ isSubmitted, state }}
@@ -181,9 +179,10 @@ const EditableInput = React.forwardRef((props, ref) => {
 		setEditable((prev) => !prev);
 	};
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
 		setValue(defaultValue);
-	}, [state])
+	}, [defaultValue, state])
 
 	React.useEffect(() => {
 		if (isSubmitted) setEditable(false);
@@ -215,7 +214,6 @@ const EditableInput = React.forwardRef((props, ref) => {
 							handleOnChange(event)
 						}}
 						disabled={!editable}
-						autoFocus={editable ? "autofocus" : ""}
 						className="prices w-full h-full bg-transparent focus:outline-none"
 					/>
 					{errors && (
@@ -242,14 +240,8 @@ export const PriceLoader = async () => {
 		const resData = response.data.prices.map((item) => ({ [item.trip_name]: item.cost }));
 		const result = Object.assign({}, ...resData);
 		return result;
-
 	} catch (error) {
-		if (
-			!error.code === "ERR_NETWORK" ||
-			!error.code === "ERR_INTERNET_DISCONNECTED" ||
-			!error.code === "ECONNABORTED"
-		)
-			toast.error("Error occurred while retrieving trip details");
+		customError(error, "Error occurred while retrieving trip details");
 		return {
 			within_marina: 0,
 			calabar_to_uyo: 0,
