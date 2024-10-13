@@ -34,10 +34,11 @@ import Logo from "@/assets/logo2.svg";
 import { Mailbox } from "lucide-react";
 import { customError } from "@/lib/utils";
 import Cookies from 'js-cookie';
+import NoMobileView from "@/assets/images/no_mobile_view.jpg"
 
 const ProtectedRoute = () => {
 	const navigate = useNavigate();
-	const matches = useMediaQuery("(min-width:1240px)");
+	const matches = useMediaQuery("(min-width:1024px)");
 	const { adminProfile } = React.useContext(GlobalCTX);
 	const { setBookingQuery, setFiltering } =
 		React.useContext(BookingCTX);
@@ -196,91 +197,98 @@ const ProtectedRoute = () => {
 			<Helmet>
 				<title>Admin | Abitto Ferry</title>
 			</Helmet>
-			<div className="relative">
-				{/* sidebar */}
-				<aside className="h-screen w-40 md:w-60 bg-black text-white flex flex-col fixed">
-					<div>
-						<img
-							alt="logo"
-							src={Logo}
-							width={150}
-							height={50}
-							className="pl-5 pt-3"
-						/>
-					</div>
-					<nav className="pt-6 pb-2 px-5 mx-auto overflow-scroll no-scrollbar">
-						<ul>
-							{menuItems.filter((item) => item[3].includes(accountType))
-								.map(([title, url, icon]) => {
-									return (
-										<li key={title}>
-											<NavLink
-												to={url}
-												className="[&.active]:bg-blue-500 px-5 md:min-w-44 py-3 rounded-xl hover:bg-gray-700/90 mb-2 transition-all ease-in-out cursor-pointer flex items-center gap-2 [&>.title]:hidden  w-fit md:w-full md:[&>.title]:block"
-											>
-												<span className="text-[#f1f1f1]">{icon}</span>
-												<span className="font-medium text-sm hidden md:block">
-													{title}
-												</span>
-											</NavLink>
-										</li>
-									);
-								})}
-						</ul>
-					</nav>
-					<div className="pt-2 mt-auto">
-						<button
-							type="button"
-							className="px-10 w-full text-sm py-3 border-t mt-auto flex items-center gap-2 hover:bg-gray-900/80 "
-							onClick={handleLogout}
-						>
-							<LogoutIcon />
-							<span>Logout</span>
-						</button>
-					</div>
-				</aside>
-				<main className="ml-40 md:ml-60 bg-[#F7F7F7] ">
-					<header className="h-16 w-full bg-white px-8 flex items-center gap-5">
-						{searchBarVisibility && (
-							<div className="h-10 w-80 bg-blue-50 p-3 border border-blue-500 rounded-lg font-normal text-xs font-poppins flex items-center gap-2">
-								<SearchIcon />
-								<input
-									onChange={handleChange}
-									value={filterValue}
-									type="text"
-									className="bg-transparent w-full focus:outline-none py-1"
-									placeholder="Search by booking Id or name"
-								/>
-							</div>
-						)}
-						<div className="ml-auto flex gap-3 text-right">
-							<div className=" leading-none self-end">
-								<p className="font-semibold">{adminProfile.first_name}</p>
-								<p className="text-sm font-medium text-gray-500 lowercase">
-									{adminProfile.account_type} - {adminProfile.city}
-								</p>
-							</div>
-							<Link to={`/backend/${accountType}/settings`}>
-								<Avatar
-									alt={adminProfile.first_name.substring(0, 1)}
-									src={adminProfile.profile_picture}
-									className="bg-gray-300"
-								/>
-							</Link>
+			{matches ?
+				<div className="relative">
+					{/* sidebar */}
+					<aside className="h-screen w-40 md:w-60 bg-black text-white flex flex-col fixed">
+						<div>
+							<img
+								alt="logo"
+								src={Logo}
+								width={150}
+								height={50}
+								className="pl-5 pt-3"
+							/>
 						</div>
-					</header>
-					<section className="relative min-h-[calc(100vh-64px)]">
-						<div className="p-8">
-							{matches ? (
-								<Outlet />
-							) : (
-								<p>Switch to desktop or reduce screen zoom to 100% to view</p>
+						<nav className="pt-6 pb-2 px-5 mx-auto overflow-scroll no-scrollbar">
+							<ul>
+								{menuItems.filter((item) => item[3].includes(accountType))
+									.map(([title, url, icon]) => {
+										return (
+											<li key={title}>
+												<NavLink
+													to={url}
+													className="[&.active]:bg-blue-500 px-5 md:min-w-44 py-3 rounded-xl hover:bg-gray-700/90 mb-2 transition-all ease-in-out cursor-pointer flex items-center gap-2 [&>.title]:hidden  w-fit md:w-full md:[&>.title]:block"
+												>
+													<span className="text-[#f1f1f1]">{icon}</span>
+													<span className="font-medium text-sm hidden md:block">
+														{title}
+													</span>
+												</NavLink>
+											</li>
+										);
+									})}
+							</ul>
+						</nav>
+						<div className="pt-2 mt-auto">
+							<button
+								type="button"
+								className="px-10 w-full text-sm py-3 border-t mt-auto flex items-center gap-2 hover:bg-gray-900/80 "
+								onClick={handleLogout}
+							>
+								<LogoutIcon />
+								<span>Logout</span>
+							</button>
+						</div>
+					</aside>
+					<main className="ml-40 md:ml-60 bg-[#F7F7F7] ">
+						<header className="h-16 w-full bg-white px-8 flex items-center gap-5">
+							{searchBarVisibility && (
+								<div className="h-10 w-80 bg-blue-50 p-3 border border-blue-500 rounded-lg font-normal text-xs font-poppins flex items-center gap-2">
+									<SearchIcon />
+									<input
+										onChange={handleChange}
+										value={filterValue}
+										type="text"
+										className="bg-transparent w-full focus:outline-none py-1"
+										placeholder="Search by booking Id or name"
+									/>
+								</div>
 							)}
-						</div>
-						<Loader />
-					</section>
-				</main>
-			</div>
+							<div className="ml-auto flex gap-3 text-right">
+								<div className=" leading-none self-end">
+									<p className="font-semibold">{adminProfile.first_name}</p>
+									<p className="text-sm font-medium text-gray-500 lowercase">
+										{adminProfile.account_type} - {adminProfile.city}
+									</p>
+								</div>
+								<Link to={`/backend/${accountType}/settings`}>
+									<Avatar
+										alt={adminProfile.first_name.substring(0, 1)}
+										src={adminProfile.profile_picture}
+										className="bg-gray-300"
+									/>
+								</Link>
+							</div>
+						</header>
+						<section className="relative min-h-[calc(100vh-64px)]">
+							<div className="p-8">
+								<Outlet />
+							</div>
+							<Loader />
+						</section>
+					</main>
+				</div>
+				:
+				<div className="px-5 pt-14 flex flex-col gap-5 items-center max-w-[500px] mx-auto">
+					<img src={NoMobileView} alt="NoMobileView" className="mix-blend-multiply w-40 aspect-square" />
+					<p className="text-center font-medium">
+						We&apos;re sorry, but it seems the current page cannot be viewed on your
+						device due to the screen size limitation. To ensure the best user experience
+						and readability, the page you&apos;re trying to access requires a larger screen size(min-width 1024px).
+					</p>
+				</div>
+			}
 		</>
 	);
 };
