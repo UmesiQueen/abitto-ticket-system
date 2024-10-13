@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 import React from "react";
-import { useRevalidator } from "react-router-dom";
 import { Button as ButtonUI } from "@/components/ui/button";
 import Button from "@/components/custom/Button";
 import { useForm } from "react-hook-form";
@@ -11,6 +10,8 @@ import { GlobalCTX } from "@/contexts/GlobalContext";
 import ConfirmationModal from "@/components/modals/confirmation";
 import axiosInstance from "@/api";
 import { useUpdate } from "@/hooks/useUpdate";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 
 const pricingSchema = yup.object().shape({
 	within_marina: yup.string().required("Amount cannot be empty."),
@@ -20,7 +21,6 @@ const pricingSchema = yup.object().shape({
 });
 
 const Pricing = () => {
-	const { revalidate, state } = useRevalidator();
 	const { mountPortalModal } = React.useContext(GlobalCTX);
 	const [cost, setCost] = React.useState({
 		within_marina: 0,
@@ -29,31 +29,42 @@ const Pricing = () => {
 		logistics: 0
 	});
 	const { updatePrices } = useUpdate();
+	const queryClient = useQueryClient();
+
+	const { data, isSuccess, isPending } = useQuery({
+		queryKey: ["prices"],
+		queryFn: PriceLoader
+	})
 
 	const {
 		register,
 		handleSubmit,
-		formState: { errors, isSubmitted, defaultValues },
+		reset,
+		formState: { errors, isSubmitted, defaultValues, isDirty },
 	} = useForm({
 		mode: "onSubmit",
 		resolver: yupResolver(pricingSchema),
 		defaultValues: cost
 	});
 
-	// React.useEffect(() => {
-	// 	console.log(defaultValues, "default")
-	// }, [isSubmitted])
+	React.useEffect(() => {
+		if (isSuccess) {
+			reset(data)
+			setCost(data)
+		}
+	}, [data, isSuccess, reset])
 
 	const onSubmit = handleSubmit((formData) => {
 		const reqData = Object.entries(formData).map(([key, value]) => ({
 			trip_name: key,
 			cost: value
 		}));
+		console.log(reqData, "hello")
 		mountPortalModal(
 			<ConfirmationModal
 				props={{
-					header: "Update these prices?",
-					handleRequest: () => updatePrices(reqData, () => { revalidate() })
+					header: "Update prices?",
+					handleRequest: () => updatePrices(reqData, () => { queryClient.invalidateQueries("prices") })
 				}}
 			/>
 		);
@@ -66,16 +77,17 @@ const Pricing = () => {
 
 	return (
 		<form onSubmit={onSubmit} className="space-y-10">
-			<div className="flex justify-between mb-10">
+			<div className="flex justify-between">
 				<h1 className="font-semibold text-lg">Manage Prices</h1>
 				<Button
 					type="submit"
-					// disabled={!isDirty}
+					disabled={!isDirty}
 					text="Save"
 					className="w-40"
 				/>
 			</div>
-			<div className="p-10 rounded-lg bg-white">
+			{isPending && <p className="inline-flex gap-2 items-center text-xs">Fetching data <Loader2 className="animate-spin" /></p>}
+			<div className="p-10 rounded-lg bg-white mt-10">
 				<h2 className="mb-5 font-medium">Rental Pricing</h2>
 				<table className="w-full border [&_th]:p-2  [&_th]:border [&_td]:px-2  [&_td]:py-4 [&_td]:text-center   [&_td]:border  ">
 					<colgroup>
@@ -88,7 +100,7 @@ const Pricing = () => {
 						<tr>
 							<th>S/N</th>
 							<th>Rental Package</th>
-							<th> Rent Cost</th>
+							<th className="text-left !px-10">Rent Cost</th>
 							<th>Action</th>
 						</tr>
 					</thead>
@@ -97,10 +109,10 @@ const Pricing = () => {
 							<td>1</td>
 							<td>Within Marina</td>
 							<EditableInput
-								defaultValue={cost.within_marina}
+								defaultValue={defaultValues.within_marina}
 								{...register("within_marina")}
 								error={errors}
-								formState={{ isSubmitted, state }}
+								isSubmitted={isSubmitted}
 								handleOnChange={handleChange}
 							/>
 						</tr>
@@ -111,7 +123,7 @@ const Pricing = () => {
 								defaultValue={defaultValues.calabar_to_uyo}
 								{...register("calabar_to_uyo")}
 								error={errors}
-								formState={{ isSubmitted, state }}
+								isSubmitted={isSubmitted}
 								handleOnChange={handleChange}
 							/>
 						</tr>
@@ -122,9 +134,8 @@ const Pricing = () => {
 								defaultValue={defaultValues.uyo_to_calabar}
 								{...register("uyo_to_calabar")}
 								error={errors}
-								formState={{ isSubmitted, state }}
+								isSubmitted={isSubmitted}
 								handleOnChange={handleChange}
-
 							/>
 						</tr>
 					</tbody>
@@ -143,7 +154,7 @@ const Pricing = () => {
 						<tr>
 							<th>S/N</th>
 							<th>Terminals</th>
-							<th>Cost/kg</th>
+							<th className="text-left !px-10">Cost/kg</th>
 							<th>Action</th>
 						</tr>
 					</thead>
@@ -155,9 +166,8 @@ const Pricing = () => {
 								defaultValue={defaultValues.logistics}
 								{...register("logistics")}
 								error={errors}
-								formState={{ isSubmitted, state }}
+								isSubmitted={isSubmitted}
 								handleOnChange={handleChange}
-
 							/>
 						</tr>
 					</tbody>
@@ -170,19 +180,19 @@ const Pricing = () => {
 export default Pricing;
 
 const EditableInput = React.forwardRef((props, ref) => {
-	const { name, error, formState: { isSubmitted, state }, onChange, defaultValue, handleOnChange, ...prop } = props;
+	const { name, error, isSubmitted, onChange, defaultValue, handleOnChange, ...prop } = props;
 	const errors = error?.[name];
 	const [editable, setEditable] = React.useState(false);
 	const [value, setValue] = React.useState(defaultValue);
+
 	const toggleEditable = (element) => {
 		if (!editable) document.getElementById(element).focus();
 		setEditable((prev) => !prev);
 	};
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
 		setValue(defaultValue);
-	}, [defaultValue, state])
+	}, [defaultValue])
 
 	React.useEffect(() => {
 		if (isSubmitted) setEditable(false);
@@ -196,7 +206,7 @@ const EditableInput = React.forwardRef((props, ref) => {
 			<td>
 				<div
 					className={cn(
-						"flex gap-1 items-center rounded-lg border-2 border-transparent px-3 w-60 mx-auto h-12 relative",
+						"flex gap-1 items-center rounded-lg border-2 border-transparent px-3 w-60 mx-5  h-12 relative",
 						{ "border-gray-600": editable, "border-red-500": errors }
 					)}
 				>
@@ -213,6 +223,7 @@ const EditableInput = React.forwardRef((props, ref) => {
 							handleChange(event)
 							handleOnChange(event)
 						}}
+						onBlur={() => setEditable(false)}
 						disabled={!editable}
 						className="prices w-full h-full bg-transparent focus:outline-none"
 					/>
@@ -237,7 +248,7 @@ EditableInput.displayName = EditableInput;
 export const PriceLoader = async () => {
 	try {
 		const response = await axiosInstance.get("/price/get");
-		const resData = response.data.prices.map((item) => ({ [item.trip_name]: item.cost }));
+		const resData = response.data.prices.map((item) => ({ [item.trip_name]: String(item.cost) }));
 		const result = Object.assign({}, ...resData);
 		return result;
 	} catch (error) {
