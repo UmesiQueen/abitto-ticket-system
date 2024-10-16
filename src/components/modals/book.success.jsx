@@ -1,22 +1,29 @@
 /* eslint-disable react/prop-types */
 import React from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import Button from "@/components/custom/Button";
 import checkGIF from "@/assets/check.gif";
+import RentalInvoice from "@/components/RentalInvoice";
+import TicketInvoice from "@/components/TicketInvoice";
+import { useReactToPrint } from "react-to-print";
+import LogisticsInvoice from "@/components/LogisticInvoice";
 
-const BookingSuccessModal = ({ id, onclick = () => { } }) => {
+export const BookingSuccessModal = ({ currentUser, onclick = () => { } }) => {
 	const { handleReset } = React.useContext(BookingCTX);
 	const { unMountPortalModal } = React.useContext(GlobalCTX);
-	const { pathname } = useLocation();
-	const navigate = useNavigate()
+	const componentRef = React.useRef();
 
 	const reset = () => {
 		unMountPortalModal();
-		sessionStorage.removeItem("cus_info");
 		handleReset();
 	};
+
+	const handlePrint = useReactToPrint({
+		content: () => componentRef.current,
+		documentTitle: `Abitto Ticket - ${currentUser?.ticket_id}`,
+		onAfterPrint: reset
+	});
 
 	return (
 		<div className="font-poppins mx-auto py-10 px-5 md:p-16 w-full max-w-[450px] bg-white text-center flex flex-col rounded-lg">
@@ -27,24 +34,16 @@ const BookingSuccessModal = ({ id, onclick = () => { } }) => {
 				Your Ferry Seat has been successfully booked!
 			</h2>
 			<p className="font-normal text-xs text-[#454545] px-10 mb-5">
-				Please check your email for important ticket details.
+				Print ferry ticket details.
 			</p>
-
+			<TicketInvoice props={{ currentUser }} ref={componentRef} />
 			<Button
-				text={
-					String(pathname).includes("/backend")
-						? "Print Ticket"
-						: "Download Ticket"
-				}
+				text="Print Ticket"
 				className="md:py-5 w-full mb-5"
-				onClick={() => {
-					// initiate and redirect to a downloaded pdf here
-					navigate(`/ticket-invoice/${id}`);
-					setTimeout(() => reset())
-				}}
+				onClick={handlePrint}
 			/>
 			<Button
-				text={"Continue"}
+				text="Continue"
 				variant="outline"
 				className=" md:py-5 "
 				onClick={() => {
@@ -56,17 +55,21 @@ const BookingSuccessModal = ({ id, onclick = () => { } }) => {
 	);
 };
 
-export default BookingSuccessModal;
-
-export const RentalSuccessModal = ({ id }) => {
+export const RentalSuccessModal = ({ currentRental }) => {
 	const { handleReset } = React.useContext(BookingCTX);
 	const { unMountPortalModal } = React.useContext(GlobalCTX);
-	const { pathname } = useLocation();
+	const componentRef = React.useRef();
 
 	const reset = () => {
 		unMountPortalModal();
 		handleReset();
 	};
+
+	const handlePrint = useReactToPrint({
+		content: () => componentRef.current,
+		documentTitle: `Abitto Ticket - ${currentRental?.ticket_id}`,
+		onAfterPrint: reset
+	});
 
 	return (
 		<div className="font-poppins mx-auto py-10 px-5 md:p-16 w-full max-w-[450px] bg-white text-center flex flex-col rounded-lg">
@@ -77,19 +80,14 @@ export const RentalSuccessModal = ({ id }) => {
 				Your Ferry rental has been confirmed successfully!
 			</h2>
 			<p className="font-normal text-xs text-[#454545] px-10 mb-5">
-				Please check your email for important ticket details.
+				Please print rental invoice details.
 			</p>
-			<Link to={`/rental-invoice/${id}`}>
-				<Button
-					text={
-						String(pathname).includes("backend")
-							? "Print Ticket"
-							: "Download Ticket"
-					}
-					className="md:py-5 w-full mb-5"
-					onClick={reset}
-				/>
-			</Link>
+			<RentalInvoice props={{ currentUser: currentRental }} ref={componentRef} />
+			<Button
+				text="Print Ticket"
+				className="md:py-5 w-full mb-5"
+				onClick={handlePrint}
+			/>
 			<Button
 				text={"Continue"}
 				variant="outline"
@@ -100,13 +98,20 @@ export const RentalSuccessModal = ({ id }) => {
 	);
 };
 
-export const LogisticsSuccessModal = ({ props: { id, handleReset } }) => {
+export const LogisticsSuccessModal = ({ props: { currentShipment, handleReset } }) => {
 	const { unMountPortalModal } = React.useContext(GlobalCTX);
+	const componentRef = React.useRef();
 
 	const reset = () => {
 		unMountPortalModal();
 		handleReset();
 	};
+
+	const handlePrint = useReactToPrint({
+		content: () => componentRef.current,
+		documentTitle: `Abitto Ticket - ${currentShipment?.shipment_id}`,
+		onAfterPrint: reset
+	});
 
 	return (
 		<div className="font-poppins mx-auto py-10 px-5 md:p-16 w-full max-w-[450px] bg-white text-center flex flex-col rounded-lg">
@@ -119,13 +124,12 @@ export const LogisticsSuccessModal = ({ props: { id, handleReset } }) => {
 			<p className="font-normal text-xs text-[#454545] px-10 mb-5">
 				Print shipment invoice details.
 			</p>
-			<Link to={`/logistics-invoice/${id}`}>
-				<Button
-					text="Print Invoice"
-					className="md:py-5 w-full mb-5"
-					onClick={reset}
-				/>
-			</Link>
+			<LogisticsInvoice props={{ currentShipment }} ref={componentRef} />
+			<Button
+				text="Print Invoice"
+				className="md:py-5 w-full mb-5"
+				onClick={handlePrint}
+			/>
 			<Button
 				text={"Continue"}
 				variant="outline"

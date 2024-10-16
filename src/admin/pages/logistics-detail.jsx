@@ -37,6 +37,8 @@ import ConfirmationModal from "@/components/modals/confirmation";
 import { useUpdate } from "@/hooks/useUpdate";
 import { Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { useReactToPrint } from "react-to-print";
+import LogisticsInvoice from "@/components/LogisticInvoice";
 
 const LogisticsDetails = () => {
 	const navigate = useNavigate();
@@ -299,6 +301,13 @@ export const ShipmentDetails = () => {
 	const { adminProfile, mountPortalModal } = React.useContext(GlobalCTX);
 	const { updateShipmentStatus } = useUpdate();
 	const { revalidate } = useRevalidator();
+	const componentRef = React.useRef();
+
+
+	const handlePrint = useReactToPrint({
+		content: () => componentRef.current,
+		documentTitle: `Abitto Ticket - ${currentShipment?.ticket_id}`,
+	});
 
 	if (!currentShipment?.shipment_id) return <Navigate to={`/backend/${adminProfile.account_type}/pageNotFound`} />;
 
@@ -354,7 +363,6 @@ export const ShipmentDetails = () => {
 									}
 								</div>
 							</div>
-
 							<div className="p-5 pb-20 space-y-6">
 								<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
 									<li>
@@ -427,7 +435,6 @@ export const ShipmentDetails = () => {
 											})}
 										</p>
 									</li>
-
 								</ul>
 								<div className=" space-y-6 border-l-8 border-green-800 bg-green-50 py-2 pl-3 -ml-5">
 									<ul className="*:flex *:flex-col *:gap-1 flex flex-wrap gap-y-5 gap-x-10">
@@ -506,7 +513,6 @@ export const ShipmentDetails = () => {
 										</li>
 									</ul>
 								</div>
-
 								<ul className="*:flex *:flex-col *:gap-1 flex flex-wrap gap-y-5 gap-x-10">
 									<li>
 										<p className="text-xs text-[#7F7F7F]">Payment Method</p>
@@ -575,7 +581,6 @@ export const ShipmentDetails = () => {
 								</ul>
 							</div>
 						</div>
-
 						<div className="bg-white rounded-lg basis-4/12 p-5 flex flex-col gap-6">
 							<div>
 								<h3 className="text-blue-500 font-semibold  text-base md:text-xl ">
@@ -626,10 +631,8 @@ export const ShipmentDetails = () => {
 											{currentShipment?.shipment_status}
 										</span>
 									</p>
-
 								</li>
 							</ul>
-
 							<div className="border-y-2 border-dashed py-2">
 								<table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] ">
 									<tbody>
@@ -660,13 +663,12 @@ export const ShipmentDetails = () => {
 							<button
 								type="button"
 								className=" bg-blue-500 w-full py-3 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white flex justify-center gap-2 mx-auto rounded-lg "
-								onClick={() => {
-									navigate(`/logistics-invoice/${currentShipment.shipment_id}`);
-								}}
+								onClick={handlePrint}
 							>
 								<PrinterIcon />
 								Print
 							</button>
+							<LogisticsInvoice props={{ currentShipment }} ref={componentRef} />
 						</div>
 					</div>
 				) : (

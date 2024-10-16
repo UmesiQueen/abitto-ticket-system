@@ -36,11 +36,6 @@ const BookingContext = ({ children }) => {
 	const [customersData, setCustomersData] = React.useState([]);
 	const [filtering, setFiltering] = React.useState("");
 
-	React.useEffect(() => {
-		if (Object.keys(formData?.bookingDetails).length)
-			sessionStorage.setItem("cus_info", JSON.stringify(formData))
-	}, [formData]);
-
 	// React.useEffect(() => {
 	// 	// check if pathname does not include booking 
 	// handleReset();

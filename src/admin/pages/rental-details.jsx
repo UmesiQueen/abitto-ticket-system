@@ -46,6 +46,8 @@ import { capitalize, truncate } from "lodash";
 import { formatValue } from "react-currency-input-field";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
+import RentalInvoice from "@/components/RentalInvoice";
+import { useReactToPrint } from "react-to-print";
 
 const RentalDetails = () => {
 	return (
@@ -527,6 +529,12 @@ const RentalTable = () => {
 export const RentDetail = () => {
 	const navigate = useNavigate();
 	const currentRental = useLoaderData();
+	const componentRef = React.useRef();
+
+	const handlePrint = useReactToPrint({
+		content: () => componentRef.current,
+		documentTitle: `Abitto Ticket - ${currentRental?.ticket_id}`,
+	});
 
 	return (
 		<div>
@@ -536,218 +544,215 @@ export const RentDetail = () => {
 				</button>
 				<h1 className="text-base font-semibold">Rental Details</h1>
 			</div>
-			{currentRental ? (
-				<div className="flex gap-5 items-start">
-					<div className="bg-white rounded-lg overflow-hidden basis-8/12">
-						<div className="bg-blue-50 flex gap-3 p-5 ">
-							<div className="bg-white rounded-lg p-2 ">
-								<TickIcon />
+			{currentRental ?
+				<>
+					<div className="flex gap-5 items-start">
+						<div className="bg-white rounded-lg overflow-hidden basis-8/12">
+							<div className="bg-blue-50 flex gap-3 p-5 ">
+								<div className="bg-white rounded-lg p-2 ">
+									<TickIcon />
+								</div>
+								<div>
+									<h2 className="text-blue-500 text-sm font-semibold">
+										Rental Confirmed!
+									</h2>
+									<p className="text-[10px]">
+										Great news! The rental has been successfully confirmed from
+										our sales point.
+									</p>
+								</div>
 							</div>
-							<div>
-								<h2 className="text-blue-500 text-sm font-semibold">
-									Rental Confirmed!
-								</h2>
-								<p className="text-[10px]">
-									Great news! The rental has been successfully confirmed from
-									our sales point.
-								</p>
-							</div>
-						</div>
-
-						<div className="p-5 pb-20 space-y-6">
-							<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Rental ID</p>
-									<p className="text-base font-semibold uppercase">
-										#{currentRental?.ticket_id}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Customer Name</p>
-									<p className="text-base font-semibold capitalize">{`${currentRental?.first_name} ${currentRental?.surname}`}</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Phone</p>
-									<p className="text-base font-semibold">
-										{currentRental?.phone_number}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Email</p>
-									<p className="text-base font-semibold">
-										{currentRental?.email}
-									</p>
-								</li>
-							</ul>
-							<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
-								<li>
-									<p className="text-xs text-[#7F7F7F] ">Rental Type</p>
-									<p className="text-base font-semibold capitalize">
-										{currentRental?.rent_type}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">No. of Passengers</p>
-									<p className="text-base font-semibold">
-										{currentRental?.passengers}
-									</p>
-								</li>
-							</ul>
-							{/* FIXME:  */}
-							<div className=" space-y-6">
+							<div className="p-5 pb-20 space-y-6">
 								<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
 									<li>
-										<p className="text-xs text-[#7F7F7F]">Departure</p>
-										<p className="text-base font-semibold">
-											{currentRental?.departure}
+										<p className="text-xs text-[#7F7F7F]">Rental ID</p>
+										<p className="text-base font-semibold uppercase">
+											#{currentRental?.ticket_id}
 										</p>
 									</li>
 									<li>
-										<p className="text-xs text-[#7F7F7F]">Arrival</p>
+										<p className="text-xs text-[#7F7F7F]">Customer Name</p>
+										<p className="text-base font-semibold capitalize">{`${currentRental?.first_name} ${currentRental?.surname}`}</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">Phone</p>
 										<p className="text-base font-semibold">
-											{currentRental?.arrival}
+											{currentRental?.phone_number}
+										</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">Email</p>
+										<p className="text-base font-semibold">
+											{currentRental?.email}
 										</p>
 									</li>
 								</ul>
-								<ul className="*:flex *:flex-col *:gap-1 flex gap-10 ">
+								<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
 									<li>
-										<p className="text-xs text-[#7F7F7F]">Rental Date</p>
-										<p className="text-base font-semibold">
-											{format(currentRental?.rental_date, "PPPP")}
+										<p className="text-xs text-[#7F7F7F] ">Rental Type</p>
+										<p className="text-base font-semibold capitalize">
+											{currentRental?.rent_type}
 										</p>
 									</li>
 									<li>
-										<p className="text-xs text-[#7F7F7F]">Rental Time</p>
+										<p className="text-xs text-[#7F7F7F]">No. of Passengers</p>
 										<p className="text-base font-semibold">
-											{currentRental?.rental_time}
+											{currentRental?.passengers}
+										</p>
+									</li>
+								</ul>
+								<div className=" space-y-6">
+									<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
+										<li>
+											<p className="text-xs text-[#7F7F7F]">Departure</p>
+											<p className="text-base font-semibold">
+												{currentRental?.departure}
+											</p>
+										</li>
+										<li>
+											<p className="text-xs text-[#7F7F7F]">Arrival</p>
+											<p className="text-base font-semibold">
+												{currentRental?.arrival}
+											</p>
+										</li>
+									</ul>
+									<ul className="*:flex *:flex-col *:gap-1 flex gap-10 ">
+										<li>
+											<p className="text-xs text-[#7F7F7F]">Rental Date</p>
+											<p className="text-base font-semibold">
+												{format(currentRental?.rental_date, "PPPP")}
+											</p>
+										</li>
+										<li>
+											<p className="text-xs text-[#7F7F7F]">Rental Time</p>
+											<p className="text-base font-semibold">
+												{currentRental?.rental_time}
+											</p>
+										</li>
+									</ul>
+								</div>
+								<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
+									<li>
+										<p className="text-xs text-[#7F7F7F] ">Booking Medium</p>
+										<p className="text-base font-semibold">
+											{currentRental?.payment_medium}
+										</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">Payment Method</p>
+										<p className="text-base font-semibold">
+											{currentRental?.payment_method}
+										</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">Payment Status</p>
+										<p
+											className={cn(
+												"text-center font-semibold rounded-lg py-1 px-2 text-xs",
+												{
+													"text-green-500 bg-green-100":
+														currentRental?.payment_status === "Success",
+													"text-[#E78913] bg-[#F8DAB6]":
+														currentRental?.payment_status === "Pending",
+													"text-[#F00000] bg-[#FAB0B0]":
+														currentRental?.payment_status === "Canceled",
+												}
+											)}
+										>
+											{currentRental?.payment_status}
+										</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">
+											Transaction Reference
+										</p>
+										<p className="text-base font-semibold">
+											{currentRental?.trxRef}
+										</p>
+									</li>
+								</ul>
+								<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
+									<li>
+										<p className="text-xs text-[#7F7F7F]">Booked on</p>
+										<p className="text-base font-semibold">
+											{format(currentRental.created_at, "PPPPpppp").split(
+												"GMT",
+												1
+											)}
+										</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">Booked By</p>
+										<p className="text-base font-semibold">
+											{currentRental?.paid_by}
+										</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">Trip Status</p>
+										<p
+											className={cn(
+												"rounded-lg w-20 mx-auto py-1 text-xs px-2 text-center font-semibold",
+												{
+													"text-green-500 bg-green-100":
+														currentRental?.rental_status === "Completed",
+													"text-[#E78913] bg-[#F8DAB6]":
+														currentRental?.rental_status === "Upcoming",
+													"text-[#F00000] bg-[#FAB0B0]":
+														currentRental?.rental_status === "Canceled",
+													"text-black bg-slate-500/50 ":
+														currentRental?.rental_status === "Rescheduled",
+													"text-purple-900 bg-purple-300/30 ":
+														currentRental?.rental_status === "Missed",
+												}
+											)}
+										>
+											{currentRental?.rental_status}
 										</p>
 									</li>
 								</ul>
 							</div>
-							<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
-								<li>
-									<p className="text-xs text-[#7F7F7F] ">Booking Medium</p>
-									<p className="text-base font-semibold">
-										{currentRental?.payment_medium}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Payment Method</p>
-									<p className="text-base font-semibold">
-										{currentRental?.payment_method}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Payment Status</p>
-									<p
-										className={cn(
-											"text-center font-semibold rounded-lg py-1 px-2 text-xs",
-											{
-												"text-green-500 bg-green-100":
-													currentRental?.payment_status === "Success",
-												"text-[#E78913] bg-[#F8DAB6]":
-													currentRental?.payment_status === "Pending",
-												"text-[#F00000] bg-[#FAB0B0]":
-													currentRental?.payment_status === "Canceled",
-											}
-										)}
-									>
-										{currentRental?.payment_status}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">
-										Transaction Reference
-									</p>
-									<p className="text-base font-semibold">
-										{currentRental?.trxRef}
-									</p>
-								</li>
-							</ul>
-							<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Booked on</p>
-									<p className="text-base font-semibold">
-										{format(currentRental.created_at, "PPPPpppp").split(
-											"GMT",
-											1
-										)}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Booked By</p>
-									<p className="text-base font-semibold">
-										{currentRental?.paid_by}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Trip Status</p>
-									<p
-										className={cn(
-											"rounded-lg w-20 mx-auto py-1 text-xs px-2 text-center font-semibold",
-											{
-												"text-green-500 bg-green-100":
-													currentRental?.rental_status === "Completed",
-												"text-[#E78913] bg-[#F8DAB6]":
-													currentRental?.rental_status === "Upcoming",
-												"text-[#F00000] bg-[#FAB0B0]":
-													currentRental?.rental_status === "Canceled",
-												"text-black bg-slate-500/50 ":
-													currentRental?.rental_status === "Rescheduled",
-												"text-purple-900 bg-purple-300/30 ":
-													currentRental?.rental_status === "Missed",
-											}
-										)}
-									>
-										{currentRental?.rental_status}
-									</p>
-								</li>
-							</ul>
 						</div>
-					</div>
-
-					<div className="bg-white rounded-lg basis-4/12 p-5 flex flex-col gap-6">
-						<div>
-							<h3 className="text-blue-500 font-semibold  text-base md:text-xl ">
-								Abitto Ferry Terminal
-							</h3>
-							<p className="text-[#8E98A8] text-sm inline-flex items-center gap-1">
-								Non-refundable <InformationCircleIcon />
-							</p>
-							<p className="font-medium text-xs text-right">
-								Rental ID: #
-								<span className="uppercase">{currentRental?.ticket_id}</span>
-							</p>
-						</div>
-						<div>
-							<h4 className="font-semibold text-sm mb-1">Rental Package</h4>
-							<div className="my-2 flex flex-wrap gap-x-4 gap-y-1 text-[#1E1E1E] text-xs font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
-								<p className="capitalize">
-									<Boat2Icon />
-									{currentRental?.rent_type}
+						<div className="bg-white rounded-lg basis-4/12 p-5 flex flex-col gap-6">
+							<div>
+								<h3 className="text-blue-500 font-semibold  text-base md:text-xl ">
+									Abitto Ferry Terminal
+								</h3>
+								<p className="text-[#8E98A8] text-sm inline-flex items-center gap-1">
+									Non-refundable <InformationCircleIcon />
 								</p>
-								<p>
-									<UsersIcon /> {currentRental?.passengers} passenger(s)
+								<p className="font-medium text-xs text-right">
+									Rental ID: #
+									<span className="uppercase">{currentRental?.ticket_id}</span>
 								</p>
 							</div>
-							<div className="flex flex-wrap gap-x-4 gap-y-1 text-[#1E1E1E] text-xs font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
-								<p>
-									<CalendarIcon />
-									{format(currentRental?.rental_date, "PP")}
-								</p>
-								<p>
-									<ClockIcon />
-									{currentRental?.rental_time}
-								</p>
+							<div>
+								<h4 className="font-semibold text-sm mb-1">Rental Package</h4>
+								<div className="my-2 flex flex-wrap gap-x-4 gap-y-1 text-[#1E1E1E] text-xs font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
+									<p className="capitalize">
+										<Boat2Icon />
+										{currentRental?.rent_type}
+									</p>
+									<p>
+										<UsersIcon /> {currentRental?.passengers} passenger(s)
+									</p>
+								</div>
+								<div className="flex flex-wrap gap-x-4 gap-y-1 text-[#1E1E1E] text-xs font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
+									<p>
+										<CalendarIcon />
+										{format(currentRental?.rental_date, "PP")}
+									</p>
+									<p>
+										<ClockIcon />
+										{currentRental?.rental_time}
+									</p>
+								</div>
 							</div>
-						</div>
-						<div className="border-y-2 border-dashed py-2">
-							<table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] ">
-								<tbody>
-									<tr>
-										<td className="text-xs text-[#444444]">Ticket Price</td>
-										<td className="text-xs text-[#444444]">
-											<span className="block text-sm">
+							<div className="border-y-2 border-dashed py-2">
+								<table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] ">
+									<tbody>
+										<tr>
+											<td className="text-sm text-[#444444]">Rental Cost</td>
+											<td className="text-sm text-[#444444]">
 												{formatValue({
 													value: String(currentRental.rental_cost ?? 0),
 													prefix: "₦",
@@ -755,36 +760,35 @@ export const RentDetail = () => {
 												{currentRental.rent_type === "within marina" && (
 													<> x {currentRental?.rental_duration}</>
 												)}
-											</span>
-										</td>
-									</tr>
-									<tr>
-										<td className="font-medium text-base">Total</td>
-										<td className="font-medium text-base">
-											₦
-											{formatValue({
-												value: String(currentRental?.total_cost),
-											})}
-										</td>
-									</tr>
-								</tbody>
-							</table>
+											</td>
+										</tr>
+										<tr>
+											<td className="font-medium text-base">Total</td>
+											<td className="font-medium text-base">
+												₦
+												{formatValue({
+													value: String(currentRental?.total_cost),
+												})}
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<button
+								type="button"
+								className=" bg-blue-500 w-full py-3 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white flex justify-center gap-2 mx-auto rounded-lg "
+								onClick={handlePrint}
+							>
+								<PrinterIcon />
+								Print
+							</button>
 						</div>
-						<button
-							type="button"
-							className=" bg-blue-500 w-56 py-3 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white flex justify-center gap-2 mx-auto rounded-lg "
-							onClick={() => {
-								navigate(`/rental-invoice/${currentRental.ticket_id}`);
-							}}
-						>
-							<PrinterIcon />
-							Print
-						</button>
 					</div>
-				</div>
-			) : (
-				<p className="ml-10">No Result</p>
-			)}
+					<RentalInvoice props={{ currentUser: currentRental }} ref={componentRef} />
+				</>
+				: (
+					<p className="ml-10">No Result</p>
+				)}
 		</div>
 	);
 };

@@ -250,7 +250,7 @@ const ShippingDetails = () => {
 					{/* NumericFormat Input Field */}
 					<div className="flex flex-col w-full">
 						<label htmlFor="value" className="text-xs md:text-sm !w-full flex gap-2 md:gap-3 flex-col">
-							Value(NGN)
+							Est. Item Value(NGN)
 							<Controller
 								control={control}
 								name="value"
@@ -576,7 +576,7 @@ const ReceiverDetails = () => {
 const Payment = () => {
 	const { onPrevClick } = useStepper();
 	const { packageDetails, setPackageDetails } = React.useContext(ctx);
-	const { handleLogisticsPayment } = usePayment();
+	const { logisticsPayment } = usePayment();
 	const {
 		register,
 		handleSubmit,
@@ -593,7 +593,7 @@ const Payment = () => {
 			...formData,
 			...(prev?.name ?? { name: prev.category })
 		}))
-		handleLogisticsPayment(packageDetails, () => { setPackageDetails({}) });
+		logisticsPayment(packageDetails, () => { setPackageDetails({}) });
 	});
 
 	const handleChange = (e) => {

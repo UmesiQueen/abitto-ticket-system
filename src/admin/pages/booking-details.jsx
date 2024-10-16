@@ -804,9 +804,7 @@ export const CustomerDetails = () => {
 							</button>
 						</div>
 					</div>
-					<div className="hidden">
-						<TicketInvoice props={{ currentUser }} ref={componentRef} />
-					</div>
+					<TicketInvoice props={{ currentUser }} ref={componentRef} />
 				</>
 			) : (
 				<p className="ml-10">No Result</p>

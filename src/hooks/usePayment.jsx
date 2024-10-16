@@ -1,26 +1,16 @@
 import React from "react";
-import PaystackPop from "@paystack/inline-js";
 import axiosInstance from "@/api";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { LogisticsSuccessModal } from "@/components/modals/book.success";
 import { v4 as uuid } from "uuid";
 import { RentalSuccessModal } from "@/components/modals/book.success";
-import BookingFailedModal, {
-	BookingRequestFailedModal,
-} from "@/components/modals/book.failure";
 import { customError } from "@/lib/utils";
 import { useSearchTrip } from "./useSearchTrip";
 
 export const usePayment = () => {
 	const { formData, rentalData, setLoading: loader } = React.useContext(BookingCTX);
-	const {
-		mountPortalModal,
-		setModalContent,
-		setShowModal,
-		adminProfile,
-		setLoading,
-	} = React.useContext(GlobalCTX);
+	const { mountPortalModal, adminProfile, setLoading, } = React.useContext(GlobalCTX);
 	const { bookingDetails, passengerDetails, ticket_id } = formData;
 	const { checkAvailability } = useSearchTrip();
 	const total_ticket_cost =
@@ -36,6 +26,7 @@ export const usePayment = () => {
 	};
 
 	const onlinePayment = async () => {
+		sessionStorage.setItem("cus_info", JSON.stringify(formData))
 		const requestData = {
 			...bookingDetails,
 			...passengerDetails,
@@ -104,73 +95,8 @@ export const usePayment = () => {
 			}
 	};
 
-	const onlineRentalPayment = () => {
-		setShowModal(false);
-		const paystack = new PaystackPop();
-
-		paystack.newTransaction({
-			key: "pk_live_b25d12c8f8e8a5b151d6015b71ae2e99d1e4e243", //abitto
-			// key: "pk_test_5d5cd21c077f1395d701366d2880665b3e9fb0f5", // queen
-			amount: rentalData.total_cost * 100,
-			email: rentalData.email,
-			firstname: rentalData.first_name,
-			lastname: rentalData.surname,
-			phone: rentalData.phone_number,
-			onSuccess(res) {
-				handleOnlineRental({
-					payment_status: "Success",
-					trxRef: res.trxref,
-				});
-			},
-			onCancel() {
-				handleOnlineRental({
-					payment_status: "Canceled",
-					trxRef: "N/A",
-				});
-				setShowModal(true);
-				setModalContent(<BookingFailedModal />);
-			},
-		});
-	};
-
-	const handleOnlineRental = ({ payment_status, trxRef }) => {
-		setLoading(true);
-		const requestData = {
-			...rentalData,
-			boat_id: "bt-54321",
-			rental_status: "Upcoming",
-			payment_method: "Paystack",
-			payment_medium: "Online",
-			paid_by: "Customer",
-			payment_status,
-			trxRef,
-		};
-
-		const isSuccess = payment_status === "Success";
-
-		axiosInstance
-			.post("/rent/createrent", requestData)
-			.then((res) => {
-				if (res.status === 200 && isSuccess) {
-					const ticket_id = res.data.rent.ticket_id;
-					setModalContent(<RentalSuccessModal id={ticket_id} />);
-				}
-			})
-			.catch(() => {
-				if (isSuccess) {
-					document.getElementById("rental_payment_btn").disabled = true;
-					document.getElementById("rental_next_btn").innerHTML = "Clear";
-					setModalContent(<BookingRequestFailedModal header={"Rental"} />);
-				}
-			})
-			.finally(() => {
-				setShowModal(true);
-				setLoading(false);
-			});
-	};
-
 	const offlineRentalPayment = (data) => {
-		const { payment_status, transaction_ref, payment_method } = data;
+		const { transaction_ref, payment_method } = data;
 
 		setLoading(true);
 		const requestData = {
@@ -179,7 +105,7 @@ export const usePayment = () => {
 			rental_status: "Upcoming",
 			payment_medium: "Offline",
 			paid_by: `${adminProfile.first_name}(${adminProfile.account_type})`,
-			payment_status,
+			payment_status: "Success",
 			payment_method,
 			trxRef: transaction_ref,
 		};
@@ -188,8 +114,8 @@ export const usePayment = () => {
 			.post("/rent/createrent", requestData)
 			.then((res) => {
 				if (res.status === 200) {
-					const ticket_id = res.data.rent.ticket_id;
-					mountPortalModal(<RentalSuccessModal id={ticket_id} />);
+					const currentRental = res.data.rent;
+					mountPortalModal(<RentalSuccessModal currentRental={currentRental} />);
 				}
 			})
 			.catch((error) => {
@@ -198,7 +124,7 @@ export const usePayment = () => {
 			.finally(() => setLoading(false));
 	};
 
-	const handleLogisticsPayment = (data, handleReset) => {
+	const logisticsPayment = (data, handleReset) => {
 		setLoading(true);
 		const requestData = {
 			...data,
@@ -211,8 +137,8 @@ export const usePayment = () => {
 			.post("/logistics/new", requestData)
 			.then((res) => {
 				if (res.status === 200) {
-					const id = res.data.logistics.shipment_id;
-					mountPortalModal(<LogisticsSuccessModal props={{ id, handleReset }} />);
+					const currentShipment = res.data.logistics;
+					mountPortalModal(<LogisticsSuccessModal props={{ currentShipment, handleReset }} />);
 				}
 			})
 			.catch((error) => {
@@ -224,8 +150,7 @@ export const usePayment = () => {
 	return {
 		onlinePayment,
 		offlinePayment,
-		onlineRentalPayment,
 		offlineRentalPayment,
-		handleLogisticsPayment
+		logisticsPayment
 	};
 };

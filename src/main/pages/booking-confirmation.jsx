@@ -93,9 +93,8 @@ const BookingConfirmation = () => {
                             onClick={() => navigate("/booking")}
                         />
                         {currentUser &&
-                            <div className="hidden">
-                                <TicketInvoice props={{ currentUser }} ref={componentRef} />
-                            </div>}
+                            <TicketInvoice props={{ currentUser }} ref={componentRef} />
+                        }
                     </>
                         : <>
                             <h2 className="font-semibold text-base md:text-lg text-[#454545] px-5 md:px-10 mb-5">Invalid transaction reference</h2>

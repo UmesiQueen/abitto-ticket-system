@@ -51,9 +51,8 @@ const RentalAdmin = () => {
 					<RentalForm />
 				) : activeStep === 2 ? (
 					<RentalSummary />
-				) : (
-					""
-				)}
+				) : null
+				}
 			</div>
 		</>
 	);
@@ -67,7 +66,6 @@ const RentalSummary = () => {
 	const { offlineRentalPayment } = usePayment();
 
 	const paymentSchema = yup.object().shape({
-		payment_status: yup.string().required("This field is required."),
 		payment_method: yup.string().required("This field is required."),
 		transaction_ref: yup
 			.string()
@@ -105,15 +103,14 @@ const RentalSummary = () => {
 				</h3>
 
 				<div className="space-y-1 text-sm -mt-2">
-					<h4 className="font-semibold mb-1">Rentage Route</h4>
 					<p>
-						<span className="font-semibold text-sm md:text-base text-gray-500">
+						<span className="font-semibold text-gray-500">
 							From:
 						</span>{" "}
 						{rentalData?.departure}
 					</p>
 					<p>
-						<span className="font-semibold text-sm md:text-base text-gray-500">
+						<span className="font-semibold  text-gray-500">
 							Arrival:
 						</span>{" "}
 						{rentalData?.arrival}
@@ -154,13 +151,9 @@ const RentalSummary = () => {
 				<div className="border-y-2 border-dashed py-2 mt-5 md:mt-0">
 					<table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] ">
 						<tbody>
-							{/* <tr>
-                <td className="text-xs text-[#444444]">Ride Insurance</td>
-                <td className="text-xs text-[#444444]">₦0</td>
-              </tr> */}
 							<tr>
-								<td className="text-xs text-[#444444]">Rental Price</td>
-								<td className="text-xs text-[#444444]">
+								<td className="text-sm text-[#444444]">Rental Cost/hr</td>
+								<td className="text-sm text-[#444444]">
 									{formatValue({
 										value: String(rentalData.rental_cost),
 										prefix: "₦",
@@ -227,20 +220,12 @@ const RentalSummary = () => {
 
 				{/* form */}
 				<form onSubmit={onSubmit}>
-					<div className="mt-20 py-8 h-36 grid grid-cols-3 gap-5">
+					<div className="mt-20 py-8 h-36 grid grid-cols-2 gap-5">
 						<SelectField
 							{...register("payment_method")}
 							label="Payment Method"
 							placeholder="Select payment method"
 							options={["POS", "Bank Transfer", "Cash"]}
-							errors={errors}
-							className="bg-white"
-						/>
-						<SelectField
-							{...register("payment_status")}
-							label="Payment Status"
-							placeholder="Select payment status"
-							options={["Success", "Canceled", "Pending"]}
 							errors={errors}
 							className="bg-white"
 						/>

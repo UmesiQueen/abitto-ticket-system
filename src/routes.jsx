@@ -24,7 +24,6 @@ import RentalAdmin from "./admin/pages/rental";
 import Report from "./admin/pages/report";
 import Rental from "./main/pages/rental";
 import { TripDetailsLoader } from "./admin/pages/trip-details";
-import RentalInvoice from "./components/RentalInvoice";
 import { RentalInvoiceLoader } from "./components/RentalInvoice";
 // import { CustomerLoader } from "./admin/pages/customers";
 // import CustomerHistory from "./admin/pages/customer-history";
@@ -42,7 +41,7 @@ import LogisticsDetails, {
 import GetQuote from "./main/pages/quote";
 import Pricing, { PriceLoader } from "./admin/pages/pricing";
 import InformationBox from "./admin/pages/information-box";
-import LogisticsInvoice, { ShipmentLoader } from "./components/LogisticInvoice";
+import { ShipmentLoader } from "./components/LogisticInvoice";
 import TermsAndConditions from "./main/pages/terms-and-conditions";
 import PrivacyPolicy from "./main/pages/privacy-policy";
 import PassengerDetails from "@/components/PassengerDetails";
@@ -121,16 +120,6 @@ export const router = createBrowserRouter(
 				</Route>
 			</Route>
 
-			<Route
-				path="rental-invoice/:rentalID"
-				element={<RentalInvoice />}
-				loader={RentalInvoiceLoader}
-			/>
-			<Route
-				path="logistics-invoice/:shipmentID"
-				element={<LogisticsInvoice />}
-				loader={ShipmentLoader}
-			/>
 			<Route path="/login" element={<Login />} />
 			<Route path="*" element={<PageNotFound />} />
 		</Route>
