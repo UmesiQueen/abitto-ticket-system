@@ -8,6 +8,9 @@ import RentalInvoice from "@/components/RentalInvoice";
 import TicketInvoice from "@/components/TicketInvoice";
 import { useReactToPrint } from "react-to-print";
 import LogisticsInvoice from "@/components/LogisticInvoice";
+import { Button as IconButton } from "@/components/ui/button";
+import { useLocation, useNavigate } from "react-router-dom";
+import { CancelSquareIcon } from "@/assets/icons";
 
 export const BookingSuccessModal = ({ currentUser, onclick = () => { } }) => {
 	const { handleReset } = React.useContext(BookingCTX);
@@ -139,3 +142,35 @@ export const LogisticsSuccessModal = ({ props: { currentShipment, handleReset } 
 		</div>
 	);
 };
+
+export const UnAvailableModal = () => {
+	const navigate = useNavigate();
+	const { pathname } = useLocation();
+	const { unMountPortalModal, adminProfile } = React.useContext(GlobalCTX);
+
+	return (
+		<div className="font-poppins mx-auto pt-8 p-5 md:p-10 w-full max-w-[450px] bg-white  flex flex-col rounded-lg relative">
+			<IconButton
+				variant="ghost"
+				size="icon"
+				className="absolute right-0 top-0"
+				onClick={unMountPortalModal}
+			>
+				<CancelSquareIcon />
+			</IconButton>
+			<h2 className="font-semibold text-base md:text-lg text-[#454545] mb-5 text-center">
+				Sorry, There are no longer available seats on this trip.
+			</h2>
+			<Button
+				text={"Search for more"}
+				className="md:py-5 w-full"
+				onClick={() => {
+					unMountPortalModal();
+					pathname.includes("/booking") ?
+						navigate("/booking") :
+						navigate(`/backend/${adminProfile.account_type}/create/book-ticket`)
+				}}
+			/>
+		</div>
+	)
+}

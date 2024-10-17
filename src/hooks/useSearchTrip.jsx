@@ -2,7 +2,7 @@ import React from "react";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import axiosInstance from "@/api";
-import { UnAvailableModal } from "@/components/modals/book.warning";
+import { UnAvailableModal } from "@/components/modals/booking";
 import { customError } from "@/lib/utils";
 
 export const useSearchTrip = () => {

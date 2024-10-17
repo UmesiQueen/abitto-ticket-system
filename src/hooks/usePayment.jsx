@@ -2,9 +2,9 @@ import React from "react";
 import axiosInstance from "@/api";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import { LogisticsSuccessModal } from "@/components/modals/book.success";
+import { LogisticsSuccessModal } from "@/components/modals/booking";
 import { v4 as uuid } from "uuid";
-import { RentalSuccessModal } from "@/components/modals/book.success";
+import { RentalSuccessModal } from "@/components/modals/booking";
 import { customError } from "@/lib/utils";
 import { useSearchTrip } from "./useSearchTrip";
 

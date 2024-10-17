@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import SuccessModal from "@/components/modals/success";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import BookingSuccessModal from "@/components/modals/book.success";
+import { BookingSuccessModal } from "@/components/modals/booking";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuid } from "uuid"
 import { customError } from "@/lib/utils";

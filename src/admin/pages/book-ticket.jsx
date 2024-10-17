@@ -25,7 +25,7 @@ import { BookingForm } from "@/components/BookingDetails";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import BookingSuccessModal from "@/components/modals/book.success";
+import { BookingSuccessModal } from "@/components/modals/booking";
 
 const BookTicket = () => {
 	const navigate = useNavigate();
