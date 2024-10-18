@@ -64,6 +64,7 @@ const RescheduleForm = () => {
 	const { searchAvailableTrips } = useSearchTrip();
 	const { activeStep } = useStepper();
 	const { setActiveStep, setAvailableTrips } = React.useContext(BookingCTX);
+	const [loading, setLoading] = React.useState(false);
 
 	const rescheduleSchema = yup.object().shape({
 		date: yup.string().required("New date is required."),
@@ -83,9 +84,13 @@ const RescheduleForm = () => {
 			arrival: currentUser.travel_to,
 			date: format(formData.date, "PP")
 		}
-		setActiveStep(0)
+		setLoading(true)
 		const response = await searchAvailableTrips(reqData);
-		setAvailableTrips(response)
+		setLoading(false);
+		if (response) {
+			setAvailableTrips(response);
+			setActiveStep(1);
+		}
 	});
 
 	return (
@@ -94,7 +99,7 @@ const RescheduleForm = () => {
 				<ul className="w-full [&_h4]:uppercase [&_h4]:text-gray-400 [&_h4]:text-xs [&_p]:text-white [&_p]:text-sm flex flex-wrap *:grow px-2 items-center gap-5 md:justify-around md:divide-x-2 h-full md:[&_li:not(:first-of-type)]:pl-5 *:space-y-1">
 					<li>
 						<h4>Customer name</h4>
-						<p className="capitalize">{capitalize(`${currentUser?.passenger1_first_name} ${currentUser?.last_name}`)}</p>
+						<p className="capitalize">{capitalize(`${currentUser?.passenger1_first_name} ${currentUser?.passenger1_last_name}`)}</p>
 					</li>
 					<li>
 						<h4>Route</h4>
@@ -175,6 +180,7 @@ const RescheduleForm = () => {
 						text="Search Trip"
 						className="w-full mt-8 mb-auto"
 						type="submit"
+						loading={loading}
 					/>
 				</form>
 				{activeStep === 1 && <RescheduleSelection />}
@@ -324,7 +330,6 @@ const RescheduleSelection = () => {
 					</div>
 				)}
 			</div>
-			{/* FIXME: add a fix width to this rather than col */}
 			<Button
 				text="Reschedule"
 				className="w-full"
@@ -343,7 +348,6 @@ const Payment = () => {
 	const total_ticket_cost = Number(bookingData.departure_ticket_cost) * Number(bookingData.total_passengers);
 	const ticket_balance = (Number(total_ticket_cost) * 50) / 100;
 	const paymentSchema = yup.object().shape({
-		payment_status: yup.string().required("This field is required."),
 		payment_method: yup.string().required("This field is required."),
 		transaction_ref: yup
 			.string()
@@ -392,7 +396,7 @@ const Payment = () => {
 						</li>
 						<li>
 							<p>Surname</p>
-							<p>{bookingData.last_name}</p>
+							<p>{bookingData.passenger1_last_name}</p>
 						</li>
 						<li>
 							<p>Phone Number</p>
@@ -455,20 +459,12 @@ const Payment = () => {
 				) : (
 					""
 				)}
-				<div className="mt-20 py-8 h-36  grid grid-cols-2 gap-5">
+				<div className="mt-20 py-8 h-fit grid grid-cols-3 gap-5">
 					<SelectField
 						{...register("payment_method")}
 						label="Payment Method"
 						placeholder="Select payment method"
 						options={["POS", "Bank Transfer", "Cash"]}
-						errors={errors}
-						className="bg-white"
-					/>
-					<SelectField
-						{...register("payment_status")}
-						label="Payment Status"
-						placeholder="Select payment status"
-						options={["Success", "Canceled", "Pending"]}
 						errors={errors}
 						className="bg-white"
 					/>
@@ -499,7 +495,7 @@ const Payment = () => {
 					</div>
 				</div>
 
-				<div className="flex gap-5 mt-36">
+				<div className="flex gap-5">
 					<Button
 						onClick={onPrevClick}
 						variant="outline"
