@@ -106,10 +106,10 @@ export const AdminPayment = () => {
 		mutationFn: (data) => {
 			return offlinePayment(data)
 		},
-		onSuccess: (id) => {
+		onSuccess: (currentUser) => {
 			queryClient.invalidateQueries('bookings');
 			mountPortalModal(
-				<BookingSuccessModal id={id} onclick={() => navigate(`/backend/${adminProfile.account_type}/create/book-ticket`)} />);
+				<BookingSuccessModal currentUser={currentUser} onclick={() => navigate(`/backend/${adminProfile.account_type}/create/book-ticket`)} />);
 		},
 	})
 

@@ -59,7 +59,7 @@ const Pricing = () => {
 			trip_name: key,
 			cost: value
 		}));
-		console.log(reqData, "hello")
+
 		mountPortalModal(
 			<ConfirmationModal
 				props={{

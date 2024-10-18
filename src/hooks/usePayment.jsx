@@ -56,7 +56,7 @@ export const usePayment = () => {
 				}
 			}
 			catch (error) {
-				customError(error, "Payment initialization failed. Try Again.")
+				customError(error, "An error occurred. Please try again.")
 			}
 			finally {
 				loader(false)
@@ -85,7 +85,7 @@ export const usePayment = () => {
 					...requestData,
 					departure_seats: randomSeats(isAvailable, bookingDetails.total_passengers),
 				})
-				return res.data.booking.ticket_id
+				return res.data.booking;
 			}
 			catch (error) {
 				customError(error, "Booking not confirmed. Please try again.")

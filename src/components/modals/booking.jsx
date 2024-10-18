@@ -20,6 +20,7 @@ export const BookingSuccessModal = ({ currentUser, onclick = () => { } }) => {
 	const reset = () => {
 		unMountPortalModal();
 		handleReset();
+		onclick();
 	};
 
 	const handlePrint = useReactToPrint({
@@ -49,10 +50,7 @@ export const BookingSuccessModal = ({ currentUser, onclick = () => { } }) => {
 				text="Continue"
 				variant="outline"
 				className=" md:py-5 "
-				onClick={() => {
-					reset();
-					onclick();
-				}}
+				onClick={reset}
 			/>
 		</div>
 	);

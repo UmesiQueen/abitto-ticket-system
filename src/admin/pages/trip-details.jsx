@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/table";
 import { Button as IconButton } from "@/components/ui/button";
 import Button from "@/components/custom/Button";
-import { cn } from "@/lib/utils";
+import { cn, customError } from "@/lib/utils";
 import { DeleteIcon, PrinterIcon, CircleArrowLeftIcon } from "@/assets/icons";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { BookingCTX } from "@/contexts/BookingContext";
@@ -36,9 +36,7 @@ import ConfirmationModal from "@/components/modals/confirmation";
 import { useScheduleTrip } from "@/hooks/useScheduleTrip";
 import axiosInstance from "@/api";
 import { useReactToPrint } from "react-to-print";
-// import { humanize } from "@/lib/utils";
 import { formatValue } from "react-currency-input-field";
-import { toast } from "sonner";
 
 const TripDetails = () => {
 	const { mountPortalModal, setLoading, adminProfile } =
@@ -61,6 +59,7 @@ const TripDetails = () => {
 	});
 	const [currentDataQuery, setCurrentDataQuery] = React.useState([]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
 		if (tripDetails) {
 			const sortedQuery = bookingQuery.filter(
@@ -74,6 +73,7 @@ const TripDetails = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [tripDetails]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
 		setLoading(false);
 		if (selectedTrip) setTripDetails(selectedTrip);
@@ -381,12 +381,7 @@ export const TripDetailsLoader = async ({ params }) => {
 		});
 		return response.data.ticket;
 	} catch (error) {
-		if (
-			!error.code === "ERR_NETWORK" ||
-			!error.code === "ERR_INTERNET_DISCONNECTED" ||
-			!error.code === "ECONNABORTED"
-		)
-			toast.error("Error occurred while retrieving trip details");
+		customError(error, "Error occurred while retrieving trip details");
 		return null;
 	}
 };

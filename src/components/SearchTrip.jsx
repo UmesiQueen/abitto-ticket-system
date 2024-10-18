@@ -4,7 +4,6 @@ import { formatValue } from "react-currency-input-field";
 import Button from "./custom/Button";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import { useStepper } from "@/hooks/useStepper";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -24,7 +23,6 @@ const SearchTrip = () => {
 	const [totalCost, setTotalCost] = React.useState(0);
 	const [isDisabled, setIsDisabled] = React.useState(true);
 	const navigate = useNavigate()
-	const { setActiveStep } = useStepper();
 	const { searchAvailableTrips } = useSearchTrip()
 	const { search, pathname } = useLocation();
 	const isAdmin = pathname.includes("/backend");
@@ -49,8 +47,7 @@ const SearchTrip = () => {
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
-		mutation.mutateAsync(reqData)
-		setActiveStep(1)
+		mutation.mutateAsync(reqData);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
