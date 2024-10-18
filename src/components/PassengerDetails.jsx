@@ -7,7 +7,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import Button from "@/components/custom/Button";
-import { useStepper } from "@/hooks/useStepper";
 import InputField from "@/components/custom/InputField";
 import { format } from "date-fns";
 import { useNavigate, useLocation, Navigate } from "react-router-dom";
@@ -16,18 +15,12 @@ const PassengerDetails = () => {
 	const { loading, setLoading, adminProfile } = React.useContext(GlobalCTX);
 	const { setChecked, isChecked, formData, setFormData } =
 		React.useContext(BookingCTX);
-	const { setActiveStep } = useStepper();
 	const navigate = useNavigate()
 	const { search, pathname } = useLocation();
 	const adults_number = formData.bookingDetails?.adults_number;
 
 	const searchParams = new URLSearchParams(search.split("?")[1]);
 	const ticket_id = searchParams.get("cid");
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	React.useEffect(() => {
-		setActiveStep(2)
-	}, [])
 
 	const {
 		register,
@@ -49,9 +42,7 @@ const PassengerDetails = () => {
 					passenger1_phone_number: formData_.passenger1_phone_number,
 					passenger1_email: formData_.passenger1_email,
 				}
-				: {
-					...formData_,
-				}),
+				: formData_),
 		};
 
 		setLoading(true);

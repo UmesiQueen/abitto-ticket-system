@@ -56,7 +56,7 @@ export const usePayment = () => {
 				}
 			}
 			catch (error) {
-				customError(error, "Payment initialization failed. Try Again.")
+				customError(error, "An error occurred. Please try again.")
 			}
 			finally {
 				loader(false)

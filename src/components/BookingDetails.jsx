@@ -12,7 +12,6 @@ import { GlobalCTX } from "@/contexts/GlobalContext";
 import Button from "@/components/custom/Button";
 import SelectField from "./custom/SelectField";
 import { v4 as uuid } from "uuid";
-import { useStepper } from "@/hooks/useStepper";
 
 const BookingDetail = () => {
 	return (
@@ -35,11 +34,7 @@ export const BookingForm = () => {
 	const isSalesperson =
 		["salesperson"].includes(adminProfile.account_type) &&
 		pathname.includes("/backend");
-	const { setActiveStep } = useStepper()
 	const navigate = useNavigate();
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	React.useEffect(() => setActiveStep(0), [])
 
 	const destinations = {
 		Calabar: {

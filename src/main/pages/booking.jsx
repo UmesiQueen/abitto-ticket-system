@@ -1,12 +1,11 @@
 // import React from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { Helmet } from "react-helmet-async";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation, matchPath } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
-import { useStepper } from "@/hooks/useStepper";
 
 
 const Booking = () => {
@@ -34,7 +33,19 @@ const Booking = () => {
 export default Booking;
 
 const MaterialUIStepper = () => {
-  const { activeStep } = useStepper();
+  const location = useLocation();
+
+  // Define the base paths (without dynamic params)
+  const stepMap = ['/booking', '/booking/available-trips', '/booking/passenger-details', '/booking/payment'];
+
+  // Determine which path matches and find the step index
+  const currentStep = stepMap.findIndex((path) =>
+    matchPath(path, location.pathname)
+  );
+
+  // Fallback to step 0 if no match is found
+  const activeStep = currentStep !== -1 ? currentStep : 0;
+
   const steps = [
     "Trip Details",
     "Available Trips",
