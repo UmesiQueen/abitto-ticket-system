@@ -28,13 +28,12 @@ import { BookingCTX } from "@/contexts/BookingContext";
 import { useQuery } from "@tanstack/react-query";
 import { customError } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
+import { useSearchParam } from "@/hooks/useSearchParam";
 
 const Customers = () => {
 	const {
 		customersData,
 		setCustomersData,
-		filtering,
-		setFiltering,
 		setCurrentPageIndex,
 		currentPageIndex,
 	} = React.useContext(BookingCTX);
@@ -43,12 +42,13 @@ const Customers = () => {
 	const [columnVisibility, setColumnVisibility] = React.useState({
 		fullName: false,
 	});
-	const [rowSelection, setRowSelection] = React.useState({});
 	const [pageCount, setPageCount] = React.useState(0);
 	const [pagination, setPagination] = React.useState({
 		pageIndex: 0,
 		pageSize: 7,
 	});
+	const { getSearchParams } = useSearchParam();
+	const searchParamValues = getSearchParams();
 
 	const { data, isSuccess, isPending } = useQuery({
 		queryKey: ["customers"],
@@ -91,29 +91,6 @@ const Customers = () => {
 	React.useEffect(() => {
 		if (isSuccess) setCustomersData(data);
 	}, [data, isSuccess, setCustomersData])
-
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	React.useEffect(() => {
-		if (customersData.length)
-			setPageCount(Math.ceil(customersData.length / pagination.pageSize));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [customersData]);
-
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	React.useEffect(() => {
-		if (columnFilters.length || filtering.length) {
-			setPageCount(
-				Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
-			);
-			setCurrentPageIndex((prev) => ({
-				...prev,
-				customers: 0,
-			}));
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [columnFilters, filtering]);
 
 	const columns = [
 		{
@@ -177,19 +154,35 @@ const Customers = () => {
 		getSortedRowModel: getSortedRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
 		onColumnVisibilityChange: setColumnVisibility,
-		onRowSelectionChange: setRowSelection,
 		onPaginationChange: setPagination,
-		onGroupingChange: setFiltering,
 		pageCount,
 		state: {
 			sorting,
 			columnFilters,
 			columnVisibility,
-			rowSelection,
 			pagination,
-			globalFilter: filtering,
+			globalFilter: searchParamValues?.s,
 		},
 	});
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	React.useEffect(() => {
+		if (customersData.length)
+			setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [customersData]);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	React.useEffect(() => {
+		setPageCount(
+			Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
+		);
+		setCurrentPageIndex((prev) => ({
+			...prev,
+			customers: 0,
+		}));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [columnFilters, searchParamValues?.s]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {

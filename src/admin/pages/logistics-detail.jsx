@@ -39,10 +39,11 @@ import { Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useReactToPrint } from "react-to-print";
 import LogisticsInvoice from "@/components/LogisticInvoice";
+import { useSearchParam } from "@/hooks/useSearchParam";
 
 const LogisticsDetails = () => {
 	const navigate = useNavigate();
-	const { setCurrentPageIndex, filtering, setFiltering, currentPageIndex } = React.useContext(BookingCTX);
+	const { setCurrentPageIndex, currentPageIndex } = React.useContext(BookingCTX);
 	const [dataQuery, setDataQuery] = React.useState([]);
 	const [columnFilters, setColumnFilters] = React.useState([]);
 	const [pageCount, setPageCount] = React.useState(0);
@@ -50,12 +51,14 @@ const LogisticsDetails = () => {
 		pageIndex: 0,
 		pageSize: 10,
 	});
+	const { getSearchParams } = useSearchParam()
+	const searchParamValues = getSearchParams();
 
 	const { data, isSuccess, isPending } = useQuery({
 		queryKey: ["logistics"],
 		queryFn: async () => {
 			try {
-				const response = await axiosInstance.get("logistics/get");
+				const response = await axiosInstance.get("/logistics/get");
 				return response.data.logistics;
 			}
 			catch (error) {
@@ -68,33 +71,6 @@ const LogisticsDetails = () => {
 	React.useEffect(() => {
 		if (isSuccess) setDataQuery(data);
 	}, [data, isSuccess])
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	React.useEffect(() => {
-		if (dataQuery.length)
-			setPageCount(Math.ceil(dataQuery.length / pagination.pageSize));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [dataQuery]);
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	React.useEffect(() => {
-		table.setPageIndex(currentPageIndex.logistics);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	React.useEffect(() => {
-		if (columnFilters.length || filtering.length) {
-			setPageCount(
-				Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
-			);
-			setCurrentPageIndex((prev) => ({
-				...prev,
-				logistics: 0,
-			}));
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [columnFilters, filtering]);
 
 	const columns = [
 		{
@@ -168,7 +144,6 @@ const LogisticsDetails = () => {
 		getSortedRowModel: getSortedRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
 		onPaginationChange: setPagination,
-		onGroupingChange: setFiltering,
 		pageCount,
 		state: {
 			pagination,
@@ -176,7 +151,7 @@ const LogisticsDetails = () => {
 			columnVisibility: {
 				dateTime: false,
 			},
-			globalFilter: filtering,
+			globalFilter: searchParamValues?.s,
 		},
 		initialState: {
 			sorting: [
@@ -187,6 +162,31 @@ const LogisticsDetails = () => {
 			],
 		},
 	});
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	React.useEffect(() => {
+		if (dataQuery.length)
+			setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [dataQuery]);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	React.useEffect(() => {
+		setPageCount(
+			Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
+		);
+		setCurrentPageIndex((prev) => ({
+			...prev,
+			logistics: 0,
+		}));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [columnFilters, searchParamValues?.s]);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	React.useEffect(() => {
+		table.setPageIndex(currentPageIndex.logistics);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return (
 		<>

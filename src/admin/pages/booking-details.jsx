@@ -20,7 +20,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { useLoaderData, useNavigate, } from "react-router-dom";
+import { useLoaderData, useNavigate, useSearchParams } from "react-router-dom";
 import React from "react";
 import { format } from "date-fns";
 import {
@@ -39,7 +39,7 @@ import { PaginationEllipsis } from "@/components/ui/pagination";
 import ReactPaginate from "react-paginate";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import { SearchForm } from "./journey-list";
+import SearchForm from "@/components/SearchForm";
 import {
 	Select,
 	SelectContent,
@@ -52,24 +52,19 @@ import Button from "@/components/custom/Button";
 import { useReactToPrint } from "react-to-print";
 import TicketInvoice from "@/components/TicketInvoice";
 import axiosInstance from "@/api";
+import { useSearchParam } from "@/hooks/useSearchParam";
 
 const BookingDetails = () => {
 	const navigate = useNavigate();
 	const {
 		bookingQuery,
 		currentPageIndex,
-		filtering,
-		setFiltering,
-		searchParams,
-		setSearchParams,
-		setCurrentPageIndex
+		setCurrentPageIndex,
+		setFilterValue
 	} = React.useContext(BookingCTX);
 	const { adminProfile } = React.useContext(GlobalCTX);
-	const isColumnVisible =
-		adminProfile.account_type === "dev" ||
-		adminProfile.account_type === "super-admin";
+	const isColumnVisible = ["dev", "super-admin"].includes(adminProfile.account_type);
 	const [sorting, setSorting] = React.useState([]);
-	const [columnFilters, setColumnFilters] = React.useState([]);
 	const [columnVisibility, setColumnVisibility] = React.useState({
 		fullName: false,
 		departure: isColumnVisible,
@@ -80,6 +75,12 @@ const BookingDetails = () => {
 		pageIndex: 0,
 		pageSize: 7,
 	});
+	const [searchParams, setSearchParams] = useSearchParams();
+	const { getSearchParams, updateSearchParam, removeSearchParam } = useSearchParam()
+	const searchParamValues = getSearchParams();
+	const defaultColumnFilters =
+		Object.entries(searchParamValues).map(([key, value]) => ({ id: key, value }))
+	const [columnFilters, setColumnFilters] = React.useState(defaultColumnFilters);
 
 	const columns = [
 		{
@@ -212,37 +213,34 @@ const BookingDetails = () => {
 		getFilteredRowModel: getFilteredRowModel(),
 		onColumnVisibilityChange: setColumnVisibility,
 		onPaginationChange: setPagination,
-		onGroupingChange: setFiltering,
 		pageCount,
 		state: {
 			sorting,
 			columnFilters,
 			columnVisibility,
 			pagination,
-			globalFilter: filtering,
-		},
+			globalFilter: searchParamValues?.s,
+		}
 	});
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
 		if (bookingQuery.length)
-			setPageCount(Math.ceil(bookingQuery.length / pagination.pageSize));
+			setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [bookingQuery]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
-		if (columnFilters.length || filtering.length) {
-			setPageCount(
-				Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
-			);
-			setCurrentPageIndex((prev) => ({
-				...prev,
-				booking: 0,
-			}));
-		}
+		setPageCount(
+			Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
+		);
+		setCurrentPageIndex((prev) => ({
+			...prev,
+			booking: 0,
+		}));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [columnFilters, filtering]);
+	}, [columnFilters, searchParamValues?.s]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
@@ -252,15 +250,27 @@ const BookingDetails = () => {
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
-		if (searchParams) {
-			table.getColumn("departure").setFilterValue(searchParams?.departure);
-			if (searchParams?.date) {
-				const formatDate = format(new Date(searchParams.date), "P");
-				table.getColumn("date").setFilterValue(formatDate);
-			}
+		const departure = searchParams.get("departure")
+		if (departure)
+			table.getColumn("departure").setFilterValue(departure);
+
+		const date = searchParams.get("date");
+		if (date) {
+			const formatDate = format(new Date(date), "P");
+			table.getColumn("date").setFilterValue(formatDate);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [searchParams]);
+	}, [searchParams])
+
+	const handleFilterChange = (key, value) => {
+		if (value === "#") {
+			removeSearchParam(key)
+			table.getColumn(key)?.setFilterValue("");
+			return;
+		}
+		updateSearchParam(key, value)
+		table.getColumn(key)?.setFilterValue(value);
+	}
 
 	return (
 		<>
@@ -269,7 +279,14 @@ const BookingDetails = () => {
 			</Helmet>
 
 			<h1 className="text-lg font-semibold mb-10">Booking Details</h1>
-			<SearchForm />
+			<SearchForm
+				props={{
+					name: "departure",
+					label: "Departure",
+					placeholder: "Select Departure Terminal",
+					options: ["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]
+				}}
+			/>
 			<div className="my-10 flex gap-5 justify-between flex-wrap items-center">
 				{(columnFilters.length) ?
 					<Button
@@ -278,6 +295,7 @@ const BookingDetails = () => {
 						onClick={() => {
 							table.resetColumnFilters(true);
 							setSearchParams({});
+							setFilterValue("");
 						}}
 						text="Reset filters"
 					/> : ""}
@@ -288,14 +306,9 @@ const BookingDetails = () => {
 							Medium
 						</span>
 						<Select
-							defaultValue="#"
+							defaultValue={searchParamValues?.medium ?? "#"}
 							value={table.getColumn("medium")?.getFilterValue() ?? "#"}
-							onValueChange={(value) => {
-								if (value === "#") {
-									return table.getColumn("medium")?.setFilterValue("");
-								}
-								table.getColumn("medium")?.setFilterValue(value);
-							}}
+							onValueChange={(value) => handleFilterChange("medium", value)}
 						>
 							<SelectTrigger className="w-[170px] grow rounded-none rounded-r-lg border-0 border-l px-5 focus:ring-0 focus:ring-offset-0 bg-white">
 								<SelectValue />
@@ -314,14 +327,9 @@ const BookingDetails = () => {
 							Payment status
 						</span>
 						<Select
-							defaultValue="#"
+							defaultValue={searchParamValues?.payment_status ?? "#"}
 							value={table.getColumn("payment_status")?.getFilterValue() ?? "#"}
-							onValueChange={(value) => {
-								if (value === "#") {
-									return table.getColumn("payment_status")?.setFilterValue("");
-								}
-								table.getColumn("payment_status")?.setFilterValue(value);
-							}}
+							onValueChange={(value) => handleFilterChange("payment_status", value)}
 						>
 							<SelectTrigger className="w-[170px] grow rounded-none rounded-r-lg border-0 border-l px-5 focus:ring-0 focus:ring-offset-0 bg-white">
 								<SelectValue />
@@ -341,14 +349,9 @@ const BookingDetails = () => {
 							Trip status
 						</span>
 						<Select
-							defaultValue="#"
+							defaultValue={searchParamValues?.trip_status ?? "#"}
 							value={table.getColumn("trip_status")?.getFilterValue() ?? "#"}
-							onValueChange={(value) => {
-								if (value === "#") {
-									return table.getColumn("trip_status")?.setFilterValue("");
-								}
-								table.getColumn("trip_status")?.setFilterValue(value);
-							}}
+							onValueChange={(value) => handleFilterChange("trip_status", value)}
 						>
 							<SelectTrigger className="w-[170px] grow rounded-none rounded-r-lg border-0 border-l px-5 focus:ring-0 focus:ring-offset-0 bg-white">
 								<SelectValue />
@@ -368,22 +371,7 @@ const BookingDetails = () => {
 				</div>
 			</div>
 
-			{Object.keys(searchParams).length ? (
-				<div className="flex items-center mb-5">
-					<div className="inline-flex gap-1">
-						<h2 className="font-semibold">Search results for </h2>
-						<p className="divide-x divide-black flex gap-2 [&>*:not(:first-of-type)]:pl-2">
-							({" "}
-							{searchParams?.departure && (
-								<span>{searchParams.departure} </span>
-							)}
-							{searchParams?.date && <span>{searchParams.date}</span>})
-						</p>
-					</div>
-				</div>
-			) : (
-				<h2 className="font-semibold mb-5">All Bookings</h2>
-			)}
+			<h2 className="font-semibold mb-5"> {Object.keys(searchParamValues).length ? "Search results" : "All bookings"}</h2>
 			<div className="bg-white rounded-lg px-4 py-2 ">
 				<Table>
 					<TableHeader>

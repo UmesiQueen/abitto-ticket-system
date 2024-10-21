@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import React from "react";
 import { Helmet } from "react-helmet-async";
@@ -26,14 +27,13 @@ import {
 } from "@tanstack/react-table";
 import { Button as ButtonUI } from "@/components/ui/button";
 import Button from "@/components/custom/Button";
-// import { formatValue } from "react-currency-input-field";
 import { PaginationEllipsis } from "@/components/ui/pagination";
 import ReactPaginate from "react-paginate";
 import { truncate, capitalize } from "lodash";
 import ConfirmationModal from "@/components/modals/confirmation";
 import { useUpdate } from "@/hooks/useUpdate";
-// import { cn } from "@/lib/utils";
 import humanizeList from "humanize-list";
+import { useSearchParam } from "@/hooks/useSearchParam";
 
 const CheckIn = () => {
 	const navigate = useNavigate();
@@ -88,13 +88,7 @@ export default CheckIn;
 const CheckInTable = () => {
 	const navigate = useNavigate();
 	const { accountType } = useParams();
-	const {
-		bookingQuery,
-		currentPageIndex,
-		filtering,
-		setFiltering,
-		setCurrentPageIndex,
-	} = React.useContext(BookingCTX);
+	const { bookingQuery, currentPageIndex, setCurrentPageIndex } = React.useContext(BookingCTX);
 	const { mountPortalModal } = React.useContext(GlobalCTX);
 	const { checkInPassenger } = useUpdate();
 	const [sorting, setSorting] = React.useState([]);
@@ -104,12 +98,14 @@ const CheckInTable = () => {
 		departure: accountType === "dev",
 		phone_number: accountType !== "dev",
 	});
-	const [rowSelection, setRowSelection] = React.useState({});
 	const [pagination, setPagination] = React.useState({
 		pageIndex: 0,
 		pageSize: 7,
 	});
+	const [pageCount, setPageCount] = React.useState(0);
 	const [dailyBookingQuery, setDailyBookingQuery] = React.useState([]);
+	const { getSearchParams } = useSearchParam();
+	const searchParamValues = getSearchParams();
 
 	React.useEffect(() => {
 		const result = bookingQuery.filter((booking) => {
@@ -173,12 +169,6 @@ const CheckInTable = () => {
 			cell: ({ row }) => row.original.travel_from,
 			enableGlobalFilter: false,
 		},
-		// {
-		// 	accessorKey: "type",
-		// 	header: "Trip type",
-		// 	cell: ({ row }) => row.original.trip_type,
-		// 	enableGlobalFilter: false,
-		// },
 		{
 			accessorKey: "medium",
 			header: "Medium",
@@ -225,19 +215,33 @@ const CheckInTable = () => {
 		getSortedRowModel: getSortedRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
 		onColumnVisibilityChange: setColumnVisibility,
-		onRowSelectionChange: setRowSelection,
 		onPaginationChange: setPagination,
-		onGroupingChange: setFiltering,
-		pageCount: Math.ceil(dailyBookingQuery.length / pagination.pageSize),
+		pageCount,
 		state: {
 			sorting,
 			columnFilters,
 			columnVisibility,
-			rowSelection,
 			pagination,
-			globalFilter: filtering,
+			globalFilter: searchParamValues?.s,
 		},
 	});
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	React.useEffect(() => {
+		if (dailyBookingQuery.length)
+			setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
+	}, [dailyBookingQuery])
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	React.useEffect(() => {
+		setPageCount(
+			Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
+		);
+		setCurrentPageIndex((prev) => ({
+			...prev,
+			checkIn: 0,
+		}));
+	}, [searchParamValues?.s]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {

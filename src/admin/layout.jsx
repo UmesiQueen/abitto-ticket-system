@@ -35,32 +35,30 @@ import { Mailbox } from "lucide-react";
 import { customError } from "@/lib/utils";
 import Cookies from 'js-cookie';
 import NoMobileView from "@/assets/images/no_mobile_view.jpg"
+import { useSearchParam } from "@/hooks/useSearchParam";
 
 const ProtectedRoute = () => {
 	const navigate = useNavigate();
 	const matches = useMediaQuery("(min-width:1024px)");
 	const { adminProfile } = React.useContext(GlobalCTX);
-	const { setBookingQuery, setFiltering } =
-		React.useContext(BookingCTX);
+	const { setBookingQuery, filterValue, setFilterValue } = React.useContext(BookingCTX);
 	const { pathname } = useLocation();
 	const accountType = adminProfile.account_type;
+	const currentPathname = pathname.replace(/\/$/, "");
 	const searchBarVisibility = [
 		`/backend/${accountType}/booking-details`,
-		`/backend/${accountType}/booking-details/`,
 		`/backend/${accountType}/rental-details`,
-		`/backend/${accountType}/rental-details/`,
 		`/backend/${accountType}/create/check-in`,
-		`/backend/${accountType}/create/check-in/`,
 		`/backend/${accountType}/customers`,
-		`/backend/${accountType}/customers/`,
 		`/backend/${accountType}/logistics`,
-		`/backend/${accountType}/logistics/`,
-	].includes(pathname);
-	const [filterValue, setFilterValue] = React.useState("");
+	].includes(currentPathname);
+	const { updateSearchParam } = useSearchParam();
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
-		setTimeout(() => { setFiltering(filterValue) }, 500)
-	}, [filterValue, setFiltering])
+		setTimeout(() => { updateSearchParam("s", filterValue) }, 1000)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [filterValue])
 
 	const { data, isSuccess } = useQuery({
 		queryKey: ["bookings"],
@@ -89,13 +87,6 @@ const ProtectedRoute = () => {
 	React.useEffect(() => {
 		if (isSuccess) setBookingQuery(data)
 	}, [isSuccess, data, setBookingQuery])
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	React.useEffect(() => {
-		setFiltering("");
-		setFilterValue("")
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [pathname]);
 
 	const menuItems = [
 		[

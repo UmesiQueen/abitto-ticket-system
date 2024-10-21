@@ -1,7 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import { useNavigate, useLoaderData } from "react-router-dom";
-import { addDays, format } from "date-fns";
+import { useNavigate, useLoaderData, useSearchParams } from "react-router-dom";
+import { format } from "date-fns";
 import {
 	flexRender,
 	getCoreRowModel,
@@ -12,10 +12,6 @@ import {
 } from "@tanstack/react-table";
 import ReactPaginate from "react-paginate";
 import { cn, customError } from "@/lib/utils";
-import { useForm, Controller } from "react-hook-form";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import DatePicker from "react-datepicker";
 import { PaginationEllipsis } from "@/components/ui/pagination";
 import {
 	Table,
@@ -38,7 +34,6 @@ import {
 	UsersIcon,
 	ClockIcon,
 } from "@/assets/icons";
-import SelectField from "@/components/custom/SelectField";
 import { BookingCTX } from "@/contexts/BookingContext";
 import axiosInstance from "@/api";
 import { GlobalCTX } from "@/contexts/GlobalContext";
@@ -48,6 +43,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import RentalInvoice from "@/components/RentalInvoice";
 import { useReactToPrint } from "react-to-print";
+import { useSearchParam } from "@/hooks/useSearchParam";
+import SearchForm from "@/components/SearchForm";
 
 const RentalDetails = () => {
 	return (
@@ -55,8 +52,15 @@ const RentalDetails = () => {
 			<Helmet>
 				<title>Rental Details | Admin</title>
 			</Helmet>
-			<h1 className=" text-lg font-semibold">Rental Details</h1>
-			<SearchForm />
+			<h1 className="text-lg font-semibold mb-10">Rental Details</h1>
+			<SearchForm
+				props={{
+					name: "rent_type",
+					label: "Select Package",
+					placeholder: "Select Rental Package",
+					options: ["Within Marina", "Calabar to Uyo", "Uyo to Calabar"]
+				}}
+			/>
 			<RentalTable />
 		</>
 	);
@@ -64,125 +68,9 @@ const RentalDetails = () => {
 
 export default RentalDetails;
 
-const searchSchema = yup
-	.object()
-	.shape({
-		date: yup.string(),
-		rent_type: yup.string(),
-	})
-	.test("require at least one field", ({ date, rent_type }) => {
-		const a = !!(date || rent_type); // At least one must be non-empty
-		if (!a) {
-			return new yup.ValidationError(
-				"At least one of the two fields must be filled.", //Message
-				"null",
-				"rent_type", //error name
-				"required" //type
-			);
-		}
-		return true;
-	});
-
-const SearchForm = () => {
-	const { loading, setLoading, setSearchParams, searchParams } =
-		React.useContext(BookingCTX);
-	const { adminProfile } = React.useContext(GlobalCTX);
-	const {
-		register,
-		handleSubmit,
-		formState: { errors, isSubmitted },
-		control,
-		reset,
-	} = useForm({
-		mode: "onChange",
-		resolver: yupResolver(searchSchema),
-	});
-
-	React.useEffect(() => {
-		if (!Object.keys(searchParams).length) {
-			reset({});
-		}
-	}, [searchParams, reset]);
-
-	const onSubmit = handleSubmit((formData) => {
-		setLoading(true);
-		setTimeout(() => {
-			setSearchParams({
-				...formData,
-				...(formData?.date && {
-					date: new Date(addDays(formData.date, 1)).toISOString().split("T")[0],
-				}),
-			});
-			setLoading(false);
-		}, 650);
-	});
-
-	return (
-		<form
-			onSubmit={onSubmit}
-			className="flex gap-5 justify-between bg-white rounded-lg my-8 p-6"
-		>
-			<div className="flex gap-5 w-full ">
-				{["super-admin", "dev"].includes(adminProfile.account_type) && (
-					<SelectField
-						{...register("rent_type")}
-						label="Select Package"
-						placeholder="Select Rental Package"
-						options={["Within Marina", "Calabar to Uyo", "Uyo to Calabar"]}
-						errors={errors}
-						formState={isSubmitted}
-					/>
-				)}
-
-				{/* date field */}
-				<div className="flex flex-col w-full">
-					<label htmlFor="date" className="text-xs md:text-sm !w-full flex flex-col ">
-						Choose Date
-						<Controller
-							control={control}
-							name="date"
-							render={({ field }) => (
-								<DatePicker
-									icon={<CalendarIcon />}
-									showIcon
-									toggleCalendarOnIconClick={true}
-									closeOnScroll
-									className="bg-blue-50 h-10 md:h-12 border border-blue-500 font-normal text-base w-full !px-4 !rounded-lg font-poppins mt-2 md:mt-3 text-left"
-									onChange={(date) => field.onChange(date)}
-									selected={field.value}
-									customInput={
-										<button type="button">
-											{field?.value ? (
-												format(field?.value, "P")
-											) : (
-												<span className="text-xs text-[#9fa6b2]">
-													dd/mm/yyyy
-												</span>
-											)}
-										</button>
-									}
-								/>
-							)}
-						/>
-					</label>
-					{errors?.date && (
-						<p className="text-xs pt-2 text-red-700">{errors?.date.message}</p>
-					)}
-				</div>
-			</div>
-			<Button
-				text="Search"
-				type="submit"
-				loading={loading}
-				className="w-40 py-6  md:mt-7 "
-			/>
-		</form>
-	);
-};
-
 const RentalTable = () => {
 	const { adminProfile } = React.useContext(GlobalCTX);
-	const { searchParams, setSearchParams, currentPageIndex, filtering, setCurrentPageIndex } =
+	const { currentPageIndex, setCurrentPageIndex, setFilterValue } =
 		React.useContext(BookingCTX);
 	const [sorting, setSorting] = React.useState([]);
 	const [columnFilters, setColumnFilters] = React.useState([]);
@@ -197,6 +85,9 @@ const RentalTable = () => {
 	});
 	const [rentalData, setRentalData] = React.useState([]);
 	const navigate = useNavigate();
+	const [searchParams, setSearchParams] = useSearchParams();
+	const { getSearchParams } = useSearchParam();
+	const searchParamValues = getSearchParams();
 
 	const { data, isSuccess, isPending } = useQuery({
 		queryKey: ["rentals"],
@@ -225,7 +116,6 @@ const RentalTable = () => {
 		if (isSuccess) setRentalData(data)
 	}, [isSuccess, data])
 
-
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
 		table.setPageIndex(currentPageIndex.rentals);
@@ -233,35 +123,34 @@ const RentalTable = () => {
 	}, []);
 
 	React.useEffect(() => {
-		if (searchParams) {
-			table.getColumn("rent_type").setFilterValue(searchParams?.rent_type);
+		const rent_type = searchParams.get("rent_type");
+		if (rent_type)
+			table.getColumn("rent_type").setFilterValue(rent_type);
 
-			if (searchParams?.date) {
-				const formatDate = format(new Date(searchParams.date), "P");
-				table.getColumn("rental_date").setFilterValue(formatDate);
-			}
+		const date = searchParams.get("date");
+		if (date) {
+			const formatDate = format(new Date(date), "P");
+			table.getColumn("rental_date").setFilterValue(formatDate);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [searchParams]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
-		if (columnFilters.length || filtering.length) {
-			setPageCount(
-				Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
-			);
-			setCurrentPageIndex((prev) => ({
-				...prev,
-				rentals: 0,
-			}));
-		}
+		setPageCount(
+			Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
+		);
+		setCurrentPageIndex((prev) => ({
+			...prev,
+			rentals: 0,
+		}));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [columnFilters, filtering]);
+	}, [columnFilters, searchParamValues?.s]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
 		if (rentalData.length)
-			setPageCount(Math.ceil(rentalData.length / pagination.pageSize));
+			setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [rentalData]);
 
@@ -387,7 +276,7 @@ const RentalTable = () => {
 			columnVisibility,
 			sorting,
 			columnFilters,
-			globalFilter: filtering,
+			globalFilter: searchParamValues?.s,
 		},
 	});
 
@@ -399,32 +288,20 @@ const RentalTable = () => {
 
 	return (
 		<div>
-			{Object.keys(searchParams).length ? (
-				<div className="flex justify-between items-center mt-14 mb-5">
-					<div className="inline-flex gap-1 items-center">
-						<h2 className="font-semibold">Search results for </h2>
-						<p className="divide-x divide-black flex gap-2 [&>*:not(:first-of-type)]:pl-2">
-							(
-							{searchParams?.rent_type && (
-								<span>{searchParams.rent_type} </span>
-							)}
-							{searchParams?.date && <span>{searchParams.date}</span>})
-						</p>
-					</div>
-
+			<div className="flex items-center gap-10 justify-between w-full mt-10 mb-5 ">
+				<h2 className="font-semibold"> {Object.keys(searchParamValues).length ? "Search results" : "All Rentals"}</h2>
+				{(columnFilters.length) ?
 					<Button
-						className="h-10 text-sm"
+						variant="outline"
+						className="!h-8 !text-sm"
 						onClick={() => {
 							table.resetColumnFilters(true);
 							setSearchParams({});
+							setFilterValue("");
 						}}
 						text="Reset filters"
-						variant="outline"
-					/>
-				</div>
-			) : (
-				<h2 className="font-semibold mt-14 mb-5">All Rentals</h2>
-			)}
+					/> : ""}
+			</div>
 			<div className="bg-white rounded-lg p-5">
 				<Table>
 					<TableHeader>

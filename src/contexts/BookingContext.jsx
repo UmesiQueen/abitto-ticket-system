@@ -1,5 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { useSearchParam } from "@/hooks/useSearchParam";
+import { useLocation } from "react-router-dom";
 
 export const BookingCTX = React.createContext();
 
@@ -34,13 +36,15 @@ const BookingContext = ({ children }) => {
 	const [tripDetails, setTripDetails] = React.useState({});
 	const [rentalData, setRentalData] = React.useState({});
 	const [customersData, setCustomersData] = React.useState([]);
-	const [filtering, setFiltering] = React.useState("");
+	const { getSearchParams } = useSearchParam();
+	const searchParamValues = getSearchParams()
+	const [filterValue, setFilterValue] = React.useState(searchParamValues?.s ?? "");
+	const { pathname } = useLocation();
 
-	// React.useEffect(() => {
-	// 	// check if pathname does not include booking 
-	// handleReset();
-	// 	setSearchParams({})
-	// }, [pathname]);
+	React.useEffect(() => {
+		if (pathname)
+			setFilterValue("")
+	}, [pathname]);
 
 	const handleReset = () => {
 		setActiveStep(0);
@@ -86,8 +90,8 @@ const BookingContext = ({ children }) => {
 		setCurrentPageIndex,
 		customersData,
 		setCustomersData,
-		filtering,
-		setFiltering,
+		filterValue,
+		setFilterValue,
 		resetSelectField: () => { },
 	};
 
