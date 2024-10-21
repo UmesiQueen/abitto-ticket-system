@@ -19,6 +19,7 @@ import {
 	Link,
 	useLocation,
 	useParams,
+	useNavigation
 } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import Avatar from "@mui/material/Avatar";
@@ -32,10 +33,11 @@ import axiosInstance from "@/api";
 import { Feedback, PriceChange } from "@mui/icons-material";
 import Logo from "@/assets/logo2.svg";
 import { Mailbox } from "lucide-react";
-import { customError } from "@/lib/utils";
+import { customError, cn } from "@/lib/utils";
 import Cookies from 'js-cookie';
 import NoMobileView from "@/assets/images/no_mobile_view.jpg"
 import { useSearchParam } from "@/hooks/useSearchParam";
+import { Loader2 } from "lucide-react";
 
 const ProtectedRoute = () => {
 	const navigate = useNavigate();
@@ -53,6 +55,7 @@ const ProtectedRoute = () => {
 		`/backend/${accountType}/logistics`,
 	].includes(currentPathname);
 	const { updateSearchParam } = useSearchParam();
+	const navigation = useNavigation();
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
@@ -190,6 +193,11 @@ const ProtectedRoute = () => {
 			</Helmet>
 			{matches ?
 				<div className="relative">
+					<div className={cn("fixed top-0 w-full left-0 overflow-hidden right-0 h-0 shadow-xl backdrop-blur-[1px] bg-blue-500/15 z-20 rounded-b-full flex items-center justify-center transition duration-300 ease-in",
+						{ 'h-20': navigation.state === "loading" }
+					)} >
+						<Loader2 className="animate-spin text-white" size={30} />
+					</div>
 					{/* sidebar */}
 					<aside className="h-screen w-40 md:w-60 bg-black text-white flex flex-col fixed">
 						<div>
