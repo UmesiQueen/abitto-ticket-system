@@ -225,7 +225,7 @@ const TicketInvoice = React.forwardRef(({ props: { currentUser } }, ref) => {
 						</strong>
 					</p>
 				</div>
-				<p className="text-xs text-center">Built with ❤️ by <a href="http://www.ticketsbyallin.com" className="underline">www.ticketsbyallin.com</a></p>
+				<p className="text-xs text-center">Built with ❤️ by <a href="https://www.ticketsbyallin.com" className="underline">www.ticketsbyallin.com</a></p>
 			</div>
 		</div>
 	)

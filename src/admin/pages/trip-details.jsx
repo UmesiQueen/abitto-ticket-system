@@ -47,6 +47,8 @@ import {
 } from "@/components/ui/select";
 import { PaginationEllipsis } from "@/components/ui/pagination";
 import ReactPaginate from "react-paginate";
+import { useQueryClient } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 
 const TripDetails = () => {
     const { mountPortalModal, adminProfile } = React.useContext(GlobalCTX);
@@ -65,6 +67,7 @@ const TripDetails = () => {
     });
     const [pageCount, setPageCount] = React.useState(0);
     const [currentDataQuery, setCurrentDataQuery] = React.useState([]);
+    const queryClient = useQueryClient();
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     React.useEffect(() => {
@@ -420,7 +423,7 @@ const TripDetails = () => {
                                         colSpan={columns.length}
                                         className="h-24 text-center"
                                     >
-                                        No results.
+                                        {queryClient.isFetching("booking") ? <p className="inline-flex gap-2 items-center">Fetching data  <Loader2 className="animate-spin" /></p> : "No results."}
                                     </TableCell>
                                 </TableRow>
                             )}

@@ -27,6 +27,8 @@ import { BookingCTX } from "@/contexts/BookingContext";
 import Logo from "@/assets/logo.svg";
 import { useReactToPrint } from "react-to-print";
 import { formatValue } from "react-currency-input-field";
+import { useQueryClient } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 
 const Manifesto = () => {
 	const { adminProfile } = React.useContext(GlobalCTX);
@@ -44,6 +46,8 @@ const Manifesto = () => {
 	});
 	const [currentDataQuery, setCurrentDataQuery] = React.useState([]);
 	const { tripCode } = useParams();
+	const queryClient = useQueryClient();
+
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
@@ -293,7 +297,7 @@ const Manifesto = () => {
 										colSpan={columns.length}
 										className="h-24 text-center"
 									>
-										No results.
+										{queryClient.isFetching("booking") ? <p className="inline-flex gap-2 items-center">Fetching data  <Loader2 className="animate-spin" /></p> : "No results."}
 									</TableCell>
 								</TableRow>
 							)}

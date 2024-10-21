@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import React from "react";
 import { Helmet } from "react-helmet-async";
@@ -34,6 +33,8 @@ import ConfirmationModal from "@/components/modals/confirmation";
 import { useUpdate } from "@/hooks/useUpdate";
 import humanizeList from "humanize-list";
 import { useSearchParam } from "@/hooks/useSearchParam";
+import { useQueryClient } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 
 const CheckIn = () => {
 	const navigate = useNavigate();
@@ -106,6 +107,7 @@ const CheckInTable = () => {
 	const [dailyBookingQuery, setDailyBookingQuery] = React.useState([]);
 	const { getSearchParams } = useSearchParam();
 	const searchParamValues = getSearchParams();
+	const queryClient = useQueryClient();
 
 	React.useEffect(() => {
 		const result = bookingQuery.filter((booking) => {
@@ -230,6 +232,7 @@ const CheckInTable = () => {
 	React.useEffect(() => {
 		if (dailyBookingQuery.length)
 			setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dailyBookingQuery])
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -241,6 +244,7 @@ const CheckInTable = () => {
 			...prev,
 			checkIn: 0,
 		}));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [searchParamValues?.s]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -315,7 +319,7 @@ const CheckInTable = () => {
 									colSpan={columns.length}
 									className="h-24 text-center"
 								>
-									No results.
+									{queryClient.isFetching("booking") ? <p className="inline-flex gap-2 items-center">Fetching data  <Loader2 className="animate-spin" /></p> : "No results."}
 								</TableCell>
 							</TableRow>
 						)}

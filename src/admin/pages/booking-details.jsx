@@ -53,6 +53,8 @@ import { useReactToPrint } from "react-to-print";
 import TicketInvoice from "@/components/TicketInvoice";
 import axiosInstance from "@/api";
 import { useSearchParam } from "@/hooks/useSearchParam";
+import { useQueryClient } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 
 const BookingDetails = () => {
 	const navigate = useNavigate();
@@ -81,6 +83,7 @@ const BookingDetails = () => {
 	const defaultColumnFilters =
 		Object.entries(searchParamValues).map(([key, value]) => ({ id: key, value }))
 	const [columnFilters, setColumnFilters] = React.useState(defaultColumnFilters);
+	const queryClient = useQueryClient();
 
 	const columns = [
 		{
@@ -419,7 +422,7 @@ const BookingDetails = () => {
 									colSpan={columns.length}
 									className="h-24 text-center"
 								>
-									No results.
+									{queryClient.isFetching("booking") ? <p className="inline-flex gap-2 items-center">Fetching data  <Loader2 className="animate-spin" /></p> : "No results."}
 								</TableCell>
 							</TableRow>
 						)}
