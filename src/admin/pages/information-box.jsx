@@ -156,7 +156,10 @@ const InformationBox = () => {
 						type="button"
 						variant="secondary"
 						className="text-xs"
-						onClick={() => setPreview(row.original.message)}
+						onClick={() => {
+							setImageFile("");
+							setPreview(row.original.message)
+						}}
 					>
 						Preview
 					</ButtonUI>
@@ -247,12 +250,7 @@ const InformationBox = () => {
 					}
 				})
 				.catch((error) => {
-					if (
-						!error.code === "ERR_NETWORK" ||
-						!error.code === "ERR_INTERNET_DISCONNECTED" ||
-						!error.code === "ECONNABORTED"
-					)
-						toast.error("Failed to upload message. Try Again.");
+					customError(error, "Failed to upload message. Try Again.");
 				})
 				.finally(() => {
 					setLoader(false);
@@ -438,7 +436,7 @@ const InformationBox = () => {
 							>
 								{preview.length ?
 									<img src={preview} alt="notice" />
-									: ""
+									: null
 								}
 							</div>
 						</div>
@@ -585,7 +583,7 @@ const PreviewModal = ({ url }) => {
 	const { unMountPortalModal } = React.useContext(GlobalCTX);
 
 	return (
-		<div className="py-12 w-full max-w-[calc(100vw-100px)] min-h-[700px] max-h-[calc(100vh-96px)] flex justify-center">
+		<div className="w-full max-w-[calc(100vw-100px)] h-full max-h-[calc(100vh-100px)] flex justify-center ">
 			<div className="h-full w-fit relative">
 				<ButtonUI
 					variant="ghost"
@@ -603,7 +601,7 @@ const PreviewModal = ({ url }) => {
 
 const InformationLoader = async () => {
 	try {
-		const response = await axiosInstance.get("infobox/get");
+		const response = await axiosInstance.get("/infobox/get");
 		return response.data.infoBoxes;
 	} catch (error) {
 		customError(error, "Error occurred while retrieving uploaded messages.");

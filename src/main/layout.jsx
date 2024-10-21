@@ -14,31 +14,31 @@ import { GlobalCTX } from "@/contexts/GlobalContext";
 import LogoSVG from "@/assets/icons/abitto.svg";
 import Loader from "@/components/animation/Loader";
 import { InformationModal } from "@/admin/pages/information-box";
-import axiosInstance from "@/api";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 
 const MainLayout = () => {
 	const { setLiveMessage } = React.useContext(GlobalCTX);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	React.useEffect(() => {
-		axiosInstance
-			.get("infobox/get")
-			.then((res) => {
-				if (res.status === 200) {
-					const data = res.data.infoBoxes;
-					const activeMessage = data.filter((message) => message.status === "Active")[0];
-					if (activeMessage)
-						setLiveMessage(activeMessage)
-				}
-			})
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	useQuery({
+		queryKey: ["notification"],
+		queryFn: async () => {
+			const API_BASE_URL = process.env.ABITTO_BASE_URL;
+			const res = await axios.get(`${API_BASE_URL}/infobox/get`)
+			if (res.status === 200) {
+				const data = res.data.infoBoxes;
+				const activeMessage = data.filter((message) => message.status === "Active")[0];
+				if (activeMessage) setLiveMessage(activeMessage)
+				return true
+			}
+		}
+	})
 
 	return (
 		<>
 			<div className="relative">
 				<Navbar />
-				<main className="h-full min-h-[calc(100vh-275px)]">
+				<main className="h-full min-h-[calc(100dvh-275px)]">
 					<Outlet />
 				</main>
 				<Footer />
