@@ -466,7 +466,6 @@ const Pagination = ({ props: { table } }) => {
 				}));
 			}}
 			forcePage={currentPageIndex.booking}
-			initialPage={currentPageIndex.booking}
 			pageRangeDisplayed={3}
 			pageCount={pageCount}
 			previousLabel={
@@ -880,11 +879,29 @@ const CustomerDetailsModal = ({ props: { currentUser } }) => {
 };
 
 export const CustomerDetailsLoader = async ({ params }) => {
+	const ticket_id = params.bookingID;
+	const cacheKey = `tk-${ticket_id}`
+	const cachedData = JSON.parse(sessionStorage.getItem(cacheKey))
+	const cacheTime = 5 * 60 * 1000; // 5 mins
+	const currentTimeStamp = Date.now();
+
+	// check if trip is cached and has not exceeded cacheTime limit
+	if (cachedData && (currentTimeStamp - cachedData.timestamp) < cacheTime) return cachedData.data;
+
 	try {
 		const response = await axiosInstance.post("/booking/querynew", {
-			ticket_id: params.bookingID,
+			ticket_id,
 		});
-		return response.data.booking;
+
+		// check and remove existing trip cache
+		Object.keys(sessionStorage).map((cache) => {
+			if (cache.startsWith("tk-"))
+				sessionStorage.removeItem(cache)
+		})
+
+		const data = response.data.booking
+		sessionStorage.setItem(cacheKey, JSON.stringify({ data, timestamp: currentTimeStamp }))
+		return data;
 	} catch (error) {
 		customError(error, "Error occurred while retrieving ticket invoice.");
 		return null;

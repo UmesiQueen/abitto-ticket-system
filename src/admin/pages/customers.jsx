@@ -272,7 +272,6 @@ const Customers = () => {
 								customers: val.selected,
 							}));
 						}}
-						initialPage={currentPageIndex.customers}
 						forcePage={currentPageIndex.customers}
 						pageRangeDisplayed={3}
 						pageCount={table.getPageCount()}

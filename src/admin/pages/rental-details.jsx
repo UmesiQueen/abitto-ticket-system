@@ -379,7 +379,6 @@ const RentalTable = () => {
 							});
 						}}
 						forcePage={currentPageIndex.rentals}
-						initialPage={currentPageIndex.rentals}
 						pageRangeDisplayed={3}
 						pageCount={table.getPageCount()}
 						previousLabel={

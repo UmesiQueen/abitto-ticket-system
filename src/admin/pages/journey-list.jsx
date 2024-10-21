@@ -239,7 +239,7 @@ const JourneyTable = () => {
 	return (
 		<div>
 			<div className="flex items-center gap-10 justify-between w-full mt-16 mb-5 ">
-				<h2 className="font-semibold"> {Object.keys(searchParamValues).length ? "Search results" : "All Rentals"}</h2>
+				<h2 className="font-semibold"> {Object.keys(searchParamValues).length ? "Search results" : "All Scheduled Trips"}</h2>
 				{(columnFilters.length) ?
 					<Button
 						variant="outline"
@@ -359,7 +359,6 @@ const JourneyTable = () => {
 							}));
 						}}
 						forcePage={currentPageIndex.booking}
-						initialPage={currentPageIndex.booking}
 						pageRangeDisplayed={3}
 						pageCount={pageCount}
 						previousLabel={

@@ -270,7 +270,6 @@ const LogisticsDetails = () => {
 								logistics: val.selected,
 							}));
 						}}
-						initialPage={currentPageIndex.logistics}
 						forcePage={currentPageIndex.logistics}
 						pageRangeDisplayed={3}
 						pageCount={table.getPageCount()}
