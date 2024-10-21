@@ -15,7 +15,8 @@ const BookingContext = ({ children }) => {
 		checkIn: 0,
 		journeyList: 0,
 		feedback: 0,
-		logistics: 0
+		logistics: 0,
+		tripDetails: 0,
 	});
 	const [activeStep, setActiveStep] = React.useState(0);
 	const [formData, setFormData] = React.useState(storedSession ?? {
@@ -37,13 +38,16 @@ const BookingContext = ({ children }) => {
 	const [rentalData, setRentalData] = React.useState({});
 	const [customersData, setCustomersData] = React.useState([]);
 	const { getSearchParams } = useSearchParam();
-	const searchParamValues = getSearchParams()
+	const searchParamValues = getSearchParams();
 	const [filterValue, setFilterValue] = React.useState(searchParamValues?.s ?? "");
 	const { pathname } = useLocation();
 
 	React.useEffect(() => {
-		if (pathname)
+		if (pathname) {
 			setFilterValue("")
+			setActiveStep(0);
+			setRentalData({});
+		}
 	}, [pathname]);
 
 	const handleReset = () => {

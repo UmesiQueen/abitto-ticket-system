@@ -17,7 +17,7 @@ import Login from "./admin/auth/login";
 import MainLayout from "./main/layout";
 import About from "./main/pages/about";
 import BookTicket, { AdminTripDetails, AdminPayment } from "./admin/pages/book-ticket";
-import TripDetails from "./admin/pages/trip-details";
+import Manifesto from "./admin/pages/manifesto";
 import Create from "./admin/pages/create";
 import ScheduleTrip from "./admin/pages/schedule-trip";
 import RentalAdmin from "./admin/pages/rental";
@@ -49,6 +49,7 @@ import BookingDetail from "@/components/BookingDetails";
 import Payment from "@/components/Payment";
 import SearchTrip from "@/components/SearchTrip";
 import BookingConfirmation from "./main/pages/booking-confirmation";
+import TripDetails from "./admin/pages/trip-details";
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -105,6 +106,10 @@ export const router = createBrowserRouter(
 						path="journey-list/:tripCode"
 						element={<TripDetails />}
 						loader={TripDetailsLoader}
+					/>
+					<Route
+						path="journey-list/:tripCode/manifesto"
+						element={<Manifesto />}
 					/>
 					<Route path="schedule-trip" element={<ScheduleTrip />} />
 					<Route path="customers" element={<Customers />} />
