@@ -10,7 +10,6 @@ import { format } from "date-fns";
 import { CalendarIcon, ClockIcon, CircleArrowLeftIcon, Boat2Icon, UsersIcon, InformationCircleIcon } from "@/assets/icons";
 import { BookingCTX } from "@/contexts/BookingContext";
 import Button from "@/components/custom/Button";
-import { Button as ButtonIcon } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { formatValue } from "react-currency-input-field";
 import { toast } from "sonner";
@@ -36,11 +35,11 @@ const Reschedule = () => {
 				<title>Reschedule Booking | Admin</title>
 			</Helmet>
 			<div>
-				<div className="flex gap-1 items-center mb-10 ">
-					<ButtonIcon size="icon" variant="ghost" onClick={() => navigate(-1)}>
+				<div className="flex gap-1 items-center mb-5 py-2">
+					<button type="button" onClick={() => navigate(-1)}>
 						<CircleArrowLeftIcon />
-					</ButtonIcon>
-					<h1 className="font-semibold text-lg">Reschedule Booking</h1>
+					</button>
+					<h1 className="text-base font-semibold">Reschedule Booking</h1>
 				</div>
 				{
 					currentUser ?
@@ -94,9 +93,9 @@ const RescheduleForm = () => {
 	});
 
 	return (
-		<section className="px-20">
-			<div className="bg-blue-700 mx-auto mb-5 min-h-20 p-5 md:p-2 flex items-center ">
-				<ul className="w-full [&_h4]:uppercase [&_h4]:text-gray-400 [&_h4]:text-xs [&_p]:text-white [&_p]:text-sm flex flex-wrap *:grow px-2 items-center gap-5 md:justify-around md:divide-x-2 h-full md:[&_li:not(:first-of-type)]:pl-5 *:space-y-1">
+		<section className="px-5 pb-5">
+			<div className="bg-stone-800/90 mx-auto mb-5 min-h-24 py-5 px-4 flex items-center rounded-lg ">
+				<ul className="w-full [&_h4]:uppercase [&_h4]:font-semibold [&_h4]:text-blue-600 [&_h4]:text-xs [&_p]:text-white [&_p]:text-sm flex flex-wrap *:grow px-2 items-center gap-5 md:justify-around md:divide-x-2 h-full md:[&_li:not(:first-of-type)]:pl-5 *:space-y-1">
 					<li>
 						<h4>Customer name</h4>
 						<p className="capitalize">{capitalize(`${currentUser?.passenger1_first_name} ${currentUser?.passenger1_last_name}`)}</p>
@@ -196,10 +195,9 @@ const RescheduleSelection = () => {
 	const { onNextClick } = useStepper();
 
 	React.useEffect(() => {
-		if (Object.keys(selectedTrip.departure))
-			setIsDisabled(true)
-		else
-			setIsDisabled(false)
+		if (Object.keys(selectedTrip.departure).length)
+			return setIsDisabled(true)
+		setIsDisabled(false)
 	}, [selectedTrip])
 
 	const handleCheck = (name, state, tripDetails, seatExceeded) => {
@@ -560,69 +558,58 @@ const Payment = () => {
 					</div>
 				</div>
 
-				<div className="border-y-2 border-dashed py-2">
-					<table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] ">
-						<tbody>
-							<tr>
-								<td className="text-xs md:text-sm text-[#444444]">
-									Old ticket
-								</td>
-								<td className="text-xs md:text-sm text-[#444444]">
-									{formatValue({
-										value: String(currentUser.departure_ticket_cost),
-										prefix: "₦",
-									})}
-									{" "}	x {currentUser.total_passengers}
-								</td>
-							</tr>
-							<tr>
-								<td className="text-xs md:text-sm text-[#444444]">
-									Total
-								</td>
-								<td className="text-xs md:text-sm text-[#444444]">
-									{formatValue({
-										value: String(currentUser.total_ticket_cost),
-										prefix: "₦",
-									})}
-								</td>
-							</tr>
-							<tr className="border-t">
-								<td className="text-xs md:text-sm text-[#444444]">
-									New ticket
-								</td>
-								<td className="text-xs md:text-sm text-[#444444]">
-									{formatValue({
-										value: String(
-											bookingData.departure_ticket_cost ?? 0
-										),
-										prefix: "₦",
-									})}
-									{" "}	x {bookingData.total_passengers}
-								</td>
-							</tr>
-							<tr>
-								<td className="text-xs md:text-sm text-[#444444]">
-									Total
-								</td>
-								<td className="font-medium text-[#444444]">
-									₦
-									{formatValue({
-										value: String(total_ticket_cost),
-									})} {" "}<span className="font-normal text-sm"> / 50%</span>
-								</td>
-							</tr>
-
-							<tr>
-								<td className="font-medium text-base md:text-lg">Balance</td>
-								<td className="font-semibold">
-									{formatValue({
-										value: String(ticket_balance),
-										prefix: "₦",
-									})}
-								</td>
-							</tr>
-						</tbody>
-					</table>
+				<div className="border-y-2 *:flex *:w-full *:justify-between *:gap-10 *:items-end *:py-3 divide-y-2 divide-dashed">
+					<div>
+						<h3 className="text-xs md:text-sm text-[#444444]">
+							Previous cost
+						</h3>
+						<div className="text-right">
+							<p className="text-xs md:text-sm text-[#444444]">
+								{formatValue({
+									value: String(currentUser.departure_ticket_cost),
+									prefix: "₦",
+								})}
+								{" "}	x {currentUser.total_passengers}
+							</p>
+							<p className="text-xs md:text-sm  font-medium text-[#444444]">
+								{formatValue({
+									value: String(currentUser.total_ticket_cost),
+									prefix: "₦",
+								})}
+							</p>
+						</div>
+					</div>
+					<div>
+						<h3 className="text-xs md:text-sm text-[#444444]">
+							Current cost
+						</h3>
+						<div className="text-right">
+							<p className="text-xs md:text-sm text-[#444444]">
+								{formatValue({
+									value: String(
+										bookingData.departure_ticket_cost ?? 0
+									),
+									prefix: "₦",
+								})}
+								{" "}	x {bookingData.total_passengers}
+							</p>
+							<p className="font-medium text-[#444444]">
+								₦
+								{formatValue({
+									value: String(total_ticket_cost),
+								})} {" "}<span className="font-normal text-sm"> / 50%</span>
+							</p>
+						</div>
+					</div>
+					<div className="">
+						<h3 className="font-medium text-base md:text-lg">Balance</h3>
+						<p className="font-semibold text-right">
+							{formatValue({
+								value: String(ticket_balance),
+								prefix: "₦",
+							})}
+						</p>
+					</div>
 				</div>
 			</div>
 		</div>

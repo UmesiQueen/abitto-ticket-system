@@ -230,22 +230,9 @@ const CheckInTable = () => {
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
-		if (dailyBookingQuery.length)
-			setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
+		setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [dailyBookingQuery])
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	React.useEffect(() => {
-		setPageCount(
-			Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
-		);
-		setCurrentPageIndex((prev) => ({
-			...prev,
-			checkIn: 0,
-		}));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [searchParamValues?.s]);
+	}, [dailyBookingQuery, columnFilters]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
@@ -350,7 +337,7 @@ const CheckInTable = () => {
 								checkIn: val.selected,
 							}));
 						}}
-						initialPage={currentPageIndex.checkIn}
+						forcePage={currentPageIndex.checkIn}
 						pageRangeDisplayed={3}
 						pageCount={table.getPageCount()}
 						previousLabel={

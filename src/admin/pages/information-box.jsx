@@ -38,7 +38,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 
 const InformationBox = () => {
-	const { setCurrentPageIndex, setLoading: setLoader } = React.useContext(BookingCTX);
+	const { setLoading } = React.useContext(BookingCTX);
 	const { mountPortalModal, setModalContent } = React.useContext(GlobalCTX);
 	const [dataQuery, setDataQuery] = React.useState([]);
 	const queryClient = useQueryClient();
@@ -208,7 +208,7 @@ const InformationBox = () => {
 	})
 
 	const handleUploadMessage = async (formData) => {
-		setLoader(true)
+		setLoading(true)
 		const file = imageFile.target.files[0];
 		const cloudinaryData = new FormData();
 		cloudinaryData.append("file", file);
@@ -224,7 +224,7 @@ const InformationBox = () => {
 			})
 			.catch(() => {
 				toast.error("Failed to upload message. Try Again.");
-				setLoader(false);
+				setLoading(false);
 				return false;
 			});
 
@@ -253,7 +253,7 @@ const InformationBox = () => {
 					customError(error, "Failed to upload message. Try Again.");
 				})
 				.finally(() => {
-					setLoader(false);
+					setLoading(false);
 				});
 
 		}
@@ -292,7 +292,7 @@ const InformationBox = () => {
 	}
 
 	const updateRequest = (data, action) => {
-		setLoader(true)
+		setLoading(true)
 		const formValues = {
 			...data,
 			status: action
@@ -314,7 +314,7 @@ const InformationBox = () => {
 		if (action === "Active") {
 			const isActive = dataQuery.filter((message) => message.status === "Active").length
 			if (isActive) {
-				setLoader(false);
+				setLoading(false);
 				toast.warning("A message is currently active. Please deactivate to upload a new one.")
 				return;
 			}
@@ -336,7 +336,7 @@ const InformationBox = () => {
 			.catch((error) => {
 				customError(error, options[action].error);
 			})
-			.finally(() => setLoader(false));
+			.finally(() => setLoading(false));
 	}
 
 	const handleDelete = (data) => {
@@ -352,7 +352,7 @@ const InformationBox = () => {
 	}
 
 	const deleteRequest = (data) => {
-		setLoader(true)
+		setLoading(true)
 		axiosInstance
 			.patch("/infobox/delete", { message_id: data.message_id })
 			.then((res) => {
@@ -368,7 +368,7 @@ const InformationBox = () => {
 			})
 			.catch((error) => {
 				customError(error, "Failed to delete message. Try Again.");
-			}).finally(() => setLoader(false))
+			}).finally(() => setLoading(false))
 	}
 
 	return (
@@ -509,10 +509,6 @@ const InformationBox = () => {
 							}
 							onPageChange={(val) => {
 								table.setPageIndex(val.selected);
-								setCurrentPageIndex((prev) => ({
-									...prev,
-									feedback: val.selected,
-								}));
 							}}
 							initialPage={0}
 							pageRangeDisplayed={3}

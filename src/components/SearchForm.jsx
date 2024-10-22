@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { addDays, format } from "date-fns";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -10,14 +10,15 @@ import { CalendarIcon } from "@/assets/icons";
 import SelectField from "@/components/custom/SelectField";
 import * as yup from "yup";
 import { useSearchParam } from "@/hooks/useSearchParam";
+import { BookingCTX } from "@/contexts/BookingContext";
 
 const SearchForm = ({ props }) => {
 	const [loading, setLoading] = React.useState(false);
-	const [searchParams, setSearchParams] = useSearchParams();
+	const { resetPageIndex } = React.useContext(BookingCTX)
 	const { accountType } = useParams();
-	const { getSearchParams } = useSearchParam();
+	const { searchParams, setSearchParams, getSearchParams } = useSearchParam();
 	const searchParamValues = getSearchParams();
-	const { name, ...prop } = props
+	const { name, page, ...prop } = props
 
 	const searchSchema = yup.object().shape({
 		[name]: yup.string(),
@@ -66,6 +67,7 @@ const SearchForm = ({ props }) => {
 					date: new Date(addDays(formData.date, 1)).toISOString().split("T")[0],
 				}),
 			});
+			resetPageIndex(page);
 			setLoading(false);
 		}, 650);
 	});

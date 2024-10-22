@@ -165,22 +165,9 @@ const LogisticsDetails = () => {
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
-		if (dataQuery.length)
-			setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
+		setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [dataQuery]);
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	React.useEffect(() => {
-		setPageCount(
-			Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
-		);
-		setCurrentPageIndex((prev) => ({
-			...prev,
-			logistics: 0,
-		}));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [columnFilters, searchParamValues?.s]);
+	}, [dataQuery, columnFilters]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {

@@ -43,7 +43,7 @@ const ProtectedRoute = () => {
 	const navigate = useNavigate();
 	const matches = useMediaQuery("(min-width:1024px)");
 	const { adminProfile } = React.useContext(GlobalCTX);
-	const { setBookingQuery, filterValue, setFilterValue } = React.useContext(BookingCTX);
+	const { setBookingQuery, filterValue, setFilterValue, setCurrentPageIndex } = React.useContext(BookingCTX);
 	const { pathname } = useLocation();
 	const accountType = adminProfile.account_type;
 	const currentPathname = pathname.replace(/\/$/, "");
@@ -59,7 +59,19 @@ const ProtectedRoute = () => {
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
-		setTimeout(() => { updateSearchParam("s", filterValue) }, 1000)
+		setTimeout(() => {
+			updateSearchParam("s", filterValue)
+			setCurrentPageIndex({
+				rentals: 0,
+				customers: 0,
+				booking: 0,
+				checkIn: 0,
+				journeyList: 0,
+				feedback: 0,
+				logistics: 0,
+				tripDetails: 0,
+			})
+		}, 1000)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [filterValue])
 
@@ -85,6 +97,8 @@ const ProtectedRoute = () => {
 				return [];
 			}
 		},
+		staleTime: 300000,
+		cacheTime: 300000
 	})
 
 	React.useEffect(() => {

@@ -31,7 +31,7 @@ import { Loader2 } from "lucide-react";
 
 const FeedbackAdmin = () => {
 	const navigate = useNavigate();
-	const { setCurrentPageIndex } = React.useContext(BookingCTX);
+	const { currentPageIndex, setCurrentPageIndex } = React.useContext(BookingCTX);
 	const { setCurrentFeedback } = React.useContext(GlobalCTX);
 	const [dataQuery, setDataQuery] = React.useState([]);
 	const [pagination, setPagination] = React.useState({
@@ -122,6 +122,12 @@ const FeedbackAdmin = () => {
 		},
 	});
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	React.useEffect(() => {
+		table.setPageIndex(currentPageIndex.feedback);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
 	return (
 		<>
 			<Helmet>
@@ -205,7 +211,7 @@ const FeedbackAdmin = () => {
 								feedback: val.selected,
 							}));
 						}}
-						initialPage={0}
+						forcePage={currentPageIndex.feedback}
 						pageRangeDisplayed={3}
 						pageCount={table.getPageCount()}
 						previousLabel={

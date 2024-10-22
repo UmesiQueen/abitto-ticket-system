@@ -20,7 +20,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { useLoaderData, useNavigate, useSearchParams } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import React from "react";
 import { format } from "date-fns";
 import {
@@ -61,7 +61,7 @@ const BookingDetails = () => {
 	const {
 		bookingQuery,
 		currentPageIndex,
-		setCurrentPageIndex,
+		resetPageIndex,
 		setFilterValue
 	} = React.useContext(BookingCTX);
 	const { adminProfile } = React.useContext(GlobalCTX);
@@ -77,8 +77,7 @@ const BookingDetails = () => {
 		pageIndex: 0,
 		pageSize: 7,
 	});
-	const [searchParams, setSearchParams] = useSearchParams();
-	const { getSearchParams, updateSearchParam, removeSearchParam } = useSearchParam()
+	const { searchParams, setSearchParams, getSearchParams, updateSearchParam, removeSearchParam } = useSearchParam();
 	const searchParamValues = getSearchParams();
 	const defaultColumnFilters =
 		Object.entries(searchParamValues).map(([key, value]) => ({ id: key, value }))
@@ -228,22 +227,9 @@ const BookingDetails = () => {
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
-		if (bookingQuery.length)
-			setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
+		setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [bookingQuery]);
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	React.useEffect(() => {
-		setPageCount(
-			Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
-		);
-		setCurrentPageIndex((prev) => ({
-			...prev,
-			booking: 0,
-		}));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [columnFilters, searchParamValues?.s]);
+	}, [columnFilters, bookingQuery]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
@@ -269,10 +255,12 @@ const BookingDetails = () => {
 		if (value === "#") {
 			removeSearchParam(key)
 			table.getColumn(key)?.setFilterValue("");
+			resetPageIndex("booking");
 			return;
 		}
 		updateSearchParam(key, value)
 		table.getColumn(key)?.setFilterValue(value);
+		resetPageIndex("booking");
 	}
 
 	return (
@@ -284,6 +272,7 @@ const BookingDetails = () => {
 			<h1 className="text-lg font-semibold mb-10">Booking Details</h1>
 			<SearchForm
 				props={{
+					page: "booking",
 					name: "departure",
 					label: "Departure",
 					placeholder: "Select Departure Terminal",
@@ -299,6 +288,7 @@ const BookingDetails = () => {
 							table.resetColumnFilters(true);
 							setSearchParams({});
 							setFilterValue("");
+							resetPageIndex("booking");
 						}}
 						text="Reset filters"
 					/> : ""}
@@ -514,7 +504,7 @@ export const CustomerDetails = () => {
 				<>
 					<div className="flex gap-5 items-start">
 						<div className="bg-white rounded-lg overflow-hidden basis-8/12">
-							<div className="bg-blue-50 flex gap-3 p-5 ">
+							<div className="bg-blue-50 flex gap-3 p-5 items-center">
 								<div className="bg-white rounded-lg p-2 ">
 									<TickIcon />
 								</div>
@@ -522,7 +512,7 @@ export const CustomerDetails = () => {
 									<h2 className="text-blue-500 text-sm font-semibold">
 										Booking Confirmed!
 									</h2>
-									<p className="text-[10px]">
+									<p className="text-xs">
 										Great news! The ferry trip has been successfully confirmed
 										from our sales point.
 									</p>
@@ -807,11 +797,11 @@ const CustomerDetailsModal = ({ props: { currentUser } }) => {
 	const { unMountPortalModal } = React.useContext(GlobalCTX);
 
 	return (
-		<div className="bg-white rounded-lg p-10 pt-5 flex flex-col">
+		<div className="bg-white rounded-lg p-10 relative">
 			<ButtonUI
 				variant="ghost"
 				size="icon"
-				className="ml-auto"
+				className="absolute top-0 right-0"
 				onClick={unMountPortalModal}
 			>
 				<CancelSquareIcon />

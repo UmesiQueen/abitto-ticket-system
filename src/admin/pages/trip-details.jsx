@@ -52,7 +52,7 @@ import { Loader2 } from "lucide-react";
 
 const TripDetails = () => {
     const { mountPortalModal, adminProfile } = React.useContext(GlobalCTX);
-    const { tripDetails, setTripDetails, bookingQuery, setCurrentPageIndex, currentPageIndex } =
+    const { tripDetails, setTripDetails, bookingQuery, resetPageIndex, currentPageIndex } =
         React.useContext(BookingCTX);
     const navigate = useNavigate();
     const selectedTrip = useLoaderData();
@@ -69,19 +69,14 @@ const TripDetails = () => {
     const [currentDataQuery, setCurrentDataQuery] = React.useState([]);
     const queryClient = useQueryClient();
 
-    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     React.useEffect(() => {
         if (tripDetails) {
             const sortedQuery = bookingQuery.filter(
                 (booking) =>
                     booking.departure_trip_code === tripDetails.trip_code
             );
-            if (sortedQuery) {
-                setPageCount(sortedQuery.length / pagination.pageSize);
-                setCurrentDataQuery(sortedQuery);
-            }
+            setCurrentDataQuery(sortedQuery);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tripDetails, bookingQuery]);
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -219,15 +214,9 @@ const TripDetails = () => {
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     React.useEffect(() => {
-        setPageCount(
-            Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
-        );
-        setCurrentPageIndex((prev) => ({
-            ...prev,
-            tripDetails: 0,
-        }));
+        setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [columnFilters]);
+    }, [currentDataQuery, columnFilters])
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     React.useEffect(() => {
@@ -356,9 +345,11 @@ const TripDetails = () => {
                         onValueChange={(value) => {
                             if (value === "#") {
                                 table.getColumn("payment_status")?.setFilterValue("");
+                                resetPageIndex("tripDetails");
                                 return;
                             }
                             table.getColumn("payment_status")?.setFilterValue(value);
+                            resetPageIndex("tripDetails");
                         }}
                     >
                         <SelectTrigger className="w-[200px] grow rounded-none rounded-r-lg border-0 border-l px-5 focus:ring-0 focus:ring-offset-0 bg-white">

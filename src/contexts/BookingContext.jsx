@@ -68,6 +68,13 @@ const BookingContext = ({ children }) => {
 		setChecked(false);
 	};
 
+	const resetPageIndex = (page) => {
+		setCurrentPageIndex((prev) => ({
+			...prev,
+			[page]: 0
+		}));
+	}
+
 	const ctxValues = {
 		formData,
 		setFormData,
@@ -96,7 +103,7 @@ const BookingContext = ({ children }) => {
 		setCustomersData,
 		filterValue,
 		setFilterValue,
-		resetSelectField: () => { },
+		resetPageIndex
 	};
 
 	return (

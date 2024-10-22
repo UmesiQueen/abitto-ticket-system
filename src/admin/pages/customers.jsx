@@ -167,22 +167,9 @@ const Customers = () => {
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
-		if (customersData.length)
-			setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
+		setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [customersData]);
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	React.useEffect(() => {
-		setPageCount(
-			Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
-		);
-		setCurrentPageIndex((prev) => ({
-			...prev,
-			customers: 0,
-		}));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [columnFilters, searchParamValues?.s]);
+	}, [customersData, columnFilters]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
@@ -222,7 +209,6 @@ const Customers = () => {
 								{table.getRowModel().rows.map((row) => (
 									<TableRow
 										key={row.id}
-										data-state={row.getIsSelected() && "selected"}
 									>
 										{row.getVisibleCells().map((cell) => (
 											<TableCell key={cell.id} className="h-[77px]">

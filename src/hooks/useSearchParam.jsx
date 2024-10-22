@@ -1,7 +1,7 @@
 import { useSearchParams } from 'react-router-dom'
 
 export const useSearchParam = () => {
-    const [searchParams, setSearchParams] = useSearchParams()
+    const [searchParams, setSearchParams] = useSearchParams();
 
     const getSearchParams = () => {
         return (searchParams.entries().reduce((obj, [key, value]) => {
@@ -35,6 +35,6 @@ export const useSearchParam = () => {
         setSearchParams(newSearchParams);
     };
 
-    return { getSearchParams, updateSearchParam, removeSearchParam }
+    return { getSearchParams, updateSearchParam, removeSearchParam, searchParams, setSearchParams }
 }
 

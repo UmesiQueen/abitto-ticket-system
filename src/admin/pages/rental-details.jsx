@@ -1,6 +1,6 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import { useNavigate, useLoaderData, useSearchParams } from "react-router-dom";
+import { useNavigate, useLoaderData } from "react-router-dom";
 import { format } from "date-fns";
 import {
 	flexRender,
@@ -55,6 +55,7 @@ const RentalDetails = () => {
 			<h1 className="text-lg font-semibold mb-10">Rental Details</h1>
 			<SearchForm
 				props={{
+					page: "rentals",
 					name: "rent_type",
 					label: "Select Package",
 					placeholder: "Select Rental Package",
@@ -70,7 +71,7 @@ export default RentalDetails;
 
 const RentalTable = () => {
 	const { adminProfile } = React.useContext(GlobalCTX);
-	const { currentPageIndex, setCurrentPageIndex, setFilterValue } =
+	const { currentPageIndex, resetPageIndex, setFilterValue } =
 		React.useContext(BookingCTX);
 	const [sorting, setSorting] = React.useState([]);
 	const [columnFilters, setColumnFilters] = React.useState([]);
@@ -85,8 +86,7 @@ const RentalTable = () => {
 	});
 	const [rentalData, setRentalData] = React.useState([]);
 	const navigate = useNavigate();
-	const [searchParams, setSearchParams] = useSearchParams();
-	const { getSearchParams } = useSearchParam();
+	const { searchParams, setSearchParams, getSearchParams } = useSearchParam();
 	const searchParamValues = getSearchParams();
 
 	const { data, isSuccess, isPending } = useQuery({
@@ -116,12 +116,6 @@ const RentalTable = () => {
 		if (isSuccess) setRentalData(data)
 	}, [isSuccess, data])
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	React.useEffect(() => {
-		table.setPageIndex(currentPageIndex.rentals);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
 	React.useEffect(() => {
 		const rent_type = searchParams.get("rent_type");
 		if (rent_type)
@@ -134,25 +128,6 @@ const RentalTable = () => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [searchParams]);
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	React.useEffect(() => {
-		setPageCount(
-			Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
-		);
-		setCurrentPageIndex((prev) => ({
-			...prev,
-			rentals: 0,
-		}));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [columnFilters, searchParamValues?.s]);
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	React.useEffect(() => {
-		if (rentalData.length)
-			setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [rentalData]);
 
 	const columns = [
 		{
@@ -282,6 +257,12 @@ const RentalTable = () => {
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
+		setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [rentalData, columnFilters]);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	React.useEffect(() => {
 		table.setPageIndex(currentPageIndex.rentals);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -298,6 +279,7 @@ const RentalTable = () => {
 							table.resetColumnFilters(true);
 							setSearchParams({});
 							setFilterValue("");
+							resetPageIndex("rentals")
 						}}
 						text="Reset filters"
 					/> : ""}

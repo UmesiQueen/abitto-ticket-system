@@ -1,6 +1,6 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import {
 	flexRender,
@@ -49,6 +49,7 @@ const JourneyList = () => {
 			<h1 className=" text-lg font-semibold mb-10">Journey List</h1>
 			<SearchForm
 				props={{
+					page: "journeyList",
 					name: "departure",
 					label: "Departure",
 					placeholder: "Select Departure Terminal",
@@ -65,7 +66,7 @@ export default JourneyList;
 const JourneyTable = () => {
 	const navigate = useNavigate();
 	const { adminProfile } = React.useContext(GlobalCTX);
-	const { currentPageIndex, setCurrentPageIndex } = React.useContext(BookingCTX);
+	const { currentPageIndex, setCurrentPageIndex, resetPageIndex } = React.useContext(BookingCTX);
 	const [columnFilters, setColumnFilters] = React.useState([]);
 	const [pageCount, setPageCount] = React.useState(0);
 	const [pagination, setPagination] = React.useState({
@@ -73,8 +74,7 @@ const JourneyTable = () => {
 		pageSize: 7,
 	});
 	const [journeyList, setJourneyList] = React.useState([]);
-	const [searchParams, setSearchParams] = useSearchParams();
-	const { getSearchParams, updateSearchParam, removeSearchParam } = useSearchParam()
+	const { searchParams, setSearchParams, getSearchParams, updateSearchParam, removeSearchParam } = useSearchParam();
 	const searchParamValues = getSearchParams();
 
 	const { data, isSuccess, isPending } = useQuery({
@@ -213,22 +213,9 @@ const JourneyTable = () => {
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
-		if (journeyList.length)
-			setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
+		setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [journeyList]);
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	React.useEffect(() => {
-		setPageCount(
-			Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
-		);
-		setCurrentPageIndex((prev) => ({
-			...prev,
-			journeyList: 0,
-		}));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [columnFilters]);
+	}, [journeyList, columnFilters]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
@@ -247,6 +234,7 @@ const JourneyTable = () => {
 						onClick={() => {
 							table.resetColumnFilters(true);
 							setSearchParams({});
+							resetPageIndex("journeyList")
 						}}
 						text="Reset filters"
 					/> : ""}
@@ -263,10 +251,12 @@ const JourneyTable = () => {
 						if (value === "#") {
 							removeSearchParam("trip_status")
 							table.getColumn("trip_status")?.setFilterValue("");
+							resetPageIndex("journeyList")
 							return;
 						}
 						updateSearchParam("trip_status", value)
 						table.getColumn("trip_status")?.setFilterValue(value);
+						resetPageIndex("journeyList")
 					}}
 				>
 					<SelectTrigger className="w-[150px] grow rounded-none rounded-r-lg border-0 border-l px-5 focus:ring-0 focus:ring-offset-0 bg-white">
@@ -358,7 +348,7 @@ const JourneyTable = () => {
 								journeyList: val.selected,
 							}));
 						}}
-						forcePage={currentPageIndex.booking}
+						forcePage={currentPageIndex.journeyList}
 						pageRangeDisplayed={3}
 						pageCount={pageCount}
 						previousLabel={
