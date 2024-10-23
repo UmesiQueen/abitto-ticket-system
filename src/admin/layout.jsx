@@ -45,7 +45,7 @@ const ProtectedRoute = () => {
 	const { adminProfile } = React.useContext(GlobalCTX);
 	const { setBookingQuery, filterValue, setFilterValue, setCurrentPageIndex } = React.useContext(BookingCTX);
 	const { pathname } = useLocation();
-	const accountType = adminProfile.account_type;
+	const { accountType, tripCode } = useParams();
 	const currentPathname = pathname.replace(/\/$/, "");
 	const searchBarVisibility = [
 		`/backend/${accountType}/booking-details`,
@@ -53,6 +53,7 @@ const ProtectedRoute = () => {
 		`/backend/${accountType}/create/check-in`,
 		`/backend/${accountType}/customers`,
 		`/backend/${accountType}/logistics`,
+		`/backend/${accountType}/journey-list/${tripCode}`,
 	].includes(currentPathname);
 	const { updateSearchParam } = useSearchParam();
 	const navigation = useNavigation();

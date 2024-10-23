@@ -49,6 +49,7 @@ import { PaginationEllipsis } from "@/components/ui/pagination";
 import ReactPaginate from "react-paginate";
 import { useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
+import { useSearchParam } from "@/hooks/useSearchParam";
 
 const TripDetails = () => {
     const { mountPortalModal, adminProfile } = React.useContext(GlobalCTX);
@@ -59,8 +60,7 @@ const TripDetails = () => {
     const { cancelRequest } = useScheduleTrip();
     const { accountType } = useParams();
     const [sorting, setSorting] = React.useState([]);
-    const [columnFilters, setColumnFilters] = React.useState([]);
-    const [columnVisibility, setColumnVisibility] = React.useState({});
+    const [columnVisibility, setColumnVisibility] = React.useState({ fullName: false });
     const [pagination, setPagination] = React.useState({
         pageIndex: 0,
         pageSize: 7,
@@ -68,6 +68,11 @@ const TripDetails = () => {
     const [pageCount, setPageCount] = React.useState(0);
     const [currentDataQuery, setCurrentDataQuery] = React.useState([]);
     const queryClient = useQueryClient();
+    const { getSearchParams, updateSearchParam, removeSearchParam } = useSearchParam();
+    const searchParamValues = getSearchParams();
+    const defaultColumnFilters =
+        Object.entries(searchParamValues).map(([key, value]) => ({ id: key, value }))
+    const [columnFilters, setColumnFilters] = React.useState(defaultColumnFilters);
 
     React.useEffect(() => {
         if (tripDetails) {
@@ -87,10 +92,10 @@ const TripDetails = () => {
 
     const columns = [
         {
-            accessorKey: "id",
+            accessorKey: "ticket_id",
             header: "ID",
             cell: ({ row }) => (
-                <div className="uppercase">#{row.original.ticket_id}</div>
+                <div className="uppercase">#{row.getValue("ticket_id")}</div>
             ),
         },
         {
@@ -106,15 +111,23 @@ const TripDetails = () => {
                     <p className="italic lowercase">{row.original.passenger1_email}</p>
                 </div>
             ),
+            enableGlobalFilter: false,
         },
         {
             accessorKey: "phone_number",
             header: "Phone Number",
             cell: ({ row }) => <div>{row.original.passenger1_phone_number}</div>,
+            enableGlobalFilter: false,
+        },
+        {
+            accessorKey: "payment_medium",
+            header: <div className="text-center">Medium</div>,
+            cell: ({ row }) => <div className="text-center">{row.original.medium}</div>,
+            enableGlobalFilter: false,
         },
         {
             accessorKey: "payment_status",
-            header: <div className="text-center text-nowrap">Payment</div>,
+            header: <div className="text-center text-nowrap">Payment Status</div>,
             cell: ({ row }) => {
                 const { payment_status } = row.original;
                 return (
@@ -140,6 +153,7 @@ const TripDetails = () => {
             cell: ({ row }) => (
                 <div className="text-center">{row.original.total_passengers}</div>
             ),
+            enableGlobalFilter: false,
         },
         {
             accessorKey: "trip_status",
@@ -165,6 +179,13 @@ const TripDetails = () => {
             },
             enableGlobalFilter: false,
         },
+        {
+            accessorKey: "fullName",
+            id: "fullName",
+            header: "fullName",
+            accessorFn: (row) =>
+                `${row.passenger1_first_name} ${row.passenger1_last_name}`,
+        },
     ];
 
     const table = useReactTable({
@@ -184,6 +205,7 @@ const TripDetails = () => {
             columnFilters,
             columnVisibility,
             pagination,
+            globalFilter: searchParamValues?.s,
         },
     });
 
@@ -344,10 +366,12 @@ const TripDetails = () => {
                         value={table.getColumn("payment_status")?.getFilterValue() ?? "#"}
                         onValueChange={(value) => {
                             if (value === "#") {
+                                removeSearchParam("payment_status")
                                 table.getColumn("payment_status")?.setFilterValue("");
                                 resetPageIndex("tripDetails");
                                 return;
                             }
+                            updateSearchParam("payment_status", value)
                             table.getColumn("payment_status")?.setFilterValue(value);
                             resetPageIndex("tripDetails");
                         }}
