@@ -7,16 +7,17 @@ import { v4 as uuid } from "uuid";
 import { RentalSuccessModal } from "@/components/modals/booking";
 import { customError } from "@/lib/utils";
 import { useSearchTrip } from "./useSearchTrip";
+import { useNavigate } from "react-router-dom";
 
 export const usePayment = () => {
 	const { formData, rentalData, setLoading: loader } = React.useContext(BookingCTX);
 	const { mountPortalModal, adminProfile, setLoading, } = React.useContext(GlobalCTX);
 	const { bookingDetails, passengerDetails, ticket_id } = formData;
 	const { checkAvailability } = useSearchTrip();
+	const navigate = useNavigate();
 	const total_ticket_cost =
 		Number(formData.bookingDetails?.departure_ticket_cost) *
 		Number(formData.bookingDetails?.total_passengers);
-
 
 	const randomSeats = (availableSeats, total_passengers) => {
 		const seatsArray = Array.from({ length: availableSeats }, (_, i) =>
@@ -50,9 +51,9 @@ export const usePayment = () => {
 							...requestData,
 							departure_seats: randomSeats(isAvailable, bookingDetails.total_passengers),
 						})
-				if (response) {
-					const { authorization_url } = response.data.payment
-					window.location.href = authorization_url;
+				if (response.status === 200) {
+					const { access_code } = response.data.payment
+					navigate(`/paystack/checkout?access_code=${access_code}&cid=${requestData.ticket_id}`);
 				}
 			}
 			catch (error) {

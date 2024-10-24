@@ -87,6 +87,12 @@
 	}
 }
 
+@layer components {
+	.checkout-card {
+		@apply font-poppins mx-auto p-5 md:p-10 w-full max-w-[450px] bg-white flex flex-col items-center rounded-lg text-center text-[#454545];
+	}
+}
+
 *,
 *::after,
 *::before {

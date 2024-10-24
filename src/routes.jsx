@@ -48,7 +48,7 @@ import PassengerDetails from "@/components/PassengerDetails";
 import BookingDetail from "@/components/BookingDetails";
 import Payment from "@/components/Payment";
 import SearchTrip from "@/components/SearchTrip";
-import BookingConfirmation from "./main/pages/booking-confirmation";
+import Checkout from "./main/pages/checkout";
 import TripDetails from "./admin/pages/trip-details";
 
 export const router = createBrowserRouter(
@@ -62,7 +62,6 @@ export const router = createBrowserRouter(
 					<Route path="passenger-details" element={<PassengerDetails />} />
 					<Route path="payment" element={<Payment />} />
 				</Route>
-				<Route path="booking/confirmation" element={<BookingConfirmation />} />
 				<Route path="about" element={<About />} />
 				<Route path="rental" element={<Rental />} loader={PriceLoader} />
 				<Route path="feedback" element={<Feedback />} />
@@ -70,6 +69,7 @@ export const router = createBrowserRouter(
 				<Route path="terms-conditions" element={<TermsAndConditions />} />
 				<Route path="privacy-policy" element={<PrivacyPolicy />} />
 			</Route>
+			<Route path="paystack/checkout" element={<Checkout />} />
 
 			<Route path="/backend" element={<AdminLayout />} >
 				<Route path="/backend/:accountType">
