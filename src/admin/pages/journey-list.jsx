@@ -298,7 +298,7 @@ const JourneyTable = () => {
 								<TableRow
 									key={row.original.trip_code}
 									className="h-[65px]"
-									onClick={() => {
+									onDoubleClick={() => {
 										navigate(row.original.trip_code);
 									}}
 								>

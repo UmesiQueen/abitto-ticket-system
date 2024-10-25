@@ -81,7 +81,7 @@ const PassengerDetails = () => {
 
 	return (
 		<>
-			<div className="bg-blue-700 mx-auto mb-5 min-h-20 p-5 md:p-2 flex items-center ">
+			<div className="bg-blue-700 mx-auto mb-5 min-h-20 p-5 md:p-2 flex items-center rounded-lg ">
 				<ul className="w-full [&_h4]:uppercase [&_h4]:text-gray-400 [&_h4]:text-xs [&_p]:text-white [&_p]:text-sm flex flex-wrap  *:grow px-2 items-center gap-5 md:justify-around md:divide-x-2 h-full md:[&_li:not(:first-of-type)]:pl-5 *:space-y-1">
 					<li>
 						<h4>Trip type</h4>
@@ -118,7 +118,7 @@ const PassengerDetails = () => {
 				</ul>
 			</div>
 
-			<section className="bg-white p-5 pb-10 md:p-10">
+			<section className="bg-white p-5 pb-10 md:p-10 rounded-lg">
 				<hgroup>
 					<h2 className="text-blue-500 text-base font-semibold">
 						Customer Details

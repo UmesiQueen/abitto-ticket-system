@@ -53,7 +53,7 @@ const Payment = () => {
 	if (ticket_id !== formData?.ticket_id) return (<Navigate to="/booking" />)
 
 	return (
-		<form onSubmit={onSubmit} className="p-5 md:p-12 !bg-white mx-auto flex flex-col gap-2">
+		<form onSubmit={onSubmit} className="p-5 md:p-12 !bg-white mx-auto flex flex-col gap-2 rounded-lg">
 			<div className="flex gap-5 justify-between items-center">
 				<img
 					alt="logo"
@@ -338,11 +338,11 @@ const PassengerDetails = () => {
 const PassengerDetailsModal = () => {
 	const { unMountPortalModal } = React.useContext(GlobalCTX);
 	return (
-		<div className="bg-white rounded-lg p-5 pb-10 flex flex-col">
+		<div className="bg-white rounded-lg p-5 relative">
 			<IconButton
 				variant="ghost"
 				size="icon"
-				className="ml-auto"
+				className="absolute top-0 right-0"
 				onClick={unMountPortalModal}
 			>
 				<CancelSquareIcon />

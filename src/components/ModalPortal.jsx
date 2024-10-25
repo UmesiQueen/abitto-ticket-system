@@ -18,7 +18,7 @@ const ModalPortal = () => {
 						}}
 						className="no-scrollbar"
 					>
-						<div className=" py-20 md:my-0 min-h-screen md:h-full flex justify-center items-center px-5">
+						<div className=" py-20 md:my-0 min-h-[100dvh] md:h-full flex justify-center items-center px-5">
 							{modalContent}
 						</div>
 					</Modal>,

@@ -220,7 +220,7 @@ const Manifesto = () => {
 						</li>
 						<li
 							className={cn(
-								"basis-3/12 self-end ml-auto flex justify-end gap-2",
+								"w-fit self-end ml-auto",
 								{ hidden: isPrinting }
 							)}
 						>

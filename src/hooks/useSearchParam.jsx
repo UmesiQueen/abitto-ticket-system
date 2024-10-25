@@ -4,7 +4,7 @@ export const useSearchParam = () => {
     const [searchParams, setSearchParams] = useSearchParams();
 
     const getSearchParams = () => {
-        return (searchParams.entries().reduce((obj, [key, value]) => {
+        return (Array.from(searchParams.entries()).reduce((obj, [key, value]) => {
             obj[key] = value;
             return obj;
         }, {}))

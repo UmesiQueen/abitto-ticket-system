@@ -157,9 +157,9 @@ export const RentalSelection = ({ rentalCosts }) => {
 												});
 											}}
 										/> :
-										<p className="mt-8">For rentals or enquiries, please
+										<p className="mt-8">For rentals or enquiries, please {" "}
 											<button type="button"
-												className="text-blue-500 hover:text-blue-700 transition ease-in-out cursor-pointer pl-1"
+												className="text-blue-500 hover:text-blue-700 transition ease-in-out cursor-pointer underline"
 												onClick={() => {
 													navigate("/");
 													setTimeout(() => scrollToSection(terminals))

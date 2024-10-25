@@ -111,12 +111,10 @@ const SearchTrip = () => {
 
 	return (
 		<section className="space-y-10 px-3 md:px-8">
-			<div className="flex flex-col-reverse md:flex-row gap-5 justify-between md:items-center">
-				<hgroup>
-					<h2 className="font-semibold md:text-lg">Select Departure Time</h2>
-					<p className="text-sm">Choose an option to continue</p>
-				</hgroup>
-			</div>
+			<hgroup>
+				<h2 className="font-semibold md:text-lg">Select Departure Time</h2>
+				<p className="text-sm">Choose an option to continue</p>
+			</hgroup>
 
 			{/* Departure Time */}
 			<div className="min-h-20">
