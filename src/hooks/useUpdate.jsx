@@ -72,7 +72,7 @@ export const useUpdate = () => {
 							}
 						})
 						.catch((error) => {
-							customError(error, "'Reschedule not confirmed.', { description: 'Error occurred while making reschedule request.' }");
+							customError(error, "Error occurred while making reschedule request.");
 						}).finally(() => setLoading(false))
 				}
 			}).catch((error) => {

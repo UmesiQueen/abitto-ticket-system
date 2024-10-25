@@ -5,24 +5,24 @@ import {
 } from "react-router-dom";
 
 import App from "./App";
-import Home from "./main/pages";
-import Booking from "./main/pages/booking";
-import PageNotFound from "./main/pages/404";
+import Home from "./app/pages";
+import Booking from "./app/pages/booking";
+import PageNotFound from "./app/pages/404";
 import AdminLayout from "./admin/layout";
 import BookingDetails, { CustomerDetailsLoader, CustomerDetails } from "./admin/pages/booking-details";
 import Customers from "./admin/pages/customers";
 import JourneyList from "./admin/pages/journey-list";
 import Settings from "./admin/pages/settings";
 import Login from "./admin/auth/login";
-import MainLayout from "./main/layout";
-import About from "./main/pages/about";
+import MainLayout from "./app/layout";
+import About from "./app/pages/about";
 import BookTicket, { AdminTripDetails, AdminPayment } from "./admin/pages/book-ticket";
 import Manifesto from "./admin/pages/manifesto";
 import Create from "./admin/pages/create";
 import ScheduleTrip from "./admin/pages/schedule-trip";
 import RentalAdmin from "./admin/pages/rental";
 import Report from "./admin/pages/report";
-import Rental from "./main/pages/rental";
+import Rental from "./app/pages/rental";
 import { TripDetailsLoader } from "./admin/pages/trip-details";
 import { RentalInvoiceLoader } from "./components/RentalInvoice";
 // import { CustomerLoader } from "./admin/pages/customers";
@@ -32,23 +32,23 @@ import PageNotFoundAdmin from "./admin/pages/page-not-found";
 import CheckIn from "./admin/pages/check-in";
 import Reschedule from "./admin/pages/reschedule";
 import { RentDetail } from "./admin/pages/rental-details";
-import Feedback from "./main/pages/feedback";
+import Feedback from "./app/pages/feedback";
 import FeedbackAdmin, { FeedbackDetails } from "./admin/pages/feedback";
 import Logistics from "./admin/pages/logistics";
 import LogisticsDetails, {
 	ShipmentDetails,
 } from "./admin/pages/logistics-detail";
-import GetQuote from "./main/pages/quote";
+import GetQuote from "./app/pages/quote";
 import Pricing, { PriceLoader } from "./admin/pages/pricing";
 import InformationBox from "./admin/pages/information-box";
 import { ShipmentLoader } from "./components/LogisticInvoice";
-import TermsAndConditions from "./main/pages/terms-and-conditions";
-import PrivacyPolicy from "./main/pages/privacy-policy";
+import TermsAndConditions from "./app/pages/terms-and-conditions";
+import PrivacyPolicy from "./app/pages/privacy-policy";
 import PassengerDetails from "@/components/PassengerDetails";
 import BookingDetail from "@/components/BookingDetails";
 import Payment from "@/components/Payment";
 import SearchTrip from "@/components/SearchTrip";
-import Checkout from "./main/pages/checkout";
+import Checkout from "./app/pages/checkout";
 import TripDetails from "./admin/pages/trip-details";
 
 export const router = createBrowserRouter(

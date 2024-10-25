@@ -31,7 +31,9 @@ const MainLayout = () => {
 				if (activeMessage) setLiveMessage(activeMessage)
 				return true
 			}
-		}
+		},
+		staleTime: 60 * 1000 * 5, // 5mins
+		cacheTime: 60 * 1000 * 5, // 5mins
 	})
 
 	return (

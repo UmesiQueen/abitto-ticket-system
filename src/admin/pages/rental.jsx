@@ -15,8 +15,8 @@ import {
 	CircleArrowLeftIcon,
 } from "@/assets/icons";
 import Button from "@/components/custom/Button";
-import { RentalSelection } from "@/main/pages/rental";
-import { RentalForm } from "@/main/pages/rental";
+import { RentalSelection } from "@/app/pages/rental";
+import { RentalForm } from "@/app/pages/rental";
 import { useStepper } from "@/hooks/useStepper";
 import { usePayment } from "@/hooks/usePayment";
 import SelectField from "@/components/custom/SelectField";

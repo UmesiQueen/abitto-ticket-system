@@ -84,7 +84,7 @@ const Feedback = () => {
 				}
 			})
 			.catch((error) => {
-				customError(error, "'Bad Request.', { description: 'Could not send feedback. Please try again.'}");
+				customError(error, "Could not send feedback. Please try again.");
 			})
 			.finally(() => setLoading(false));
 	});
