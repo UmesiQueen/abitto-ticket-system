@@ -120,7 +120,7 @@ const TripDetails = () => {
             enableGlobalFilter: false,
         },
         {
-            accessorKey: "payment_medium",
+            accessorKey: "medium",
             header: <div className="text-center">Medium</div>,
             cell: ({ row }) => <div className="text-center">{row.original.medium}</div>,
             enableGlobalFilter: false,
@@ -246,6 +246,19 @@ const TripDetails = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+
+    const handleFilterChange = (key, value) => {
+        if (value === "#") {
+            removeSearchParam(key)
+            table.getColumn(key)?.setFilterValue("");
+            resetPageIndex("tripDetails");
+            return;
+        }
+        updateSearchParam(key, value)
+        table.getColumn(key)?.setFilterValue(value);
+        resetPageIndex("tripDetails");
+    }
+
     if (!selectedTrip?.trip_code) return <Navigate to={`/backend/${adminProfile.account_type}/journey-list`} />;
 
     return (
@@ -357,38 +370,78 @@ const TripDetails = () => {
                         })}
                     />
                 </div>
-                <div className="flex items-center w-fit border border-gray-200 font-medium rounded-t-lg mt-8 bg-white ">
-                    <span className="px-4 text-nowrap text-sm font-semibold h-full inline-flex items-center rounded-l-lg">
-                        Filter by payment
-                    </span>
-                    <Select
-                        defaultValue="#"
-                        value={table.getColumn("payment_status")?.getFilterValue() ?? "#"}
-                        onValueChange={(value) => {
-                            if (value === "#") {
-                                removeSearchParam("payment_status")
-                                table.getColumn("payment_status")?.setFilterValue("");
-                                resetPageIndex("tripDetails");
-                                return;
-                            }
-                            updateSearchParam("payment_status", value)
-                            table.getColumn("payment_status")?.setFilterValue(value);
-                            resetPageIndex("tripDetails");
-                        }}
-                    >
-                        <SelectTrigger className="w-[200px] grow rounded-none rounded-r-lg border-0 border-l px-5 focus:ring-0 focus:ring-offset-0 bg-white">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectItem value="#">All Passengers</SelectItem>
-                                <SelectItem value="Success">Success</SelectItem>
-                                <SelectItem value="Canceled">Canceled</SelectItem>
-                                <SelectItem value="Pending">Pending</SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
+
+                <div className="flex gap-5 justify-end my-10">
+                    <div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg">
+                        <span className="px-4 text-nowrap text-sm font-semibold bg-white h-full inline-flex items-center rounded-l-lg">
+                            Medium
+                        </span>
+                        <Select
+                            defaultValue={searchParamValues?.medium ?? "#"}
+                            value={table.getColumn("medium")?.getFilterValue() ?? "#"}
+                            onValueChange={(value) => handleFilterChange("medium", value)}
+                        >
+                            <SelectTrigger className="w-[170px] grow rounded-none rounded-r-lg border-0 border-l px-5 focus:ring-0 focus:ring-offset-0 bg-white">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem value="#">Both mediums</SelectItem>
+                                    <SelectItem value="Online">Online</SelectItem>
+                                    <SelectItem value="Offline">Offline</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg">
+                        <span className="px-4 text-nowrap text-sm font-semibold bg-white h-full inline-flex items-center rounded-l-lg">
+                            Payment status
+                        </span>
+                        <Select
+                            defaultValue={searchParamValues?.payment_status ?? "#"}
+                            value={table.getColumn("payment_status")?.getFilterValue() ?? "#"}
+                            onValueChange={(value) => handleFilterChange("payment_status", value)}
+                        >
+                            <SelectTrigger className="w-[170px] grow rounded-none rounded-r-lg border-0 border-l px-5 focus:ring-0 focus:ring-offset-0 bg-white">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem value="#">All Passengers</SelectItem>
+                                    <SelectItem value="Success">Success</SelectItem>
+                                    <SelectItem value="Canceled">Canceled</SelectItem>
+                                    <SelectItem value="Pending">Pending</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg">
+                        <span className="px-4 text-nowrap text-sm font-semibold bg-white h-full inline-flex items-center rounded-l-lg">
+                            Trip status
+                        </span>
+                        <Select
+                            defaultValue={searchParamValues?.trip_status ?? "#"}
+                            value={table.getColumn("trip_status")?.getFilterValue() ?? "#"}
+                            onValueChange={(value) => handleFilterChange("trip_status", value)}
+                        >
+                            <SelectTrigger className="w-[170px] grow rounded-none rounded-r-lg border-0 border-l px-5 focus:ring-0 focus:ring-offset-0 bg-white">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem value="#">All Passengers</SelectItem>
+                                    <SelectItem value="Completed">Completed</SelectItem>
+                                    <SelectItem value="Upcoming">Upcoming</SelectItem>
+                                    <SelectItem value="Rescheduled">Rescheduled</SelectItem>
+                                    <SelectItem value="Canceled">Canceled</SelectItem>
+                                    <SelectItem value="Missed">Missed</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </div>
+
+
                 <div className="bg-white rounded-b-lg px-4 py-2">
                     <Table>
                         <TableHeader>
