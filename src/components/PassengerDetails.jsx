@@ -9,17 +9,15 @@ import { GlobalCTX } from "@/contexts/GlobalContext";
 import CustomButton from "@/components/custom/Button";
 import InputField from "@/components/custom/InputField";
 import { format } from "date-fns";
-import { useNavigate, useLocation, Navigate } from "react-router-dom";
+import { useNavigate, useLocation, Navigate, useSearchParams } from "react-router-dom";
 
 const PassengerDetails = () => {
 	const { loading, setLoading, adminProfile } = React.useContext(GlobalCTX);
-	const { setChecked, isChecked, formData, setFormData } =
-		React.useContext(BookingCTX);
+	const { setChecked, isChecked, formData, setFormData } = React.useContext(BookingCTX);
 	const navigate = useNavigate()
-	const { search, pathname } = useLocation();
+	const { pathname } = useLocation();
 	const adults_number = formData.bookingDetails?.adults_number;
-
-	const searchParams = new URLSearchParams(search.split("?")[1]);
+	const searchParams = useSearchParams()[0];
 	const ticket_id = searchParams.get("cid");
 
 	const {

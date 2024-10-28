@@ -6,9 +6,10 @@ import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useMutation } from '@tanstack/react-query';
 import { useSearchTrip } from "@/hooks/useSearchTrip";
+import { useSearchParam } from "@/hooks/useSearchParam";
 
 const SearchTrip = () => {
 	const {
@@ -19,21 +20,17 @@ const SearchTrip = () => {
 		setSelectedTrip,
 		setFormData,
 	} = React.useContext(BookingCTX);
-	const { setLoading, adminProfile } = React.useContext(GlobalCTX);
+	const { setLoading } = React.useContext(GlobalCTX);
 	const [totalCost, setTotalCost] = React.useState(0);
 	const [isDisabled, setIsDisabled] = React.useState(true);
 	const navigate = useNavigate()
 	const { searchAvailableTrips } = useSearchTrip()
-	const { search, pathname } = useLocation();
+	const { pathname } = useLocation();
 	const isAdmin = pathname.includes("/backend");
-	const { account_type } = adminProfile
-
-	const searchParams = new URLSearchParams(search.split("?")[1]);
-	const searchObj = {}
-	for (const [key, value] of searchParams.entries()) {
-		searchObj[key] = value;
-	}
-	const { passengers: total_passengers, ...reqData } = searchObj;
+	const { accountType } = useParams();
+	const { getSearchParams } = useSearchParam();
+	const searchParamValues = getSearchParams();
+	const { passengers: total_passengers, ...reqData } = searchParamValues;
 
 	const { isPending, ...mutation } = useMutation({
 		mutationKey: "availableTrips",
@@ -91,7 +88,7 @@ const SearchTrip = () => {
 			},
 		}));
 		if (isAdmin)
-			return navigate(`/backend/${account_type}/create/book-ticket/passenger-details?cid=${formData.ticket_id}`)
+			return navigate(`/backend/${accountType}/create/book-ticket/passenger-details?cid=${formData.ticket_id}`)
 		return navigate(`/booking/passenger-details?cid=${formData.ticket_id}`)
 	};
 
@@ -105,7 +102,7 @@ const SearchTrip = () => {
 			return_trip: [],
 		});
 		if (isAdmin)
-			return navigate(`/backend/${account_type}/create/book-ticket`)
+			return navigate(`/backend/${accountType}/create/book-ticket`)
 		return navigate("/booking")
 	};
 

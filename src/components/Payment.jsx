@@ -13,7 +13,7 @@ import CustomButton from "@/components/custom/Button";
 import { Button as IconButton } from "./ui/button";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Link, useLocation, Navigate, useNavigate } from "react-router-dom"
+import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom"
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -23,9 +23,8 @@ const Payment = () => {
 	const { loading, formData } = React.useContext(BookingCTX);
 	const { mountPortalModal } = React.useContext(GlobalCTX);
 	const { onlinePayment } = usePayment()
-	const { search } = useLocation();
 	const navigate = useNavigate();
-	const searchParams = new URLSearchParams(search.split("?")[1]);
+	const searchParams = useSearchParams()[0];
 	const ticket_id = searchParams.get("cid");
 	const total_ticket_cost =
 		Number(formData.bookingDetails.departure_ticket_cost) *
