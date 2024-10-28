@@ -7,7 +7,7 @@ import { customError } from "@/lib/utils";
 import { MapIcon, PhoneIcon, CaretIcon, BoatIcon } from "@/assets/icons";
 import { marinaMap, timberMap } from "@/assets/images";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import HeroGIF from "@/assets/hero.gif";
 import CountUp from "react-countup";
 import {
@@ -54,14 +54,15 @@ const Home = () => {
 								Africa with Abitto
 							</p>
 
-							<Button
-								text="Get Started"
+							<CustomButton
 								onClick={() => {
 									setTimeout(() => scrollToSection(services));
 									navigate("/");
 								}}
 								className="w-40 mx-auto md:mx-0"
-							/>
+							>
+								Get Started
+							</CustomButton>
 						</div>
 					</div>
 				</div>
@@ -88,23 +89,21 @@ const Home = () => {
 									Easily plan your journey and book a seat on our ferry. Get started in seconds.
 								</p>
 								<div className="ml-auto mt-auto">
-									<Button
-										text={
-											<p className="inline-flex items-center gap-2">
-												Book a trip
-												<span>
-													<CaretIcon />
-												</span>
-											</p>
-										}
+									<CustomButton
 										className="rounded-full w-40 md:w-44 h-10 md:h-12"
 										onClick={() => navigate("/booking")}
-									/>
+									>
+										<p className="inline-flex items-center gap-2">
+											Book a trip
+											<span>
+												<CaretIcon />
+											</span>
+										</p>
+									</CustomButton>
 								</div>
 							</div>
 						</div>
 						<div className="bg-white rounded-[1.8rem] p-6 md:p-8 h-[15rem] md:h-[20rem]  hover:scale-[1.02] hover:shadow-md transition-all relative overflow-hidden ">
-							{/* <img src={WaveSVG} alt="svg" className="absolute top-0 left-0 " /> */}
 							<div className=" flex flex-col gap-2 h-full relative z-1">
 								<h3 className="text-lg md:text-xl lg:text-2xl font-semibold text-blue-500">
 									Boat Rentals
@@ -113,18 +112,17 @@ const Home = () => {
 									Rent a boat for your next adventure or event. Secure your reservation today.
 								</p>
 								<div className="ml-auto mt-auto">
-									<Button
-										text={
-											<p className="inline-flex items-center gap-2 ">
-												Rent a boat
-												<span>
-													<CaretIcon />
-												</span>
-											</p>
-										}
+									<CustomButton
 										className="rounded-full w-40 md:w-44 h-10 md:h-12"
 										onClick={() => navigate("/rental")}
-									/>
+									>
+										<p className="inline-flex items-center gap-2 ">
+											Rent a boat
+											<span>
+												<CaretIcon />
+											</span>
+										</p>
+									</CustomButton>
 								</div>
 							</div>
 						</div>
@@ -138,18 +136,17 @@ const Home = () => {
 									Transport your goods smoothly with our reliable logistics service. Start your request here.
 								</p>
 								<div className="ml-auto mt-auto">
-									<Button
-										text={
-											<p className="inline-flex items-center gap-2 ">
-												Get a Quote
-												<span>
-													<CaretIcon />
-												</span>
-											</p>
-										}
+									<CustomButton
 										className="rounded-full w-40 md:w-44 h-10 md:h-12"
 										onClick={() => navigate("/get-quote")}
-									/>
+									>
+										<p className="inline-flex items-center gap-2 ">
+											Get a Quote
+											<span>
+												<CaretIcon />
+											</span>
+										</p>
+									</CustomButton>
 								</div>
 							</div>
 						</div>
@@ -514,7 +511,7 @@ const ContactForm = () => {
 	return (
 		<>
 			<form
-				className="flex flex-col gap-y-5 *:p-3 *:rounded-lg h-full *:bg-[#EEEEEE] md:*:bg-white [&>*:not(&_button,&_p)]:shadow-md"
+				className="flex flex-col gap-y-5 *:p-3 *:rounded-lg h-full *:bg-[#EEEEEE] md:*:bg-white [&>*:not(&_CustomButton,&_p)]:shadow-md"
 				onSubmit={onSubmit}
 			>
 				<input
@@ -540,13 +537,14 @@ const ContactForm = () => {
 				) : (
 					""
 				)}
-				<Button
+				<CustomButton
 					variant="outline"
 					type="submit"
 					loading={loading}
-					text={"Send Message"}
 					className="w-full md:w-56 ml-auto mt-5"
-				/>
+				>
+					Send Message
+				</CustomButton>
 			</form>
 		</>
 	);
@@ -599,11 +597,12 @@ const TestimonialsCarousel = () => {
 				<div className="mt-5">
 					<EmblaCarousel slides={testimonials} />
 				</div>
-				<Button
-					text="Send your Feedback"
+				<CustomButton
 					className="mx-auto px-5 mt-10 md:mt-5"
 					onClick={() => navigate("feedback")}
-				/>
+				>
+					Send your Feedback
+				</CustomButton>
 			</div>
 		</section>
 	);

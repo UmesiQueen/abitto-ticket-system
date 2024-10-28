@@ -1,5 +1,5 @@
 import React from "react";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import { Eye, EyeSlash } from "iconsax-react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -8,7 +8,6 @@ import { GlobalCTX } from "@/contexts/GlobalContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import axiosInstance from "@/api";
-// import { customError } from "@/lib/utils";
 import Cookies from 'js-cookie';
 
 const schema = yup.object().shape({
@@ -59,7 +58,6 @@ const Login = () => {
 				if (error.code === "ERR_BAD_REQUEST") {
 					return toast.error("Email or password is incorrect.");
 				}
-
 			})
 			.finally(() => setLoading(false));
 	});
@@ -143,23 +141,13 @@ const Login = () => {
 							</p>
 						)}
 					</div>
-
-					{/* <div className="flex justify-between items-center"> */}
-					{/* <label className="flex items-center gap-1 w-fit">
-            <input type="checkbox" />
-            <span className="text-xs">Remember me</span>
-          </label> */}
-					{/* <p className="font-semibold text-sm hover:underline cursor-pointer">
-              Forgot password
-            </p>
-          </div> */}
-
-					<Button
+					<CustomButton
 						className="rounded-lg mt-2"
-						text="Sign in"
 						type="submit"
 						loading={loading}
-					/>
+					>
+						Sign in
+					</CustomButton>
 				</form>
 			</div>
 		</div>

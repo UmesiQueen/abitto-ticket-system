@@ -15,12 +15,12 @@ import {
 	Boat2Icon,
 } from "@/assets/icons";
 import { BookingCTX } from "@/contexts/BookingContext";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import SelectField from "@/components/custom/SelectField";
 import InputField from "@/components/custom/InputField";
 import { usePayment } from "@/hooks/usePayment";
-import { Button as ButtonIcon } from "@/components/ui/button";
-import { useNavigate, Outlet, useLocation, Navigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { useNavigate, Outlet, Navigate, useSearchParams, useParams } from "react-router-dom";
 import { BookingForm } from "@/components/BookingDetails";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -37,9 +37,9 @@ const BookTicket = () => {
 			</Helmet>
 			<div>
 				<div className="flex gap-1 items-center mb-10 ">
-					<ButtonIcon size="icon" variant="ghost" onClick={() => navigate(-1)}>
+					<Button size="icon" variant="ghost" onClick={() => navigate(-1)}>
 						<CircleArrowLeftIcon />
-					</ButtonIcon>
+					</Button>
 					<h1 className="font-semibold text-lg">Salespoint Terminal</h1>
 				</div>
 				<Outlet />
@@ -53,14 +53,12 @@ export default BookTicket;
 export const AdminTripDetails = () => {
 	return (
 		<section className="bg-white p-10 my-8 rounded-lg">
-			<div className="flex justify-between">
-				<hgroup>
-					<h2 className="text-blue-500 text-base font-semibold">
-						Trip Details
-					</h2>
-					<p className="text-sm">Please fill in customers trip details</p>
-				</hgroup>
-			</div>
+			<hgroup>
+				<h2 className="text-blue-500 text-base font-semibold">
+					Trip Details
+				</h2>
+				<p className="text-sm">Please fill in customers trip details</p>
+			</hgroup>
 			<BookingForm />
 		</section>
 	);
@@ -68,12 +66,12 @@ export const AdminTripDetails = () => {
 
 export const AdminPayment = () => {
 	const { formData, loading } = React.useContext(BookingCTX);
-	const { mountPortalModal, setLoading, adminProfile } = React.useContext(GlobalCTX);
+	const { mountPortalModal, setLoading } = React.useContext(GlobalCTX);
+	const { accountType } = useParams();
 	const { offlinePayment } = usePayment();
 	const queryClient = useQueryClient()
 	const navigate = useNavigate();
-	const { search } = useLocation();
-	const searchParams = new URLSearchParams(search.split("?")[1]);
+	const searchParams = useSearchParams()[0];
 	const ticket_id = searchParams.get("cid");
 	const total_ticket_cost =
 		Number(formData.bookingDetails.departure_ticket_cost) *
@@ -109,7 +107,7 @@ export const AdminPayment = () => {
 		onSuccess: (currentUser) => {
 			queryClient.invalidateQueries('bookings');
 			mountPortalModal(
-				<BookingSuccessModal currentUser={currentUser} onclick={() => navigate(`/backend/${adminProfile.account_type}/create/book-ticket`)} />);
+				<BookingSuccessModal currentUser={currentUser} onclick={() => navigate(`/backend/${accountType}/create/book-ticket`)} />);
 		},
 	})
 
@@ -122,10 +120,10 @@ export const AdminPayment = () => {
 	});
 
 	const handlePrev = () => {
-		navigate(`/backend/${adminProfile.account_type}/create/book-ticket/passenger-details?cid=${formData.ticket_id}`)
+		navigate(`/backend/${accountType}/create/book-ticket/passenger-details?cid=${formData.ticket_id}`)
 	}
 
-	if (ticket_id !== formData?.ticket_id) return (<Navigate to={`/backend/${adminProfile.account_type}/create/book-ticket`} />)
+	if (ticket_id !== formData?.ticket_id) return (<Navigate to={`/backend/${accountType}/create/book-ticket`} />)
 
 	return (
 		<div className="flex gap-5">
@@ -205,9 +203,7 @@ export const AdminPayment = () => {
 							);
 						})}
 					</>
-				) : (
-					""
-				)}
+				) : null}
 				<div className="mt-20 py-8 h-36 grid grid-cols-3 gap-5">
 					<SelectField
 						{...register("payment_method")}
@@ -244,18 +240,20 @@ export const AdminPayment = () => {
 				</div>
 
 				<div className="flex gap-5">
-					<Button
+					<CustomButton
 						onClick={handlePrev}
 						variant="outline"
-						text="Back"
 						className="w-40"
-					/>
-					<Button
-						text="Submit"
+					>
+						Back
+					</CustomButton>
+					<CustomButton
 						type="submit"
 						loading={loading}
 						className="w-40"
-					/>
+					>
+						Submit
+					</CustomButton>
 				</div>
 			</form>
 			<div className=" self-start basis-4/12  bg-white rounded-lg p-5 flex flex-col gap-6">

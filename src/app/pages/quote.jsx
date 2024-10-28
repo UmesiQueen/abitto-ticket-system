@@ -5,12 +5,12 @@ import SelectField from "@/components/custom/SelectField";
 import InputField from "@/components/custom/InputField";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import { NumericFormat } from "react-number-format";
 import { shipmentDetailsSchema } from "@/lib/validators/logisticsSchema";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { CancelSquareIcon } from "@/assets/icons";
-import { Button as ButtonIcon } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import PackageGIF from "@/assets/package.gif";
 import { formatValue } from "react-currency-input-field";
 import { BookingCTX } from "@/contexts/BookingContext";
@@ -197,12 +197,13 @@ const GetQuote = () => {
 							</div>
 						</div>
 
-						<Button
-							text="Get Quote"
+						<CustomButton
 							type="submit"
 							className="w-full mt-5"
 							loading={loading}
-						/>
+						>
+							Get Quote
+						</CustomButton>
 					</form>
 				</div>
 			</div>
@@ -219,14 +220,14 @@ const QuoteModal = ({
 
 	return (
 		<div className=" w-full max-w-[30rem] p-5 md:p-10 rounded-lg bg-white space-y-5 relative text-center">
-			<ButtonIcon
+			<Button
 				variant="ghost"
 				size="icon"
 				className=" absolute top-0 right-0"
 				onClick={unMountPortalModal}
 			>
 				<CancelSquareIcon />
-			</ButtonIcon>
+			</Button>
 			<div className="min-h-32">
 				<img src={PackageGIF} alt="package gif" className="mx-auto" />
 			</div>
@@ -271,14 +272,12 @@ const QuoteModal = ({
 				</tbody>
 			</table>
 			<p className="text-sm md:text-base">Please visit our closest terminal to complete shipment.</p>
-			<Button
-				text="Ok, I understand"
+			<CustomButton
 				className="w-full"
-				onClick={() => {
-					// handleReset();
-					unMountPortalModal();
-				}}
-			/>
+				onClick={unMountPortalModal}
+			>
+				Ok, I understand
+			</CustomButton>
 		</div>
 	);
 };

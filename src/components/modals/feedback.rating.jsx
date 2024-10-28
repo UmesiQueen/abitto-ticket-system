@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
 import React from "react";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import Rating from "@mui/material/Rating";
-import { Button as ButtonUI } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import WaveSVG from "@/assets/layered-peaks-haikei.svg";
 
 const FeedbackRatingModal = () => {
@@ -55,22 +55,19 @@ const FeedbackRatingModal = () => {
 					/>
 				</div>
 				<p>{ratingRemark(starRating)}</p>
-				<Button
-					text="Continue"
+				<CustomButton
 					className="w-full mt-10 "
-					onClick={() => {
-						unMountPortalModal();
-					}}
-				/>
-				<ButtonUI
+					onClick={unMountPortalModal}
+				>
+					Continue
+				</CustomButton>
+				<Button
 					variant="ghost"
 					className="w-full h-10 md:h-12 "
-					onClick={() => {
-						unMountPortalModal();
-					}}
+					onClick={unMountPortalModal}
 				>
 					No, thanks
-				</ButtonUI>
+				</Button>
 			</div>
 		</div>
 	);

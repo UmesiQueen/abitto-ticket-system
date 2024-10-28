@@ -9,7 +9,7 @@ import * as yup from "yup";
 import { format } from "date-fns";
 import { CalendarIcon, ClockIcon, CircleArrowLeftIcon, Boat2Icon, UsersIcon, InformationCircleIcon } from "@/assets/icons";
 import { BookingCTX } from "@/contexts/BookingContext";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { formatValue } from "react-currency-input-field";
 import { toast } from "sonner";
@@ -17,9 +17,9 @@ import { useSearchTrip } from "@/hooks/useSearchTrip";
 import { capitalize } from "lodash"
 import InputField from "@/components/custom/InputField";
 import SelectField from "@/components/custom/SelectField";
-// import { usePayment } from "@/hooks/usePayment";
 import { useStepper } from "@/hooks/useStepper";
 import { useUpdate } from "@/hooks/useUpdate";
+import { Button } from "@/components/ui/button";
 
 const ctx = React.createContext();
 
@@ -35,10 +35,10 @@ const Reschedule = () => {
 				<title>Reschedule Booking | Admin</title>
 			</Helmet>
 			<div>
-				<div className="flex gap-1 items-center mb-5 py-2">
-					<button type="button" onClick={() => navigate(-1)}>
+				<div className="flex gap-1 items-center mb-10">
+					<Button size="icon" variant="ghost" onClick={() => navigate(-1)}>
 						<CircleArrowLeftIcon />
-					</button>
+					</Button>
 					<h1 className="text-base font-semibold">Reschedule Booking</h1>
 				</div>
 				{
@@ -175,12 +175,11 @@ const RescheduleForm = () => {
 							<p className="text-xs pt-2 text-red-700">{errors?.date.message}</p>
 						)}
 					</div>
-					<Button
-						text="Search Trip"
+					<CustomButton
 						className="w-full mt-8 mb-auto"
 						type="submit"
 						loading={loading}
-					/>
+					>Search Trip</CustomButton>
 				</form>
 				{activeStep === 1 && <RescheduleSelection />}
 			</div>
@@ -328,12 +327,11 @@ const RescheduleSelection = () => {
 					</div>
 				)}
 			</div>
-			<Button
-				text="Reschedule"
+			<CustomButton
 				className="w-full"
 				onClick={handleReschedule}
 				disabled={!isDisabled}
-			/>
+			>Reschedule</CustomButton>
 		</div>
 	)
 }
@@ -494,18 +492,16 @@ const Payment = () => {
 				</div>
 
 				<div className="flex gap-5">
-					<Button
+					<CustomButton
 						onClick={onPrevClick}
 						variant="outline"
-						text="Back"
 						className="w-40"
-					/>
-					<Button
-						text="Submit"
+					>Back</CustomButton>
+					<CustomButton
 						type="submit"
 						loading={loading}
 						className="w-40"
-					/>
+					>Submit</CustomButton>
 				</div>
 			</form>
 			<div className=" self-start basis-4/12  bg-white rounded-lg p-5 flex flex-col gap-6">

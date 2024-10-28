@@ -9,7 +9,7 @@ import {
 	CancelSquareIcon,
 } from "@/assets/icons/index";
 import { BookingCTX } from "@/contexts/BookingContext";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import { Button as IconButton } from "./ui/button";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -236,21 +236,21 @@ const Payment = () => {
 			</div>
 
 			<div className="my-5 md:mt-8 md:mb-0 space-y-5">
-				<Button
+				<CustomButton
 					type="submit"
-					id="paystack_btn"
 					loading={loading}
-					text={"Pay with paystack"}
 					className="uppercase w-full md:py-6"
-				/>
-				<Button
+				>
+					Pay with paystack
+				</CustomButton>
+				<CustomButton
 					onClick={handlePrev}
-					text="Back"
-					id="payment_next_btn"
 					variant="outline"
 					type="button"
 					className="w-full md:py-6"
-				/>
+				>
+					Back
+				</CustomButton>
 			</div>
 		</form>
 	);

@@ -5,7 +5,7 @@ import { useNavigate, useLoaderData, useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BoatURL from "@/assets/images/boat1.jpg";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import { UsersIcon, CalendarIcon, ClockIcon } from "@/assets/icons";
 import { BookingCTX } from "@/contexts/BookingContext";
 import InputField from "@/components/custom/InputField";
@@ -144,9 +144,8 @@ export const RentalSelection = ({ rentalCosts }) => {
 									</div>
 
 									{String(pathname).includes("/backend") ?
-										<Button
+										<CustomButton
 											id="select_btn"
-											text="Select package"
 											className="mt-8 md:mt-auto w-full md:w-48"
 											onClick={() => {
 												handleClick({
@@ -156,7 +155,9 @@ export const RentalSelection = ({ rentalCosts }) => {
 													rent_type: item.type,
 												});
 											}}
-										/> :
+										>
+											Select package
+										</CustomButton> :
 										<p className="mt-8">For rentals or enquiries, please {" "}
 											<button type="button"
 												className="text-blue-500 hover:text-blue-700 transition ease-in-out cursor-pointer underline"
@@ -402,18 +403,20 @@ export const RentalForm = () => {
 				</div>
 
 				<div className="flex flex-col-reverse md:flex-row gap-5 mt-10">
-					<Button
-						text="Cancel"
+					<CustomButton
 						variant="outline"
 						className="w-full md:w-40"
 						onClick={handleCancel}
-					/>
-					<Button
-						text="Proceed to checkout"
+					>
+						Cancel
+					</CustomButton>
+					<CustomButton
 						type="submit"
 						className="w-full md:w-48"
 						onClick={onSubmit}
-					/>
+					>
+						Proceed to checkout
+					</CustomButton>
 				</div>
 			</form>
 		</>

@@ -14,14 +14,14 @@ import {
 	ClockIcon,
 	CircleArrowLeftIcon,
 } from "@/assets/icons";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import { RentalSelection } from "@/app/pages/rental";
 import { RentalForm } from "@/app/pages/rental";
 import { useStepper } from "@/hooks/useStepper";
 import { usePayment } from "@/hooks/usePayment";
 import SelectField from "@/components/custom/SelectField";
 import InputField from "@/components/custom/InputField";
-import { Button as ButtonIcon } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 const RentalAdmin = () => {
 	const { activeStep } = useStepper();
@@ -36,13 +36,13 @@ const RentalAdmin = () => {
 			<div className="bg-white min-h-[calc(100vh-150px)] p-10">
 				{activeStep === 0 ? (
 					<div className="flex items-start">
-						<ButtonIcon
+						<Button
 							size="icon"
 							variant="ghost"
 							onClick={() => navigate(-1)}
 						>
 							<CircleArrowLeftIcon />
-						</ButtonIcon>
+						</Button>
 						<div className="w-full">
 							<RentalSelection rentalCosts={rentalCosts} />
 						</div>
@@ -242,13 +242,14 @@ const RentalSummary = () => {
 					</div>
 
 					<div className="flex flex-col-reverse md:flex-row gap-5 mt-10">
-						<Button
-							text="Back"
+						<CustomButton
 							variant="outline"
 							className="w-full md:w-40"
 							onClick={onPrevClick}
-						/>
-						<Button type="submit" text="Submit" className=" w-full md:w-48" />
+						>
+							Back
+						</CustomButton>
+						<CustomButton type="submit" className=" w-full md:w-48">Submit</CustomButton>
 					</div>
 				</form>
 			</div>

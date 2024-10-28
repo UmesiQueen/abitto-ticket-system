@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from "react";
-import { Button as ButtonUI } from "@/components/ui/button";
-import Button from "@/components/custom/Button";
+import { Button } from "@/components/ui/button";
+import CustomButton from "@/components/custom/Button";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -79,12 +79,11 @@ const Pricing = () => {
 		<form onSubmit={onSubmit} className="space-y-10">
 			<div className="flex justify-between">
 				<h1 className="font-semibold text-lg">Manage Prices</h1>
-				<Button
+				<CustomButton
 					type="submit"
 					disabled={!isDirty}
-					text="Save"
 					className="w-40"
-				/>
+				>Save</CustomButton>
 			</div>
 			{isPending && <p className="inline-flex gap-2 items-center text-xs">Fetching data <Loader2 className="animate-spin" /></p>}
 			<div className="p-10 rounded-lg bg-white mt-10">
@@ -235,9 +234,9 @@ const EditableInput = React.forwardRef((props, ref) => {
 				</div>
 			</td>
 			<td>
-				<ButtonUI type="button" onClick={() => toggleEditable(name)}>
+				<Button type="button" onClick={() => toggleEditable(name)}>
 					Edit
-				</ButtonUI>
+				</Button>
 			</td>
 		</>
 	);

@@ -7,7 +7,7 @@ import { Cloud2Icon, UserIcon, PasswordIcon } from "@/assets/icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SelectField from "@/components/custom/SelectField";
 import InputField from "@/components/custom/InputField";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import { toast } from "sonner";
 import PasswordField from "@/components/custom/PasswordField";
 import {
@@ -228,12 +228,11 @@ const EditProfile = () => {
 					/>
 				</div>
 
-				<Button
+				<CustomButton
 					type="submit"
 					className="w-32 "
 					loading={loading}
-					text="Update"
-				/>
+				>Update</CustomButton>
 			</form>
 		</>
 	);
@@ -344,12 +343,11 @@ const ChangePassword = () => {
 					placeholder="Re-enter new password"
 					errors={errors}
 				/>
-				<Button
+				<CustomButton
 					className="w-32"
 					type="submit"
-					text="Update"
 					loading={loading}
-				/>
+				>Update</CustomButton>
 			</form>
 		</>
 	);

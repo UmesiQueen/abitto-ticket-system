@@ -31,7 +31,7 @@ import {
 	getSortedRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import { Button as ButtonUI } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { formatValue } from "react-currency-input-field";
 import { capitalize, truncate } from "lodash";
 import { cn, customError } from "@/lib/utils";
@@ -48,7 +48,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import { useReactToPrint } from "react-to-print";
 import TicketInvoice from "@/components/TicketInvoice";
 import axiosInstance from "@/api";
@@ -281,7 +281,7 @@ const BookingDetails = () => {
 			/>
 			<div className="my-10 flex gap-5 justify-between flex-wrap items-center">
 				{(columnFilters.length) ?
-					<Button
+					<CustomButton
 						variant="outline"
 						className="!h-8 !text-sm"
 						onClick={() => {
@@ -290,8 +290,9 @@ const BookingDetails = () => {
 							setFilterValue("");
 							resetPageIndex("booking");
 						}}
-						text="Reset filters"
-					/> : ""}
+					>
+						Reset filters
+					</CustomButton> : ""}
 
 				<div className="flex gap-5 justify-end ml-auto">
 					<div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg">
@@ -442,14 +443,14 @@ const Pagination = ({ props: { table } }) => {
 		<ReactPaginate
 			breakLabel={<PaginationEllipsis />}
 			nextLabel={
-				<ButtonUI
+				<Button
 					variant="ghost"
 					size="sm"
 					onClick={() => table.nextPage()}
 					disabled={!table.getCanNextPage()}
 				>
 					<CaretIcon />
-				</ButtonUI>
+				</Button>
 			}
 			onPageChange={(val) => {
 				table.setPageIndex(val.selected);
@@ -462,7 +463,7 @@ const Pagination = ({ props: { table } }) => {
 			pageRangeDisplayed={3}
 			pageCount={pageCount}
 			previousLabel={
-				<ButtonUI
+				<Button
 					variant="ghost"
 					size="sm"
 					onClick={() => table.previousPage()}
@@ -471,7 +472,7 @@ const Pagination = ({ props: { table } }) => {
 					<span className="rotate-180">
 						<CaretIcon />
 					</span>
-				</ButtonUI>
+				</Button>
 			}
 			renderOnZeroPageCount={null}
 			className="flex gap-2 items-center text-xs font-normal [&_a]:inline-flex [&_a]:items-center [&_a]:justify-center [&_a]:min-w-7 [&_a]:h-8 [&_a]:rounded-lg *:text-center *:[&_.selected]:bg-blue-500  *:[&_.selected]:text-white [&_.disabled]:pointer-events-none "
@@ -517,12 +518,15 @@ export const CustomerDetails = () => {
 										from our sales point.
 									</p>
 								</div>
-								{canReschedule && <Button
-									text="Re-schedule"
-									variant="outline"
-									className="text-nowrap h-10 ml-auto"
-									onClick={() => navigate("reschedule")}
-								/>}
+								{canReschedule &&
+									<CustomButton
+										variant="outline"
+										className="text-nowrap h-10 ml-auto"
+										onClick={() => navigate("reschedule")}
+									>
+										Re-schedule
+									</CustomButton>
+								}
 							</div>
 							<div className="p-5 pb-20 space-y-6">
 								<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
@@ -798,14 +802,14 @@ const CustomerDetailsModal = ({ props: { currentUser } }) => {
 
 	return (
 		<div className="bg-white rounded-lg p-10 relative">
-			<ButtonUI
+			<Button
 				variant="ghost"
 				size="icon"
 				className="absolute top-0 right-0"
 				onClick={unMountPortalModal}
 			>
 				<CancelSquareIcon />
-			</ButtonUI>
+			</Button>
 			<div className="space-y-2">
 				<div id="Passenger01">
 					<h4 className="font-semibold text-sm">Passenger 01</h4>

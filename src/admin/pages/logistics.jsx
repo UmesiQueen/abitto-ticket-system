@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { Button as ButtonUI } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { CircleArrowLeftIcon } from "@/assets/icons";
 import Logo from "@/assets/logo3.svg";
 import SelectField from "@/components/custom/SelectField";
@@ -12,7 +12,7 @@ import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import InputField from "@/components/custom/InputField";
 import { Textarea } from "@/components/ui/textarea";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import { NumericFormat } from "react-number-format";
 import {
 	shipmentDetailsSchema,
@@ -38,9 +38,9 @@ const Logistics = () => {
 			</Helmet>
 			<ctx.Provider value={{ packageDetails, setPackageDetails }}>
 				<div className="flex gap-1 items-center mb-10 ">
-					<ButtonUI size="icon" variant="ghost" onClick={() => navigate(-1)}>
+					<Button size="icon" variant="ghost" onClick={() => navigate(-1)}>
 						<CircleArrowLeftIcon />
-					</ButtonUI>
+					</Button>
 					<h1 className="font-semibold text-lg">Create a new Shipment</h1>
 				</div>
 				<div className="rounded-lg bg-white p-10">
@@ -314,7 +314,7 @@ const ShippingDetails = () => {
 						/>
 					</label>
 				</div>
-				{!showPopover && <Button text="Get Quote" type="submit" loading={loading} className="w-full" />}
+				{!showPopover && <CustomButton text="Get Quote" type="submit" loading={loading} className="w-full" />}
 			</form>
 
 			{/* Quote */}
@@ -339,7 +339,7 @@ const ShippingDetails = () => {
 						</p>
 					</div>
 				</div>
-				<Button text="Continue" onClick={handleNextClick} className="w-full" />
+				<CustomButton onClick={handleNextClick} className="w-full" >Continue</CustomButton>
 			</div>}
 		</div>
 	);
@@ -446,13 +446,12 @@ const SenderDetails = () => {
 					</label>
 				</div>
 				<div className="flex gap-4 mt-10">
-					<Button
-						text="Back"
+					<CustomButton
 						variant="outline"
 						onClick={onPrevClick}
 						className="w-40"
-					/>
-					<Button text="Continue" type="submit" className="w-40 " />
+					>Back</CustomButton>
+					<CustomButton type="submit" className="w-40" >Continue</CustomButton>
 				</div>
 			</form>
 		</div>
@@ -560,13 +559,12 @@ const ReceiverDetails = () => {
 					</label>
 				</div>
 				<div className="flex gap-4 mt-10">
-					<Button
-						text="Back"
+					<CustomButton
 						variant="outline"
 						onClick={onPrevClick}
 						className="w-40"
-					/>
-					<Button text="Continue" type="submit" className="w-40" />
+					>Back</CustomButton>
+					<CustomButton type="submit" className="w-40" >Continue</CustomButton>
 				</div>
 			</form>
 		</div>

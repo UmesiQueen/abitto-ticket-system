@@ -303,11 +303,11 @@ export const ShipmentDetails = () => {
 				<title>Shipment Details | Admin </title>
 			</Helmet>
 			<div>
-				<div className="flex gap-1 items-center mb-5 py-2">
-					<button type="button" onClick={() => navigate(-1)}>
+				<div className="flex gap-1 items-center mb-10">
+					<Button size="icon" variant="ghost" onClick={() => navigate(-1)}>
 						<CircleArrowLeftIcon />
-					</button>
-					<h1 className="text-base font-semibold">Shipment Details</h1>
+					</Button>
+					<h1 className="text-lg font-semibold">Shipment Details</h1>
 				</div>
 				{currentShipment ? (
 					<div className="flex gap-5 items-start">

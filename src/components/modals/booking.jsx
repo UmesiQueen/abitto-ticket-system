@@ -2,13 +2,13 @@
 import React from "react";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import checkGIF from "@/assets/check.gif";
 import RentalInvoice from "@/components/RentalInvoice";
 import TicketInvoice from "@/components/TicketInvoice";
 import { useReactToPrint } from "react-to-print";
 import LogisticsInvoice from "@/components/LogisticInvoice";
-import { Button as IconButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { useLocation, useNavigate } from "react-router-dom";
 import { CancelSquareIcon } from "@/assets/icons";
 
@@ -41,17 +41,19 @@ export const BookingSuccessModal = ({ currentUser, onclick = () => { } }) => {
 				Print ferry ticket details.
 			</p>
 			<TicketInvoice props={{ currentUser }} ref={componentRef} />
-			<Button
-				text="Print Ticket"
+			<CustomButton
 				className="md:py-5 w-full mb-5"
 				onClick={handlePrint}
-			/>
-			<Button
-				text="Continue"
+			>
+				Print Ticket
+			</CustomButton>
+			<CustomButton
 				variant="outline"
 				className=" md:py-5 "
 				onClick={reset}
-			/>
+			>
+				Continue
+			</CustomButton>
 		</div>
 	);
 };
@@ -84,17 +86,19 @@ export const RentalSuccessModal = ({ currentRental }) => {
 				Please print rental invoice details.
 			</p>
 			<RentalInvoice props={{ currentUser: currentRental }} ref={componentRef} />
-			<Button
-				text="Print Ticket"
+			<CustomButton
 				className="md:py-5 w-full mb-5"
 				onClick={handlePrint}
-			/>
-			<Button
-				text={"Continue"}
+			>
+				Print ticket
+			</CustomButton>
+			<CustomButton
 				variant="outline"
 				className=" md:py-5 "
 				onClick={reset}
-			/>
+			>
+				Continue
+			</CustomButton>
 		</div>
 	);
 };
@@ -126,17 +130,19 @@ export const LogisticsSuccessModal = ({ props: { currentShipment, handleReset } 
 				Print shipment invoice details.
 			</p>
 			<LogisticsInvoice props={{ currentShipment }} ref={componentRef} />
-			<Button
-				text="Print Invoice"
+			<CustomButton
 				className="md:py-5 w-full mb-5"
 				onClick={handlePrint}
-			/>
-			<Button
-				text={"Continue"}
+			>
+				Print Invoice
+			</CustomButton>
+			<CustomButton
 				variant="outline"
 				className=" md:py-5 "
 				onClick={reset}
-			/>
+			>
+				Continue
+			</CustomButton>
 		</div>
 	);
 };
@@ -148,19 +154,18 @@ export const UnAvailableModal = () => {
 
 	return (
 		<div className="font-poppins mx-auto pt-8 p-5 md:p-10 w-full max-w-[450px] bg-white  flex flex-col rounded-lg relative">
-			<IconButton
+			<Button
 				variant="ghost"
 				size="icon"
 				className="absolute right-0 top-0"
 				onClick={unMountPortalModal}
 			>
 				<CancelSquareIcon />
-			</IconButton>
+			</Button>
 			<h2 className="font-semibold text-base md:text-lg text-[#454545] mb-5 text-center">
 				Sorry, There are no longer available seats on this trip.
 			</h2>
-			<Button
-				text={"Search for more"}
+			<CustomButton
 				className="md:py-5 w-full"
 				onClick={() => {
 					unMountPortalModal();
@@ -168,7 +173,9 @@ export const UnAvailableModal = () => {
 						navigate("/booking") :
 						navigate(`/backend/${adminProfile.account_type}/create/book-ticket`)
 				}}
-			/>
+			>
+				Search for more
+			</CustomButton>
 		</div>
 	)
 }

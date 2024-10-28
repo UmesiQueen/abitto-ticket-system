@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from "react";
 import { formatValue } from "react-currency-input-field";
-import Button from "./custom/Button";
+import CustomButton from "./custom/Button";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -237,12 +237,13 @@ const SearchTrip = () => {
 					</p>
 				</div>
 				<div className="md:col-span-3 flex items-center justify-center gap-5 md:border-l-2 border-gray-400 rounded-t-lg md:rounded-lg  md:bg-white md:px-8">
-					<Button
-						text="Back"
+					<CustomButton
 						variant="outline"
 						className="w-full basis-1/2"
 						onClick={handleReturn}
-					/>
+					>
+						Back
+					</CustomButton>
 					<div
 						onClick={() => {
 							if (isDisabled)
@@ -254,12 +255,13 @@ const SearchTrip = () => {
 						}}
 						className="w-full basis-1/2"
 					>
-						<Button
-							text="Continue"
+						<CustomButton
 							className="w-full"
 							disabled={isDisabled}
 							onClick={handleSubmit}
-						/>
+						>
+							Continue
+						</CustomButton>
 					</div>
 				</div>
 			</div>

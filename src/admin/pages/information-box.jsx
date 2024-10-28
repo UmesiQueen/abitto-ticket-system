@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/table";
 import { PaginationEllipsis } from "@/components/ui/pagination";
 import ReactPaginate from "react-paginate";
-import { Button as ButtonUI } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { CaretIcon, CancelSquareIcon, DeleteIcon } from "@/assets/icons";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { cn, customError } from "@/lib/utils";
@@ -135,24 +135,24 @@ const InformationBox = () => {
 				<div className="inline-flex justify-end w-full gap-5">
 					{
 						row.original.status === "Active" ?
-							<ButtonUI
+							<Button
 								type="button"
 								variant="secondary"
 								className="text-xs bg-red-50 hover:bg-red-100"
 								onClick={() => handleUpdateMessage(row.original, "deactivate")}
 							>
 								Deactivate
-							</ButtonUI> : <ButtonUI
+							</Button> : <Button
 								type="button"
 								variant="secondary"
 								className="text-xs bg-green-50 hover:bg-green-100"
 								onClick={() => handleUpdateMessage(row.original, "activate")}
 							>
 								Activate
-							</ButtonUI>
+							</Button>
 					}
 
-					<ButtonUI
+					<Button
 						type="button"
 						variant="secondary"
 						className="text-xs"
@@ -162,14 +162,14 @@ const InformationBox = () => {
 						}}
 					>
 						Preview
-					</ButtonUI>
-					<ButtonUI
+					</Button>
+					<Button
 						variant="destructive"
 						size="icon"
 						onClick={() => handleDelete(row.original)}
 					>
 						<DeleteIcon />
-					</ButtonUI>
+					</Button>
 				</div>
 			),
 			width: 200
@@ -392,13 +392,13 @@ const InformationBox = () => {
 								</p>
 							)}
 						</div>
-						<ButtonUI
+						<Button
 							type="submit"
 							className="inline-flex gap-2 items-center ml-auto bg-green-800 hover:bg-green-900"
 						>
 							<UploadIcon />
 							Upload Image
-						</ButtonUI>
+						</Button>
 					</div>
 					<div className="flex *:w-full *:grow items-stretch h-[500px]">
 						<div className={cn("shadow-lg border-2 border-dashed p-2 rounded-lg flex justify-center items-center", {
@@ -498,14 +498,14 @@ const InformationBox = () => {
 						<ReactPaginate
 							breakLabel={<PaginationEllipsis />}
 							nextLabel={
-								<ButtonUI
+								<Button
 									variant="ghost"
 									size="sm"
 									onClick={() => table.nextPage()}
 									disabled={!table.getCanNextPage()}
 								>
 									<CaretIcon />
-								</ButtonUI>
+								</Button>
 							}
 							onPageChange={(val) => {
 								table.setPageIndex(val.selected);
@@ -514,7 +514,7 @@ const InformationBox = () => {
 							pageRangeDisplayed={3}
 							pageCount={table.getPageCount()}
 							previousLabel={
-								<ButtonUI
+								<Button
 									variant="ghost"
 									size="sm"
 									onClick={() => table.previousPage()}
@@ -523,7 +523,7 @@ const InformationBox = () => {
 									<span className="rotate-180">
 										<CaretIcon />
 									</span>
-								</ButtonUI>
+								</Button>
 							}
 							renderOnZeroPageCount={null}
 							className="flex gap-2 items-center text-xs font-normal [&_a]:inline-flex [&_a]:items-center [&_a]:justify-center [&_a]:min-w-7 [&_a]:h-8 [&_a]:rounded-lg *:text-center *:[&_.selected]:bg-blue-500  *:[&_.selected]:text-white [&_.disabled]:pointer-events-none"
@@ -555,14 +555,14 @@ export const InformationModal = () => {
 						<div className="py-20 md:py-0 min-h-screen md:h-full flex justify-center items-center px-5">
 							<div className="w-full max-w-[calc(100vw-100px)] h-full max-h-[calc(100vh-100px)] flex justify-center ">
 								<div className="h-full w-fit relative">
-									<ButtonUI
+									<Button
 										variant="ghost"
 										size="icon"
 										className="bg-white rounded-full absolute -top-3 -right-3 p-2 shadow-md"
 										onClick={() => { setShowLiveModal(false) }}
 									>
 										<CancelSquareIcon />
-									</ButtonUI>
+									</Button>
 									<img src={liveMessage?.message} alt="notice" className="w-full h-full" />
 								</div>
 							</div>
@@ -581,14 +581,14 @@ const PreviewModal = ({ url }) => {
 	return (
 		<div className="w-full max-w-[calc(100vw-100px)] h-full max-h-[calc(100vh-100px)] flex justify-center ">
 			<div className="h-full w-fit relative">
-				<ButtonUI
+				<Button
 					variant="ghost"
 					size="icon"
 					className="bg-white rounded-full absolute -top-3 -right-3  p-2 shadow-md"
 					onClick={unMountPortalModal}
 				>
 					<CancelSquareIcon />
-				</ButtonUI>
+				</Button>
 				<img src={url} alt="notice" className="w-fit h-full" />
 			</div>
 		</div>

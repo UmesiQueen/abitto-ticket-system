@@ -21,8 +21,8 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { Button as ButtonUI } from "@/components/ui/button";
-import Button from "@/components/custom/Button";
+import { Button } from "@/components/ui/button";
+import CustomButton from "@/components/custom/Button";
 import {
 	CaretIcon,
 	CalendarIcon,
@@ -272,7 +272,7 @@ const RentalTable = () => {
 			<div className="flex items-center gap-10 justify-between w-full mt-10 mb-5 ">
 				<h2 className="font-semibold"> {Object.keys(searchParamValues).length ? "Search results" : "All Rentals"}</h2>
 				{(columnFilters.length) ?
-					<Button
+					<CustomButton
 						variant="outline"
 						className="!h-8 !text-sm"
 						onClick={() => {
@@ -281,8 +281,9 @@ const RentalTable = () => {
 							setFilterValue("");
 							resetPageIndex("rentals")
 						}}
-						text="Reset filters"
-					/> : ""}
+					>
+						Reset filters
+					</CustomButton> : ""}
 			</div>
 			<div className="bg-white rounded-lg p-5">
 				<Table>
@@ -344,14 +345,14 @@ const RentalTable = () => {
 					<ReactPaginate
 						breakLabel={<PaginationEllipsis />}
 						nextLabel={
-							<ButtonUI
+							<Button
 								variant="ghost"
 								size="sm"
 								onClick={() => table.nextPage()}
 								disabled={!table.getCanNextPage()}
 							>
 								<CaretIcon />
-							</ButtonUI>
+							</Button>
 						}
 						onPageChange={(val) => {
 							table.setPageIndex(val.selected);
@@ -364,7 +365,7 @@ const RentalTable = () => {
 						pageRangeDisplayed={3}
 						pageCount={table.getPageCount()}
 						previousLabel={
-							<ButtonUI
+							<Button
 								variant="ghost"
 								size="sm"
 								onClick={() => table.previousPage()}
@@ -373,7 +374,7 @@ const RentalTable = () => {
 								<span className="rotate-180">
 									<CaretIcon />
 								</span>
-							</ButtonUI>
+							</Button>
 						}
 						renderOnZeroPageCount={null}
 						className="flex gap-2 items-center text-xs font-normal [&_a]:inline-flex [&_a]:items-center [&_a]:justify-center [&_a]:min-w-7 [&_a]:h-8 [&_a]:rounded-lg *:text-center *:[&_.selected]:bg-blue-500  *:[&_.selected]:text-white [&_.disabled]:pointer-events-none"

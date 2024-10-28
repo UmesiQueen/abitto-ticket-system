@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/table";
 import { PaginationEllipsis } from "@/components/ui/pagination";
 import ReactPaginate from "react-paginate";
-import { Button as ButtonUI } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { CaretIcon, CircleArrowLeftIcon } from "@/assets/icons";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { format } from "date-fns";
@@ -195,14 +195,14 @@ const FeedbackAdmin = () => {
 					<ReactPaginate
 						breakLabel={<PaginationEllipsis />}
 						nextLabel={
-							<ButtonUI
+							<Button
 								variant="ghost"
 								size="sm"
 								onClick={() => table.nextPage()}
 								disabled={!table.getCanNextPage()}
 							>
 								<CaretIcon />
-							</ButtonUI>
+							</Button>
 						}
 						onPageChange={(val) => {
 							table.setPageIndex(val.selected);
@@ -215,7 +215,7 @@ const FeedbackAdmin = () => {
 						pageRangeDisplayed={3}
 						pageCount={table.getPageCount()}
 						previousLabel={
-							<ButtonUI
+							<Button
 								variant="ghost"
 								size="sm"
 								onClick={() => table.previousPage()}
@@ -224,7 +224,7 @@ const FeedbackAdmin = () => {
 								<span className="rotate-180">
 									<CaretIcon />
 								</span>
-							</ButtonUI>
+							</Button>
 						}
 						renderOnZeroPageCount={null}
 						className="flex gap-2 items-center text-xs font-normal [&_a]:inline-flex [&_a]:items-center [&_a]:justify-center [&_a]:min-w-7 [&_a]:h-8 [&_a]:rounded-lg *:text-center *:[&_.selected]:bg-blue-500  *:[&_.selected]:text-white [&_.disabled]:pointer-events-none"
@@ -250,9 +250,9 @@ export const FeedbackDetails = () => {
 			</Helmet>
 			<div>
 				<div className="flex gap-1 items-center mb-10 ">
-					<ButtonUI size="icon" variant="ghost" onClick={() => navigate(-1)}>
+					<Button size="icon" variant="ghost" onClick={() => navigate(-1)}>
 						<CircleArrowLeftIcon />
-					</ButtonUI>
+					</Button>
 					<h1 className="font-semibold text-lg">Feedback Details</h1>
 				</div>
 				<div className=" bg-white p-10 rounded-lg">

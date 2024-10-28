@@ -25,8 +25,8 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { Button as ButtonUI } from "@/components/ui/button";
-import Button from "@/components/custom/Button";
+import { Button } from "@/components/ui/button";
+import CustomButton from "@/components/custom/Button";
 import { cn, customError } from "@/lib/utils";
 import { DeleteIcon, CircleArrowLeftIcon, CaretIcon } from "@/assets/icons";
 import { GlobalCTX } from "@/contexts/GlobalContext";
@@ -271,7 +271,7 @@ const TripDetails = () => {
                 <div
                     className="flex gap-1 items-center mb-8"
                 >
-                    <ButtonUI
+                    <Button
                         size="icon"
                         variant="ghost"
                         onClick={() =>
@@ -279,7 +279,7 @@ const TripDetails = () => {
                         }
                     >
                         <CircleArrowLeftIcon />
-                    </ButtonUI>
+                    </Button>
                     <h1 className="text-lg font-semibold ">Journey Details</h1>
                 </div>
                 <div className="bg-white rounded-lg">
@@ -336,30 +336,28 @@ const TripDetails = () => {
                             {["dev", "super-admin"].includes(accountType) &&
                                 selectedTrip?.trip_status === "Upcoming" && (
                                     <>
-                                        <Button
-                                            text="Edit Journey Details"
+                                        <CustomButton
                                             variant="outline"
                                             className="text-nowrap h-10"
-                                            onClick={() => {
-                                                mountPortalModal(<RescheduleEditModal />);
-                                            }}
-                                        />
-                                        <ButtonUI
+                                            onClick={() => mountPortalModal(<RescheduleEditModal />)}
+                                        >
+                                            Edit Journey Details
+                                        </CustomButton>
+                                        <Button
                                             variant="destructive"
                                             size="icon"
                                             onClick={handleCancel}
                                         >
                                             <DeleteIcon />
-                                        </ButtonUI>
+                                        </Button>
                                     </>
                                 )}
-                            <Button
-                                text="Manifesto"
+                            <CustomButton
                                 className="h-10 md:text-sm"
-                                onClick={() => {
-                                    navigate("manifesto")
-                                }}
-                            />
+                                onClick={() => navigate("manifesto")}
+                            >
+                                Manifesto
+                            </CustomButton>
                         </li>
                     </ul>
                     <div
@@ -521,14 +519,14 @@ const Pagination = ({ props: { table } }) => {
         <ReactPaginate
             breakLabel={<PaginationEllipsis />}
             nextLabel={
-                <ButtonUI
+                <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => table.nextPage()}
                     disabled={!table.getCanNextPage()}
                 >
                     <CaretIcon />
-                </ButtonUI>
+                </Button>
             }
             onPageChange={(val) => {
                 table.setPageIndex(val.selected);
@@ -541,7 +539,7 @@ const Pagination = ({ props: { table } }) => {
             pageRangeDisplayed={3}
             pageCount={pageCount}
             previousLabel={
-                <ButtonUI
+                <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => table.previousPage()}
@@ -550,7 +548,7 @@ const Pagination = ({ props: { table } }) => {
                     <span className="rotate-180">
                         <CaretIcon />
                     </span>
-                </ButtonUI>
+                </Button>
             }
             renderOnZeroPageCount={null}
             className="flex gap-2 items-center text-xs font-normal [&_a]:inline-flex [&_a]:items-center [&_a]:justify-center [&_a]:min-w-7 [&_a]:h-8 [&_a]:rounded-lg *:text-center *:[&_.selected]:bg-blue-500  *:[&_.selected]:text-white [&_.disabled]:pointer-events-none "

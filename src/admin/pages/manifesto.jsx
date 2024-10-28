@@ -19,7 +19,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { Button as IconButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { PrinterIcon, CircleArrowLeftIcon } from "@/assets/icons";
 import { GlobalCTX } from "@/contexts/GlobalContext";
@@ -150,17 +150,17 @@ const Manifesto = () => {
 
 			<section ref={componentRef}>
 				<div
-					className={cn("flex gap-1 items-center mb-8", {
+					className={cn("flex gap-1 items-center mb-10", {
 						hidden: isPrinting,
 					})}
 				>
-					<IconButton
+					<Button
 						size="icon"
 						variant="ghost"
 						onClick={() => navigate(-1)}
 					>
 						<CircleArrowLeftIcon />
-					</IconButton>
+					</Button>
 					<h1 className="text-lg font-semibold ">Manifesto</h1>
 				</div>
 				<div className="bg-white rounded-lg">
@@ -224,7 +224,7 @@ const Manifesto = () => {
 								{ hidden: isPrinting }
 							)}
 						>
-							<IconButton
+							<Button
 								size="icon"
 								className="bg-blue-500"
 								onClick={() => {
@@ -235,7 +235,7 @@ const Manifesto = () => {
 								}}
 							>
 								<PrinterIcon />
-							</IconButton>
+							</Button>
 						</li>
 					</ul>
 					<div

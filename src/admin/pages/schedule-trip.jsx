@@ -9,7 +9,7 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { CalendarIcon, ClockIcon } from "@/assets/icons";
 import SelectField from "@/components/custom/SelectField";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { scheduleTripSchema } from "@/lib/validators/scheduleTripSchema";
 import { NumericFormat } from "react-number-format";
@@ -256,11 +256,10 @@ const ScheduleTrip = () => {
 							</p>
 						)}
 					</div>
-					<Button
-						text="Add"
+					<CustomButton
 						className="w-36 mt-8 mb-auto"
 						onClick={handleAddDate}
-					/>
+					>Add</CustomButton>
 				</div>
 				{dateOptions.length ? (
 					<ul className="flex gap-2">
@@ -284,11 +283,10 @@ const ScheduleTrip = () => {
 				) : (
 					""
 				)}
-				<Button
-					text="Create new trip"
+				<CustomButton
 					type="submit"
 					className="w-full !mt-12 py-6"
-				/>
+				>Create new trip</CustomButton>
 			</form>
 		</>
 	);

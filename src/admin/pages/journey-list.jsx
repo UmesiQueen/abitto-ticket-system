@@ -21,8 +21,8 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { Button as ButtonUI } from "@/components/ui/button";
-import Button from "@/components/custom/Button";
+import { Button } from "@/components/ui/button";
+import CustomButton from "@/components/custom/Button";
 import { CaretIcon } from "@/assets/icons";
 import { BookingCTX } from "@/contexts/BookingContext";
 import axiosInstance from "@/api";
@@ -228,7 +228,7 @@ const JourneyTable = () => {
 			<div className="flex items-center gap-10 justify-between w-full mt-16 mb-5 ">
 				<h2 className="font-semibold"> {Object.keys(searchParamValues).length ? "Search results" : "All Scheduled Trips"}</h2>
 				{(columnFilters.length) ?
-					<Button
+					<CustomButton
 						variant="outline"
 						className="!h-8 !text-sm"
 						onClick={() => {
@@ -236,8 +236,9 @@ const JourneyTable = () => {
 							setSearchParams({});
 							resetPageIndex("journeyList")
 						}}
-						text="Reset filters"
-					/> : ""}
+					>
+						Reset filters
+					</CustomButton> : ""}
 			</div>
 
 			<div className="flex items-center w-fit border border-gray-200 font-medium rounded-t-lg mt-8 bg-white ">
@@ -332,14 +333,14 @@ const JourneyTable = () => {
 					<ReactPaginate
 						breakLabel={<PaginationEllipsis />}
 						nextLabel={
-							<ButtonUI
+							<Button
 								variant="ghost"
 								size="sm"
 								onClick={() => table.nextPage()}
 								disabled={!table.getCanNextPage()}
 							>
 								<CaretIcon />
-							</ButtonUI>
+							</Button>
 						}
 						onPageChange={(val) => {
 							table.setPageIndex(val.selected);
@@ -352,7 +353,7 @@ const JourneyTable = () => {
 						pageRangeDisplayed={3}
 						pageCount={pageCount}
 						previousLabel={
-							<ButtonUI
+							<Button
 								variant="ghost"
 								size="sm"
 								onClick={() => table.previousPage()}
@@ -361,7 +362,7 @@ const JourneyTable = () => {
 								<span className="rotate-180">
 									<CaretIcon />
 								</span>
-							</ButtonUI>
+							</Button>
 						}
 						renderOnZeroPageCount={null}
 						className="flex gap-2 items-center text-xs font-normal [&_a]:inline-flex [&_a]:items-center [&_a]:justify-center [&_a]:min-w-7 [&_a]:h-8 [&_a]:rounded-lg *:text-center *:[&_.selected]:bg-blue-500  *:[&_.selected]:text-white [&_.disabled]:pointer-events-none"

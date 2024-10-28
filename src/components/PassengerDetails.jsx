@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import InputField from "@/components/custom/InputField";
 import { format } from "date-fns";
 import { useNavigate, useLocation, Navigate } from "react-router-dom";
@@ -241,18 +241,20 @@ const PassengerDetails = () => {
 							</div>
 						)}
 						<div className="flex gap-4">
-							<Button
-								text="Back"
+							<CustomButton
 								variant="outline"
 								onClick={handlePrev}
 								className="w-full md:w-40"
-							/>
-							<Button
-								text="Continue"
+							>
+								Back
+							</CustomButton>
+							<CustomButton
 								type="submit"
 								loading={loading}
 								className="col-start-1 w-full md:w-40 "
-							/>
+							>
+								Continue
+							</CustomButton>
 						</div>
 					</div>
 				</form>

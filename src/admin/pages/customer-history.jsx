@@ -12,7 +12,7 @@ const CustomerHistory = () => {
 	const { customerID } = useParams();
 	const { customersData } = React.useContext(BookingCTX);
 
-	const currentCustomer = customersData.find((item) => item._id == customerID);
+	const currentCustomer = customersData.find((item) => item._id === customerID);
 
 	if (!currentCustomer?._id) return <Navigate to="/backend/admin/customers" />;
 
@@ -22,11 +22,11 @@ const CustomerHistory = () => {
 				<title>Customer Details| Admin</title>
 			</Helmet>
 			<div>
-				<div className="flex gap-1 items-center mb-5 py-2">
-					<button onClick={() => navigate(-1)}>
+				<div className="flex gap-1 items-center mb-10">
+					<Button size="icon" variant="ghost" onClick={() => navigate(-1)}>
 						<CircleArrowLeftIcon />
-					</button>
-					<h1 className="text-base font-semibold">Customer History</h1>
+					</Button>
+					<h1 className="text-lg font-semibold">Customer History</h1>
 				</div>
 				<div className="min-h-[500px] flex *:grow *:w-1/2 gap-5">
 					<div className="p-10 bg-white rounded-lg">

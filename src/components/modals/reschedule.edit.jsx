@@ -10,7 +10,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { BookingCTX } from "@/contexts/BookingContext";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import { CalendarIcon, ClockIcon, CancelSquareIcon } from "@/assets/icons";
 import { Button as IconButton } from "@/components/ui/button";
 import { useScheduleTrip } from "@/hooks/useScheduleTrip";
@@ -227,12 +227,13 @@ const RescheduleEditModal = () => {
 						/>
 					</div>
 				</div>
-				<Button
+				<CustomButton
 					disabled={!isDirty}
 					type="submit"
-					text="Continue"
 					className="w-full mt-8 !h-12"
-				/>
+				>
+					Continue
+				</CustomButton>
 			</form>
 		</div>
 	);

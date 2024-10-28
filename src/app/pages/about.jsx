@@ -1,7 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate, Link } from "react-router-dom";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import { about, about2 } from "@/assets/images";
 import FounderImg from "@/assets/images/founder.jpg";
 import FounderImg3 from "@/assets/images/founder2.jpg";
@@ -222,6 +222,7 @@ const About = () => {
 												<a
 													href="www.abittoglobal.com"
 													target="_blank"
+													rel="noreferrer"
 													className="text-blue-500 hover:text-blue-700 px-1 "
 												>
 													www.abittoglobal.com
@@ -416,14 +417,15 @@ const About = () => {
 						<p className="text-xs md:text-base">
 							Experience Seamless and Enjoyable Water Travel
 						</p>
-						<Button
-							text="Get Started"
+						<CustomButton
 							onClick={() => {
 								setTimeout(() => scrollToSection(services))
 								navigate("/");
 							}}
 							className="w-40 mx-auto mt-5"
-						/>
+						>
+							Get Started
+						</CustomButton>
 					</div>
 				</section>
 			</div>

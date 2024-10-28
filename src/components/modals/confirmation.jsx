@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from "react";
 import { Warning2 } from "iconsax-react";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { cn } from "@/lib/utils";
@@ -38,24 +38,26 @@ const ConfirmationModal = ({
 			</div>
 
 			<div className="flex gap-3 justify-between !mt-5">
-				<Button
-					text="Cancel"
+				<CustomButton
 					variant="outline"
 					className={cn("w-56", {
 						" !text-black/50 hover:!text-blue-700 border-black/50":
 							severity === "delete",
 					})}
 					onClick={unMountPortalModal}
-				/>
-				<Button
-					text={severity === "delete" ? "Delete" : "Save Changes"}
+				>
+					Cancel
+				</CustomButton>
+				<CustomButton
 					className={cn("w-56", {
 						"!bg-[#E71F1F] border-[#E71F1F] hover:!bg-red-700 hover:!border-red-700":
 							severity === "delete",
 					})}
 					loading={loading}
 					onClick={handleRequest}
-				/>
+				>
+					{severity === "delete" ? "Delete" : "Save Changes"}
+				</CustomButton>
 			</div>
 		</div>
 	);

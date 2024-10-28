@@ -5,7 +5,7 @@ import { addDays, format } from "date-fns";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import DatePicker from "react-datepicker";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import { CalendarIcon } from "@/assets/icons";
 import SelectField from "@/components/custom/SelectField";
 import * as yup from "yup";
@@ -125,12 +125,13 @@ const SearchForm = ({ props }) => {
 					)}
 				</div>
 			</div>
-			<Button
-				text="Search"
+			<CustomButton
 				type="submit"
 				loading={loading}
 				className="w-44 py-5 md:mt-8 "
-			/>
+			>
+				Search
+			</CustomButton>
 		</form>
 	);
 };

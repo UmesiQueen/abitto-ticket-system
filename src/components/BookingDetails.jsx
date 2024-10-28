@@ -9,7 +9,7 @@ import { bookingDetailsSchema } from "@/lib/validators/bookingSchema";
 import { CalendarIcon } from "@/assets/icons";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import SelectField from "./custom/SelectField";
 import { v4 as uuid } from "uuid";
 
@@ -186,7 +186,9 @@ export const BookingForm = () => {
 					/>
 				</div>
 			</div>
-			<Button text="Continue" type="submit" className="w-full !h-12" />
+			<CustomButton type="submit" className="w-full !h-12" >
+				Continue
+			</CustomButton>
 		</form>
 	);
 };

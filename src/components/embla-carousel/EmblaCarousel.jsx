@@ -42,10 +42,10 @@ const EmblaCarousel = (props) => {
 				<div className="embla__container">
 					{slides.map((slide, index) => (
 						<div
-							// data-state={selectedIndex == index ? "active" : ""}
 							className="embla__slide"
 							key={index}
 							onClick={() => onDotButtonClick(index)}
+							onKeyDown={() => onDotButtonClick(index)}
 						>
 							<div className="embla__slide__number bg-white flex flex-col md:gap-3 p-6 md:p-8">
 								<span className="font-bold text-2xl md:text-4xl">“</span>
@@ -78,6 +78,7 @@ const EmblaCarousel = (props) => {
 			<div className="flex gap-5 justify-between">
 				<div className="space-x-2">
 					<button
+						type="button"
 						onClick={onPrevButtonClick}
 						disabled={prevBtnDisabled}
 						className="w-9 h-9 rounded-full bg-blue-500 text-white disabled:bg-white disabled:text-black font-bold text-xl inline-flex items-center justify-center ml-auto transition duration-150 ease-in-out"
@@ -87,6 +88,7 @@ const EmblaCarousel = (props) => {
 						</span>
 					</button>
 					<button
+						type="button"
 						onClick={onNextButtonClick}
 						disabled={nextBtnDisabled}
 						className="w-9 h-9 rounded-full bg-blue-500 text-white disabled:bg-white disabled:text-black font-bold text-xl inline-flex items-center justify-center transition duration-150 ease-in-out"
@@ -99,7 +101,8 @@ const EmblaCarousel = (props) => {
 				<div className="flex items-center gap-2">
 					{Array.from({ length: slides.length }).map((_, index) => (
 						<button
-							data-state={selectedIndex == index ? "active" : ""}
+							type="button"
+							data-state={selectedIndex === index ? "active" : ""}
 							key={index}
 							onClick={() => onDotButtonClick(index)}
 							className="w-2 h-2 bg-white shadow-sm rounded-full data-[state=active]:bg-black"

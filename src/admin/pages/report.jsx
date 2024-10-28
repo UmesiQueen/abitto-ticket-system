@@ -20,7 +20,7 @@ import { GlobalCTX } from "@/contexts/GlobalContext";
 import { capitalize } from "lodash";
 import DatePicker from "react-datepicker";
 import { Controller, useForm } from "react-hook-form";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { customError } from "@/lib/utils";
@@ -577,12 +577,11 @@ const Report = () => {
 							)}
 						</div>
 						<div className="flex items-center gap-2 ml-4">
-							<Button text="Apply" type="submit" className="px-4 h-8 !text-xs" />
-							<Button
-								text="Reset"
+							<CustomButton type="submit" className="px-4 h-8 !text-xs" >Apply</CustomButton>
+							<CustomButton
 								onClick={reset}
 								className="px-4 h-8 !text-xs !border-[#bfbfbf] !bg-[#bfbfbf] hover:!bg-gray-400 hover:!border-gray-400 disabled:!bg-[#C2C2C2] disabled:!border-[#C2C2C2]"
-							/>
+							>Reset</CustomButton>
 						</div>
 					</form>
 				)}
