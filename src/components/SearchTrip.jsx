@@ -20,7 +20,7 @@ const SearchTrip = () => {
 		setSelectedTrip,
 		setFormData,
 	} = React.useContext(BookingCTX);
-	const { setLoading } = React.useContext(GlobalCTX);
+	const { loading, setLoading } = React.useContext(GlobalCTX);
 	const [totalCost, setTotalCost] = React.useState(0);
 	const [isDisabled, setIsDisabled] = React.useState(true);
 	const navigate = useNavigate()
@@ -49,14 +49,16 @@ const SearchTrip = () => {
 	}, [])
 
 	React.useEffect(() => {
-		setLoading(isPending)
-	}, [isPending, setLoading])
+		if (!Object.keys(availableTrips).length)
+			return setLoading(isPending)
+		return setLoading(false)
+	}, [isPending, setLoading, availableTrips])
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
-		if (Object.keys(selectedTrip?.departure).length) {
+		if (Object.keys(selectedTrip).length) {
 			const departureCost =
-				Number(selectedTrip.departure?.ticket_cost ?? 0) * total_passengers;
+				Number(selectedTrip?.ticket_cost ?? 0) * total_passengers;
 			setTotalCost(departureCost);
 			return setIsDisabled(false);
 		}
@@ -65,12 +67,9 @@ const SearchTrip = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedTrip]);
 
-	const handleCheck = (name, state, tripDetails, seatExceeded) => {
+	const handleCheck = (state, tripDetails, seatExceeded) => {
 		if (!seatExceeded)
-			setSelectedTrip((prev) => ({
-				...prev,
-				[name]: state ? tripDetails : {},
-			}));
+			setSelectedTrip(state ? tripDetails : {});
 		else
 			toast.error(
 				"There are no available seats for the number of passengers you have selected."
@@ -82,9 +81,9 @@ const SearchTrip = () => {
 			...prev,
 			bookingDetails: {
 				...prev.bookingDetails,
-				departure_ticket_cost: selectedTrip.departure?.ticket_cost,
-				departure_time: selectedTrip.departure.time,
-				departure_trip_code: selectedTrip.departure.trip_code,
+				departure_ticket_cost: selectedTrip?.ticket_cost,
+				departure_time: selectedTrip?.time,
+				departure_trip_code: selectedTrip?.trip_code,
 			},
 		}));
 		if (isAdmin)
@@ -93,14 +92,8 @@ const SearchTrip = () => {
 	};
 
 	const handleReturn = () => {
-		setSelectedTrip({
-			departure: {},
-			return: {},
-		});
-		setAvailableTrips({
-			departure_trip: [],
-			return_trip: [],
-		});
+		setSelectedTrip({});
+		setAvailableTrips([]);
 		if (isAdmin)
 			return navigate(`/backend/${accountType}/create/book-ticket`)
 		return navigate("/booking")
@@ -115,14 +108,12 @@ const SearchTrip = () => {
 
 			{/* Departure Time */}
 			<div className="min-h-20">
-				{!isPending && <div className="space-y-3">
-					{availableTrips?.departure_trip.length ? (
-						availableTrips.departure_trip.map((item) => {
+				{!loading && <div className="space-y-3">
+					{availableTrips.length ? (
+						availableTrips.map((item) => {
 							const available_seats = Number(item.trip_capacity) - Number(item.current_booked_seats);
-							const isAvailableSeatsExceeded =
-								total_passengers > available_seats
-							const isActive =
-								selectedTrip?.departure?.trip_code === item.trip_code;
+							const isAvailableSeatsExceeded = total_passengers > available_seats;
+							const isActive = selectedTrip?.trip_code === item.trip_code;
 							return (
 								<div
 									tabIndex={isAvailableSeatsExceeded ? "-1" : "0"}
@@ -137,7 +128,6 @@ const SearchTrip = () => {
 									aria-disabled={isAvailableSeatsExceeded}
 									onClick={() => {
 										handleCheck(
-											"departure",
 											!isActive,
 											item,
 											isAvailableSeatsExceeded
@@ -147,7 +137,6 @@ const SearchTrip = () => {
 										event.preventDefault();
 										if (event.key === "Enter" || event.key === " ") {
 											handleCheck(
-												"departure",
 												!isActive,
 												item,
 												isAvailableSeatsExceeded
@@ -225,7 +214,7 @@ const SearchTrip = () => {
 						</strong>
 						<span className="block text-sm">
 							{formatValue({
-								value: String(selectedTrip.departure?.ticket_cost ?? 0),
+								value: String(selectedTrip?.ticket_cost ?? 0),
 								prefix: "₦",
 							})}
 							{" "}

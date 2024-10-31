@@ -6,6 +6,7 @@ import { useLocation } from "react-router-dom";
 export const BookingCTX = React.createContext();
 
 const storedSession = JSON.parse(sessionStorage.getItem('cus_info'));
+
 const BookingContext = ({ children }) => {
 	const [bookingQuery, setBookingQuery] = React.useState([]);
 	const [currentPageIndex, setCurrentPageIndex] = React.useState({
@@ -24,16 +25,9 @@ const BookingContext = ({ children }) => {
 		passengerDetails: {},
 	});
 	const [loading, setLoading] = React.useState(false);
-	const [availableTrips, setAvailableTrips] = React.useState({
-		departure_trip: [],
-		return_trip: [],
-	});
-	const [selectedTrip, setSelectedTrip] = React.useState({
-		departure: {},
-		return: {},
-	});
+	const [availableTrips, setAvailableTrips] = React.useState([]);
+	const [selectedTrip, setSelectedTrip] = React.useState({});
 	const [isChecked, setChecked] = React.useState(false);
-	const [searchParams, setSearchParams] = React.useState({});
 	const [tripDetails, setTripDetails] = React.useState({});
 	const [rentalData, setRentalData] = React.useState({});
 	const [customersData, setCustomersData] = React.useState([]);
@@ -56,14 +50,8 @@ const BookingContext = ({ children }) => {
 			bookingDetails: {},
 			passengerDetails: {},
 		});
-		setAvailableTrips({
-			departure_trip: [],
-			return_trip: [],
-		});
-		setSelectedTrip({
-			departure: {},
-			return: {},
-		});
+		setAvailableTrips([]);
+		setSelectedTrip({});
 		setRentalData({});
 		setChecked(false);
 	};
@@ -85,8 +73,6 @@ const BookingContext = ({ children }) => {
 		isChecked,
 		setChecked,
 		handleReset,
-		searchParams,
-		setSearchParams,
 		availableTrips,
 		setAvailableTrips,
 		selectedTrip,

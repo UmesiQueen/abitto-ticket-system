@@ -377,8 +377,7 @@ const Home = () => {
 									>
 										www.abittoferry.com
 									</a>
-									. From the homepage, click on{" 'Book a Ticket,' "}choose your
-									trip type (One-Way or Round Trip), fill in your details, and
+									. From the homepage, click on{" 'Book a Ticket,' "}, fill in your details, and
 									follow the prompts to complete your booking.
 								</AccordionContent>
 							</AccordionItem>

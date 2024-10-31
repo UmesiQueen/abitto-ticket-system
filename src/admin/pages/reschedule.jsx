@@ -116,15 +116,6 @@ const RescheduleForm = () => {
 							{currentUser?.departure_time}
 						</p>
 					</li>
-					{currentUser?.trip_type === "Round Trip" && (
-						<li>
-							<h4> Return Date & Time</h4>
-							<p>
-								{format(new Date(currentUser?.return_date), "PP")} -{" "}
-								{currentUser?.return_time}
-							</p>
-						</li>
-					)}
 					<li>
 						<h4>Adult</h4>
 						<p>{currentUser?.adults_number}</p>
@@ -194,17 +185,14 @@ const RescheduleSelection = () => {
 	const { onNextClick } = useStepper();
 
 	React.useEffect(() => {
-		if (Object.keys(selectedTrip.departure).length)
+		if (Object.keys(selectedTrip).length)
 			return setIsDisabled(true)
-		setIsDisabled(false)
+		return setIsDisabled(false)
 	}, [selectedTrip])
 
-	const handleCheck = (name, state, tripDetails, seatExceeded) => {
+	const handleCheck = (state, tripDetails, seatExceeded) => {
 		if (!seatExceeded)
-			setSelectedTrip((prev) => ({
-				...prev,
-				[name]: state ? tripDetails : {},
-			}));
+			setSelectedTrip(state ? tripDetails : {});
 		else
 			toast.error(
 				"There are no available seats for the number of passengers you have selected."
@@ -212,7 +200,7 @@ const RescheduleSelection = () => {
 	}
 
 	const handleReschedule = () => {
-		const { date, time, trip_code, ticket_cost } = selectedTrip.departure;
+		const { date, time, trip_code, ticket_cost } = selectedTrip;
 		// create new booking record with this
 		const newFormData = {
 			...currentUser,
@@ -234,13 +222,13 @@ const RescheduleSelection = () => {
 
 			{/* Departure Time */}
 			<div className="space-y-3">
-				{availableTrips?.departure_trip.length ? (
-					availableTrips.departure_trip.map((item) => {
+				{availableTrips.length ? (
+					availableTrips.map((item) => {
 						const available_seats = Number(item.trip_capacity) - Number(item.current_booked_seats);
 						const isAvailableSeatsExceeded =
 							currentUser.total_passengers > available_seats
 						const isActive =
-							selectedTrip?.departure?.trip_code === item.trip_code;
+							selectedTrip?.trip_code === item.trip_code;
 						return (
 							<div
 								tabIndex={isAvailableSeatsExceeded ? "-1" : "0"}
@@ -255,7 +243,6 @@ const RescheduleSelection = () => {
 								aria-disabled={isAvailableSeatsExceeded}
 								onClick={() => {
 									handleCheck(
-										"departure",
 										!isActive,
 										item,
 										isAvailableSeatsExceeded
@@ -265,7 +252,6 @@ const RescheduleSelection = () => {
 									event.preventDefault();
 									if (event.key === "Enter" || event.key === " ") {
 										handleCheck(
-											"departure",
 											!isActive,
 											item,
 											isAvailableSeatsExceeded

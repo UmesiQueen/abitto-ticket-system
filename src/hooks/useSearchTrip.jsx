@@ -12,7 +12,7 @@ export const useSearchTrip = () => {
 	const searchAvailableTrips = async (reqData) => {
 		try {
 			const response = await axiosInstance.post("/ticket/query", reqData);
-			return response.data
+			return response.data.departure_trip
 		} catch (error) {
 			customError(error, "Unable to retrieve available trips. Please try again.")
 		}
