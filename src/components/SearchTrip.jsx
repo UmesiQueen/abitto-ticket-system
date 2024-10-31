@@ -35,7 +35,8 @@ const SearchTrip = () => {
 	const { isPending, ...mutation } = useMutation({
 		mutationKey: "availableTrips",
 		mutationFn: (reqData) => {
-			return searchAvailableTrips(reqData);
+			if (formData?.ticket_id) return searchAvailableTrips(reqData);
+			navigate("/booking")
 		},
 		onSuccess: (data) => {
 			setAvailableTrips(data);
@@ -202,7 +203,7 @@ const SearchTrip = () => {
 
 			<div className="grid grid-cols-1 md:grid-cols-7 gap-y-5 min-h-32">
 				<div className="md:col-span-4 flex-grow flex justify-between items-end rounded-t-lg rounded-lg  bg-white p-8 min-h-16">
-					<p className="font-semibold text-sm md:text-lg uppercase">
+					<p className="font-semibold text-sm md:text-lg uppercase text-nowrap">
 						Total Cost
 					</p>
 					<p className="text-right md:text-xl">

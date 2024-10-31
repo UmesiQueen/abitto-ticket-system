@@ -31,12 +31,8 @@ import { Loader2 } from "lucide-react";
 import { useSearchParam } from "@/hooks/useSearchParam";
 
 const Customers = () => {
-	const {
-		customersData,
-		setCustomersData,
-		setCurrentPageIndex,
-		currentPageIndex,
-	} = React.useContext(BookingCTX);
+	const { setCurrentPageIndex, currentPageIndex } = React.useContext(BookingCTX);
+	const [customersData, setCustomersData] = React.useState([])
 	const [sorting, setSorting] = React.useState([]);
 	const [columnFilters, setColumnFilters] = React.useState([]);
 	const [columnVisibility, setColumnVisibility] = React.useState({
@@ -90,7 +86,7 @@ const Customers = () => {
 
 	React.useEffect(() => {
 		if (isSuccess) setCustomersData(data);
-	}, [data, isSuccess, setCustomersData])
+	}, [data, isSuccess])
 
 	const columns = [
 		{

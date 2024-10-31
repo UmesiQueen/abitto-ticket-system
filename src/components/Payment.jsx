@@ -10,7 +10,7 @@ import {
 } from "@/assets/icons/index";
 import { BookingCTX } from "@/contexts/BookingContext";
 import CustomButton from "@/components/custom/Button";
-import { Button as IconButton } from "./ui/button";
+import { Button } from "./ui/button";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom"
@@ -73,7 +73,7 @@ const Payment = () => {
 					<p className="text-xs md:text-sm font-bold text-gray-500 mb-1">
 						Ticket total(NGN)
 					</p>
-					<p className="nowrap font-semibold text-4xl md:text-5xl ">
+					<p className="font-semibold text-4xl md:text-5xl ">
 						<span className="text-2xl">₦</span>
 						{formatValue({
 							value: String(total_ticket_cost),
@@ -101,49 +101,20 @@ const Payment = () => {
 							<UsersIcon />
 							<p>{formData.bookingDetails.total_passengers} Passenger(s)</p>
 						</li>
+						<li>
+							<CalendarIcon />
+							<p>
+								{format(
+									new Date(formData.bookingDetails.departure_date),
+									"PP"
+								)}
+							</p>
+						</li>
+						<li>
+							<ClockIcon />
+							<p>{formData.bookingDetails.departure_time}</p>
+						</li>
 					</ul>
-				</div>
-
-				{/* time and return */}
-				<div className="flex flex-wrap gap-x-5 gap-y-3">
-					<div>
-						<h4 className="font-semibold text-sm mb-1">Departure Details</h4>
-						<ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1  [&_li]:inline-flex [&_li]:items-center [&_li]:gap-1">
-							<li>
-								<CalendarIcon />
-								<p>
-									{format(
-										new Date(formData.bookingDetails.departure_date),
-										"PP"
-									)}
-								</p>
-							</li>
-							<li>
-								<ClockIcon />
-								<p>{formData.bookingDetails.departure_time}</p>
-							</li>
-						</ul>
-					</div>
-					{formData.bookingDetails.trip_type === "Round Trip" && (
-						<div>
-							<h5 className="font-semibold text-sm mb-1">Return Details</h5>
-							<ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1 [&_li]:inline-flex [&_li]:items-center [&_li]:gap-1">
-								<li>
-									<CalendarIcon />
-									<p>
-										{format(
-											new Date(formData.bookingDetails?.return_date),
-											"PP"
-										)}
-									</p>
-								</li>
-								<li>
-									<ClockIcon />
-									<p>{formData.bookingDetails?.return_time}</p>
-								</li>
-							</ul>
-						</div>
-					)}
 				</div>
 
 				{/* customer details */}
@@ -166,7 +137,7 @@ const Payment = () => {
 					<tbody>
 						<tr>
 							<td className="text-xs md:text-sm text-[#444444]">
-								Ticket Price
+								Ticket cost
 							</td>
 							<td className="text-xs md:text-sm text-[#444444]">
 								{formatValue({
@@ -209,7 +180,7 @@ const Payment = () => {
 				</p>
 				<p>
 					<strong>
-						This ticket is Non-refundable and cannot be rescheduled if scheduled
+						This ticket is non-refundable and cannot be rescheduled if scheduled
 						time is missed.
 					</strong>
 				</p>
@@ -234,7 +205,7 @@ const Payment = () => {
 				)}
 			</div>
 
-			<div className="my-5 md:mt-8 md:mb-0 space-y-5">
+			<div className=" mt-8 md:mb-0 space-y-5">
 				<CustomButton
 					type="submit"
 					loading={loading}
@@ -266,7 +237,7 @@ const PassengerDetails = () => {
 				<h4 className="font-semibold text-sm">Passenger 01</h4>
 				<ul className="mt-2 border-2 rounded-lg py-3 px-5 flex flex-wrap gap-y-3 gap-x-5 md:gap-x-12 [&_p:first-of-type]:text-xs  [&_p:first-of-type]:font-semibold  [&_p:last-of-type]:text-gray-500  [&_li]:space-y-1  ">
 					<li>
-						<p>First Name</p>
+						<p>First name</p>
 						<p>{formData.passengerDetails.passenger1_first_name}</p>
 					</li>
 					<li>
@@ -274,11 +245,11 @@ const PassengerDetails = () => {
 						<p>{formData.passengerDetails.passenger1_last_name}</p>
 					</li>
 					<li>
-						<p>Phone Number</p>
+						<p>Phone number</p>
 						<p>{formData.passengerDetails.passenger1_phone_number}</p>
 					</li>
 					<li>
-						<p>Email Address</p>
+						<p>Email address</p>
 						<p>{formData.passengerDetails?.passenger1_email}</p>
 					</li>
 				</ul>
@@ -295,7 +266,7 @@ const PassengerDetails = () => {
 								<h4 className="font-semibold text-sm">Passenger 0{num}</h4>
 								<ul className="mt-2 border-2 rounded-lg py-3 px-5 flex flex-wrap gap-y-3 gap-x-5 md:gap-x-12 [&_p:first-of-type]:text-xs  [&_p:first-of-type]:font-semibold  [&_p:last-of-type]:text-gray-500 [&_li]:space-y-1">
 									<li>
-										<p>First Name</p>
+										<p>First name</p>
 										<p>
 											{formData.passengerDetails[`passenger${num}_first_name`]}
 										</p>
@@ -307,7 +278,7 @@ const PassengerDetails = () => {
 										</p>
 									</li>
 									<li>
-										<p>Phone Number</p>
+										<p>Phone number</p>
 										<p>
 											{
 												formData.passengerDetails[
@@ -317,7 +288,7 @@ const PassengerDetails = () => {
 										</p>
 									</li>
 									<li>
-										<p>Email Address</p>
+										<p>Email address</p>
 										<p>
 											{formData.passengerDetails?.[`passenger${num}_email`]}
 										</p>
@@ -338,14 +309,14 @@ const PassengerDetailsModal = () => {
 	const { unMountPortalModal } = React.useContext(GlobalCTX);
 	return (
 		<div className="bg-white rounded-lg p-5 relative">
-			<IconButton
+			<Button
 				variant="ghost"
 				size="icon"
 				className="absolute top-0 right-0"
 				onClick={unMountPortalModal}
 			>
 				<CancelSquareIcon />
-			</IconButton>
+			</Button>
 			<PassengerDetails />
 		</div>
 	);

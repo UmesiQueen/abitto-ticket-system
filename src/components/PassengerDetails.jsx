@@ -106,17 +106,17 @@ const PassengerDetails = () => {
 						</p>
 					</li>
 					<li>
-						<h4>Adult</h4>
+						<h4>Passengers</h4>
 						<p>{formData.bookingDetails?.adults_number}</p>
 					</li>
-					<li>
+					{/* <li>
 						<h4>Children</h4>
 						<p>{formData.bookingDetails?.children_number ?? 0}</p>
-					</li>
+					</li> */}
 				</ul>
 			</div>
 
-			<section className="bg-white p-5 pb-10 md:p-10 rounded-lg">
+			<section className="bg-white p-5 md:p-10 rounded-lg">
 				<hgroup>
 					<h2 className="text-blue-500 text-base font-semibold">
 						Customer Details
@@ -192,7 +192,7 @@ const PassengerDetails = () => {
 													<h4 className="font-medium text-sm">
 														Passenger 0{i + 2} (Adult)
 													</h4>
-													<div className="grid gap-3 grid-cols-1 md:grid-cols-2">
+													<div className="grid gap-3 grid-cols-1 sm:grid-cols-2">
 														<InputField
 															{...register(`${currentPassenger}_first_name`, {
 																required: "This field is required.",

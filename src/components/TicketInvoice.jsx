@@ -36,7 +36,7 @@ const TicketInvoice = React.forwardRef(({ props: { currentUser } }, ref) => {
 						<p className="text-xs md:text-sm font-bold text-gray-500 mb-1">
 							Ticket total(NGN)
 						</p>
-						<p className="nowrap font-semibold text-4xl md:text-5xl ">
+						<p className="font-semibold text-4xl md:text-5xl ">
 							<span className="text-2xl">₦</span>
 							{formatValue({
 								value: String(currentUser?.total_ticket_cost),

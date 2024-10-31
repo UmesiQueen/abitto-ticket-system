@@ -15,7 +15,7 @@ import { v4 as uuid } from "uuid";
 
 const BookingDetail = () => {
 	return (
-		<div className="bg-white p-5 pb-10 md:p-10 rounded-lg">
+		<div className="bg-white p-5 md:p-10 rounded-lg">
 			<hgroup>
 				<h3 className="text-blue-500 font-semibold text-base md:text-xl font-poppins ">
 					Trip Details
@@ -64,7 +64,7 @@ export const BookingForm = () => {
 	});
 
 	const onSubmit = (formData_) => {
-		const total_passengers = Number(formData_.adults_number) + Number(formData_.children_number);
+		const total_passengers = Number(formData_.adults_number) + Number(formData_?.children_number ?? 0);
 		setFormData((prev) => ({
 			...prev,
 			bookingDetails: {
@@ -163,19 +163,17 @@ export const BookingForm = () => {
 							</p>
 						)}
 					</div>
-				</div>
 
-				<div className="flex gap-5">
 					<SelectField
 						{...register("adults_number")}
 						defaultValue={defaultValues.adults_number}
-						label="No. of Adults"
+						label="No. of Passengers"
 						placeholder="0"
-						options={[1, 2, 3, 4, 5]}
+						options={[1, 2, 3, 4, 5, 6]}
 						errors={errors}
 						handlechange={handleChange}
 					/>
-					<SelectField
+					{/* <SelectField
 						{...register("children_number")}
 						defaultValue={defaultValues.children_number}
 						label="No. of Children"
@@ -183,7 +181,7 @@ export const BookingForm = () => {
 						options={["", 1, 2, 3, 4, 5]}
 						errors={errors}
 						handlechange={handleChange}
-					/>
+					/> */}
 				</div>
 			</div>
 			<CustomButton type="submit" className="w-full !h-12" >

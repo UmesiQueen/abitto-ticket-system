@@ -6,7 +6,7 @@ import { GlobalCTX } from "@/contexts/GlobalContext";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { cn } from "@/lib/utils";
 import { CancelSquareIcon } from "@/assets/icons";
-import { Button as IconButton } from "../ui/button";
+import { Button } from "@/components/ui/button";
 
 const ConfirmationModal = ({
 	props: { header, handleRequest, severity = "warning" },
@@ -20,14 +20,14 @@ const ConfirmationModal = ({
 
 	return (
 		<div className="w-96 p-5 rounded-lg bg-white flex flex-col gap-4 relative">
-			<IconButton
+			<Button
 				variant="ghost"
 				size="icon"
 				className="absolute top-0 right-0 scale-[.8]"
 				onClick={unMountPortalModal}
 			>
 				<CancelSquareIcon />
-			</IconButton>
+			</Button>
 			<h2 className="font-bold text-lg text-black/90">{header}</h2>
 			<div className={cn("p-3 text-sm inline-flex gap-1", variant[severity])}>
 				<Warning2 />

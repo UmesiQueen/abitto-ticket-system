@@ -12,12 +12,12 @@ import { GlobalCTX } from "@/contexts/GlobalContext";
 import { BookingCTX } from "@/contexts/BookingContext";
 import CustomButton from "@/components/custom/Button";
 import { CalendarIcon, ClockIcon, CancelSquareIcon } from "@/assets/icons";
-import { Button as IconButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { useScheduleTrip } from "@/hooks/useScheduleTrip";
 import ConfirmationModal from "@/components/modals/confirmation";
 import { NumericFormat } from "react-number-format";
 import { formatValue } from "react-currency-input-field";
-import InputField from "../custom/InputField";
+import InputField from "@/components/custom/InputField";
 
 const rescheduleSchema = yup.object().shape({
 	date: yup.string().required("Date field is required."),
@@ -84,14 +84,14 @@ const RescheduleEditModal = () => {
 
 	return (
 		<div className="bg-white rounded-lg p-10 pt-5 min-w-[700px] flex flex-col gap-5 relative">
-			<IconButton
+			<Button
 				size="icon"
 				variant="ghost"
 				className="absolute top-0 right-0"
 				onClick={unMountPortalModal}
 			>
 				<CancelSquareIcon />
-			</IconButton>
+			</Button>
 			<h3 className="font-bold text-center text-lg">Edit Journey Details</h3>
 			<form onSubmit={onSubmit}>
 				<div className="grid grid-cols-2 gap-5">

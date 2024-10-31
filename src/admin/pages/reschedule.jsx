@@ -39,7 +39,7 @@ const Reschedule = () => {
 					<Button size="icon" variant="ghost" onClick={() => navigate(-1)}>
 						<CircleArrowLeftIcon />
 					</Button>
-					<h1 className="text-base font-semibold">Reschedule Booking</h1>
+					<h1 className="text-base font-semibold">Reschedule</h1>
 				</div>
 				{
 					currentUser ?
@@ -117,13 +117,13 @@ const RescheduleForm = () => {
 						</p>
 					</li>
 					<li>
-						<h4>Adult</h4>
+						<h4>Passengers</h4>
 						<p>{currentUser?.adults_number}</p>
 					</li>
-					<li>
+					{/* <li>
 						<h4>Children</h4>
 						<p>{currentUser?.children_number ?? 0}</p>
-					</li>
+					</li> */}
 				</ul>
 			</div>
 

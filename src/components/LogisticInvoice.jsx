@@ -33,7 +33,7 @@ const LogisticsInvoice = React.forwardRef(({ props: { currentShipment } }, ref) 
                         <p className="text-xs md:text-sm font-bold text-gray-500 mb-1">
                             Shipment total(NGN)
                         </p>
-                        <p className="nowrap font-semibold text-4xl md:text-5xl ">
+                        <p className="font-semibold text-4xl md:text-5xl ">
                             <span className="text-2xl">₦</span>
                             {formatValue({
                                 value: String(currentShipment?.total_cost),
