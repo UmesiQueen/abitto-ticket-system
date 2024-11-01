@@ -51,6 +51,10 @@ const LogisticsDetails = () => {
 		pageIndex: 0,
 		pageSize: 10,
 	});
+	const [sorting, setSorting] = React.useState([{
+		id: "dateTime",
+		desc: true, // sort by name in descending order by default
+	}])
 	const { getSearchParams } = useSearchParam()
 	const searchParamValues = getSearchParams();
 
@@ -72,7 +76,7 @@ const LogisticsDetails = () => {
 		if (isSuccess) setDataQuery(data);
 	}, [data, isSuccess])
 
-	const columns = [
+	const columns = React.useMemo(() => [
 		{
 			accessorKey: "shipment_id",
 			header: "Shipment ID",
@@ -133,7 +137,7 @@ const LogisticsDetails = () => {
 				return dateTime;
 			},
 		},
-	];
+	], [])
 
 	const table = useReactTable({
 		data: dataQuery,
@@ -141,26 +145,20 @@ const LogisticsDetails = () => {
 		getCoreRowModel: getCoreRowModel(),
 		onColumnFiltersChange: setColumnFilters,
 		getPaginationRowModel: getPaginationRowModel(),
+		onSortingChange: setSorting,
 		getSortedRowModel: getSortedRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
 		onPaginationChange: setPagination,
 		pageCount,
 		state: {
+			sorting,
 			pagination,
 			columnFilters,
 			columnVisibility: {
 				dateTime: false,
 			},
 			globalFilter: searchParamValues?.s,
-		},
-		initialState: {
-			sorting: [
-				{
-					id: "dateTime",
-					desc: true, // sort by name in descending order by default
-				},
-			],
-		},
+		}
 	});
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -173,7 +171,7 @@ const LogisticsDetails = () => {
 	React.useEffect(() => {
 		table.setPageIndex(currentPageIndex.logistics);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [pageCount])
 
 	return (
 		<>

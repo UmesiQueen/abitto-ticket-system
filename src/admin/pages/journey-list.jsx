@@ -67,15 +67,21 @@ const JourneyTable = () => {
 	const navigate = useNavigate();
 	const { adminProfile } = React.useContext(GlobalCTX);
 	const { currentPageIndex, setCurrentPageIndex, resetPageIndex } = React.useContext(BookingCTX);
-	const [columnFilters, setColumnFilters] = React.useState([]);
 	const [pageCount, setPageCount] = React.useState(0);
 	const [pagination, setPagination] = React.useState({
 		pageIndex: 0,
 		pageSize: 7,
 	});
+	const [sorting, setSorting] = React.useState([{
+		id: "dateTime",
+		desc: true, // sort by name in descending order by default
+	}])
 	const [journeyList, setJourneyList] = React.useState([]);
 	const { searchParams, setSearchParams, getSearchParams, updateSearchParam, removeSearchParam } = useSearchParam();
 	const searchParamValues = getSearchParams();
+	const defaultColumnFilters =
+		Object.entries(searchParamValues).map(([key, value]) => ({ id: key, value }))
+	const [columnFilters, setColumnFilters] = React.useState(defaultColumnFilters);
 
 	const { data, isSuccess, isPending } = useQuery({
 		queryKey: ["journeyList"],
@@ -116,7 +122,7 @@ const JourneyTable = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [searchParams]);
 
-	const columns = [
+	const columns = React.useMemo(() => [
 		{
 			accessorKey: "trip_code",
 			header: "Trip Code",
@@ -182,7 +188,7 @@ const JourneyTable = () => {
 				return dateTime;
 			},
 		},
-	];
+	], [])
 
 	const table = useReactTable({
 		data: journeyList,
@@ -190,24 +196,18 @@ const JourneyTable = () => {
 		getCoreRowModel: getCoreRowModel(),
 		onColumnFiltersChange: setColumnFilters,
 		getPaginationRowModel: getPaginationRowModel(),
+		onSortingChange: setSorting,
 		getSortedRowModel: getSortedRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
 		onPaginationChange: setPagination,
 		pageCount,
 		state: {
+			sorting,
 			columnFilters,
 			pagination,
 			columnVisibility: {
 				dateTime: false,
 			},
-		},
-		initialState: {
-			sorting: [
-				{
-					id: "dateTime",
-					desc: true, // sort by name in descending order by default
-				},
-			],
 		},
 	});
 
@@ -221,7 +221,7 @@ const JourneyTable = () => {
 	React.useEffect(() => {
 		table.setPageIndex(currentPageIndex.journeyList);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [pageCount])
 
 	return (
 		<div>

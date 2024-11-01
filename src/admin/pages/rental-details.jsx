@@ -81,7 +81,7 @@ const RentalTable = () => {
 	});
 	const [pageCount, setPageCount] = React.useState(0);
 	const [pagination, setPagination] = React.useState({
-		pageIndex: 0,
+		pageIndex: currentPageIndex.rentals,
 		pageSize: 7,
 	});
 	const [rentalData, setRentalData] = React.useState([]);
@@ -107,7 +107,7 @@ const RentalTable = () => {
 			}
 			catch (error) {
 				customError(error, "Error occurred while fetching rental data. Refresh page.");
-				return []``
+				return [];
 			}
 		}
 	})
@@ -260,12 +260,6 @@ const RentalTable = () => {
 		setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [rentalData, columnFilters]);
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	React.useEffect(() => {
-		table.setPageIndex(currentPageIndex.rentals);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	return (
 		<div>

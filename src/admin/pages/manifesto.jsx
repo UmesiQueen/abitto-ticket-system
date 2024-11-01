@@ -1,6 +1,6 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import { useNavigate, Navigate, useParams } from "react-router-dom";
+import { useNavigate, Navigate, useParams, useLoaderData } from "react-router-dom";
 import { format } from "date-fns";
 import { capitalize } from "lodash";
 import {
@@ -32,7 +32,8 @@ import { Loader2 } from "lucide-react";
 
 const Manifesto = () => {
 	const { adminProfile } = React.useContext(GlobalCTX);
-	const { tripDetails, bookingQuery } = React.useContext(BookingCTX);
+	const { bookingQuery } = React.useContext(BookingCTX);
+	const tripDetails = useLoaderData();
 	const navigate = useNavigate();
 	const [isPrinting, setIsPrinting] = React.useState(false);
 	const componentRef = React.useRef(null);

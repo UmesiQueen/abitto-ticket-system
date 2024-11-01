@@ -40,7 +40,7 @@ const Customers = () => {
 	});
 	const [pageCount, setPageCount] = React.useState(0);
 	const [pagination, setPagination] = React.useState({
-		pageIndex: 0,
+		pageIndex: currentPageIndex.customers,
 		pageSize: 7,
 	});
 	const { getSearchParams } = useSearchParam();
@@ -166,12 +166,6 @@ const Customers = () => {
 		setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [customersData, columnFilters]);
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	React.useEffect(() => {
-		table.setPageIndex(currentPageIndex.customers);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	return (
 		<>

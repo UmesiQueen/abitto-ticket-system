@@ -74,7 +74,7 @@ const BookingDetails = () => {
 	});
 	const [pageCount, setPageCount] = React.useState(0);
 	const [pagination, setPagination] = React.useState({
-		pageIndex: 0,
+		pageIndex: currentPageIndex.booking,
 		pageSize: 7,
 	});
 	const { searchParams, setSearchParams, getSearchParams, updateSearchParam, removeSearchParam } = useSearchParam();
@@ -230,12 +230,6 @@ const BookingDetails = () => {
 		setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [columnFilters, bookingQuery]);
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	React.useEffect(() => {
-		table.setPageIndex(currentPageIndex.booking);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {

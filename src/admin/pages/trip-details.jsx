@@ -53,7 +53,7 @@ import { useSearchParam } from "@/hooks/useSearchParam";
 
 const TripDetails = () => {
     const { mountPortalModal, adminProfile } = React.useContext(GlobalCTX);
-    const { tripDetails, setTripDetails, bookingQuery, resetPageIndex, currentPageIndex } =
+    const { bookingQuery, resetPageIndex, currentPageIndex } =
         React.useContext(BookingCTX);
     const navigate = useNavigate();
     const selectedTrip = useLoaderData();
@@ -68,29 +68,23 @@ const TripDetails = () => {
     const [pageCount, setPageCount] = React.useState(0);
     const [currentDataQuery, setCurrentDataQuery] = React.useState([]);
     const queryClient = useQueryClient();
-    const { getSearchParams, updateSearchParam, removeSearchParam } = useSearchParam();
+    const { getSearchParams, updateSearchParam, removeSearchParam, setSearchParams } = useSearchParam();
     const searchParamValues = getSearchParams();
     const defaultColumnFilters =
         Object.entries(searchParamValues).map(([key, value]) => ({ id: key, value }))
     const [columnFilters, setColumnFilters] = React.useState(defaultColumnFilters);
 
     React.useEffect(() => {
-        if (tripDetails) {
+        if (selectedTrip) {
             const sortedQuery = bookingQuery.filter(
                 (booking) =>
-                    booking.departure_trip_code === tripDetails.trip_code
+                    booking.departure_trip_code === selectedTrip.trip_code
             );
             setCurrentDataQuery(sortedQuery);
         }
-    }, [tripDetails, bookingQuery]);
+    }, [selectedTrip, bookingQuery]);
 
-    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-    React.useEffect(() => {
-        if (selectedTrip) setTripDetails(selectedTrip);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedTrip]);
-
-    const columns = [
+    const columns = React.useMemo(() => [
         {
             accessorKey: "ticket_id",
             header: "ID",
@@ -186,7 +180,7 @@ const TripDetails = () => {
             accessorFn: (row) =>
                 `${row.passenger1_first_name} ${row.passenger1_last_name}`,
         },
-    ];
+    ], [])
 
     const table = useReactTable({
         data: currentDataQuery,
@@ -224,7 +218,7 @@ const TripDetails = () => {
                     header: "Delete journey list",
                     handleRequest: () => {
                         cancelRequest({
-                            ...tripDetails,
+                            ...selectedTrip,
                             trip_status: "Canceled",
                         });
                     },
@@ -244,8 +238,7 @@ const TripDetails = () => {
     React.useEffect(() => {
         table.setPageIndex(currentPageIndex.tripDetails);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
+    }, [pageCount]);
 
     const handleFilterChange = (key, value) => {
         if (value === "#") {
@@ -274,9 +267,7 @@ const TripDetails = () => {
                     <Button
                         size="icon"
                         variant="ghost"
-                        onClick={() =>
-                            navigate(`/backend/${adminProfile.account_type}/journey-list`)
-                        }
+                        onClick={() => navigate(-1)}
                     >
                         <CircleArrowLeftIcon />
                     </Button>
@@ -369,9 +360,21 @@ const TripDetails = () => {
                     />
                 </div>
 
-                <div className="flex gap-5 justify-end my-10">
-                    <div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg">
-                        <span className="px-4 text-nowrap text-sm font-semibold bg-white h-full inline-flex items-center rounded-l-lg">
+                <div className="flex gap-5 items-center justify-end flex-wrap my-10">
+                    {(columnFilters.length) ?
+                        <CustomButton
+                            variant="outline"
+                            className="!h-8 !text-sm"
+                            onClick={() => {
+                                table.resetColumnFilters(true);
+                                setSearchParams({});
+                                resetPageIndex("tripDetails")
+                            }}
+                        >
+                            Reset filters
+                        </CustomButton> : null}
+                    <div className="ml-auto flex items-center w-fit border border-gray-200 font-medium rounded-lg bg-white">
+                        <span className="mx-4 text-nowrap text-sm font-semibold">
                             Medium
                         </span>
                         <Select
@@ -391,8 +394,8 @@ const TripDetails = () => {
                             </SelectContent>
                         </Select>
                     </div>
-                    <div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg">
-                        <span className="px-4 text-nowrap text-sm font-semibold bg-white h-full inline-flex items-center rounded-l-lg">
+                    <div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg bg-white">
+                        <span className="mx-4 text-nowrap text-sm font-semibold">
                             Payment status
                         </span>
                         <Select
@@ -413,8 +416,8 @@ const TripDetails = () => {
                             </SelectContent>
                         </Select>
                     </div>
-                    <div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg">
-                        <span className="px-4 text-nowrap text-sm font-semibold bg-white h-full inline-flex items-center rounded-l-lg">
+                    <div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg bg-white">
+                        <span className="mx-4 text-nowrap text-sm font-semibold">
                             Trip status
                         </span>
                         <Select

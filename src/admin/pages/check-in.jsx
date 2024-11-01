@@ -99,7 +99,7 @@ const CheckInTable = () => {
 		phone_number: accountType !== "dev",
 	});
 	const [pagination, setPagination] = React.useState({
-		pageIndex: 0,
+		pageIndex: currentPageIndex.checkIn,
 		pageSize: 7,
 	});
 	const [pageCount, setPageCount] = React.useState(0);
@@ -233,12 +233,6 @@ const CheckInTable = () => {
 		setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dailyBookingQuery, columnFilters]);
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	React.useEffect(() => {
-		table.setPageIndex(currentPageIndex.checkIn);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	const handleCheckIn = (ticket_id) => {
 		mountPortalModal(

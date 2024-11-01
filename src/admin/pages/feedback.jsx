@@ -35,7 +35,7 @@ const FeedbackAdmin = () => {
 	const { setCurrentFeedback } = React.useContext(GlobalCTX);
 	const [dataQuery, setDataQuery] = React.useState([]);
 	const [pagination, setPagination] = React.useState({
-		pageIndex: 0,
+		pageIndex: currentPageIndex.feedback,
 		pageSize: 10,
 	});
 
@@ -121,12 +121,6 @@ const FeedbackAdmin = () => {
 			pagination,
 		},
 	});
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	React.useEffect(() => {
-		table.setPageIndex(currentPageIndex.feedback);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	return (
 		<>
