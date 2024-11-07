@@ -150,7 +150,7 @@ const EditProfile = () => {
 				cloudinaryData
 			)
 			.then((res) => {
-				const data = res.data.url;
+				const data = res.data.secure_url;
 				handleEditProfileRequest(formData, data);
 			})
 			.catch(() => {

@@ -220,7 +220,7 @@ const InformationBox = () => {
 				cloudinaryData
 			)
 			.then((res) => {
-				return res.data.url;
+				return res.data.secure_url;
 			})
 			.catch(() => {
 				toast.error("Failed to upload message. Try Again.");
@@ -539,6 +539,7 @@ export default InformationBox;
 
 export const InformationModal = () => {
 	const { showLiveModal, liveMessage, setShowLiveModal } = React.useContext(GlobalCTX);
+	const [loading, setLoading] = React.useState(false)
 
 	return (
 		<>
@@ -555,15 +556,15 @@ export const InformationModal = () => {
 						<div className="py-20 md:py-0 min-h-screen md:h-full flex justify-center items-center px-5">
 							<div className="w-full max-w-[calc(100vw-100px)] h-full max-h-[calc(100vh-100px)] flex justify-center ">
 								<div className="h-full w-fit relative">
-									<Button
+									{loading && <Button
 										variant="ghost"
 										size="icon"
 										className="bg-white rounded-full absolute -top-3 -right-3 p-2 shadow-md"
 										onClick={() => { setShowLiveModal(false) }}
 									>
 										<CancelSquareIcon />
-									</Button>
-									<img src={liveMessage?.message} alt="notice" className="w-full h-full" />
+									</Button>}
+									<img src={liveMessage?.message} onLoad={() => setLoading(true)} alt="notice" className="w-full h-full" />
 								</div>
 							</div>
 						</div>
