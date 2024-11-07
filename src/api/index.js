@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 import axios from "axios";
-import { toast } from "sonner";
 
 const API_BASE_URL = process.env.ABITTO_BASE_URL;
 
@@ -9,8 +8,8 @@ const axiosInstance = axios.create({
 	headers: {
 		//  Authorization: `<Your Auth Token>`,
 		"Content-Type": "application/json",
-		timeout: 10000,
 	},
+	// timeout: 500000
 });
 
 // // Variable to store the cancel token of the last request
@@ -35,11 +34,8 @@ const axiosInstance = axios.create({
 // 	return Promise.reject(error);
 // });
 
-
-// Add a response interceptor
 axiosInstance.interceptors.response.use(
 	(response) => {
-		// Return the response if it is successful
 		return response;
 	},
 	(error) => {
@@ -47,24 +43,6 @@ axiosInstance.interceptors.response.use(
 			// Log detailed error information in development
 			console.error("Request error:", error);
 		}
-		// Check if the error is a timeout error
-		if (error.code === "ECONNABORTED" && error.message.includes("timeout")) {
-			// Display a global error message for timeout
-			toast.error("Request timed out. Please try again later.");
-		}
-		if (
-			error.code === "ERR_NETWORK" ||
-			error.code === "ERR_INTERNET_DISCONNECTED"
-		) {
-			// Display a global error message for timeout
-			toast.error(
-				"Network error", { description: "Please check your internet connection and try again." }
-			);
-		}
-		// if (axios.isCancel(error)) {
-		// 	//do stuff
-		// }
-		// Handle other errors
 		return Promise.reject(error);
 	}
 );

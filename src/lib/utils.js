@@ -25,10 +25,17 @@ export const isValidUrl = (urlString) => {
 };
 
 export const customError = (error, customMsg) => {
+  // Check if the error is a timeout error
+  if (error.code === "ECONNABORTED" && error.message.includes("timeout")) {
+    return toast.error("Request timed out. Please try again later.");
+  }
   if (
-    error.code !== "ERR_NETWORK" ||
-    error.code !== "ERR_INTERNET_DISCONNECTED" ||
-    error.code !== "ECONNABORTED" ||
-    error.code !== "ERR_CANCELED"
-  ) { toast.error(customMsg); }
+    error.code === "ERR_NETWORK" ||
+    error.code === "ERR_INTERNET_DISCONNECTED"
+  ) {
+    return toast.error(
+      "Network error", { description: "Please check your internet connection and try again." }
+    );
+  }
+  return toast.error(customMsg);
 }
