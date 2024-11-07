@@ -273,13 +273,7 @@ const Manifesto = () => {
 									{table.getRowModel().rows.map((row) => (
 										<TableRow
 											key={row.id}
-											onDoubleClick={(event) => {
-												if (event.target.tagName !== "BUTTON")
-													navigate(
-														`/backend/${adminProfile.account_type}/booking-details/${row.original.ticket_id}`
-													);
-											}}
-											data-state={row.getIsSelected() && "selected"}
+											onDoubleClick={() => navigate(`/backend/${adminProfile.account_type}/booking-details/${row.original.ticket_id}`)}
 										>
 											{row.getVisibleCells().map((cell) => (
 												<TableCell key={cell.id} className="h-[77px]">

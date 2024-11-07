@@ -281,7 +281,6 @@ const CheckInTable = () => {
 													`/backend/${accountType}/booking-details/${row.original.ticket_id}`
 												);
 										}}
-										data-state={row.getIsSelected() && "selected"}
 									>
 										{row.getVisibleCells().map((cell) => (
 											<TableCell key={cell.id} className="h-[77px]">

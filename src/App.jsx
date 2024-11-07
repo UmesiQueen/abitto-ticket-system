@@ -4,7 +4,7 @@ import { Toaster } from "sonner";
 import GlobalContext from "@/contexts/GlobalContext";
 import "./index.css";
 import ModalPortal from "./components/ModalPortal";
-import { Analytics } from "@vercel/analytics/react"
+// import { Analytics } from "@vercel/analytics/react"
 
 const App = () => {
 	const pathname = useLocation();
@@ -27,7 +27,7 @@ const App = () => {
 				/>
 				<ModalPortal />
 			</div>
-			<Analytics />
+			{/* <Analytics /> */}
 		</GlobalContext>
 	);
 };
