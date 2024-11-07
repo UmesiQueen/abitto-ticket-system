@@ -5,7 +5,19 @@ import { useLocation } from "react-router-dom";
 
 export const BookingCTX = React.createContext();
 
-const storedSession = JSON.parse(sessionStorage.getItem('cus_info'));
+const getSessionStorage = () => {
+	const currentTimestamp = Date.now();
+	const cacheTime = 30 * 60 * 1000; // 30 mins
+	const cachedData = JSON.parse(sessionStorage.getItem('cus_info'));
+	if (cachedData) {
+		if ((currentTimestamp - cachedData.timestamp) < cacheTime) return cachedData.data;
+		sessionStorage.removeItem('cus_info');
+	}
+	return {
+		bookingDetails: {},
+		passengerDetails: {},
+	}
+}
 
 const BookingContext = ({ children }) => {
 	const [bookingQuery, setBookingQuery] = React.useState([]);
@@ -20,28 +32,22 @@ const BookingContext = ({ children }) => {
 		tripDetails: 0,
 	});
 	const [activeStep, setActiveStep] = React.useState(0);
-	const [formData, setFormData] = React.useState(storedSession ?? {
-		bookingDetails: {},
-		passengerDetails: {},
-	});
+	const [formData, setFormData] = React.useState(getSessionStorage);
 	const [loading, setLoading] = React.useState(false);
 	const [availableTrips, setAvailableTrips] = React.useState([]);
 	const [selectedTrip, setSelectedTrip] = React.useState({});
 	const [isChecked, setChecked] = React.useState(false);
-	const [tripDetails, setTripDetails] = React.useState({});
 	const [rentalData, setRentalData] = React.useState({});
-	const [customersData, setCustomersData] = React.useState([]);
 	const { getSearchParams } = useSearchParam();
 	const searchParamValues = getSearchParams();
 	const [filterValue, setFilterValue] = React.useState(searchParamValues?.s ?? "");
 	const { pathname } = useLocation();
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
-		if (pathname) {
-			setFilterValue("")
-			setActiveStep(0);
-			setRentalData({});
-		}
+		setFilterValue("")
+		setActiveStep(0);
+		setRentalData({});
 	}, [pathname]);
 
 	const handleReset = () => {
@@ -77,16 +83,12 @@ const BookingContext = ({ children }) => {
 		setAvailableTrips,
 		selectedTrip,
 		setSelectedTrip,
-		tripDetails,
-		setTripDetails,
 		rentalData,
 		setRentalData,
 		bookingQuery,
 		setBookingQuery,
 		currentPageIndex,
 		setCurrentPageIndex,
-		customersData,
-		setCustomersData,
 		filterValue,
 		setFilterValue,
 		resetPageIndex

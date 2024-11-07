@@ -25,7 +25,6 @@ import Report from "./admin/pages/report";
 import Rental from "./app/pages/rental";
 import { TripDetailsLoader } from "./admin/pages/trip-details";
 import { RentalInvoiceLoader } from "./components/RentalInvoice";
-// import { CustomerLoader } from "./admin/pages/customers";
 // import CustomerHistory from "./admin/pages/customer-history";
 import RentalDetails from "./admin/pages/rental-details";
 import PageNotFoundAdmin from "./admin/pages/page-not-found";
@@ -48,8 +47,8 @@ import PassengerDetails from "@/components/PassengerDetails";
 import BookingDetail from "@/components/BookingDetails";
 import Payment from "@/components/Payment";
 import SearchTrip from "@/components/SearchTrip";
-import Checkout from "./app/pages/checkout";
 import TripDetails from "./admin/pages/trip-details";
+import BookingConfirmation from "@/app/pages/booking-confirmation";
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -69,7 +68,7 @@ export const router = createBrowserRouter(
 				<Route path="terms-conditions" element={<TermsAndConditions />} />
 				<Route path="privacy-policy" element={<PrivacyPolicy />} />
 			</Route>
-			<Route path="paystack/checkout" element={<Checkout />} />
+			<Route path="booking/confirmation" element={<BookingConfirmation />} />
 
 			<Route path="/backend" element={<AdminLayout />} >
 				<Route path="/backend/:accountType">
@@ -109,6 +108,7 @@ export const router = createBrowserRouter(
 					/>
 					<Route
 						path="journey-list/:tripCode/manifesto"
+						loader={TripDetailsLoader}
 						element={<Manifesto />}
 					/>
 					<Route path="schedule-trip" element={<ScheduleTrip />} />
