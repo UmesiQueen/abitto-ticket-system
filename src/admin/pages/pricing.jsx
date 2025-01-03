@@ -12,6 +12,7 @@ import axiosInstance from "@/api";
 import { useUpdate } from "@/hooks/useUpdate";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
+import { NumericFormat } from "react-number-format";
 
 const pricingSchema = yup.object().shape({
 	within_marina: yup.string().required("Amount cannot be empty."),
@@ -40,7 +41,7 @@ const Pricing = () => {
 		register,
 		handleSubmit,
 		reset,
-		formState: { errors, isSubmitted, defaultValues, isDirty },
+		formState: { errors, isSubmitted, defaultValues },
 	} = useForm({
 		mode: "onSubmit",
 		resolver: yupResolver(pricingSchema),
@@ -57,7 +58,10 @@ const Pricing = () => {
 	const onSubmit = handleSubmit((formData) => {
 		const reqData = Object.entries(formData).map(([key, value]) => ({
 			trip_name: key,
-			cost: value
+			cost: value.replace("₦", "")
+				.split("")
+				.filter((cost) => cost !== ",")
+				.join("")
 		}));
 
 		mountPortalModal(
@@ -70,8 +74,7 @@ const Pricing = () => {
 		);
 	});
 
-	const handleChange = (e) => {
-		const { name, value } = e.target;
+	const handleChange = ({ name, value }) => {
 		setCost((prev) => ({ ...prev, [name]: value }))
 	}
 
@@ -81,7 +84,7 @@ const Pricing = () => {
 				<h1 className="font-semibold text-lg">Manage Prices</h1>
 				<CustomButton
 					type="submit"
-					disabled={!isDirty}
+					disabled={!!Object.keys(errors).length}
 					className="w-40"
 				>Save</CustomButton>
 			</div>
@@ -179,7 +182,7 @@ const Pricing = () => {
 export default Pricing;
 
 const EditableInput = React.forwardRef((props, ref) => {
-	const { name, error, isSubmitted, onChange, defaultValue, handleOnChange, ...prop } = props;
+	const { name, error, isSubmitted, onChange, defaultValue, handleOnChange, onBlur } = props;
 	const errors = error?.[name];
 	const [editable, setEditable] = React.useState(false);
 	const [value, setValue] = React.useState(defaultValue);
@@ -197,9 +200,19 @@ const EditableInput = React.forwardRef((props, ref) => {
 		if (isSubmitted) setEditable(false);
 	}, [isSubmitted]);
 
-	const handleChange = (e) => {
-		setValue(e.target.value)
+	const handleChange = (sourceInfo) => {
+		const event = sourceInfo?.event;
+		if (event) {
+			onChange(event);
+			const value = event.target.value.replace("₦", "")
+				.split("")
+				.filter((cost) => cost !== ",")
+				.join("");
+			setValue(value);
+			handleOnChange({ name, value });
+		}
 	}
+
 	return (
 		<>
 			<td>
@@ -209,20 +222,20 @@ const EditableInput = React.forwardRef((props, ref) => {
 						{ "border-gray-600": editable, "border-red-500": errors }
 					)}
 				>
-					<p>₦</p>
-					<input
-						ref={ref}
-						{...prop}
+					<NumericFormat
+						prefix="₦"
+						getInputRef={ref}
 						name={name}
 						id={name}
 						value={value}
-						type="text"
-						onChange={(event) => {
-							onChange(event);
-							handleChange(event)
-							handleOnChange(event)
+						placeholder="0.0"
+						thousandSeparator=","
+						allowNegative={false}
+						onValueChange={(_, sourceInfo) => handleChange(sourceInfo)}
+						onBlur={(event) => {
+							setEditable(false);
+							onBlur(event);
 						}}
-						onBlur={() => setEditable(false)}
 						disabled={!editable}
 						className="prices w-full h-full bg-transparent focus:outline-none"
 					/>
