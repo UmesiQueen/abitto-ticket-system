@@ -27,7 +27,7 @@ import { customError } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 
-const defaultValue = {
+const defaultValues = {
 	bookingRevenueAll: [],
 	bookingRevenueCalabar: [],
 	bookingRevenueUyo: [],
@@ -168,7 +168,7 @@ const Report = () => {
 	const isSuperAdmin = !!["super-admin", "dev"].includes(
 		adminProfile.account_type
 	);
-	const [total, setTotal] = React.useState(defaultValue);
+	const [total, setTotal] = React.useState(defaultValues);
 	const [filteredTotal, setFilteredTotal] = React.useState(total);
 	const [city, setCity] = React.useState("All");
 	const [filter, setFilter] = React.useState("all");
@@ -179,15 +179,12 @@ const Report = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
-		if (filter === "all") {
-			return setFilteredTotal(total)
-		}
-		if (filter === "custom") {
-			return;
-		}
-		const result = filterBy();
-		return filterData(result)
+		if (filter === "custom") return;
+
+		const dateIntervals = filterDataBy();
+		return filteredData(dateIntervals);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [filter, total])
 
@@ -334,7 +331,7 @@ const Report = () => {
 			}
 			catch (error) {
 				customError(error, "Error occurred while fetching dashboard data. Refresh page.");
-				return defaultValue;
+				return defaultValues;
 			}
 		}
 	})
@@ -350,26 +347,63 @@ const Report = () => {
 		}));
 	};
 
-	const filterData = (result) => {
+	const filteredData = (dateIntervals) => {
+		const datesArray = dateIntervals.map((date) => format(date, "PP"));
 		setTimeout(() => {
 			const filteredTotal = {};
-			const datesArray = result.map((date) => format(date, "PP"));
 			[total].map((data) => {
 				const keys = Object.keys(data);
 				return keys.map((key) => {
 					const newArr = (Array(data[key]).map((item) => {
+						if (filter === "all") return item;
 						return item.filter((final) => datesArray.includes(final.date))
 					}))[0]
-					filteredTotal[key] = newArr;
+					const sortedItems = AggregateRevenue(newArr);
+					filteredTotal[key] = sortedItems;
 					return setFilteredTotal(filteredTotal);
 				})
-
 			})
-
 		}, 500);
 	}
 
-	const filterBy = () => {
+	const AggregateRevenue = (data) => {
+		// Early return if no data is provided
+		if (data.length === 0) return [];
+
+		// Get all dates in a comparable format
+		const dates = data.map(item => new Date(item.date));
+
+		// Calculate the time difference in days
+		const diffInDays = (Math.max(...dates) - Math.min(...dates)) / (1000 * 60 * 60 * 24);
+
+		if (diffInDays > 31) {
+			// Find the dynamic key for the second property
+			const revenueKey = Object.keys(data[0]).find(key => key !== "date");
+
+			// Aggregate data by month and year
+			const aggregatedData = data.reduce((acc, curr) => {
+				const dateObj = new Date(curr.date);
+				const monthYear = dateObj.toLocaleString("default", {
+					month: "short",
+					year: "numeric",
+				});
+
+				if (!acc[monthYear]) {
+					acc[monthYear] = { date: monthYear, [revenueKey]: 0 };
+				}
+
+				acc[monthYear][revenueKey] += curr[revenueKey];
+				return acc;
+			}, {});
+
+			// Convert aggregated data back to an array
+			return Object.values(aggregatedData);
+		}
+		// If the date range is <= 31 days, return the original data
+		return data;
+	}
+
+	const filterDataBy = () => {
 		const currentDate = new Date();
 		switch (filter) {
 			case "today":
@@ -415,11 +449,11 @@ const Report = () => {
 	});
 
 	const onSubmit = handleSubmit((formData) => {
-		const result = eachDayOfInterval({
+		const dateIntervals = eachDayOfInterval({
 			start: formData.from,
 			end: formData.to
 		});
-		filterData(result);
+		filteredData(dateIntervals);
 	});
 
 	const getTotal = (arr, type) => {
@@ -569,7 +603,7 @@ const Report = () => {
 								/>
 							</div>
 							{Object.keys(errors).length ? (
-								<p className="absolute -bottom-5 px-1 text-xs text-red-700">
+								<p className="absolute -bottom-4 px-1 text-[10px] text-red-700">
 									Both dates are required.
 								</p>
 							) : (
@@ -1430,7 +1464,7 @@ const CustomizedBarChart = ({ props: { title, data } }) => {
 					categories={["totalRevenue"]}
 					colors={["blue"]}
 					valueFormatter={dataFormatter}
-					yAxisWidth={70}
+					yAxisWidth={90}
 					showLegend={false}
 				/>
 			</div>
