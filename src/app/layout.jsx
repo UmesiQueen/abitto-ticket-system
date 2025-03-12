@@ -94,7 +94,8 @@ const Navbar = () => {
 				return "active";
 			return;
 		}
-		if (location.pathname === slug) return "active";
+		// Check if the current pathname matches the slug exactly or is a child path
+		if (location.pathname === slug || location.pathname.startsWith(`${slug}/`)) return "active";
 	}
 
 	return (
