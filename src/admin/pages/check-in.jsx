@@ -232,7 +232,7 @@ const CheckInTable = () => {
 	React.useEffect(() => {
 		setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [dailyBookingQuery, columnFilters]);
+	}, [dailyBookingQuery, columnFilters, searchParamValues]);
 
 	const handleCheckIn = (ticket_id) => {
 		mountPortalModal(

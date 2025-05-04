@@ -165,7 +165,7 @@ const LogisticsDetails = () => {
 	React.useEffect(() => {
 		setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [dataQuery, columnFilters]);
+	}, [dataQuery, columnFilters, searchParamValues]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {

@@ -232,7 +232,7 @@ const TripDetails = () => {
     React.useEffect(() => {
         setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentDataQuery, columnFilters])
+    }, [currentDataQuery, columnFilters, searchParamValues])
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     React.useEffect(() => {

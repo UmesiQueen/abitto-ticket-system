@@ -259,7 +259,7 @@ const RentalTable = () => {
 	React.useEffect(() => {
 		setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [rentalData, columnFilters]);
+	}, [rentalData, columnFilters, searchParamValues]);
 
 	return (
 		<div>
