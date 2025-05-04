@@ -20,7 +20,7 @@ import * as yup from "yup";
 import { usePayment } from "@/hooks/usePayment";
 
 const Payment = () => {
-	const { loading, formData } = React.useContext(BookingCTX);
+	const { loading, formData, handleReset } = React.useContext(BookingCTX);
 	const { mountPortalModal } = React.useContext(GlobalCTX);
 	const { onlinePayment } = usePayment()
 	const navigate = useNavigate();
@@ -189,39 +189,55 @@ const Payment = () => {
 				</p>
 			</div>
 
-			<div className="flex gap-2 items-center mt-5 relative">
-				<Checkbox
-					id="checkbox"
-					className={errors.checked && "border-red-500"}
-					onCheckedChange={(value) => {
-						setValue("checked", value ? true : "")
-						if (value) clearErrors()
-					}} />
-				<label htmlFor="checkbox" className="text-xs md:text-sm">I have read and accept the <Link target="_blank" to="/terms-conditions" className="text-blue-500 underline hover:text-blue-700">Term of Agreement</Link> and <Link target="_blank" to="/privacy-policy" className="text-blue-500 underline hover:text-blue-700">Privacy Policy</Link>.</label>
-				{errors.checked && (
-					<p className="text-[10px] text-red-700 absolute -bottom-4 left-6 ">
-						{errors.checked.message}
-					</p>
-				)}
+			<div className="contents" id="conceal">
+				<div className="flex gap-2 items-center mt-5 relative">
+					<Checkbox
+						id="checkbox"
+						className={errors.checked && "border-red-500"}
+						onCheckedChange={(value) => {
+							setValue("checked", value ? true : "")
+							if (value) clearErrors()
+						}} />
+					<label htmlFor="checkbox" className="text-xs md:text-sm">I have read and accept the <Link target="_blank" to="/terms-conditions" className="text-blue-500 underline hover:text-blue-700">Term of Agreement</Link> and <Link target="_blank" to="/privacy-policy" className="text-blue-500 underline hover:text-blue-700">Privacy Policy</Link>.</label>
+					{errors.checked && (
+						<p className="text-[10px] text-red-700 absolute -bottom-4 left-6 ">
+							{errors.checked.message}
+						</p>
+					)}
+				</div>
+
+				<div className="mt-8 md:mb-0 space-y-5">
+					<CustomButton
+						type="submit"
+						loading={loading}
+						className="uppercase w-full md:py-6"
+					>
+						Pay with paystack
+					</CustomButton>
+					<CustomButton
+						onClick={handlePrev}
+						variant="outline"
+						type="button"
+						className="w-full md:py-6"
+					>
+						Back
+					</CustomButton>
+				</div>
 			</div>
 
-			<div className=" mt-8 md:mb-0 space-y-5">
-				<CustomButton
-					type="submit"
-					loading={loading}
-					className="uppercase w-full md:py-6"
-				>
-					Pay with paystack
-				</CustomButton>
-				<CustomButton
-					onClick={handlePrev}
-					variant="outline"
-					type="button"
-					className="w-full md:py-6"
-				>
-					Back
-				</CustomButton>
-			</div>
+			{/* temporal button displayed when paystack was successful but booking request does not update successfully */}
+			<CustomButton
+				id="reset-btn"
+				onClick={() => {
+					sessionStorage.removeItem("cus_info");
+					handleReset();
+				}}
+				variant="outline"
+				type="button"
+				className="hidden w-full mt-8"
+			>
+				Clear
+			</CustomButton>
 		</form>
 	);
 };
@@ -241,7 +257,7 @@ const PassengerDetails = () => {
 						<p>{formData.passengerDetails.passenger1_first_name}</p>
 					</li>
 					<li>
-						<p>Surname</p>
+						<p>Last name</p>
 						<p>{formData.passengerDetails.passenger1_last_name}</p>
 					</li>
 					<li>
@@ -272,7 +288,7 @@ const PassengerDetails = () => {
 										</p>
 									</li>
 									<li>
-										<p>Surname</p>
+										<p>Last name</p>
 										<p>
 											{formData.passengerDetails[`passenger${num}_last_name`]}
 										</p>

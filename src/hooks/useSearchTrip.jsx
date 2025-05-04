@@ -29,7 +29,7 @@ export const useSearchTrip = () => {
 					const { available_seats } = res.data
 					if (available_seats >= total_passengers)
 						return available_seats;
-					return mountPortalModal(<UnAvailableModal />);
+					return mountPortalModal(<UnAvailableModal seats={available_seats} />);
 				}
 			})
 			.catch((error) => {
