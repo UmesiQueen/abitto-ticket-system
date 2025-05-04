@@ -109,10 +109,6 @@ const PassengerDetails = () => {
 						<h4>Passengers</h4>
 						<p>{formData.bookingDetails?.adults_number}</p>
 					</li>
-					{/* <li>
-						<h4>Children</h4>
-						<p>{formData.bookingDetails?.children_number ?? 0}</p>
-					</li> */}
 				</ul>
 			</div>
 

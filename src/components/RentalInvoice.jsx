@@ -85,7 +85,6 @@ const RentalInvoice = React.forwardRef(({ props: { currentUser } }, ref) => {
 					</div>
 					{/* customer details */}
 					<div className="space-y-1">
-						{/* <h5 className="font-semibold ">Customer Details</h5> */}
 						<ul className="flex flex-wrap gap-x-4 gap-y-1 ">
 							<li>
 								<span className="text-xs text-gray-500 font-normal">
@@ -109,7 +108,6 @@ const RentalInvoice = React.forwardRef(({ props: { currentUser } }, ref) => {
 					</div>
 					{/* payment info */}
 					<div>
-						{/* <h5 className="font-semibold mb-1">Payment Details</h5> */}
 						<ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1">
 							<li>
 								<p className="text-xs text-gray-500 font-normal">
@@ -135,12 +133,6 @@ const RentalInvoice = React.forwardRef(({ props: { currentUser } }, ref) => {
 				<div className="border-y-2 border-dashed py-3 md:mt-5">
 					<table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] ">
 						<tbody>
-							{/* <tr>
-								<td className="text-xs md:text-sm text-[#444444]">
-								  Ride Insurance
-								</td>
-								<td className="text-xs md:text-sm text-[#444444]">₦0</td>
-							  </tr> */}
 							<tr>
 								<td className="text-xs md:text-sm text-[#444444]">
 									Ticket Price

@@ -17,8 +17,8 @@ export const bookingDetailsSchema = yup.object().shape({
   return_date: yup.string().notRequired(),
   adults_number: yup
     .number()
-    .required("No of adults is required.")
-    .typeError("No of adults is required."),
+    .required("No of passenger is required.")
+    .typeError("No of passenger is required."),
   children_number: yup
     .number()
     .nullable(true)

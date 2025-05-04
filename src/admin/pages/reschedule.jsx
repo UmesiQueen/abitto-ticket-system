@@ -42,7 +42,7 @@ const Reschedule = () => {
 					<h1 className="text-base font-semibold">Reschedule</h1>
 				</div>
 				{
-					currentUser ?
+					Object.keys(currentUser).length ?
 						<>
 							{activeStep === 0 || activeStep === 1 ?
 								<RescheduleForm />

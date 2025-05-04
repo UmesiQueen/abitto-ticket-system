@@ -20,7 +20,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { Navigate, useLoaderData, useNavigate, useParams } from "react-router-dom";
 import React from "react";
 import { format } from "date-fns";
 import {
@@ -229,7 +229,7 @@ const BookingDetails = () => {
 	React.useEffect(() => {
 		setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [columnFilters, bookingQuery]);
+	}, [columnFilters, bookingQuery, searchParamValues]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
@@ -476,6 +476,7 @@ const Pagination = ({ props: { table } }) => {
 
 export const CustomerDetails = () => {
 	const navigate = useNavigate();
+	const { accountType } = useParams();
 	const currentUser = useLoaderData();
 	const { mountPortalModal, adminProfile } = React.useContext(GlobalCTX);
 	const componentRef = React.useRef();
@@ -485,7 +486,9 @@ export const CustomerDetails = () => {
 		documentTitle: `Abitto Ticket - ${currentUser?.ticket_id}`,
 	});
 
-	const canReschedule = currentUser?.trip_status === "Upcoming" && ["dev", "super-admin"].includes(adminProfile.account_type)
+	const canReschedule = currentUser?.trip_status === "Upcoming" && currentUser?.payment_status === "Success" && ["dev", "super-admin"].includes(adminProfile.account_type)
+
+	if (!Object.keys(currentUser).length) return <Navigate to={`/backend/${accountType}/booking-details`} />
 
 	return (
 		<div>
@@ -872,7 +875,7 @@ const CustomerDetailsModal = ({ props: { currentUser } }) => {
 export const CustomerDetailsLoader = async ({ params }) => {
 	const ticket_id = params.bookingID;
 	const cacheKey = `tk-${ticket_id}`
-	const cachedData = JSON.parse(sessionStorage.getItem(cacheKey))
+	const cachedData = JSON.parse(sessionStorage.getItem(cacheKey));
 	const cacheTime = 5 * 60 * 1000; // 5 mins
 	const currentTimeStamp = Date.now();
 
@@ -880,21 +883,22 @@ export const CustomerDetailsLoader = async ({ params }) => {
 	if (cachedData && (currentTimeStamp - cachedData.timestamp) < cacheTime) return cachedData.data;
 
 	try {
-		const response = await axiosInstance.post("/booking/querynew", {
-			ticket_id,
-		});
-
 		// check and remove existing trip cache
 		Object.keys(sessionStorage).map((cache) => {
 			if (cache.startsWith("tk-"))
 				sessionStorage.removeItem(cache)
 		})
+		const response = await axiosInstance.post("/booking/querynew", {
+			ticket_id,
+		});
 
 		const data = response.data.booking
+		if (!data) throw new Error("Passenger not found!");
+
 		sessionStorage.setItem(cacheKey, JSON.stringify({ data, timestamp: currentTimeStamp }))
 		return data;
 	} catch (error) {
 		customError(error, "Error occurred while retrieving ticket invoice.");
-		return null;
+		return {};
 	}
 }

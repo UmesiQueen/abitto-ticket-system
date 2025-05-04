@@ -7,11 +7,13 @@ import { BookingSuccessModal } from "@/components/modals/booking";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuid } from "uuid"
 import { customError } from "@/lib/utils";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const useUpdate = () => {
 	const { unMountPortalModal, setModalContent, mountPortalModal, adminProfile } = React.useContext(GlobalCTX);
 	const { setLoading } = React.useContext(BookingCTX);
-	const navigate = useNavigate()
+	const navigate = useNavigate();
+	const queryClient = useQueryClient();
 
 	const checkInPassenger = (ticket_id) => {
 		setLoading(true);
@@ -24,13 +26,15 @@ export const useUpdate = () => {
 		axiosInstance
 			.patch("/booking/update", formValues)
 			.then((res) => {
-				if (res.status === 200)
+				if (res.status === 200) {
+					queryClient.invalidateQueries('bookings');
 					setModalContent(
 						<SuccessModal
 							header="Check-in Successful"
 							text="This passenger is successfully checked-in."
 						/>
 					);
+				}
 			})
 			.catch((error) => {
 				unMountPortalModal();

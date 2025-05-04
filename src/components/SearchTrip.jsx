@@ -39,7 +39,7 @@ const SearchTrip = () => {
 			navigate("/booking")
 		},
 		onSuccess: (data) => {
-			setAvailableTrips(data);
+			if (data) setAvailableTrips(data);
 		},
 	});
 
@@ -50,9 +50,9 @@ const SearchTrip = () => {
 	}, [])
 
 	React.useEffect(() => {
-		if (!Object.keys(availableTrips).length)
+		if (!availableTrips.length)
 			return setLoading(isPending)
-		return setLoading(false)
+		return setLoading(false);
 	}, [isPending, setLoading, availableTrips])
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>

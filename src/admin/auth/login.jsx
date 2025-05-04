@@ -51,13 +51,14 @@ const Login = () => {
 					Cookies.set('access_token', token, {
 						expires: 1, secure: true, sameSite: 'strict'
 					});
-					setTimeout(() => navigate(navigateTo(user.account_type)), 200);
+					setTimeout(() => navigate(navigateTo(user.account_type)), 100);
 				}
 			})
 			.catch((error) => {
-				if (error.code === "ERR_BAD_REQUEST") {
-					return toast.error("Email or password is incorrect.");
-				}
+				if (error.code === "ERR_BAD_REQUEST")
+					toast.error("Email or password is incorrect.");
+				else
+					toast.error("An error occurred. Try again.");
 			})
 			.finally(() => setLoading(false));
 	});
@@ -65,13 +66,11 @@ const Login = () => {
 	const navigateTo = (account_type) => {
 		switch (account_type) {
 			case "super-admin":
-				return "/backend/super-admin/dashboard";
+			case "dev":
 			case "admin":
-				return "/backend/admin/dashboard";
+				return `/backend/${account_type}/dashboard`;
 			case "salesperson":
 				return "/backend/salesperson/create";
-			case "dev":
-				return "/backend/dev/dashboard";
 			default:
 				return "/login";
 		}

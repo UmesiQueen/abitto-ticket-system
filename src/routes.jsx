@@ -48,7 +48,6 @@ import BookingDetail from "@/components/BookingDetails";
 import Payment from "@/components/Payment";
 import SearchTrip from "@/components/SearchTrip";
 import TripDetails from "./admin/pages/trip-details";
-import BookingConfirmation from "@/app/pages/booking-confirmation";
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -68,7 +67,6 @@ export const router = createBrowserRouter(
 				<Route path="terms-conditions" element={<TermsAndConditions />} />
 				<Route path="privacy-policy" element={<PrivacyPolicy />} />
 			</Route>
-			<Route path="booking/confirmation" element={<BookingConfirmation />} />
 
 			<Route path="/backend" element={<AdminLayout />} >
 				<Route path="/backend/:accountType">

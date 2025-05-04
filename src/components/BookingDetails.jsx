@@ -167,21 +167,12 @@ export const BookingForm = () => {
 					<SelectField
 						{...register("adults_number")}
 						defaultValue={defaultValues.adults_number}
-						label="No. of Passengers"
+						label="No. of Passenger"
 						placeholder="0"
 						options={[1, 2, 3, 4, 5, 6]}
 						errors={errors}
 						handlechange={handleChange}
 					/>
-					{/* <SelectField
-						{...register("children_number")}
-						defaultValue={defaultValues.children_number}
-						label="No. of Children"
-						placeholder="0"
-						options={["", 1, 2, 3, 4, 5]}
-						errors={errors}
-						handlechange={handleChange}
-					/> */}
 				</div>
 			</div>
 			<CustomButton type="submit" className="w-full !h-12" >
