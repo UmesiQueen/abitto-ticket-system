@@ -20,6 +20,12 @@ export const isValidUrl = (urlString) => {
 };
 
 export const customError = (error, customMsg) => {
+  // Only show toast for network-related errors or if it's not a GET request
+  const isGetRequest = error?.config?.method?.toLowerCase() === 'get';
+  // For GET requests that aren't network errors, don't show any toast
+  if (isGetRequest) {
+    return;
+  }
   // Check if the error is a timeout error
   if (error.code === "ECONNABORTED" && error.message.includes("timeout")) {
     return toast.error("Request timed out. Please try again later.");
