@@ -330,7 +330,7 @@ const TripDetails = () => {
                                         <CustomButton
                                             variant="outline"
                                             className="text-nowrap h-10"
-                                            onClick={() => mountPortalModal(<RescheduleEditModal />)}
+                                            onClick={() => mountPortalModal(<RescheduleEditModal tripDetails={selectedTrip} />)}
                                         >
                                             Edit Journey Details
                                         </CustomButton>

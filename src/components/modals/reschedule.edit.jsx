@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -9,7 +10,6 @@ import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import { BookingCTX } from "@/contexts/BookingContext";
 import CustomButton from "@/components/custom/Button";
 import { CalendarIcon, ClockIcon, CancelSquareIcon } from "@/assets/icons";
 import { Button } from "@/components/ui/button";
@@ -26,12 +26,10 @@ const rescheduleSchema = yup.object().shape({
 	trip_capacity: yup.string().required("Capacity is required."),
 });
 
-const RescheduleEditModal = () => {
+const RescheduleEditModal = ({ tripDetails }) => {
 	const { unMountPortalModal, setModalContent } = React.useContext(GlobalCTX);
 	const { rescheduleRequest } = useScheduleTrip();
-	const {
-		tripDetails: { date, time, ticket_cost, ...otherDetails },
-	} = React.useContext(BookingCTX);
+	const { date, time, ticket_cost, ...otherDetails } = tripDetails;
 	const {
 		control,
 		register,
