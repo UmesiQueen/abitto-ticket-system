@@ -314,7 +314,7 @@ const ShippingDetails = () => {
 						/>
 					</label>
 				</div>
-				{!showPopover && <CustomButton text="Get Quote" type="submit" loading={loading} className="w-full" />}
+				{!showPopover && <CustomButton type="submit" loading={loading} className="w-full">Get Quote</CustomButton>}
 			</form>
 
 			{/* Quote */}

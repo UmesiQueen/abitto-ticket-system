@@ -1,17 +1,23 @@
 # Abitto Ticketing System
 
-A web app that offers daily ferry transportation, ferry on hire and logistic services.
+A react web app that offers daily ferry transportation, ferry on hire and logistic services.
 It contains self-service, salespoint interface for onsite services and two-tier admin dashboard for sales overview and monitoring.
 
 ### Tools
-[Vite]( https://vite.dev/)
-[Axios](https://axios-http.com/) Data fetching
-[Tanstack](https://tanstack.com/) Asynchronous data fetching and tables
+[Vite]( https://vite.dev/) build infrastructure
+
+[Shadcn](https://ui.shadcn.com/) and [MaterialUI](https://mui.com/) component library
+
+[Axios](https://axios-http.com/) HTTP client
+
+[Tanstack](https://tanstack.com/) data management and tables
+
 
 ### Develop
 To develop all apps and packages, run the following command:
 
 ```bash
+npm install
 npm run dev
 ```
 

@@ -5,7 +5,7 @@ import {
 	InvoiceIcon,
 	SearchIcon,
 	LogoutIcon,
-	UserIcon,
+	// UserIcon,
 	BookIcon,
 	ShipIcon,
 	MenuBoardIcon,
@@ -161,12 +161,12 @@ const ProtectedRoute = () => {
 			</div>,
 			["admin", "super-admin", "salesperson", "dev"],
 		],
-		[
-			"Customers",
-			`/backend/${accountType}/customers`,
-			<UserIcon key="1" />,
-			["admin", "super-admin", "dev"],
-		],
+		// [
+		// 	"Customers",
+		// 	`/backend/${accountType}/customers`,
+		// 	<UserIcon key="1" />,
+		// 	["admin", "super-admin", "dev"],
+		// ],
 		[
 			"User Feedback",
 			`/backend/${accountType}/feedback`,
