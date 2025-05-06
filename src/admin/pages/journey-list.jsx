@@ -83,7 +83,7 @@ const JourneyTable = () => {
 		Object.entries(searchParamValues).map(([key, value]) => ({ id: key, value }))
 	const [columnFilters, setColumnFilters] = React.useState(defaultColumnFilters);
 
-	const { data, isSuccess, isPending } = useQuery({
+	const { data, isSuccess, isLoading } = useQuery({
 		queryKey: ["journeyList"],
 		queryFn: async () => {
 			try {
@@ -138,7 +138,10 @@ const JourneyTable = () => {
 		{
 			accessorKey: "date",
 			header: "Date",
-			cell: ({ row }) => row.getValue("date"),
+			cell: ({ row }) => {
+				const dateTime = new Date(row.getValue("date"));
+				return format(dateTime, "PP");
+			},
 		},
 		{
 			accessorKey: "time",
@@ -184,7 +187,8 @@ const JourneyTable = () => {
 			accessorKey: "dateTime",
 			header: "DateTime",
 			accessorFn: (row) => {
-				const dateTime = new Date(`${row.date} ${row.time}`);
+				const date = format(new Date(row.date), "PP");
+				const dateTime = new Date(`${date} ${row.time}`);
 				return dateTime;
 			},
 		},
@@ -319,7 +323,7 @@ const JourneyTable = () => {
 									colSpan={columns.length}
 									className="h-24 text-center"
 								>
-									{isPending ? <p className="inline-flex gap-2 items-center">Fetching data  <Loader2 className="animate-spin" /></p> : "No results."}
+									{isLoading ? <p className="inline-flex gap-2 items-center">Fetching data  <Loader2 className="animate-spin" /></p> : "No results."}
 								</TableCell>
 							</TableRow>
 						)}

@@ -73,6 +73,7 @@ const TripDetails = () => {
     const defaultColumnFilters =
         Object.entries(searchParamValues).map(([key, value]) => ({ id: key, value }))
     const [columnFilters, setColumnFilters] = React.useState(defaultColumnFilters);
+    const isLoading = queryClient.getQueryState(['bookings'])?.status === 'loading';
 
     React.useEffect(() => {
         if (selectedTrip) {
@@ -492,7 +493,7 @@ const TripDetails = () => {
                                         colSpan={columns.length}
                                         className="h-24 text-center"
                                     >
-                                        {queryClient.isFetching("booking") ? <p className="inline-flex gap-2 items-center">Fetching data  <Loader2 className="animate-spin" /></p> : "No results."}
+                                        {isLoading ? <p className="inline-flex gap-2 items-center">Fetching data  <Loader2 className="animate-spin" /></p> : "No results."}
                                     </TableCell>
                                 </TableRow>
                             )}

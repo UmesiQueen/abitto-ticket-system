@@ -1,5 +1,5 @@
 import React from "react";
-import { useRevalidator } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axiosInstance from "@/api";
 import SuccessModal from "@/components/modals/success";
 import { BookingCTX } from "@/contexts/BookingContext";
@@ -10,7 +10,7 @@ import { useQueryClient } from "@tanstack/react-query";
 export const useScheduleTrip = () => {
 	const { unMountPortalModal, setModalContent } = React.useContext(GlobalCTX);
 	const { setLoading } = React.useContext(BookingCTX);
-	const { revalidate } = useRevalidator();
+	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 
 	const scheduleRequest = (handleReset, formValues) => {
@@ -49,7 +49,7 @@ export const useScheduleTrip = () => {
 					setModalContent(
 						<SuccessModal
 							header="Update Successful"
-							onclick={() => revalidate()}
+							onclick={() => { navigate(".", { replace: true }); }}
 							text="You have successfully rescheduled this trip."
 						/>
 					);
@@ -73,8 +73,8 @@ export const useScheduleTrip = () => {
 					queryClient.invalidateQueries('journeyList');
 					setModalContent(
 						<SuccessModal
-							header="Cancelation Successful"
-							onclick={() => revalidate()}
+							header="Cancellation Successful"
+							onclick={() => { navigate(".", { replace: true }); }}
 							text="You have successfully cancelled this trip."
 						/>
 					);
