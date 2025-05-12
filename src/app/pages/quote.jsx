@@ -35,7 +35,6 @@ const GetQuote = () => {
 		handleSubmit,
 		control,
 		formState: { errors, isSubmitted, defaultValues },
-		// reset,
 	} = useForm({
 		mode: "onSubmit",
 		resolver: yupResolver(shipmentDetailsSchema),
@@ -56,7 +55,6 @@ const GetQuote = () => {
 						weight: packageDetails.weight,
 						quantity: packageDetails.no_item,
 						cost_per_kg: cost,
-						// handleReset
 					}}
 				/>
 			);

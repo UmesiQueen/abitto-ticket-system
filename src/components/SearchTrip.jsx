@@ -48,7 +48,7 @@ const SearchTrip = () => {
 			}
 			return null;
 		},
-		enabled: true, // This makes the query run immediately
+		staleTime: 1000
 	});
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>

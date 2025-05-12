@@ -89,13 +89,8 @@ const PassengerDetails = () => {
 						<h4>Route</h4>
 						<p>
 							{formData.bookingDetails?.travel_from.includes("Calabar")
-								? "Calabar"
-								: "Uyo"}{" "}
-							==
-							{">"}{" "}
-							{formData.bookingDetails?.travel_to.includes("Calabar")
-								? "Calabar"
-								: "Uyo"}
+								? "Calabar ==> Uyo"
+								: "Uyo ==> Calabar"}
 						</p>
 					</li>
 					<li>

@@ -730,8 +730,7 @@ const Payment = () => {
 					<Button
 						text="Submit"
 						type="submit"
-						// loading={loading}
-						className="w-40 "
+						className="w-40"
 					/>
 				</div>
 			</form>

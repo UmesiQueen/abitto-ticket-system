@@ -9,7 +9,7 @@ const axiosInstance = axios.create({
 		//  Authorization: `<Your Auth Token>`,
 		"Content-Type": "application/json",
 	},
-	timeout: 5 * 60 * 1000 // 5 mins
+	timeout: 7 * 60 * 1000 // 7 mins
 });
 
 // Response interceptor

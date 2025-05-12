@@ -25,7 +25,6 @@ import Report from "./admin/pages/report";
 import Rental from "./app/pages/rental";
 import { TripDetailsLoader } from "./admin/pages/trip-details";
 import { RentalInvoiceLoader } from "./components/RentalInvoice";
-// import CustomerHistory from "./admin/pages/customer-history";
 import RentalDetails from "./admin/pages/rental-details";
 import PageNotFoundAdmin from "./admin/pages/page-not-found";
 import CheckIn from "./admin/pages/check-in";
@@ -111,7 +110,6 @@ export const router = createBrowserRouter(
 					/>
 					<Route path="schedule-trip" element={<ScheduleTrip />} />
 					<Route path="customers" element={<Customers />} />
-					{/* <Route path="customers/:customerID" element={<CustomerHistory />} /> */}
 					<Route path="settings" element={<Settings />} />
 					<Route path="feedback" element={<FeedbackAdmin />} />
 					<Route path="feedback/:feedbackID" element={<FeedbackDetails />} />

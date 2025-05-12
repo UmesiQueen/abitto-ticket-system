@@ -103,10 +103,8 @@ const RescheduleForm = () => {
 					<li>
 						<h4>Route</h4>
 						<p>
-							{currentUser?.travel_from.includes("Calabar") ? "Calabar" : "Uyo"}{" "}
-							==
-							{">"}{" "}
-							{currentUser?.travel_to.includes("Calabar") ? "Calabar" : "Uyo"}
+							{currentUser?.travel_from.includes("Calabar") ? "Calabar ==> Uyo"
+								: "Uyo ==> Calabar"}
 						</p>
 					</li>
 					<li>
@@ -120,10 +118,6 @@ const RescheduleForm = () => {
 						<h4>Passengers</h4>
 						<p>{currentUser?.adults_number}</p>
 					</li>
-					{/* <li>
-						<h4>Children</h4>
-						<p>{currentUser?.children_number ?? 0}</p>
-					</li> */}
 				</ul>
 			</div>
 

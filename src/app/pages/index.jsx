@@ -45,7 +45,6 @@ const Home = () => {
 					alt="hero"
 					className="w-full h-full absolute object-cover"
 				/>
-				{/* <FadeInBackgroundTransition /> */}
 				<div className=" px-5 md:px-20 z-[2] relative h-full">
 					<div className="max-w-[1440px] mx-auto h-full flex items-center">
 						<div className="w-[400px] mx-auto md:mx-0 md:w-[600px] space-y-10">
