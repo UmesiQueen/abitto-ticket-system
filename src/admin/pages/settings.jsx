@@ -7,7 +7,7 @@ import { Cloud2Icon, UserIcon, PasswordIcon } from "@/assets/icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SelectField from "@/components/custom/SelectField";
 import InputField from "@/components/custom/InputField";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import { toast } from "sonner";
 import PasswordField from "@/components/custom/PasswordField";
 import {
@@ -20,6 +20,7 @@ import { BookingCTX } from "@/contexts/BookingContext";
 import axios from "axios";
 import axiosInstance from "@/api";
 import { isValidUrl } from "@/lib/utils";
+import { customError } from "@/lib/utils";
 
 const Settings = () => {
 	return (
@@ -132,12 +133,7 @@ const EditProfile = () => {
 				toast.success("Profile successfully updated.");
 			})
 			.catch((error) => {
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error("Error occurred while updating profile.");
+				customError(error, "Error occurred while updating profile.");
 			})
 			.finally(() => setLoading(false));
 	};
@@ -154,7 +150,7 @@ const EditProfile = () => {
 				cloudinaryData
 			)
 			.then((res) => {
-				const data = res.data.url;
+				const data = res.data.secure_url;
 				handleEditProfileRequest(formData, data);
 			})
 			.catch(() => {
@@ -232,12 +228,11 @@ const EditProfile = () => {
 					/>
 				</div>
 
-				<Button
+				<CustomButton
 					type="submit"
 					className="w-32 "
 					loading={loading}
-					text="Update"
-				/>
+				>Update</CustomButton>
 			</form>
 		</>
 	);
@@ -316,12 +311,7 @@ const ChangePassword = () => {
 			.catch((error) => {
 				if (error.code === "ERR_BAD_REQUEST")
 					toast.error("Old password is incorrect.");
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error("Error occurred while changing password.Try again.");
+				customError(error, "Error occurred while changing password.Try again.");
 			})
 			.finally(() => {
 				setLoading(false);
@@ -353,12 +343,11 @@ const ChangePassword = () => {
 					placeholder="Re-enter new password"
 					errors={errors}
 				/>
-				<Button
+				<CustomButton
 					className="w-32"
 					type="submit"
-					text="Update"
 					loading={loading}
-				/>
+				>Update</CustomButton>
 			</form>
 		</>
 	);

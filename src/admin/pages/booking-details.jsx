@@ -6,7 +6,6 @@ import {
 	InformationCircleIcon,
 	CalendarIcon,
 	ClockIcon,
-	ChairIcon,
 	UsersIcon,
 	PrinterIcon,
 	Boat2Icon,
@@ -21,7 +20,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { useLoaderData, useNavigate, } from "react-router-dom";
+import { Navigate, useLoaderData, useNavigate, useParams } from "react-router-dom";
 import React from "react";
 import { format } from "date-fns";
 import {
@@ -32,15 +31,15 @@ import {
 	getSortedRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import { Button as ButtonUI } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { formatValue } from "react-currency-input-field";
 import { capitalize, truncate } from "lodash";
-import { cn, humanize } from "@/lib/utils";
+import { cn, customError } from "@/lib/utils";
 import { PaginationEllipsis } from "@/components/ui/pagination";
 import ReactPaginate from "react-paginate";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import { SearchForm } from "./journey-list";
+import SearchForm from "@/components/SearchForm";
 import {
 	Select,
 	SelectContent,
@@ -49,35 +48,41 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
+import { useReactToPrint } from "react-to-print";
+import TicketInvoice from "@/components/TicketInvoice";
+import axiosInstance from "@/api";
+import { useSearchParam } from "@/hooks/useSearchParam";
+import { useQueryClient } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 
 const BookingDetails = () => {
 	const navigate = useNavigate();
 	const {
 		bookingQuery,
 		currentPageIndex,
-		filtering,
-		setFiltering,
-		searchParams,
-		setSearchParams,
-		setCurrentPageIndex
+		resetPageIndex,
+		setFilterValue
 	} = React.useContext(BookingCTX);
 	const { adminProfile } = React.useContext(GlobalCTX);
-	const isColumnVisible =
-		adminProfile.account_type == "dev" ||
-		adminProfile.account_type == "super-admin";
+	const isColumnVisible = ["dev", "super-admin"].includes(adminProfile.account_type);
 	const [sorting, setSorting] = React.useState([]);
-	const [columnFilters, setColumnFilters] = React.useState([]);
 	const [columnVisibility, setColumnVisibility] = React.useState({
 		fullName: false,
-		departure: isColumnVisible ? true : false,
+		departure: isColumnVisible,
 		date: false,
 	});
 	const [pageCount, setPageCount] = React.useState(0);
 	const [pagination, setPagination] = React.useState({
-		pageIndex: 0,
+		pageIndex: currentPageIndex.booking,
 		pageSize: 7,
 	});
+	const { searchParams, setSearchParams, getSearchParams, updateSearchParam, removeSearchParam } = useSearchParam();
+	const searchParamValues = getSearchParams();
+	const defaultColumnFilters =
+		Object.entries(searchParamValues).map(([key, value]) => ({ id: key, value }))
+	const [columnFilters, setColumnFilters] = React.useState(defaultColumnFilters);
+	const queryClient = useQueryClient();
 
 	const columns = [
 		{
@@ -114,13 +119,6 @@ const BookingDetails = () => {
 			),
 			enableGlobalFilter: false,
 		},
-		// {
-		// 	accessorKey: "trip_type",
-		// 	id: "trip_type",
-		// 	header: "Type",
-		// 	cell: ({ row }) => <div>{row.original.trip_type}</div>,
-		// 	enableGlobalFilter: false,
-		// },
 		{
 			accessorKey: "travel_from",
 			header: "Departure",
@@ -217,51 +215,47 @@ const BookingDetails = () => {
 		getFilteredRowModel: getFilteredRowModel(),
 		onColumnVisibilityChange: setColumnVisibility,
 		onPaginationChange: setPagination,
-		onGroupingChange: setFiltering,
 		pageCount,
 		state: {
 			sorting,
 			columnFilters,
 			columnVisibility,
 			pagination,
-			globalFilter: filtering,
-		},
+			globalFilter: searchParamValues?.s,
+		}
 	});
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
-		if (bookingQuery.length)
-			setPageCount(Math.ceil(bookingQuery.length / pagination.pageSize));
+		setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [bookingQuery]);
+	}, [columnFilters, bookingQuery, searchParamValues]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
-		if (columnFilters.length || filtering.length) {
-			setPageCount(
-				Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
-			);
-			setCurrentPageIndex((prev) => ({
-				...prev,
-				booking: 0,
-			}));
+		const departure = searchParams.get("departure")
+		if (departure)
+			table.getColumn("departure").setFilterValue(departure);
+
+		const date = searchParams.get("date");
+		if (date) {
+			const formatDate = format(new Date(date), "P");
+			table.getColumn("date").setFilterValue(formatDate);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [columnFilters, filtering]);
+	}, [searchParams])
 
-	React.useEffect(() => {
-		table.setPageIndex(currentPageIndex.booking);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	React.useEffect(() => {
-		if (searchParams) {
-			table.getColumn("departure").setFilterValue(searchParams?.departure);
-			if (searchParams?.date) {
-				const formatDate = format(new Date(searchParams.date), "P");
-				table.getColumn("date").setFilterValue(formatDate);
-			}
+	const handleFilterChange = (key, value) => {
+		if (value === "#") {
+			removeSearchParam(key)
+			table.getColumn(key)?.setFilterValue("");
+			resetPageIndex("booking");
+			return;
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [searchParams]);
+		updateSearchParam(key, value)
+		table.getColumn(key)?.setFilterValue(value);
+		resetPageIndex("booking");
+	}
 
 	return (
 		<>
@@ -270,18 +264,29 @@ const BookingDetails = () => {
 			</Helmet>
 
 			<h1 className="text-lg font-semibold mb-10">Booking Details</h1>
-			<SearchForm />
+			<SearchForm
+				props={{
+					page: "booking",
+					name: "departure",
+					label: "Departure",
+					placeholder: "Select Departure Terminal",
+					options: ["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]
+				}}
+			/>
 			<div className="my-10 flex gap-5 justify-between flex-wrap items-center">
 				{(columnFilters.length) ?
-					<Button
+					<CustomButton
 						variant="outline"
 						className="!h-8 !text-sm"
 						onClick={() => {
 							table.resetColumnFilters(true);
 							setSearchParams({});
+							setFilterValue("");
+							resetPageIndex("booking");
 						}}
-						text="Reset filters"
-					/> : ""}
+					>
+						Reset filters
+					</CustomButton> : ""}
 
 				<div className="flex gap-5 justify-end ml-auto">
 					<div className="flex items-center w-fit border border-gray-200 font-medium rounded-lg">
@@ -289,14 +294,9 @@ const BookingDetails = () => {
 							Medium
 						</span>
 						<Select
-							defaultValue="#"
+							defaultValue={searchParamValues?.medium ?? "#"}
 							value={table.getColumn("medium")?.getFilterValue() ?? "#"}
-							onValueChange={(value) => {
-								if (value === "#") {
-									return table.getColumn("medium")?.setFilterValue("");
-								}
-								table.getColumn("medium")?.setFilterValue(value);
-							}}
+							onValueChange={(value) => handleFilterChange("medium", value)}
 						>
 							<SelectTrigger className="w-[170px] grow rounded-none rounded-r-lg border-0 border-l px-5 focus:ring-0 focus:ring-offset-0 bg-white">
 								<SelectValue />
@@ -315,14 +315,9 @@ const BookingDetails = () => {
 							Payment status
 						</span>
 						<Select
-							defaultValue="#"
+							defaultValue={searchParamValues?.payment_status ?? "#"}
 							value={table.getColumn("payment_status")?.getFilterValue() ?? "#"}
-							onValueChange={(value) => {
-								if (value === "#") {
-									return table.getColumn("payment_status")?.setFilterValue("");
-								}
-								table.getColumn("payment_status")?.setFilterValue(value);
-							}}
+							onValueChange={(value) => handleFilterChange("payment_status", value)}
 						>
 							<SelectTrigger className="w-[170px] grow rounded-none rounded-r-lg border-0 border-l px-5 focus:ring-0 focus:ring-offset-0 bg-white">
 								<SelectValue />
@@ -342,14 +337,9 @@ const BookingDetails = () => {
 							Trip status
 						</span>
 						<Select
-							defaultValue="#"
+							defaultValue={searchParamValues?.trip_status ?? "#"}
 							value={table.getColumn("trip_status")?.getFilterValue() ?? "#"}
-							onValueChange={(value) => {
-								if (value === "#") {
-									return table.getColumn("trip_status")?.setFilterValue("");
-								}
-								table.getColumn("trip_status")?.setFilterValue(value);
-							}}
+							onValueChange={(value) => handleFilterChange("trip_status", value)}
 						>
 							<SelectTrigger className="w-[170px] grow rounded-none rounded-r-lg border-0 border-l px-5 focus:ring-0 focus:ring-offset-0 bg-white">
 								<SelectValue />
@@ -369,22 +359,7 @@ const BookingDetails = () => {
 				</div>
 			</div>
 
-			{Object.keys(searchParams).length ? (
-				<div className="flex items-center mb-5">
-					<div className="inline-flex gap-1">
-						<h2 className="font-semibold">Search results for </h2>
-						<p className="divide-x divide-black flex gap-2 [&>*:not(:first-of-type)]:pl-2">
-							({" "}
-							{searchParams?.departure && (
-								<span>{searchParams.departure} </span>
-							)}
-							{searchParams?.date && <span>{searchParams.date}</span>})
-						</p>
-					</div>
-				</div>
-			) : (
-				<h2 className="font-semibold mb-5">All Bookings</h2>
-			)}
+			<h2 className="font-semibold mb-5"> {Object.keys(searchParamValues).length ? "Search results" : "All bookings"}</h2>
 			<div className="bg-white rounded-lg px-4 py-2 ">
 				<Table>
 					<TableHeader>
@@ -432,7 +407,7 @@ const BookingDetails = () => {
 									colSpan={columns.length}
 									className="h-24 text-center"
 								>
-									No results.
+									{queryClient.isFetching("booking") ? <p className="inline-flex gap-2 items-center">Fetching data  <Loader2 className="animate-spin" /></p> : "No results."}
 								</TableCell>
 							</TableRow>
 						)}
@@ -462,14 +437,14 @@ const Pagination = ({ props: { table } }) => {
 		<ReactPaginate
 			breakLabel={<PaginationEllipsis />}
 			nextLabel={
-				<ButtonUI
+				<Button
 					variant="ghost"
 					size="sm"
 					onClick={() => table.nextPage()}
 					disabled={!table.getCanNextPage()}
 				>
 					<CaretIcon />
-				</ButtonUI>
+				</Button>
 			}
 			onPageChange={(val) => {
 				table.setPageIndex(val.selected);
@@ -479,11 +454,10 @@ const Pagination = ({ props: { table } }) => {
 				}));
 			}}
 			forcePage={currentPageIndex.booking}
-			initialPage={currentPageIndex.booking}
 			pageRangeDisplayed={3}
 			pageCount={pageCount}
 			previousLabel={
-				<ButtonUI
+				<Button
 					variant="ghost"
 					size="sm"
 					onClick={() => table.previousPage()}
@@ -492,7 +466,7 @@ const Pagination = ({ props: { table } }) => {
 					<span className="rotate-180">
 						<CaretIcon />
 					</span>
-				</ButtonUI>
+				</Button>
 			}
 			renderOnZeroPageCount={null}
 			className="flex gap-2 items-center text-xs font-normal [&_a]:inline-flex [&_a]:items-center [&_a]:justify-center [&_a]:min-w-7 [&_a]:h-8 [&_a]:rounded-lg *:text-center *:[&_.selected]:bg-blue-500  *:[&_.selected]:text-white [&_.disabled]:pointer-events-none "
@@ -502,400 +476,317 @@ const Pagination = ({ props: { table } }) => {
 
 export const CustomerDetails = () => {
 	const navigate = useNavigate();
+	const { accountType } = useParams();
 	const currentUser = useLoaderData();
 	const { mountPortalModal, adminProfile } = React.useContext(GlobalCTX);
+	const componentRef = React.useRef();
 
-	const canReschedule = currentUser?.trip_status == "Upcoming" && ["dev", "super-admin"].includes(adminProfile.account_type)
+	const handlePrint = useReactToPrint({
+		content: () => componentRef.current,
+		documentTitle: `Abitto Ticket - ${currentUser?.ticket_id}`,
+	});
+
+	const canReschedule = currentUser?.trip_status === "Upcoming" && currentUser?.payment_status === "Success" && ["dev", "super-admin"].includes(adminProfile.account_type)
+
+	if (!Object.keys(currentUser).length) return <Navigate to={`/backend/${accountType}/booking-details`} />
 
 	return (
 		<div>
 			<div className="flex gap-1 items-center mb-5 py-2">
-				<button onClick={() => navigate(-1)}>
+				<button type="button" onClick={() => navigate(-1)}>
 					<CircleArrowLeftIcon />
 				</button>
 				<h1 className="text-base font-semibold">Booking Details</h1>
 			</div>
 			{currentUser ? (
-				<div className="flex gap-5 items-start">
-					<div className="bg-white rounded-lg overflow-hidden basis-8/12">
-						<div className="bg-blue-50 flex gap-3 p-5 ">
-							<div className="bg-white rounded-lg p-2 ">
-								<TickIcon />
+				<>
+					<div className="flex gap-5 items-start">
+						<div className="bg-white rounded-lg overflow-hidden basis-8/12">
+							<div className="bg-blue-50 flex gap-3 p-5 items-center">
+								<div className="bg-white rounded-lg p-2 ">
+									<TickIcon />
+								</div>
+								<div>
+									<h2 className="text-blue-500 text-sm font-semibold">
+										Booking Confirmed!
+									</h2>
+									<p className="text-xs">
+										Great news! The ferry trip has been successfully confirmed
+										from our sales point.
+									</p>
+								</div>
+								{canReschedule &&
+									<CustomButton
+										variant="outline"
+										className="text-nowrap h-10 ml-auto"
+										onClick={() => navigate("reschedule")}
+									>
+										Re-schedule
+									</CustomButton>
+								}
 							</div>
-							<div>
-								<h2 className="text-blue-500 text-sm font-semibold">
-									Booking Confirmed!
-								</h2>
-								<p className="text-[10px]">
-									Great news! The ferry trip has been successfully confirmed
-									from our sales point.
-								</p>
-							</div>
-							{canReschedule && <Button
-								text="Re-schedule"
-								variant="outline"
-								className="text-nowrap h-10 ml-auto"
-								onClick={() => {
-									navigate(
-										`reschedule`
-									);
-								}}
-							/>}
-						</div>
-
-						<div className="p-5 pb-20 space-y-6">
-							<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Booking ID</p>
-									<p className="text-base font-semibold uppercase">
-										#{currentUser?.ticket_id}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Customer Name</p>
-									<p className="text-base font-semibold capitalize">{`${currentUser?.passenger1_first_name} ${currentUser?.passenger1_last_name}`}</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Phone</p>
-									<p className="text-base font-semibold">
-										{currentUser?.passenger1_phone_number}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Email</p>
-									<p className="text-base font-semibold">
-										{currentUser?.passenger1_email}
-									</p>
-								</li>
-							</ul>
-							<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
-								<li>
-									<p className="text-xs text-[#7F7F7F] ">Type</p>
-									<p className="text-base font-semibold">
-										{currentUser?.trip_type}
-									</p>
-								</li>
-
-								<li>
-									<p className="text-xs text-[#7F7F7F]">No. of Adult</p>
-									<p className="text-base font-semibold">
-										{currentUser?.adults_number}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">No. of Children</p>
-									<p className="text-base font-semibold">
-										{currentUser?.children_number ?? 0}
-									</p>
-								</li>
-								{currentUser?.passenger2_first_name && (
-									<li className="self-center text-sm">
-										<button
-											className="text-blue-500 hover:text-blue-700 underline"
-											onClick={() => {
-												mountPortalModal(
-													<CustomerDetailsModal props={{ currentUser }} />
-												);
-											}}
-										>
-											View other passenger details {">"}
-										</button>
-									</li>
-								)}
-							</ul>
-							<div className=" space-y-6 border-l-8 border-green-800 pl-3 -ml-5">
+							<div className="p-5 pb-20 space-y-6">
 								<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
 									<li>
-										<p className="text-xs text-[#7F7F7F]">Departure From</p>
-										<p className="text-base font-semibold">
-											{currentUser?.travel_from}
+										<p className="text-xs text-[#7F7F7F]">Booking ID</p>
+										<p className="text-base font-semibold uppercase">
+											#{currentUser?.ticket_id}
 										</p>
 									</li>
 									<li>
-										<p className="text-xs text-[#7F7F7F]">Departure To</p>
-										<p className="text-base font-semibold">
-											{currentUser?.travel_to}
-										</p>
+										<p className="text-xs text-[#7F7F7F]">Customer Name</p>
+										<p className="text-base font-semibold capitalize">{`${currentUser?.passenger1_first_name} ${currentUser?.passenger1_last_name}`}</p>
 									</li>
-									{/* <li>
-										<p className="text-xs text-[#7F7F7F]">Seat No.</p>
-										<p className="text-base font-semibold">
-											{currentUser?.departure_seats.length
-												? humanize(currentUser?.departure_seats)
-												: "N/A"}
-										</p>
-									</li> */}
-								</ul>
-								<ul className="*:flex *:flex-col *:gap-1 flex gap-10 ">
 									<li>
-										<p className="text-xs text-[#7F7F7F]">Departure Date</p>
+										<p className="text-xs text-[#7F7F7F]">Phone</p>
 										<p className="text-base font-semibold">
-											{format(currentUser?.departure_date, "PPPP")}
+											{currentUser?.passenger1_phone_number}
 										</p>
 									</li>
 									<li>
-										<p className="text-xs text-[#7F7F7F]">Departure Time</p>
+										<p className="text-xs text-[#7F7F7F]">Email</p>
 										<p className="text-base font-semibold">
-											{currentUser?.departure_time}
+											{currentUser?.passenger1_email}
 										</p>
 									</li>
 								</ul>
-							</div>
-							{currentUser?.trip_type === "Round Trip" && (
-								<div className=" space-y-6 border-l-8 border-orange-800 pl-3 -ml-5">
+								<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
+									<li>
+										<p className="text-xs text-[#7F7F7F] ">Type</p>
+										<p className="text-base font-semibold">
+											{currentUser?.trip_type}
+										</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">No. of Adult</p>
+										<p className="text-base font-semibold">
+											{currentUser?.adults_number}
+										</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">No. of Children</p>
+										<p className="text-base font-semibold">
+											{currentUser?.children_number ?? 0}
+										</p>
+									</li>
+									{currentUser?.passenger2_first_name && (
+										<li className="self-center text-sm">
+											<button
+												type="button"
+												className="text-blue-500 hover:text-blue-700 underline"
+												onClick={() => {
+													mountPortalModal(
+														<CustomerDetailsModal props={{ currentUser }} />
+													);
+												}}
+											>
+												View other passenger details {">"}
+											</button>
+										</li>
+									)}
+								</ul>
+								<div className=" space-y-6 border-l-8 border-green-800 pl-3 -ml-5">
 									<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
 										<li>
-											<p className="text-xs text-[#7F7F7F]">Return From</p>
-											<p className="text-base font-semibold">
-												{currentUser?.travel_to}
-											</p>
-										</li>
-										<li>
-											<p className="text-xs text-[#7F7F7F]">Return To</p>
+											<p className="text-xs text-[#7F7F7F]">Departure From</p>
 											<p className="text-base font-semibold">
 												{currentUser?.travel_from}
 											</p>
 										</li>
-										{/* <li>
-											<p className="text-xs text-[#7F7F7F]">Seat No.</p>
-											<p className="text-base font-semibold">
-												{currentUser?.return_seats.length
-													? humanize(currentUser?.return_seats)
-													: "N/A"}
-											</p>
-										</li> */}
-									</ul>
-									<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
 										<li>
-											<p className="text-xs text-[#7F7F7F]">Return Date</p>
+											<p className="text-xs text-[#7F7F7F]">Departure To</p>
 											<p className="text-base font-semibold">
-												{format(currentUser?.return_date, "PPPP")}
+												{currentUser?.travel_to}
+											</p>
+										</li>
+									</ul>
+									<ul className="*:flex *:flex-col *:gap-1 flex gap-10 ">
+										<li>
+											<p className="text-xs text-[#7F7F7F]">Departure Date</p>
+											<p className="text-base font-semibold">
+												{format(currentUser?.departure_date, "PPPP")}
 											</p>
 										</li>
 										<li>
-											<p className="text-xs text-[#7F7F7F]">Return Time</p>
+											<p className="text-xs text-[#7F7F7F]">Departure Time</p>
 											<p className="text-base font-semibold">
-												{currentUser?.return_time}
+												{currentUser?.departure_time}
 											</p>
 										</li>
 									</ul>
 								</div>
-							)}
-							<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
-								<li>
-									<p className="text-xs text-[#7F7F7F] ">Booking Medium</p>
-									<p className="text-base font-semibold">
-										{currentUser?.medium}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Payment Method</p>
-									<p className="text-base font-semibold">
-										{currentUser?.payment_method}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Payment Status</p>
-									<p
-										className={cn(
-											"text-center font-semibold rounded-lg py-1 px-2 text-xs",
-											{
-												"text-green-500 bg-green-100":
-													currentUser?.payment_status === "Success",
-												"text-[#E78913] bg-[#F8DAB6]":
-													currentUser?.payment_status === "Pending",
-												"text-[#F00000] bg-[#FAB0B0]":
-													currentUser?.payment_status === "Canceled",
-											}
-										)}
-									>
-										{currentUser?.payment_status}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">
-										Transaction Reference
-									</p>
-									<p className="text-base font-semibold">
-										{currentUser?.trxRef}
-									</p>
-								</li>
-							</ul>
-							<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Booked on</p>
-									<p className="text-base font-semibold">
-										{format(currentUser.created_at, "PPPPpppp").split("GMT", 1)}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Booked By</p>
-									<p className="text-base font-semibold">
-										{currentUser?.booked_by}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Trip Status</p>
-									<p
-										className={cn(
-											"rounded-lg min-w-20 mx-auto py-1 text-xs px-2 text-center font-semibold",
-											{
-												"text-green-500 bg-green-100":
-													currentUser?.trip_status === "Completed",
-												"text-[#E78913] bg-[#F8DAB6]":
-													currentUser?.trip_status === "Upcoming",
-												"text-[#F00000] bg-[#FAB0B0]":
-													currentUser?.trip_status === "Canceled",
-												"text-black bg-slate-500/50 ":
-													currentUser?.trip_status === "Rescheduled",
-												"text-purple-900 bg-purple-300/30 ":
-													currentUser?.trip_status === "Missed",
-											}
-										)}
-									>
-										{currentUser?.trip_status}
-									</p>
-								</li>
-							</ul>
-						</div>
-					</div>
-
-					<div className="bg-white rounded-lg basis-4/12 p-5 flex flex-col gap-6">
-						<div>
-							<h3 className="text-blue-500 font-semibold  text-base md:text-xl ">
-								Abitto Ferry Terminal
-							</h3>
-							<p className="text-[#8E98A8] text-sm inline-flex items-center gap-1">
-								Non-refundable <InformationCircleIcon />
-							</p>
-							<p className="font-medium text-xs text-right">
-								Booking ID: #
-								<span className="uppercase">{currentUser?.ticket_id}</span>
-							</p>
-						</div>
-
-						<div>
-							<h4 className="font-semibold mb-1">Terminals</h4>
-							<p className="text-xs mb-1">
-								<span className="font-semibold text-sm text-gray-500">
-									From:
-								</span>{" "}
-								{currentUser?.travel_from}
-							</p>
-							<p className="text-xs mb-1">
-								<span className="font-semibold text-sm  text-gray-500">
-									To:
-								</span>{" "}
-								{currentUser?.travel_to}
-							</p>
-
-							<div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[#1E1E1E] text-xs font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
-								<p>
-									<Boat2Icon />
-									{currentUser?.trip_type}
-								</p>
-								<p>
-									<UsersIcon /> {currentUser?.total_passengers} passenger(s)
-								</p>
+								<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
+									<li>
+										<p className="text-xs text-[#7F7F7F] ">Booking Medium</p>
+										<p className="text-base font-semibold">
+											{currentUser?.medium}
+										</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">Payment Method</p>
+										<p className="text-base font-semibold">
+											{currentUser?.payment_method}
+										</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">Payment Status</p>
+										<p
+											className={cn(
+												"text-center font-semibold rounded-lg py-1 px-2 text-xs",
+												{
+													"text-green-500 bg-green-100":
+														currentUser?.payment_status === "Success",
+													"text-[#E78913] bg-[#F8DAB6]":
+														currentUser?.payment_status === "Pending",
+													"text-[#F00000] bg-[#FAB0B0]":
+														currentUser?.payment_status === "Canceled",
+												}
+											)}
+										>
+											{currentUser?.payment_status}
+										</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">
+											Transaction Reference
+										</p>
+										<p className="text-base font-semibold">
+											{currentUser?.trxRef}
+										</p>
+									</li>
+								</ul>
+								<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
+									<li>
+										<p className="text-xs text-[#7F7F7F]">Booked on</p>
+										<p className="text-base font-semibold">
+											{format(currentUser.created_at, "PPPPpppp").split("GMT", 1)}
+										</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">Booked By</p>
+										<p className="text-base font-semibold">
+											{currentUser?.booked_by}
+										</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">Trip Status</p>
+										<p
+											className={cn(
+												"rounded-lg min-w-20 mx-auto py-1 text-xs px-2 text-center font-semibold",
+												{
+													"text-green-500 bg-green-100":
+														currentUser?.trip_status === "Completed",
+													"text-[#E78913] bg-[#F8DAB6]":
+														currentUser?.trip_status === "Upcoming",
+													"text-[#F00000] bg-[#FAB0B0]":
+														currentUser?.trip_status === "Canceled",
+													"text-black bg-slate-500/50 ":
+														currentUser?.trip_status === "Rescheduled",
+													"text-purple-900 bg-purple-300/30 ":
+														currentUser?.trip_status === "Missed",
+												}
+											)}
+										>
+											{currentUser?.trip_status}
+										</p>
+									</li>
+								</ul>
 							</div>
 						</div>
-						<div className="flex flex-wrap gap-x-5 gap-y-3">
+						<div className="bg-white rounded-lg basis-4/12 p-5 flex flex-col gap-6">
 							<div>
-								<h5 className="font-semibold text-sm mb-1">
-									Departure Details
-								</h5>
-								<div className="flex flex-wrap gap-x-4 gap-y-1 text-[#1E1E1E] text-xs font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
+								<h3 className="text-blue-500 font-semibold  text-base md:text-xl ">
+									Abitto Ferry Terminal
+								</h3>
+								<p className="text-[#8E98A8] text-sm inline-flex items-center gap-1">
+									Non-refundable <InformationCircleIcon />
+								</p>
+								<p className="font-medium text-xs text-right">
+									Booking ID: #
+									<span className="uppercase">{currentUser?.ticket_id}</span>
+								</p>
+							</div>
+							<div>
+								<h4 className="font-semibold mb-1">Terminals</h4>
+								<p className="text-xs mb-1">
+									<span className="font-semibold text-sm text-gray-500">
+										From:
+									</span>{" "}
+									{currentUser?.travel_from}
+								</p>
+								<p className="text-xs mb-1">
+									<span className="font-semibold text-sm  text-gray-500">
+										To:
+									</span>{" "}
+									{currentUser?.travel_to}
+								</p>
+								<div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[#1E1E1E] text-xs font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
 									<p>
-										<CalendarIcon />
-										{format(currentUser?.departure_date, "PP")}
+										<Boat2Icon />
+										{currentUser?.trip_type}
 									</p>
 									<p>
-										<ClockIcon />
-										{currentUser?.departure_time}
+										<UsersIcon /> {currentUser?.total_passengers} passenger(s)
 									</p>
-									{/* <p>
-										<ChairIcon />
-										{currentUser?.departure_seats.length
-											? humanize(currentUser?.departure_seats)
-											: "N/A"}
-									</p> */}
 								</div>
 							</div>
-							{currentUser?.trip_type === "Round Trip" && (
+							<div className="flex flex-wrap gap-x-5 gap-y-3">
 								<div>
-									<h5 className="font-semibold text-sm mb-1">Return Details</h5>
+									<h5 className="font-semibold text-sm mb-1">
+										Departure Details
+									</h5>
 									<div className="flex flex-wrap gap-x-4 gap-y-1 text-[#1E1E1E] text-xs font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
 										<p>
 											<CalendarIcon />
-											{format(new Date(currentUser?.return_date), "PP")}
+											{format(currentUser?.departure_date, "PP")}
 										</p>
 										<p>
 											<ClockIcon />
-											{currentUser?.return_time}
-										</p>
-										<p>
-											<ChairIcon />
-											{currentUser?.return_seats.length
-												? humanize(currentUser?.return_seats)
-												: "N/A"}
+											{currentUser?.departure_time}
 										</p>
 									</div>
 								</div>
-							)}
-						</div>
-						<div className="border-y-2 border-dashed py-2">
-							<table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] ">
-								<tbody>
-									{/* <tr>
-										<td className="text-xs text-[#444444]">Ride Insurance</td>
-										<td className="text-xs text-[#444444]">₦0</td>
-									</tr> */}
-									<tr>
-										<td className="text-xs text-[#444444]">Ticket Price</td>
-										<td className="text-xs text-[#444444]">
-											<span className="block text-sm">
+							</div>
+							<div className="border-y-2 border-dashed py-2">
+								<table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] ">
+									<tbody>
+										<tr>
+											<td className="text-xs text-[#444444]">Ticket Price</td>
+											<td className="text-xs text-[#444444]">
+												<span className="block text-sm">
+													{formatValue({
+														value: String(currentUser.departure_ticket_cost ?? 0),
+														prefix: "₦",
+													})}
+													{" "}
+													x {currentUser.total_passengers}
+												</span>
+											</td>
+										</tr>
+										<tr>
+											<td className="font-medium text-base">Total</td>
+											<td className="font-medium text-base">
+												₦
 												{formatValue({
-													value: String(currentUser.departure_ticket_cost ?? 0),
-													prefix: "₦",
+													value: String(currentUser?.total_ticket_cost),
 												})}
-												{currentUser.trip_type === "Round Trip" && (
-													<>
-														{" + "}
-														{formatValue({
-															value: String(
-																currentUser.return_ticket_cost ?? 0
-															),
-															prefix: "₦",
-														})}
-													</>
-												)}{" "}
-												x {currentUser.total_passengers}
-											</span>
-										</td>
-									</tr>
-									<tr>
-										<td className="font-medium text-base">Total</td>
-										<td className="font-medium text-base">
-											₦
-											{formatValue({
-												value: String(currentUser?.total_ticket_cost),
-											})}
-										</td>
-									</tr>
-								</tbody>
-							</table>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<button
+								type="button"
+								className=" bg-blue-500 w-full py-3 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white flex justify-center gap-2 mx-auto rounded-lg "
+								onClick={handlePrint}
+							>
+								<PrinterIcon />
+								Print
+							</button>
 						</div>
-						<button
-							className=" bg-blue-500 w-full py-3 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white flex justify-center gap-2 mx-auto rounded-lg "
-							onClick={() => {
-								navigate(`/ticket-invoice/${currentUser.ticket_id}`);
-							}}
-						>
-							<PrinterIcon />
-							Print
-						</button>
 					</div>
-				</div>
+					<TicketInvoice props={{ currentUser }} ref={componentRef} />
+				</>
 			) : (
 				<p className="ml-10">No Result</p>
 			)}
@@ -907,15 +798,15 @@ const CustomerDetailsModal = ({ props: { currentUser } }) => {
 	const { unMountPortalModal } = React.useContext(GlobalCTX);
 
 	return (
-		<div className="bg-white rounded-lg p-10 pt-5 flex flex-col">
-			<ButtonUI
+		<div className="bg-white rounded-lg p-10 relative">
+			<Button
 				variant="ghost"
 				size="icon"
-				className="ml-auto"
+				className="absolute top-0 right-0"
 				onClick={unMountPortalModal}
 			>
 				<CancelSquareIcon />
-			</ButtonUI>
+			</Button>
 			<div className="space-y-2">
 				<div id="Passenger01">
 					<h4 className="font-semibold text-sm">Passenger 01</h4>
@@ -980,3 +871,34 @@ const CustomerDetailsModal = ({ props: { currentUser } }) => {
 		</div>
 	);
 };
+
+export const CustomerDetailsLoader = async ({ params }) => {
+	const ticket_id = params.bookingID;
+	const cacheKey = `tk-${ticket_id}`
+	const cachedData = JSON.parse(sessionStorage.getItem(cacheKey));
+	const cacheTime = 5 * 60 * 1000; // 5 mins
+	const currentTimeStamp = Date.now();
+
+	// check if trip is cached and has not exceeded cacheTime limit
+	if (cachedData && (currentTimeStamp - cachedData.timestamp) < cacheTime) return cachedData.data;
+
+	try {
+		// check and remove existing trip cache
+		Object.keys(sessionStorage).map((cache) => {
+			if (cache.startsWith("tk-"))
+				sessionStorage.removeItem(cache)
+		})
+		const response = await axiosInstance.post("/booking/querynew", {
+			ticket_id,
+		});
+
+		const data = response.data.booking
+		if (!data) throw new Error("Passenger not found!");
+
+		sessionStorage.setItem(cacheKey, JSON.stringify({ data, timestamp: currentTimeStamp }))
+		return data;
+	} catch (error) {
+		customError(error, "Error occurred while retrieving ticket invoice.");
+		return {};
+	}
+}

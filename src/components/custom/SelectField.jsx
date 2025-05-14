@@ -11,17 +11,17 @@ const SelectField = React.forwardRef((props, ref) => {
 		name,
 		errors,
 		onChange,
-		defaultValue,
+		defaultValue = "",
 		className,
-		handlechange = () => {},
+		handlechange = () => { },
 		formState = true,
 	} = props;
-	const [value, setValue] = React.useState(defaultValue ?? "");
+	const [value, setValue] = React.useState(defaultValue);
 	const [open, setOpen] = React.useState(false);
 
 	React.useEffect(() => {
-		if (!formState) setValue("");
-	}, [formState]);
+		if (!formState && !defaultValue) setValue("");
+	}, [formState, defaultValue]);
 
 	React.useEffect(() => {
 		window.addEventListener("scroll", handleClose);
@@ -38,7 +38,7 @@ const SelectField = React.forwardRef((props, ref) => {
 
 	return (
 		<div className="flex flex-col w-full">
-			<label className="text-xs md:text-sm w-full flex gap-2 md:gap-3 flex-col ">
+			<label htmlFor={name} className="text-xs md:text-sm w-full flex gap-2 md:gap-3 flex-col ">
 				{label}
 				<Select
 					open={open}
@@ -57,19 +57,19 @@ const SelectField = React.forwardRef((props, ref) => {
 						value !== ""
 							? undefined
 							: () => (
-									<span className="noTranslate text-xs font-poppins text-[#9fa6b2]">
-										{placeholder}
-									</span>
-							  )
+								<span className="noTranslate text-xs font-poppins text-[#9fa6b2]">
+									{placeholder}
+								</span>
+							)
 					}
 					sx={{
 						"& .MuiOutlinedInput-notchedOutline": { display: "none" },
 					}}
 					className={`bg-blue-50 h-10 md:h-12 border border-blue-500 font-normal text-xs w-full !rounded-lg !font-poppins ${className} `}
 				>
-					{options.map((option, index) => {
+					{options.map((option) => {
 						return (
-							<MenuItem value={option} key={index} className="!font-poppins">
+							<MenuItem value={option} key={option} className="!font-poppins">
 								{option}
 							</MenuItem>
 						);

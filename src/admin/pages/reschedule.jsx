@@ -9,8 +9,7 @@ import * as yup from "yup";
 import { format } from "date-fns";
 import { CalendarIcon, ClockIcon, CircleArrowLeftIcon, Boat2Icon, UsersIcon, InformationCircleIcon } from "@/assets/icons";
 import { BookingCTX } from "@/contexts/BookingContext";
-import Button from "@/components/custom/Button";
-import { Button as ButtonIcon } from "@/components/ui/button";
+import CustomButton from "@/components/custom/Button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { formatValue } from "react-currency-input-field";
 import { toast } from "sonner";
@@ -18,9 +17,9 @@ import { useSearchTrip } from "@/hooks/useSearchTrip";
 import { capitalize } from "lodash"
 import InputField from "@/components/custom/InputField";
 import SelectField from "@/components/custom/SelectField";
-// import { usePayment } from "@/hooks/usePayment";
 import { useStepper } from "@/hooks/useStepper";
 import { useUpdate } from "@/hooks/useUpdate";
+import { Button } from "@/components/ui/button";
 
 const ctx = React.createContext();
 
@@ -36,18 +35,18 @@ const Reschedule = () => {
 				<title>Reschedule Booking | Admin</title>
 			</Helmet>
 			<div>
-				<div className="flex gap-1 items-center mb-10 ">
-					<ButtonIcon size="icon" variant="ghost" onClick={() => navigate(-1)}>
+				<div className="flex gap-1 items-center mb-10">
+					<Button size="icon" variant="ghost" onClick={() => navigate(-1)}>
 						<CircleArrowLeftIcon />
-					</ButtonIcon>
-					<h1 className="font-semibold text-lg">Reschedule Booking</h1>
+					</Button>
+					<h1 className="text-base font-semibold">Reschedule</h1>
 				</div>
 				{
-					currentUser ?
+					Object.keys(currentUser).length ?
 						<>
-							{activeStep == 0 || activeStep == 1 ?
+							{activeStep === 0 || activeStep === 1 ?
 								<RescheduleForm />
-								: activeStep == 2
+								: activeStep === 2
 									? <Payment /> : ""}
 						</>
 						: <p className="ml-10">No Result</p>
@@ -63,7 +62,8 @@ const RescheduleForm = () => {
 	const { currentUser } = React.useContext(ctx);
 	const { searchAvailableTrips } = useSearchTrip();
 	const { activeStep } = useStepper();
-	const { setActiveStep } = React.useContext(BookingCTX);
+	const { setActiveStep, setAvailableTrips } = React.useContext(BookingCTX);
+	const [loading, setLoading] = React.useState(false);
 
 	const rescheduleSchema = yup.object().shape({
 		date: yup.string().required("New date is required."),
@@ -77,31 +77,34 @@ const RescheduleForm = () => {
 		resolver: yupResolver(rescheduleSchema),
 	});
 
-	const onSubmit = handleSubmit((formData) => {
+	const onSubmit = handleSubmit(async (formData) => {
 		const reqData = {
 			departure: currentUser.travel_from,
 			arrival: currentUser.travel_to,
 			date: format(formData.date, "PP")
 		}
-		setActiveStep(0)
-		searchAvailableTrips(reqData);
+		setLoading(true)
+		const response = await searchAvailableTrips(reqData);
+		setLoading(false);
+		if (response) {
+			setAvailableTrips(response);
+			setActiveStep(1);
+		}
 	});
 
 	return (
-		<section className="px-20">
-			<div className="bg-blue-700 mx-auto mb-5 min-h-20 p-5 md:p-2 flex items-center ">
-				<ul className="w-full [&_h4]:uppercase [&_h4]:text-gray-400 [&_h4]:text-xs [&_p]:text-white [&_p]:text-sm flex flex-wrap *:grow px-2 items-center gap-5 md:justify-around md:divide-x-2 h-full md:[&_li:not(:first-of-type)]:pl-5 *:space-y-1">
+		<section className="px-5 pb-5">
+			<div className="bg-stone-800/90 mx-auto mb-5 min-h-24 py-5 px-4 flex items-center rounded-lg ">
+				<ul className="w-full [&_h4]:uppercase [&_h4]:font-semibold [&_h4]:text-blue-600 [&_h4]:text-xs [&_p]:text-white [&_p]:text-sm flex flex-wrap *:grow px-2 items-center gap-5 md:justify-around md:divide-x-2 h-full md:[&_li:not(:first-of-type)]:pl-5 *:space-y-1">
 					<li>
 						<h4>Customer name</h4>
-						<p className="capitalize">{capitalize(`${currentUser?.passenger1_first_name} ${currentUser?.last_name}`)}</p>
+						<p className="capitalize">{capitalize(`${currentUser?.passenger1_first_name} ${currentUser?.passenger1_last_name}`)}</p>
 					</li>
 					<li>
 						<h4>Route</h4>
 						<p>
-							{currentUser?.travel_from.includes("Calabar") ? "Calabar" : "Uyo"}{" "}
-							==
-							{">"}{" "}
-							{currentUser?.travel_to.includes("Calabar") ? "Calabar" : "Uyo"}
+							{currentUser?.travel_from.includes("Calabar") ? "Calabar ==> Uyo"
+								: "Uyo ==> Calabar"}
 						</p>
 					</li>
 					<li>
@@ -111,22 +114,9 @@ const RescheduleForm = () => {
 							{currentUser?.departure_time}
 						</p>
 					</li>
-					{currentUser?.trip_type === "Round Trip" && (
-						<li>
-							<h4> Return Date & Time</h4>
-							<p>
-								{format(new Date(currentUser?.return_date), "PP")} -{" "}
-								{currentUser?.return_time}
-							</p>
-						</li>
-					)}
 					<li>
-						<h4>Adult</h4>
+						<h4>Passengers</h4>
 						<p>{currentUser?.adults_number}</p>
-					</li>
-					<li>
-						<h4>Children</h4>
-						<p>{currentUser?.children_number ?? 0}</p>
 					</li>
 				</ul>
 			</div>
@@ -134,7 +124,7 @@ const RescheduleForm = () => {
 			<div>
 				<form onSubmit={onSubmit} className="grid grid-cols-3 gap-5 mt-10">
 					<div className="flex flex-col w-full col-span-2">
-						<label className="text-xs md:text-sm !w-full flex flex-col">
+						<label htmlFor="date" className="text-xs md:text-sm !w-full flex flex-col">
 							Select new date
 							<Controller
 								control={control}
@@ -170,13 +160,13 @@ const RescheduleForm = () => {
 							<p className="text-xs pt-2 text-red-700">{errors?.date.message}</p>
 						)}
 					</div>
-					<Button
-						text="Search Trip"
+					<CustomButton
 						className="w-full mt-8 mb-auto"
 						type="submit"
-					/>
+						loading={loading}
+					>Search Trip</CustomButton>
 				</form>
-				{activeStep == 1 && <RescheduleSelection />}
+				{activeStep === 1 && <RescheduleSelection />}
 			</div>
 		</section>
 	);
@@ -189,18 +179,14 @@ const RescheduleSelection = () => {
 	const { onNextClick } = useStepper();
 
 	React.useEffect(() => {
-		if (Object.keys(selectedTrip.departure))
-			setIsDisabled(true)
-		else
-			setIsDisabled(false)
+		if (Object.keys(selectedTrip).length)
+			return setIsDisabled(true)
+		return setIsDisabled(false)
 	}, [selectedTrip])
 
-	const handleCheck = (name, state, tripDetails, seatExceeded) => {
+	const handleCheck = (state, tripDetails, seatExceeded) => {
 		if (!seatExceeded)
-			setSelectedTrip((prev) => ({
-				...prev,
-				[name]: state ? tripDetails : {},
-			}));
+			setSelectedTrip(state ? tripDetails : {});
 		else
 			toast.error(
 				"There are no available seats for the number of passengers you have selected."
@@ -208,7 +194,7 @@ const RescheduleSelection = () => {
 	}
 
 	const handleReschedule = () => {
-		const { date, time, trip_code, ticket_cost } = selectedTrip.departure;
+		const { date, time, trip_code, ticket_cost } = selectedTrip;
 		// create new booking record with this
 		const newFormData = {
 			...currentUser,
@@ -230,16 +216,15 @@ const RescheduleSelection = () => {
 
 			{/* Departure Time */}
 			<div className="space-y-3">
-				{availableTrips?.departure_trip.length ? (
-					availableTrips.departure_trip.map((item) => {
+				{availableTrips.length ? (
+					availableTrips.map((item) => {
 						const available_seats = Number(item.trip_capacity) - Number(item.current_booked_seats);
 						const isAvailableSeatsExceeded =
 							currentUser.total_passengers > available_seats
 						const isActive =
-							selectedTrip?.departure?.trip_code === item.trip_code;
+							selectedTrip?.trip_code === item.trip_code;
 						return (
 							<div
-								role="button"
 								tabIndex={isAvailableSeatsExceeded ? "-1" : "0"}
 								key={item.trip_code}
 								data-state={
@@ -252,7 +237,6 @@ const RescheduleSelection = () => {
 								aria-disabled={isAvailableSeatsExceeded}
 								onClick={() => {
 									handleCheck(
-										"departure",
 										!isActive,
 										item,
 										isAvailableSeatsExceeded
@@ -262,7 +246,6 @@ const RescheduleSelection = () => {
 									event.preventDefault();
 									if (event.key === "Enter" || event.key === " ") {
 										handleCheck(
-											"departure",
 											!isActive,
 											item,
 											isAvailableSeatsExceeded
@@ -324,13 +307,11 @@ const RescheduleSelection = () => {
 					</div>
 				)}
 			</div>
-			{/* FIXME: add a fix width to this rather than col */}
-			<Button
-				text="Reschedule"
+			<CustomButton
 				className="w-full"
 				onClick={handleReschedule}
-				disabled={!isDisabled ? true : false}
-			/>
+				disabled={!isDisabled}
+			>Reschedule</CustomButton>
 		</div>
 	)
 }
@@ -343,7 +324,6 @@ const Payment = () => {
 	const total_ticket_cost = Number(bookingData.departure_ticket_cost) * Number(bookingData.total_passengers);
 	const ticket_balance = (Number(total_ticket_cost) * 50) / 100;
 	const paymentSchema = yup.object().shape({
-		payment_status: yup.string().required("This field is required."),
 		payment_method: yup.string().required("This field is required."),
 		transaction_ref: yup
 			.string()
@@ -392,7 +372,7 @@ const Payment = () => {
 						</li>
 						<li>
 							<p>Surname</p>
-							<p>{bookingData.last_name}</p>
+							<p>{bookingData.passenger1_last_name}</p>
 						</li>
 						<li>
 							<p>Phone Number</p>
@@ -455,20 +435,12 @@ const Payment = () => {
 				) : (
 					""
 				)}
-				<div className="mt-20 py-8 h-36  grid grid-cols-2 gap-5">
+				<div className="mt-20 py-8 h-fit grid grid-cols-3 gap-5">
 					<SelectField
 						{...register("payment_method")}
 						label="Payment Method"
 						placeholder="Select payment method"
 						options={["POS", "Bank Transfer", "Cash"]}
-						errors={errors}
-						className="bg-white"
-					/>
-					<SelectField
-						{...register("payment_status")}
-						label="Payment Status"
-						placeholder="Select payment status"
-						options={["Success", "Canceled", "Pending"]}
 						errors={errors}
 						className="bg-white"
 					/>
@@ -499,19 +471,17 @@ const Payment = () => {
 					</div>
 				</div>
 
-				<div className="flex gap-5 mt-36">
-					<Button
+				<div className="flex gap-5">
+					<CustomButton
 						onClick={onPrevClick}
 						variant="outline"
-						text="Back"
 						className="w-40"
-					/>
-					<Button
-						text="Submit"
+					>Back</CustomButton>
+					<CustomButton
 						type="submit"
 						loading={loading}
 						className="w-40"
-					/>
+					>Submit</CustomButton>
 				</div>
 			</form>
 			<div className=" self-start basis-4/12  bg-white rounded-lg p-5 flex flex-col gap-6">
@@ -562,86 +532,60 @@ const Payment = () => {
 							</p>
 						</div>
 					</div>
-					{bookingData.trip_type === "Round Trip" && (
-						<div>
-							<h5 className="font-semibold text-sm mb-1">Return Details</h5>
-							<div className="flex flex-wrap gap-x-4 gap-y-1 text-[#1E1E1E] text-xs font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
-								<p>
-									<CalendarIcon />
-									{format(new Date(bookingData?.return_date), "PP")}
-								</p>
-								<p>
-									<ClockIcon />
-									{bookingData?.return_time}
-								</p>
-							</div>
-						</div>
-					)}
 				</div>
 
-				<div className="border-y-2 border-dashed py-2">
-					<table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] ">
-						<tbody>
-							<tr>
-								<td className="text-xs md:text-sm text-[#444444]">
-									Old ticket
-								</td>
-								<td className="text-xs md:text-sm text-[#444444]">
-									{formatValue({
-										value: String(currentUser.departure_ticket_cost),
-										prefix: "₦",
-									})}
-									{" "}	x {currentUser.total_passengers}
-								</td>
-							</tr>
-							<tr>
-								<td className="text-xs md:text-sm text-[#444444]">
-									Total
-								</td>
-								<td className="text-xs md:text-sm text-[#444444]">
-									{formatValue({
-										value: String(currentUser.total_ticket_cost),
-										prefix: "₦",
-									})}
-								</td>
-							</tr>
-							<tr className="border-t">
-								<td className="text-xs md:text-sm text-[#444444]">
-									New ticket
-								</td>
-								<td className="text-xs md:text-sm text-[#444444]">
-									{formatValue({
-										value: String(
-											bookingData.departure_ticket_cost ?? 0
-										),
-										prefix: "₦",
-									})}
-									{" "}	x {bookingData.total_passengers}
-								</td>
-							</tr>
-							<tr>
-								<td className="text-xs md:text-sm text-[#444444]">
-									Total
-								</td>
-								<td className="font-medium text-[#444444]">
-									₦
-									{formatValue({
-										value: String(total_ticket_cost),
-									})} {" "}<span className="font-normal text-sm"> / 50%</span>
-								</td>
-							</tr>
-
-							<tr>
-								<td className="font-medium text-base md:text-lg">Balance</td>
-								<td className="font-semibold">
-									{formatValue({
-										value: String(ticket_balance),
-										prefix: "₦",
-									})}
-								</td>
-							</tr>
-						</tbody>
-					</table>
+				<div className="border-y-2 *:flex *:w-full *:justify-between *:gap-10 *:items-end *:py-3 divide-y-2 divide-dashed">
+					<div>
+						<h3 className="text-xs md:text-sm text-[#444444]">
+							Previous cost
+						</h3>
+						<div className="text-right">
+							<p className="text-xs md:text-sm text-[#444444]">
+								{formatValue({
+									value: String(currentUser.departure_ticket_cost),
+									prefix: "₦",
+								})}
+								{" "}	x {currentUser.total_passengers}
+							</p>
+							<p className="text-xs md:text-sm  font-medium text-[#444444]">
+								{formatValue({
+									value: String(currentUser.total_ticket_cost),
+									prefix: "₦",
+								})}
+							</p>
+						</div>
+					</div>
+					<div>
+						<h3 className="text-xs md:text-sm text-[#444444]">
+							Current cost
+						</h3>
+						<div className="text-right">
+							<p className="text-xs md:text-sm text-[#444444]">
+								{formatValue({
+									value: String(
+										bookingData.departure_ticket_cost ?? 0
+									),
+									prefix: "₦",
+								})}
+								{" "}	x {bookingData.total_passengers}
+							</p>
+							<p className="font-medium text-[#444444]">
+								₦
+								{formatValue({
+									value: String(total_ticket_cost),
+								})} {" "}<span className="font-normal text-sm"> / 50%</span>
+							</p>
+						</div>
+					</div>
+					<div className="">
+						<h3 className="font-medium text-base md:text-lg">Balance</h3>
+						<p className="font-semibold text-right">
+							{formatValue({
+								value: String(ticket_balance),
+								prefix: "₦",
+							})}
+						</p>
+					</div>
 				</div>
 			</div>
 		</div>

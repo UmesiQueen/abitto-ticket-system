@@ -14,14 +14,14 @@ import {
 	ClockIcon,
 	CircleArrowLeftIcon,
 } from "@/assets/icons";
-import Button from "@/components/custom/Button";
-import { RentalSelection } from "@/main/pages/rental";
-import { RentalForm } from "@/main/pages/rental";
+import CustomButton from "@/components/custom/Button";
+import { RentalSelection } from "@/app/pages/rental";
+import { RentalForm } from "@/app/pages/rental";
 import { useStepper } from "@/hooks/useStepper";
 import { usePayment } from "@/hooks/usePayment";
 import SelectField from "@/components/custom/SelectField";
 import InputField from "@/components/custom/InputField";
-import { Button as ButtonIcon } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 const RentalAdmin = () => {
 	const { activeStep } = useStepper();
@@ -34,26 +34,25 @@ const RentalAdmin = () => {
 				<title>Rental | Admin</title>
 			</Helmet>
 			<div className="bg-white min-h-[calc(100vh-150px)] p-10">
-				{activeStep == 0 ? (
+				{activeStep === 0 ? (
 					<div className="flex items-start">
-						<ButtonIcon
+						<Button
 							size="icon"
 							variant="ghost"
 							onClick={() => navigate(-1)}
 						>
 							<CircleArrowLeftIcon />
-						</ButtonIcon>
+						</Button>
 						<div className="w-full">
 							<RentalSelection rentalCosts={rentalCosts} />
 						</div>
 					</div>
-				) : activeStep == 1 ? (
+				) : activeStep === 1 ? (
 					<RentalForm />
-				) : activeStep == 2 ? (
+				) : activeStep === 2 ? (
 					<RentalSummary />
-				) : (
-					""
-				)}
+				) : null
+				}
 			</div>
 		</>
 	);
@@ -67,7 +66,6 @@ const RentalSummary = () => {
 	const { offlineRentalPayment } = usePayment();
 
 	const paymentSchema = yup.object().shape({
-		payment_status: yup.string().required("This field is required."),
 		payment_method: yup.string().required("This field is required."),
 		transaction_ref: yup
 			.string()
@@ -105,15 +103,14 @@ const RentalSummary = () => {
 				</h3>
 
 				<div className="space-y-1 text-sm -mt-2">
-					<h4 className="font-semibold mb-1">Rentage Route</h4>
 					<p>
-						<span className="font-semibold text-sm md:text-base text-gray-500">
+						<span className="font-semibold text-gray-500">
 							From:
 						</span>{" "}
 						{rentalData?.departure}
 					</p>
 					<p>
-						<span className="font-semibold text-sm md:text-base text-gray-500">
+						<span className="font-semibold  text-gray-500">
 							Arrival:
 						</span>{" "}
 						{rentalData?.arrival}
@@ -154,13 +151,9 @@ const RentalSummary = () => {
 				<div className="border-y-2 border-dashed py-2 mt-5 md:mt-0">
 					<table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] ">
 						<tbody>
-							{/* <tr>
-                <td className="text-xs text-[#444444]">Ride Insurance</td>
-                <td className="text-xs text-[#444444]">₦0</td>
-              </tr> */}
 							<tr>
-								<td className="text-xs text-[#444444]">Rental Price</td>
-								<td className="text-xs text-[#444444]">
+								<td className="text-sm text-[#444444]">Rental Cost/hr</td>
+								<td className="text-sm text-[#444444]">
 									{formatValue({
 										value: String(rentalData.rental_cost),
 										prefix: "₦",
@@ -227,20 +220,12 @@ const RentalSummary = () => {
 
 				{/* form */}
 				<form onSubmit={onSubmit}>
-					<div className="mt-20 py-8 h-36 grid grid-cols-3 gap-5">
+					<div className="mt-20 py-8 h-36 grid grid-cols-2 gap-5">
 						<SelectField
 							{...register("payment_method")}
 							label="Payment Method"
 							placeholder="Select payment method"
 							options={["POS", "Bank Transfer", "Cash"]}
-							errors={errors}
-							className="bg-white"
-						/>
-						<SelectField
-							{...register("payment_status")}
-							label="Payment Status"
-							placeholder="Select payment status"
-							options={["Success", "Canceled", "Pending"]}
 							errors={errors}
 							className="bg-white"
 						/>
@@ -257,13 +242,14 @@ const RentalSummary = () => {
 					</div>
 
 					<div className="flex flex-col-reverse md:flex-row gap-5 mt-10">
-						<Button
-							text="Back"
+						<CustomButton
 							variant="outline"
 							className="w-full md:w-40"
 							onClick={onPrevClick}
-						/>
-						<Button type="submit" text="Submit" className=" w-full md:w-48" />
+						>
+							Back
+						</CustomButton>
+						<CustomButton type="submit" className=" w-full md:w-48">Submit</CustomButton>
 					</div>
 				</form>
 			</div>

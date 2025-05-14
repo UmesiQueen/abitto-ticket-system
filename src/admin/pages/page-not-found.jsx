@@ -31,6 +31,7 @@ const PageNotFoundAdmin = () => {
 					Page Not Found.
 				</h1>
 				<button
+					type="button"
 					onClick={() => navigate(navigateTo(adminProfile.account_type))}
 					className=" bg-green-500 py-3 px-6 font-semibold text-sm  hover:bg-green-700 transition-all duration-100  ease-in-out hover:scale-[1.1] text-white mt-5"
 				>

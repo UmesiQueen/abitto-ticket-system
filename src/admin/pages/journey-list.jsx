@@ -1,7 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import { useNavigate, useParams } from "react-router-dom";
-import { addDays, format } from "date-fns";
+import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
 import {
 	flexRender,
 	getCoreRowModel,
@@ -11,11 +11,7 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 import ReactPaginate from "react-paginate";
-import { cn } from "@/lib/utils";
-import { useForm, Controller } from "react-hook-form";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import DatePicker from "react-datepicker";
+import { cn, customError } from "@/lib/utils";
 import { PaginationEllipsis } from "@/components/ui/pagination";
 import {
 	Table,
@@ -25,15 +21,12 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { Button as ButtonUI } from "@/components/ui/button";
-import Button from "@/components/custom/Button";
-import { CaretIcon, CalendarIcon } from "@/assets/icons";
-import SelectField from "@/components/custom/SelectField";
+import { Button } from "@/components/ui/button";
+import CustomButton from "@/components/custom/Button";
+import { CaretIcon } from "@/assets/icons";
 import { BookingCTX } from "@/contexts/BookingContext";
-import { Refresh } from "iconsax-react";
 import axiosInstance from "@/api";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import { toast } from "sonner";
 import {
 	Select,
 	SelectContent,
@@ -42,6 +35,10 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { useQuery } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
+import SearchForm from "@/components/SearchForm";
+import { useSearchParam } from "@/hooks/useSearchParam";
 
 const JourneyList = () => {
 	return (
@@ -50,7 +47,15 @@ const JourneyList = () => {
 				<title>Journey List | Admin</title>
 			</Helmet>
 			<h1 className=" text-lg font-semibold mb-10">Journey List</h1>
-			<SearchForm />
+			<SearchForm
+				props={{
+					page: "journeyList",
+					name: "departure",
+					label: "Departure",
+					placeholder: "Select Departure Terminal",
+					options: ["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]
+				}}
+			/>
 			<JourneyTable />
 		</>
 	);
@@ -58,189 +63,66 @@ const JourneyList = () => {
 
 export default JourneyList;
 
-const searchSchema = yup
-	.object()
-	.shape({
-		departure: yup
-			.string()
-			.when("arrival", ([arrival], schema) =>
-				arrival
-					? schema.notOneOf(
-						[yup.ref("arrival")],
-						"Departure and arrival cannot be the same."
-					)
-					: schema
-			),
-		date: yup.string(),
-	})
-	.test("require at least one field", function ({ departure, date }) {
-		const a = !!(departure || date); // At least one must be non-empty
-
-		if (!a) {
-			return new yup.ValidationError(
-				"At least one of the two fields must be filled.", //Message
-				"null",
-				"departure", //error name
-				"required" //type
-			);
-		}
-		return true;
-	});
-
-export const SearchForm = () => {
-	const { loading, setLoading, setSearchParams, searchParams } =
-		React.useContext(BookingCTX);
-	const { accountType } = useParams();
-
-	const {
-		register,
-		handleSubmit,
-		formState: { errors, isSubmitted },
-		control,
-		reset,
-	} = useForm({
-		mode: "onChange",
-		resolver: yupResolver(searchSchema),
-	});
-
-	React.useEffect(() => {
-		if (!Object.keys(searchParams).length) {
-			reset({});
-		}
-	}, [searchParams, reset]);
-
-	const onSubmit = handleSubmit((formData) => {
-		setLoading(true);
-		setTimeout(() => {
-			setSearchParams({
-				...formData,
-				...(formData?.date && {
-					date: new Date(addDays(formData.date, 1)).toISOString().split("T")[0],
-				}),
-			});
-			setLoading(false);
-		}, 650);
-	});
-
-	return (
-		<form
-			onSubmit={onSubmit}
-			className="flex gap-5 justify-between bg-white rounded-lg p-6"
-		>
-			<div className="flex gap-5 w-full ">
-				{["super-admin", "dev"].includes(accountType) && (
-					<>
-						<SelectField
-							{...register("departure")}
-							label="Departure"
-							placeholder="Select Departure Terminal"
-							options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
-							errors={errors}
-							formState={isSubmitted}
-						/>
-					</>
-				)}
-				<div className="flex flex-col w-full">
-					<label className="text-xs md:text-sm !w-full flex flex-col ">
-						Choose Date
-						<Controller
-							control={control}
-							name="date"
-							render={({ field }) => (
-								<DatePicker
-									icon={<CalendarIcon />}
-									showIcon
-									toggleCalendarOnIconClick={true}
-									closeOnScroll
-									className="bg-blue-50 h-10 md:h-12 border border-blue-500 font-normal text-base w-full !px-4 !rounded-lg font-poppins mt-2 md:mt-3 text-left"
-									onChange={(date) => field.onChange(date)}
-									selected={field.value}
-									customInput={
-										<button type="button">
-											{field?.value ? (
-												format(field?.value, "P")
-											) : (
-												<span className="text-xs text-[#9fa6b2]">
-													dd/mm/yyyy
-												</span>
-											)}
-										</button>
-									}
-								/>
-							)}
-						/>
-					</label>
-					{errors?.date && (
-						<p className="text-xs pt-2 text-red-700">{errors?.date.message}</p>
-					)}
-				</div>
-			</div>
-			<Button
-				text="Search"
-				type="submit"
-				loading={loading}
-				className="w-44 py-6  md:mt-7 "
-			/>
-		</form>
-	);
-};
-
 const JourneyTable = () => {
 	const navigate = useNavigate();
-	// const journeyList = useLoaderData();
-	const { setLoading, adminProfile } = React.useContext(GlobalCTX);
-	const { searchParams, setSearchParams, setCurrentPageIndex } =
-		React.useContext(BookingCTX);
-	const [columnFilters, setColumnFilters] = React.useState([]);
+	const { adminProfile } = React.useContext(GlobalCTX);
+	const { currentPageIndex, setCurrentPageIndex, resetPageIndex } = React.useContext(BookingCTX);
 	const [pageCount, setPageCount] = React.useState(0);
 	const [pagination, setPagination] = React.useState({
 		pageIndex: 0,
 		pageSize: 7,
 	});
+	const [sorting, setSorting] = React.useState([{
+		id: "dateTime",
+		desc: true, // sort by name in descending order by default
+	}])
 	const [journeyList, setJourneyList] = React.useState([]);
+	const { searchParams, setSearchParams, getSearchParams, updateSearchParam, removeSearchParam } = useSearchParam();
+	const searchParamValues = getSearchParams();
+	const defaultColumnFilters =
+		Object.entries(searchParamValues).map(([key, value]) => ({ id: key, value }))
+	const [columnFilters, setColumnFilters] = React.useState(defaultColumnFilters);
+
+	const { data, isSuccess, isLoading } = useQuery({
+		queryKey: ["journeyList"],
+		queryFn: async () => {
+			try {
+				const response = await axiosInstance.get("/ticket/get");
+				const terminals = adminProfile.terminal.map((location) =>
+					location.split(",")[1].trim().toLowerCase()
+				);
+				// Filter records based on the terminal
+				const sortedJourneyList = response.data.tickets.filter((list) => {
+					const city = list.departure.split(",")[1].trim().toLowerCase();
+					return terminals.includes(city);
+				});
+				return sortedJourneyList;
+			}
+			catch (error) {
+				customError(error, "Error occurred while fetching journey list. \n Refresh page.")
+				return []
+			}
+		}
+	})
 
 	React.useEffect(() => {
-		setLoading(true),
-			axiosInstance
-				.get("/ticket/get")
-				.then((res) => {
-					if (res.status == 200) {
-						const terminals = adminProfile.terminal.map((location) =>
-							location.split(",")[1].trim().toLowerCase()
-						);
-						// Filter records based on the terminal
-						const sortedJourneyList = res.data.tickets.filter((list) => {
-							const city = list.departure.split(",")[1].trim().toLowerCase();
-							return terminals.includes(city);
-						});
-						setJourneyList(sortedJourneyList);
-					}
-				})
-				.catch((error) => {
-					if (
-						!error.code === "ERR_NETWORK" ||
-						!error.code === "ERR_INTERNET_DISCONNECTED" ||
-						!error.code === "ECONNABORTED"
-					)
-						toast.error(
-							"Error occurred while fetching journey list. Refresh page."
-						);
-				})
-				.finally(() => setLoading(false));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+		if (isSuccess) setJourneyList(data);
+	}, [data, isSuccess])
 
 	React.useEffect(() => {
-		if (searchParams) {
-			table.getColumn("departure").setFilterValue(searchParams?.departure);
-			table
-				.getColumn("date")
-				.setFilterValue(searchParams?.date && format(searchParams?.date, "PP"));
+		const departure = searchParams.get("departure")
+		if (departure)
+			table.getColumn("departure").setFilterValue(departure);
+
+		const date = searchParams.get("date");
+		if (date) {
+			const formatDate = format(new Date(date), "P");
+			table.getColumn("date").setFilterValue(formatDate);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [searchParams]);
 
-	const columns = [
+	const columns = React.useMemo(() => [
 		{
 			accessorKey: "trip_code",
 			header: "Trip Code",
@@ -256,7 +138,10 @@ const JourneyTable = () => {
 		{
 			accessorKey: "date",
 			header: "Date",
-			cell: ({ row }) => row.getValue("date"),
+			cell: ({ row }) => {
+				const dateTime = new Date(row.getValue("date"));
+				return format(dateTime, "PP");
+			},
 		},
 		{
 			accessorKey: "time",
@@ -273,7 +158,7 @@ const JourneyTable = () => {
 			id: "trip_status",
 			header: <div className="text-center">Trip Status</div>,
 			cell: ({ row }) => {
-				let status = row.original.trip_status;
+				const status = row.original.trip_status;
 				return (
 					<div
 						className={cn(
@@ -302,11 +187,12 @@ const JourneyTable = () => {
 			accessorKey: "dateTime",
 			header: "DateTime",
 			accessorFn: (row) => {
-				const dateTime = new Date(`${row.date} ${row.time}`);
+				const date = format(new Date(row.date), "PP");
+				const dateTime = new Date(`${date} ${row.time}`);
 				return dateTime;
 			},
 		},
-	];
+	], [])
 
 	const table = useReactTable({
 		data: journeyList,
@@ -314,84 +200,68 @@ const JourneyTable = () => {
 		getCoreRowModel: getCoreRowModel(),
 		onColumnFiltersChange: setColumnFilters,
 		getPaginationRowModel: getPaginationRowModel(),
+		onSortingChange: setSorting,
 		getSortedRowModel: getSortedRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
 		onPaginationChange: setPagination,
 		pageCount,
 		state: {
+			sorting,
 			columnFilters,
 			pagination,
 			columnVisibility: {
 				dateTime: false,
 			},
 		},
-		initialState: {
-			sorting: [
-				{
-					id: "dateTime",
-					desc: true, // sort by name in descending order by default
-				},
-			],
-		},
 	});
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
-		if (journeyList.length)
-			setPageCount(Math.ceil(journeyList.length / pagination.pageSize));
+		setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [journeyList]);
+	}, [journeyList, columnFilters]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
-		if (columnFilters.length)
-			setPageCount(
-				Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
-			);
+		table.setPageIndex(currentPageIndex.journeyList);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [columnFilters]);
+	}, [pageCount])
 
 	return (
 		<div>
-			{Object.keys(searchParams).length ? (
-				<div className="flex items-center mt-16 mb-5">
-					<div className="inline-flex gap-1">
-						<h2 className="font-semibold">Search results for </h2>
-						<p className="divide-x divide-black flex gap-2 [&>*:not(:first-of-type)]:pl-2">
-							({" "}
-							{searchParams?.departure && (
-								<span>{searchParams.departure} </span>
-							)}
-							{searchParams?.date && <span>{searchParams.date}</span>})
-						</p>
-					</div>
-
-					<ButtonUI
-						className="inline-flex gap-1 ml-5"
-						size="icon"
-						variant="ghost"
+			<div className="flex items-center gap-10 justify-between w-full mt-16 mb-5 ">
+				<h2 className="font-semibold"> {Object.keys(searchParamValues).length ? "Search results" : "All Scheduled Trips"}</h2>
+				{(columnFilters.length) ?
+					<CustomButton
+						variant="outline"
+						className="!h-8 !text-sm"
 						onClick={() => {
 							table.resetColumnFilters(true);
 							setSearchParams({});
+							resetPageIndex("journeyList")
 						}}
 					>
-						<Refresh />
-					</ButtonUI>
-				</div>
-			) : (
-				<h2 className="font-semibold mt-14 mb-5">All Scheduled Trips</h2>
-			)}
+						Reset filters
+					</CustomButton> : ""}
+			</div>
 
 			<div className="flex items-center w-fit border border-gray-200 font-medium rounded-t-lg mt-8 bg-white ">
 				<span className="px-4 text-nowrap text-sm font-semibold h-full inline-flex items-center rounded-l-lg">
 					Filter
 				</span>
 				<Select
-					defaultValue="#"
+					defaultValue={searchParamValues?.trip_status ?? "#"}
 					value={table.getColumn("trip_status")?.getFilterValue() ?? "#"}
 					onValueChange={(value) => {
 						if (value === "#") {
-							return table.getColumn("trip_status")?.setFilterValue("");
+							removeSearchParam("trip_status")
+							table.getColumn("trip_status")?.setFilterValue("");
+							resetPageIndex("journeyList")
+							return;
 						}
+						updateSearchParam("trip_status", value)
 						table.getColumn("trip_status")?.setFilterValue(value);
+						resetPageIndex("journeyList")
 					}}
 				>
 					<SelectTrigger className="w-[150px] grow rounded-none rounded-r-lg border-0 border-l px-5 focus:ring-0 focus:ring-offset-0 bg-white">
@@ -433,7 +303,7 @@ const JourneyTable = () => {
 								<TableRow
 									key={row.original.trip_code}
 									className="h-[65px]"
-									onClick={() => {
+									onDoubleClick={() => {
 										navigate(row.original.trip_code);
 									}}
 								>
@@ -453,7 +323,7 @@ const JourneyTable = () => {
 									colSpan={columns.length}
 									className="h-24 text-center"
 								>
-									No results.
+									{isLoading ? <p className="inline-flex gap-2 items-center">Fetching data  <Loader2 className="animate-spin" /></p> : "No results."}
 								</TableCell>
 							</TableRow>
 						)}
@@ -467,14 +337,14 @@ const JourneyTable = () => {
 					<ReactPaginate
 						breakLabel={<PaginationEllipsis />}
 						nextLabel={
-							<ButtonUI
+							<Button
 								variant="ghost"
 								size="sm"
 								onClick={() => table.nextPage()}
 								disabled={!table.getCanNextPage()}
 							>
 								<CaretIcon />
-							</ButtonUI>
+							</Button>
 						}
 						onPageChange={(val) => {
 							table.setPageIndex(val.selected);
@@ -483,11 +353,11 @@ const JourneyTable = () => {
 								journeyList: val.selected,
 							}));
 						}}
-						initialPage={0}
+						forcePage={currentPageIndex.journeyList}
 						pageRangeDisplayed={3}
-						pageCount={table.getPageCount()}
+						pageCount={pageCount}
 						previousLabel={
-							<ButtonUI
+							<Button
 								variant="ghost"
 								size="sm"
 								onClick={() => table.previousPage()}
@@ -496,7 +366,7 @@ const JourneyTable = () => {
 								<span className="rotate-180">
 									<CaretIcon />
 								</span>
-							</ButtonUI>
+							</Button>
 						}
 						renderOnZeroPageCount={null}
 						className="flex gap-2 items-center text-xs font-normal [&_a]:inline-flex [&_a]:items-center [&_a]:justify-center [&_a]:min-w-7 [&_a]:h-8 [&_a]:rounded-lg *:text-center *:[&_.selected]:bg-blue-500  *:[&_.selected]:text-white [&_.disabled]:pointer-events-none"

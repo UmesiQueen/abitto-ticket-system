@@ -9,26 +9,26 @@ import {
 	CancelSquareIcon,
 } from "@/assets/icons/index";
 import { BookingCTX } from "@/contexts/BookingContext";
-import Button from "@/components/custom/Button";
-import { Button as IconButton } from "./ui/button";
-import { useStepper } from "@/hooks/useStepper";
+import CustomButton from "@/components/custom/Button";
+import { Button } from "./ui/button";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import { useSearchTrip } from "@/hooks/useSearchTrip";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Link } from "react-router-dom"
+import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom"
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { usePayment } from "@/hooks/usePayment";
 
 const Payment = () => {
 	const { loading, formData, handleReset } = React.useContext(BookingCTX);
 	const { mountPortalModal } = React.useContext(GlobalCTX);
-	const { onPrevClick } = useStepper();
+	const { onlinePayment } = usePayment()
+	const navigate = useNavigate();
+	const searchParams = useSearchParams()[0];
+	const ticket_id = searchParams.get("cid");
 	const total_ticket_cost =
-		(Number(formData.bookingDetails.departure_ticket_cost) +
-			Number(formData.bookingDetails?.return_ticket_cost ?? 0)) *
+		Number(formData.bookingDetails.departure_ticket_cost) *
 		Number(formData.bookingDetails.total_passengers);
-	const { checkAvailability } = useSearchTrip();
 
 	const {
 		handleSubmit,
@@ -40,12 +40,19 @@ const Payment = () => {
 			checked: yup.string().required("Please check this box to proceed.")
 		}))
 	})
+
 	const onSubmit = handleSubmit(({ checked }) => {
-		if (checked) checkAvailability()
+		if (checked) onlinePayment()
 	})
 
+	const handlePrev = () => {
+		navigate(`/booking/passenger-details?cid=${formData.ticket_id}`)
+	}
+
+	if (ticket_id !== formData?.ticket_id) return (<Navigate to="/booking" />)
+
 	return (
-		<form onSubmit={onSubmit} className="p-5 md:p-12 !bg-white mx-auto flex flex-col gap-2">
+		<form onSubmit={onSubmit} className="p-5 md:p-12 !bg-white mx-auto flex flex-col gap-2 rounded-lg">
 			<div className="flex gap-5 justify-between items-center">
 				<img
 					alt="logo"
@@ -66,7 +73,7 @@ const Payment = () => {
 					<p className="text-xs md:text-sm font-bold text-gray-500 mb-1">
 						Ticket total(NGN)
 					</p>
-					<p className="nowrap font-semibold text-4xl md:text-5xl ">
+					<p className="font-semibold text-4xl md:text-5xl ">
 						<span className="text-2xl">₦</span>
 						{formatValue({
 							value: String(total_ticket_cost),
@@ -94,49 +101,20 @@ const Payment = () => {
 							<UsersIcon />
 							<p>{formData.bookingDetails.total_passengers} Passenger(s)</p>
 						</li>
+						<li>
+							<CalendarIcon />
+							<p>
+								{format(
+									new Date(formData.bookingDetails.departure_date),
+									"PP"
+								)}
+							</p>
+						</li>
+						<li>
+							<ClockIcon />
+							<p>{formData.bookingDetails.departure_time}</p>
+						</li>
 					</ul>
-				</div>
-
-				{/* time and return */}
-				<div className="flex flex-wrap gap-x-5 gap-y-3">
-					<div>
-						<h4 className="font-semibold text-sm mb-1">Departure Details</h4>
-						<ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1  [&_li]:inline-flex [&_li]:items-center [&_li]:gap-1">
-							<li>
-								<CalendarIcon />
-								<p>
-									{format(
-										new Date(formData.bookingDetails.departure_date),
-										"PP"
-									)}
-								</p>
-							</li>
-							<li>
-								<ClockIcon />
-								<p>{formData.bookingDetails.departure_time}</p>
-							</li>
-						</ul>
-					</div>
-					{formData.bookingDetails.trip_type === "Round Trip" && (
-						<div>
-							<h5 className="font-semibold text-sm mb-1">Return Details</h5>
-							<ul className="flex flex-wrap gap-x-4 gap-y-1 mb-1 [&_li]:inline-flex [&_li]:items-center [&_li]:gap-1">
-								<li>
-									<CalendarIcon />
-									<p>
-										{format(
-											new Date(formData.bookingDetails?.return_date),
-											"PP"
-										)}
-									</p>
-								</li>
-								<li>
-									<ClockIcon />
-									<p>{formData.bookingDetails?.return_time}</p>
-								</li>
-							</ul>
-						</div>
-					)}
 				</div>
 
 				{/* customer details */}
@@ -157,30 +135,16 @@ const Payment = () => {
 			<div className="border-y-2 border-dashed py-3 md:mt-5">
 				<table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] ">
 					<tbody>
-						{/* <tr>
-              <td className="text-xs md:text-sm text-[#444444]">
-                Ride Insurance
-              </td>
-              <td className="text-xs md:text-sm text-[#444444]">₦0</td>
-            </tr> */}
 						<tr>
 							<td className="text-xs md:text-sm text-[#444444]">
-								Ticket Price
+								Ticket cost
 							</td>
 							<td className="text-xs md:text-sm text-[#444444]">
 								{formatValue({
 									value: String(formData.bookingDetails.departure_ticket_cost),
 									prefix: "₦",
 								})}
-								{formData.bookingDetails.trip_type === "Round Trip" && (
-									<>
-										{" + "}
-										{formatValue({
-											value: String(formData.bookingDetails.return_ticket_cost),
-											prefix: "₦",
-										})}
-									</>
-								)}{" "}
+								{" "}
 								x {formData.bookingDetails.total_passengers}
 							</td>
 						</tr>
@@ -216,7 +180,7 @@ const Payment = () => {
 				</p>
 				<p>
 					<strong>
-						This ticket is Non-refundable and cannot be rescheduled if scheduled
+						This ticket is non-refundable and cannot be rescheduled if scheduled
 						time is missed.
 					</strong>
 				</p>
@@ -225,48 +189,55 @@ const Payment = () => {
 				</p>
 			</div>
 
-			<div className="flex gap-2 items-center mt-5">
-				<Checkbox
-					className={errors.checked && "border-red-500"}
-					onCheckedChange={(value) => {
-						setValue("checked", value ? true : "")
-						if (value) clearErrors()
-					}} />
-				<div className="relative">
-					<p className="text-xs md:text-sm">I have read and accept the <Link target="_blank" to="/terms-conditions" className="text-blue-500 underline hover:text-blue-700">Term of Agreement</Link> and <Link target="_blank" to="/privacy-policy" className="text-blue-500 underline hover:text-blue-700">Privacy Policy</Link>.</p>
+			<div className="contents" id="conceal">
+				<div className="flex gap-2 items-center mt-5 relative">
+					<Checkbox
+						id="checkbox"
+						className={errors.checked && "border-red-500"}
+						onCheckedChange={(value) => {
+							setValue("checked", value ? true : "")
+							if (value) clearErrors()
+						}} />
+					<label htmlFor="checkbox" className="text-xs md:text-sm">I have read and accept the <Link target="_blank" to="/terms-conditions" className="text-blue-500 underline hover:text-blue-700">Term of Agreement</Link> and <Link target="_blank" to="/privacy-policy" className="text-blue-500 underline hover:text-blue-700">Privacy Policy</Link>.</label>
 					{errors.checked && (
-						<p className="text-[10px] text-red-700 absolute -bottom-4 left-0 ">
+						<p className="text-[10px] text-red-700 absolute -bottom-4 left-6 ">
 							{errors.checked.message}
 						</p>
 					)}
 				</div>
 
+				<div className="mt-8 md:mb-0 space-y-5">
+					<CustomButton
+						type="submit"
+						loading={loading}
+						className="uppercase w-full md:py-6"
+					>
+						Pay with paystack
+					</CustomButton>
+					<CustomButton
+						onClick={handlePrev}
+						variant="outline"
+						type="button"
+						className="w-full md:py-6"
+					>
+						Back
+					</CustomButton>
+				</div>
 			</div>
 
-			<div className="my-5 md:mt-8 md:mb-0 space-y-5">
-				<Button
-					type="submit"
-					id="paystack_btn"
-					loading={loading}
-					text={"Pay with paystack"}
-					className="uppercase w-full md:py-6"
-				/>
-				<Button
-					onClick={(event) => {
-						const text = event.target.innerHTML;
-						text == "Back"
-							? onPrevClick()
-							: text == "Clear"
-								? handleReset()
-								: "";
-					}}
-					text="Back"
-					id="payment_next_btn"
-					variant="outline"
-					type="button"
-					className="w-full md:py-6"
-				/>
-			</div>
+			{/* temporal button displayed when paystack was successful but booking request does not update successfully */}
+			<CustomButton
+				id="reset-btn"
+				onClick={() => {
+					sessionStorage.removeItem("cus_info");
+					handleReset();
+				}}
+				variant="outline"
+				type="button"
+				className="hidden w-full mt-8"
+			>
+				Clear
+			</CustomButton>
 		</form>
 	);
 };
@@ -282,19 +253,19 @@ const PassengerDetails = () => {
 				<h4 className="font-semibold text-sm">Passenger 01</h4>
 				<ul className="mt-2 border-2 rounded-lg py-3 px-5 flex flex-wrap gap-y-3 gap-x-5 md:gap-x-12 [&_p:first-of-type]:text-xs  [&_p:first-of-type]:font-semibold  [&_p:last-of-type]:text-gray-500  [&_li]:space-y-1  ">
 					<li>
-						<p>First Name</p>
+						<p>First name</p>
 						<p>{formData.passengerDetails.passenger1_first_name}</p>
 					</li>
 					<li>
-						<p>Surname</p>
+						<p>Last name</p>
 						<p>{formData.passengerDetails.passenger1_last_name}</p>
 					</li>
 					<li>
-						<p>Phone Number</p>
+						<p>Phone number</p>
 						<p>{formData.passengerDetails.passenger1_phone_number}</p>
 					</li>
 					<li>
-						<p>Email Address</p>
+						<p>Email address</p>
 						<p>{formData.passengerDetails?.passenger1_email}</p>
 					</li>
 				</ul>
@@ -311,19 +282,19 @@ const PassengerDetails = () => {
 								<h4 className="font-semibold text-sm">Passenger 0{num}</h4>
 								<ul className="mt-2 border-2 rounded-lg py-3 px-5 flex flex-wrap gap-y-3 gap-x-5 md:gap-x-12 [&_p:first-of-type]:text-xs  [&_p:first-of-type]:font-semibold  [&_p:last-of-type]:text-gray-500 [&_li]:space-y-1">
 									<li>
-										<p>First Name</p>
+										<p>First name</p>
 										<p>
 											{formData.passengerDetails[`passenger${num}_first_name`]}
 										</p>
 									</li>
 									<li>
-										<p>Surname</p>
+										<p>Last name</p>
 										<p>
 											{formData.passengerDetails[`passenger${num}_last_name`]}
 										</p>
 									</li>
 									<li>
-										<p>Phone Number</p>
+										<p>Phone number</p>
 										<p>
 											{
 												formData.passengerDetails[
@@ -333,7 +304,7 @@ const PassengerDetails = () => {
 										</p>
 									</li>
 									<li>
-										<p>Email Address</p>
+										<p>Email address</p>
 										<p>
 											{formData.passengerDetails?.[`passenger${num}_email`]}
 										</p>
@@ -353,15 +324,15 @@ const PassengerDetails = () => {
 const PassengerDetailsModal = () => {
 	const { unMountPortalModal } = React.useContext(GlobalCTX);
 	return (
-		<div className="bg-white rounded-lg p-5 pb-10 flex flex-col">
-			<IconButton
+		<div className="bg-white rounded-lg p-5 relative">
+			<Button
 				variant="ghost"
 				size="icon"
-				className="ml-auto"
+				className="absolute top-0 right-0"
 				onClick={unMountPortalModal}
 			>
 				<CancelSquareIcon />
-			</IconButton>
+			</Button>
 			<PassengerDetails />
 		</div>
 	);

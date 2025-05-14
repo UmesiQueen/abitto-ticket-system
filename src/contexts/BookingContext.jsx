@@ -1,8 +1,23 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { useSearchParam } from "@/hooks/useSearchParam";
 import { useLocation } from "react-router-dom";
 
 export const BookingCTX = React.createContext();
+
+const getSessionStorage = () => {
+	const currentTimestamp = Date.now();
+	const cacheTime = 30 * 60 * 1000; // 30 mins
+	const cachedData = JSON.parse(sessionStorage.getItem('cus_info'));
+	if (cachedData) {
+		if ((currentTimestamp - cachedData.timestamp) < cacheTime) return cachedData.data;
+		sessionStorage.removeItem('cus_info');
+	}
+	return {
+		bookingDetails: {},
+		passengerDetails: {},
+	}
+}
 
 const BookingContext = ({ children }) => {
 	const [bookingQuery, setBookingQuery] = React.useState([]);
@@ -13,83 +28,46 @@ const BookingContext = ({ children }) => {
 		checkIn: 0,
 		journeyList: 0,
 		feedback: 0,
-		logistics: 0
+		logistics: 0,
+		tripDetails: 0,
 	});
 	const [activeStep, setActiveStep] = React.useState(0);
-	const [formData, setFormData] = React.useState({
-		bookingDetails: {},
-		passengerDetails: {},
-		seatDetails: {},
-	});
+	const [formData, setFormData] = React.useState(getSessionStorage);
 	const [loading, setLoading] = React.useState(false);
-	const [seatSelected, setSeatSelected] = React.useState({
-		departure: [],
-		return: [],
-	});
-	const [availableTrips, setAvailableTrips] = React.useState({
-		departure_trip: [],
-		return_trip: [],
-	});
-	const [selectedTrip, setSelectedTrip] = React.useState({
-		departure: {},
-		return: {},
-	});
+	const [availableTrips, setAvailableTrips] = React.useState([]);
+	const [selectedTrip, setSelectedTrip] = React.useState({});
 	const [isChecked, setChecked] = React.useState(false);
-	const [searchParams, setSearchParams] = React.useState({});
-	const [tripDetails, setTripDetails] = React.useState();
 	const [rentalData, setRentalData] = React.useState({});
+	const { getSearchParams } = useSearchParam();
+	const searchParamValues = getSearchParams();
+	const [filterValue, setFilterValue] = React.useState(searchParamValues?.s ?? "");
 	const { pathname } = useLocation();
-	const [customersData, setCustomersData] = React.useState([]);
-	const [filtering, setFiltering] = React.useState("");
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
-		handleReset();
-		setSearchParams({})
+		setFilterValue("")
+		setActiveStep(0);
+		setRentalData({});
 	}, [pathname]);
-
-	React.useEffect(() => {
-		window.scrollTo({
-			top: 0,
-			behavior: "smooth",
-		});
-	}, [activeStep]);
-
-	React.useEffect(() => {
-		if (Object.keys(formData.seatDetails).length) {
-			setSeatSelected({
-				departure: [],
-				return: [],
-			});
-			setFormData((prev) => ({
-				...prev,
-				seatDetails: {},
-			}));
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [formData.bookingDetails?.total_passengers]);
 
 	const handleReset = () => {
 		setActiveStep(0);
 		setFormData({
 			bookingDetails: {},
 			passengerDetails: {},
-			seatDetails: {},
 		});
-		setSeatSelected({
-			departure: [],
-			return: [],
-		});
-		setAvailableTrips({
-			departure_trip: [],
-			return_trip: [],
-		});
-		setSelectedTrip({
-			departure: {},
-			return: {},
-		});
+		setAvailableTrips([]);
+		setSelectedTrip({});
 		setRentalData({});
 		setChecked(false);
 	};
+
+	const resetPageIndex = (page) => {
+		setCurrentPageIndex((prev) => ({
+			...prev,
+			[page]: 0
+		}));
+	}
 
 	const ctxValues = {
 		formData,
@@ -98,30 +76,22 @@ const BookingContext = ({ children }) => {
 		setLoading,
 		activeStep,
 		setActiveStep,
-		seatSelected,
-		setSeatSelected,
 		isChecked,
 		setChecked,
 		handleReset,
-		searchParams,
-		setSearchParams,
 		availableTrips,
 		setAvailableTrips,
 		selectedTrip,
 		setSelectedTrip,
-		tripDetails,
-		setTripDetails,
 		rentalData,
 		setRentalData,
 		bookingQuery,
 		setBookingQuery,
 		currentPageIndex,
 		setCurrentPageIndex,
-		customersData,
-		setCustomersData,
-		filtering,
-		setFiltering,
-		resetSelectField: () => { },
+		filterValue,
+		setFilterValue,
+		resetPageIndex
 	};
 
 	return (

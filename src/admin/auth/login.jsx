@@ -1,5 +1,5 @@
 import React from "react";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import { Eye, EyeSlash } from "iconsax-react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -8,6 +8,7 @@ import { GlobalCTX } from "@/contexts/GlobalContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import axiosInstance from "@/api";
+import Cookies from 'js-cookie';
 
 const schema = yup.object().shape({
 	email: yup
@@ -34,7 +35,7 @@ const Login = () => {
 		axiosInstance
 			.post("/user/login", formData)
 			.then((res) => {
-				if (res.status == 200) {
+				if (res.status === 200) {
 					const { user, token } = res.data;
 					toast.success(`Welcome back ${user.first_name}`);
 					setAdminProfile({
@@ -47,20 +48,17 @@ const Login = () => {
 						city: user.city,
 						terminal: user.terminal,
 					});
-					localStorage.setItem("access token", JSON.stringify(token));
-					return navigate(navigateTo(user.account_type));
+					Cookies.set('access_token', token, {
+						expires: 1, secure: true, sameSite: 'strict'
+					});
+					setTimeout(() => navigate(navigateTo(user.account_type)), 100);
 				}
 			})
 			.catch((error) => {
-				if (error.code == "ERR_BAD_REQUEST")
+				if (error.code === "ERR_BAD_REQUEST")
 					toast.error("Email or password is incorrect.");
-
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error("Unknown Error occurred!");
+				else
+					toast.error("An error occurred. Try again.");
 			})
 			.finally(() => setLoading(false));
 	});
@@ -68,13 +66,11 @@ const Login = () => {
 	const navigateTo = (account_type) => {
 		switch (account_type) {
 			case "super-admin":
-				return "/backend/super-admin/dashboard";
+			case "dev":
 			case "admin":
-				return "/backend/admin/dashboard";
+				return `/backend/${account_type}/dashboard`;
 			case "salesperson":
 				return "/backend/salesperson/create";
-			case "dev":
-				return "/backend/dev/dashboard";
 			default:
 				return "/login";
 		}
@@ -144,23 +140,13 @@ const Login = () => {
 							</p>
 						)}
 					</div>
-
-					{/* <div className="flex justify-between items-center"> */}
-					{/* <label className="flex items-center gap-1 w-fit">
-            <input type="checkbox" />
-            <span className="text-xs">Remember me</span>
-          </label> */}
-					{/* <p className="font-semibold text-sm hover:underline cursor-pointer">
-              Forgot password
-            </p>
-          </div> */}
-
-					<Button
+					<CustomButton
 						className="rounded-lg mt-2"
-						text="Sign in"
 						type="submit"
 						loading={loading}
-					/>
+					>
+						Sign in
+					</CustomButton>
 				</form>
 			</div>
 		</div>

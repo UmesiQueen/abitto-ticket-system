@@ -1,8 +1,31 @@
-# React + Vite
+# Abitto Ticketing System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A react web app that offers daily ferry transportation, ferry on hire and logistic services.
+It contains self-service, salespoint interface for onsite services and two-tier admin dashboard for sales overview and monitoring.
 
-Currently, two official plugins are available:
+### Tools
+[Vite]( https://vite.dev/) build infrastructure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+[Shadcn](https://ui.shadcn.com/) and [MaterialUI](https://mui.com/) component library
+
+[Axios](https://axios-http.com/) HTTP client
+
+[Tanstack](https://tanstack.com/) data management and tables
+
+
+### Develop
+To develop all apps and packages, run the following command:
+
+```bash
+npm install
+npm run dev
+```
+
+
+### Build
+
+To build all apps and packages, run the following command:
+
+```bash
+npm run build
+```

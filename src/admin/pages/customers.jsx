@@ -17,7 +17,7 @@ import {
 	getSortedRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import { Button as ButtonUI } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { capitalize } from "lodash";
 import { PaginationEllipsis } from "@/components/ui/pagination";
 import ReactPaginate from "react-paginate";
@@ -25,97 +25,68 @@ import axiosInstance from "@/api";
 import { formatValue } from "react-currency-input-field";
 import { v4 as uuid } from "uuid";
 import { BookingCTX } from "@/contexts/BookingContext";
-import { toast } from "sonner";
-import { GlobalCTX } from "@/contexts/GlobalContext";
+import { useQuery } from "@tanstack/react-query";
+import { customError } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
+import { useSearchParam } from "@/hooks/useSearchParam";
 
 const Customers = () => {
-	// const navigate = useNavigate();
-	const { setLoading } = React.useContext(GlobalCTX);
-	const {
-		customersData,
-		setCustomersData,
-		filtering,
-		setFiltering,
-		setCurrentPageIndex,
-		currentPageIndex,
-	} = React.useContext(BookingCTX);
+	const { setCurrentPageIndex, currentPageIndex } = React.useContext(BookingCTX);
+	const [customersData, setCustomersData] = React.useState([])
 	const [sorting, setSorting] = React.useState([]);
 	const [columnFilters, setColumnFilters] = React.useState([]);
 	const [columnVisibility, setColumnVisibility] = React.useState({
 		fullName: false,
 	});
-	const [rowSelection, setRowSelection] = React.useState({});
 	const [pageCount, setPageCount] = React.useState(0);
 	const [pagination, setPagination] = React.useState({
-		pageIndex: 0,
+		pageIndex: currentPageIndex.customers,
 		pageSize: 7,
 	});
+	const { getSearchParams } = useSearchParam();
+	const searchParamValues = getSearchParams();
 
-	React.useEffect(() => {
-		setLoading(true);
-		axiosInstance
-			.get("/booking/customerdetails")
-			.then((res) => {
-				if (res.status == 200) {
-					const response = res.data.customerDetails;
-					const customersData_ = Object.entries(response).map(
-						([email, data]) => {
-							const {
-								details: { first_name, last_name, phone_number },
-								bookings,
-							} = data;
+	const { data, isSuccess, isPending } = useQuery({
+		queryKey: ["customers"],
+		queryFn: async () => {
+			try {
+				const response = await axiosInstance.get("/booking/customerdetails");
+				const { customerDetails } = response.data;
+				const customersData_ = Object.entries(customerDetails).map(
+					([email, data]) => {
+						const {
+							details: { first_name, last_name, phone_number },
+							bookings,
+						} = data;
 
-							const total_spent = bookings
-								.map((booking) => Number(booking.totalTicketCost ?? 0))
-								.reduce((a, c) => a + c, 0);
+						const total_spent = bookings
+							.map((booking) => Number(booking.totalTicketCost ?? 0))
+							.reduce((a, c) => a + c, 0);
 
-							return {
-								_id: `CUS_${uuid().slice(0, 10)}`,
-								email,
-								first_name,
-								last_name,
-								phone_number,
-								total_spent,
-								total_trips: bookings.length,
-								bookings,
-							};
-						}
-					);
-					setCustomersData(customersData_);
-				}
-			})
-			.catch((error) => {
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error(
-						"Error occurred while fetching customers data. Refresh page."
-					);
-			})
-			.finally(() => setLoading(false));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	React.useEffect(() => {
-		if (customersData.length)
-			setPageCount(Math.ceil(customersData.length / pagination.pageSize));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [customersData]);
-
-	React.useEffect(() => {
-		if (columnFilters.length || filtering.length) {
-			setPageCount(
-				Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
-			);
-			setCurrentPageIndex((prev) => ({
-				...prev,
-				customers: 0,
-			}));
+						return {
+							_id: `CUS_${uuid().slice(0, 10)}`,
+							email,
+							first_name,
+							last_name,
+							phone_number,
+							total_spent,
+							total_trips: bookings.length,
+							bookings,
+						};
+					}
+				);
+				return customersData_;
+			}
+			catch (error) {
+				customError(error, "Error occurred while fetching customers. Refresh page.")
+				return []
+			}
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [columnFilters, filtering]);
+	})
+
+	React.useEffect(() => {
+		if (isSuccess) setCustomersData(data);
+	}, [data, isSuccess])
 
 	const columns = [
 		{
@@ -179,24 +150,22 @@ const Customers = () => {
 		getSortedRowModel: getSortedRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
 		onColumnVisibilityChange: setColumnVisibility,
-		onRowSelectionChange: setRowSelection,
 		onPaginationChange: setPagination,
-		onGroupingChange: setFiltering,
 		pageCount,
 		state: {
 			sorting,
 			columnFilters,
 			columnVisibility,
-			rowSelection,
 			pagination,
-			globalFilter: filtering,
+			globalFilter: searchParamValues?.s,
 		},
 	});
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
-		table.setPageIndex(currentPageIndex.customers);
+		setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [customersData, columnFilters, searchParamValues]);
 
 	return (
 		<>
@@ -230,7 +199,6 @@ const Customers = () => {
 								{table.getRowModel().rows.map((row) => (
 									<TableRow
 										key={row.id}
-										data-state={row.getIsSelected() && "selected"}
 									>
 										{row.getVisibleCells().map((cell) => (
 											<TableCell key={cell.id} className="h-[77px]">
@@ -249,7 +217,7 @@ const Customers = () => {
 									colSpan={columns.length}
 									className="h-24 text-center"
 								>
-									No results.
+									{isPending ? <p className="inline-flex gap-2 items-center">Fetching data  <Loader2 className="animate-spin" /></p> : "No results."}
 								</TableCell>
 							</TableRow>
 						)}
@@ -264,14 +232,14 @@ const Customers = () => {
 					<ReactPaginate
 						breakLabel={<PaginationEllipsis />}
 						nextLabel={
-							<ButtonUI
+							<Button
 								variant="ghost"
 								size="sm"
 								onClick={() => table.nextPage()}
 								disabled={!table.getCanNextPage()}
 							>
 								<CaretIcon />
-							</ButtonUI>
+							</Button>
 						}
 						onPageChange={(val) => {
 							table.setPageIndex(val.selected);
@@ -280,12 +248,11 @@ const Customers = () => {
 								customers: val.selected,
 							}));
 						}}
-						initialPage={currentPageIndex.customers}
 						forcePage={currentPageIndex.customers}
 						pageRangeDisplayed={3}
 						pageCount={table.getPageCount()}
 						previousLabel={
-							<ButtonUI
+							<Button
 								variant="ghost"
 								size="sm"
 								onClick={() => table.previousPage()}
@@ -294,7 +261,7 @@ const Customers = () => {
 								<span className="rotate-180">
 									<CaretIcon />
 								</span>
-							</ButtonUI>
+							</Button>
 						}
 						renderOnZeroPageCount={null}
 						className="flex gap-2 items-center text-xs font-normal [&_a]:inline-flex [&_a]:items-center [&_a]:justify-center [&_a]:min-w-7 [&_a]:h-8 [&_a]:rounded-lg *:text-center *:[&_.selected]:bg-blue-500  *:[&_.selected]:text-white [&_.disabled]:pointer-events-none "

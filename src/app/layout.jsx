@@ -9,37 +9,38 @@ import { cn } from "@/lib/utils";
 import {
 	FacebookIcon,
 	InstagramIcon,
-	// LinkedinIcon,
-	// TwitterIcon,
 } from "@/assets/icons/index";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import LogoSVG from "@/assets/icons/abitto.svg";
 import Loader from "@/components/animation/Loader";
 import { InformationModal } from "@/admin/pages/information-box";
-import axiosInstance from "@/api";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 
 const MainLayout = () => {
 	const { setLiveMessage } = React.useContext(GlobalCTX);
 
-	React.useEffect(() => {
-		axiosInstance
-			.get("infobox/get")
-			.then((res) => {
-				if (res.status == 200) {
-					const data = res.data.infoBoxes;
-					const activeMessage = data.filter((message) => message.status == "Active")[0];
-					if (activeMessage)
-						setLiveMessage(activeMessage)
-				}
-			})
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	useQuery({
+		queryKey: ["notification"],
+		queryFn: async () => {
+			const API_BASE_URL = process.env.ABITTO_BASE_URL;
+			const res = await axios.get(`${API_BASE_URL}/infobox/get`)
+			if (res.status === 200) {
+				const data = res.data.infoBoxes;
+				const activeMessage = data.filter((message) => message.status === "Active")[0];
+				if (activeMessage) setLiveMessage(activeMessage)
+				return true
+			}
+		},
+		staleTime: 60 * 1000 * 5, // 5mins
+		cacheTime: 60 * 1000 * 5, // 5mins
+	})
 
 	return (
 		<>
 			<div className="relative">
 				<Navbar />
-				<main className="h-full min-h-[calc(100vh-294px)]">
+				<main className="h-full min-h-[calc(100dvh-275px)]">
 					<Outlet />
 				</main>
 				<Footer />
@@ -93,7 +94,8 @@ const Navbar = () => {
 				return "active";
 			return;
 		}
-		if (location.pathname == slug) return "active";
+		// Check if the current pathname matches the slug exactly or is a child path
+		if (location.pathname === slug || location.pathname.startsWith(`${slug}/`)) return "active";
 	}
 
 	return (
@@ -145,8 +147,8 @@ const Navbar = () => {
 									to={slug}
 									onClick={() => {
 										closeNavbar();
-										if (title == "FAQ") handleNavItemClick(faq);
-										if (title == "Contact") handleNavItemClick(contact);
+										if (title === "FAQ") handleNavItemClick(faq);
+										if (title === "Contact") handleNavItemClick(contact);
 									}}
 								>
 									{title}
@@ -155,24 +157,20 @@ const Navbar = () => {
 						);
 					})}
 				</ul>
-				{/* <Button
-					text="Get Started"
-					onClick={() => {
-						handleNavItemClick(services);
-						navigate("/#services");
-					}}
-					className="hidden md:block px-6"
-				/> */}
 			</div>
 		</nav>
 	);
 };
 
 const Footer = () => {
-	const { faq, scrollToSection } = React.useContext(GlobalCTX);
+	const { faq, terminals, scrollToSection } = React.useContext(GlobalCTX);
+
+	const scrollTo = (ref) => {
+		setTimeout(() => scrollToSection(ref))
+	}
 
 	return (
-		<footer className="bg-[#111111] px-5 py-10 md:px-10 lg:px-20 text-white ">
+		<footer className="bg-[#111111] px-5 py-10 md:px-10 lg:px-20 text-white">
 			<div className="max-w-[1440px] mx-auto">
 				<div className=" md:flex justify-between gap-x-5 ">
 					<Link to="/">
@@ -188,13 +186,9 @@ const Footer = () => {
 						<li>
 							<h3>Company</h3>
 							<Link to="/about">About Us</Link>
-							<Link to="/#faq" onClick={() => setTimeout(() => scrollToSection(faq))}>FAQ</Link>
+							<Link to="/#faq" onClick={() => scrollTo(faq)}>FAQ</Link>
+							<Link to="/#terminals" onClick={() => scrollTo(terminals)}>Terminals</Link>
 						</li>
-						{/* <li>
-							<h3>Resources</h3>
-							<a>Career</a>
-							<a>Videos</a>
-						</li> */}
 						<li>
 							<h3>Contact Us</h3>
 							<a
@@ -239,7 +233,8 @@ const Footer = () => {
 								</AccordionSummary>
 								<AccordionDetails sx={{ marginX: "20px" }}>
 									<Link to="/about">About Us</Link>
-									<Link to="/#faq" onClick={() => setTimeout(() => scrollToSection(faq))}>FAQ</Link>
+									<Link to="/#faq" onClick={() => scrollTo(faq)}>FAQ</Link>
+									<Link to="/#terminals" onClick={() => scrollTo(terminals)}>Terminals</Link>
 								</AccordionDetails>
 							</Accordion>
 						</li>
@@ -294,6 +289,7 @@ const Footer = () => {
 							href="https://lifewithallin.com/"
 							target="_blank"
 							className="border-b pb-[2px] hover:text-blue-500 hover:border-blue-500 transition ease-in-out"
+							rel="noreferrer"
 						>
 							All-in Technologies
 						</a>

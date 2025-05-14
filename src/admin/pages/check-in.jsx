@@ -2,7 +2,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button as ButtonIcon } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import Logo from "@/assets/logo.svg";
 import { format } from "date-fns";
 import { BookingCTX } from "@/contexts/BookingContext";
@@ -24,16 +24,16 @@ import {
 	getSortedRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import { Button as ButtonUI } from "@/components/ui/button";
-import Button from "@/components/custom/Button";
-// import { formatValue } from "react-currency-input-field";
+import CustomButton from "@/components/custom/Button";
 import { PaginationEllipsis } from "@/components/ui/pagination";
 import ReactPaginate from "react-paginate";
 import { truncate, capitalize } from "lodash";
 import ConfirmationModal from "@/components/modals/confirmation";
 import { useUpdate } from "@/hooks/useUpdate";
-// import { cn } from "@/lib/utils";
 import humanizeList from "humanize-list";
+import { useSearchParam } from "@/hooks/useSearchParam";
+import { useQueryClient } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 
 const CheckIn = () => {
 	const navigate = useNavigate();
@@ -46,9 +46,9 @@ const CheckIn = () => {
 			</Helmet>
 			<div>
 				<div className="flex gap-1 items-center mb-10 ">
-					<ButtonIcon size="icon" variant="ghost" onClick={() => navigate(-1)}>
+					<Button size="icon" variant="ghost" onClick={() => navigate(-1)}>
 						<CircleArrowLeftIcon />
-					</ButtonIcon>
+					</Button>
 					<h1 className="font-semibold text-lg">Check In</h1>
 				</div>
 				<section className="space-y-10 px-3 md:px-0">
@@ -88,34 +88,31 @@ export default CheckIn;
 const CheckInTable = () => {
 	const navigate = useNavigate();
 	const { accountType } = useParams();
-	const {
-		bookingQuery,
-		currentPageIndex,
-		filtering,
-		setFiltering,
-		setCurrentPageIndex,
-	} = React.useContext(BookingCTX);
+	const { bookingQuery, currentPageIndex, setCurrentPageIndex } = React.useContext(BookingCTX);
 	const { mountPortalModal } = React.useContext(GlobalCTX);
 	const { checkInPassenger } = useUpdate();
 	const [sorting, setSorting] = React.useState([]);
 	const [columnFilters, setColumnFilters] = React.useState([]);
 	const [columnVisibility, setColumnVisibility] = React.useState({
 		fullName: false,
-		departure: accountType == "dev" ? true : false,
-		phone_number: accountType != "dev" ? true : false,
+		departure: accountType === "dev",
+		phone_number: accountType !== "dev",
 	});
-	const [rowSelection, setRowSelection] = React.useState({});
 	const [pagination, setPagination] = React.useState({
-		pageIndex: 0,
+		pageIndex: currentPageIndex.checkIn,
 		pageSize: 7,
 	});
+	const [pageCount, setPageCount] = React.useState(0);
 	const [dailyBookingQuery, setDailyBookingQuery] = React.useState([]);
+	const { getSearchParams } = useSearchParam();
+	const searchParamValues = getSearchParams();
+	const queryClient = useQueryClient();
 
 	React.useEffect(() => {
 		const result = bookingQuery.filter((booking) => {
 			const bookedDate = format(new Date(booking.departure_date), "P");
 			const currentDate = format(new Date().toISOString().split("T")[0], "P");
-			return bookedDate === currentDate && booking.payment_status == "Success";
+			return bookedDate === currentDate && booking.payment_status === "Success";
 		});
 		setDailyBookingQuery(result);
 	}, [bookingQuery]);
@@ -173,12 +170,6 @@ const CheckInTable = () => {
 			cell: ({ row }) => row.original.travel_from,
 			enableGlobalFilter: false,
 		},
-		// {
-		// 	accessorKey: "type",
-		// 	header: "Trip type",
-		// 	cell: ({ row }) => row.original.trip_type,
-		// 	enableGlobalFilter: false,
-		// },
 		{
 			accessorKey: "medium",
 			header: "Medium",
@@ -203,12 +194,13 @@ const CheckInTable = () => {
 			id: "action",
 			header: <div className="text-center">Action</div>,
 			cell: ({ row }) => (
-				<Button
-					disabled={row.original.check_in ? true : false}
+				<CustomButton
+					disabled={!!row.original.check_in}
 					onClick={() => handleCheckIn(row.original.ticket_id)}
 					className="check-btn px-2 h-8 !text-xs mx-auto !border-[#85AD33] !bg-[#85AD33] hover:!bg-[#5E7B24] hover:!border-[#5E7B24] disabled:!bg-[#C2C2C2] disabled:!border-[#C2C2C2]"
-					text="Check-in"
-				/>
+				>
+					Check-in
+				</CustomButton>
 			),
 			enableSorting: false,
 			enableHiding: false,
@@ -225,30 +217,28 @@ const CheckInTable = () => {
 		getSortedRowModel: getSortedRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
 		onColumnVisibilityChange: setColumnVisibility,
-		onRowSelectionChange: setRowSelection,
 		onPaginationChange: setPagination,
-		onGroupingChange: setFiltering,
-		pageCount: Math.ceil(dailyBookingQuery.length / pagination.pageSize),
+		pageCount,
 		state: {
 			sorting,
 			columnFilters,
 			columnVisibility,
-			rowSelection,
 			pagination,
-			globalFilter: filtering,
+			globalFilter: searchParamValues?.s,
 		},
 	});
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
-		table.setPageIndex(currentPageIndex.checkIn);
+		setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [dailyBookingQuery, columnFilters, searchParamValues]);
 
 	const handleCheckIn = (ticket_id) => {
 		mountPortalModal(
 			<ConfirmationModal
 				props={{
-					header: "Do you want to check-in this passenger?",
+					header: "Check-in passenger?",
 					handleRequest: () => {
 						checkInPassenger(ticket_id);
 					},
@@ -291,7 +281,6 @@ const CheckInTable = () => {
 													`/backend/${accountType}/booking-details/${row.original.ticket_id}`
 												);
 										}}
-										data-state={row.getIsSelected() && "selected"}
 									>
 										{row.getVisibleCells().map((cell) => (
 											<TableCell key={cell.id} className="h-[77px]">
@@ -310,7 +299,7 @@ const CheckInTable = () => {
 									colSpan={columns.length}
 									className="h-24 text-center"
 								>
-									No results.
+									{queryClient.isFetching("booking") ? <p className="inline-flex gap-2 items-center">Fetching data  <Loader2 className="animate-spin" /></p> : "No results."}
 								</TableCell>
 							</TableRow>
 						)}
@@ -325,14 +314,14 @@ const CheckInTable = () => {
 					<ReactPaginate
 						breakLabel={<PaginationEllipsis />}
 						nextLabel={
-							<ButtonUI
+							<Button
 								variant="ghost"
 								size="sm"
 								onClick={() => table.nextPage()}
 								disabled={!table.getCanNextPage()}
 							>
 								<CaretIcon />
-							</ButtonUI>
+							</Button>
 						}
 						onPageChange={(val) => {
 							table.setPageIndex(val.selected);
@@ -341,11 +330,11 @@ const CheckInTable = () => {
 								checkIn: val.selected,
 							}));
 						}}
-						initialPage={currentPageIndex.checkIn}
+						forcePage={currentPageIndex.checkIn}
 						pageRangeDisplayed={3}
 						pageCount={table.getPageCount()}
 						previousLabel={
-							<ButtonUI
+							<Button
 								variant="ghost"
 								size="sm"
 								onClick={() => table.previousPage()}
@@ -354,7 +343,7 @@ const CheckInTable = () => {
 								<span className="rotate-180">
 									<CaretIcon />
 								</span>
-							</ButtonUI>
+							</Button>
 						}
 						renderOnZeroPageCount={null}
 						className="flex gap-2 items-center text-xs font-normal [&_a]:inline-flex [&_a]:items-center [&_a]:justify-center [&_a]:min-w-7 [&_a]:h-8 [&_a]:rounded-lg *:text-center *:[&_.selected]:bg-blue-500  *:[&_.selected]:text-white [&_.disabled]:pointer-events-none "

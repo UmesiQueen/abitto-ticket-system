@@ -29,18 +29,21 @@ import {
 } from "@/assets/icons";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+import { cn, customError } from "@/lib/utils";
 import { formatValue } from "react-currency-input-field";
 import axiosInstance from "@/api";
-import { toast } from "sonner";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import ConfirmationModal from "@/components/modals/confirmation";
 import { useUpdate } from "@/hooks/useUpdate";
+import { Loader2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useReactToPrint } from "react-to-print";
+import LogisticsInvoice from "@/components/LogisticInvoice";
+import { useSearchParam } from "@/hooks/useSearchParam";
 
 const LogisticsDetails = () => {
 	const navigate = useNavigate();
-	const { setCurrentPageIndex, filtering, setFiltering, currentPageIndex } = React.useContext(BookingCTX);
-	const { setLoading } = React.useContext(GlobalCTX);
+	const { setCurrentPageIndex, currentPageIndex } = React.useContext(BookingCTX);
 	const [dataQuery, setDataQuery] = React.useState([]);
 	const [columnFilters, setColumnFilters] = React.useState([]);
 	const [pageCount, setPageCount] = React.useState(0);
@@ -48,56 +51,32 @@ const LogisticsDetails = () => {
 		pageIndex: 0,
 		pageSize: 10,
 	});
+	const [sorting, setSorting] = React.useState([{
+		id: "dateTime",
+		desc: true, // sort by name in descending order by default
+	}])
+	const { getSearchParams } = useSearchParam()
+	const searchParamValues = getSearchParams();
 
-	React.useEffect(() => {
-		setLoading(true);
-		axiosInstance.get("logistics/get").then((res) => {
-			if (res.status == 200) {
-				const resData = res.data.logistics;
-				setDataQuery(resData)
+	const { data, isSuccess, isPending } = useQuery({
+		queryKey: ["logistics"],
+		queryFn: async () => {
+			try {
+				const response = await axiosInstance.get("/logistics/get");
+				return response.data.logistics;
 			}
-		}).catch((error) => {
-			if (
-				!error.code === "ERR_NETWORK" ||
-				!error.code === "ERR_INTERNET_DISCONNECTED" ||
-				!error.code === "ECONNABORTED"
-			) {
-				toast.error(
-					"Error occurred while fetching feedback. Refresh page."
-				);
+			catch (error) {
+				customError(error, "Error occurred while fetching logistics. Refresh page.")
+				return []
 			}
-		}).finally(() => setLoading(false))
-	}, [])
-
-	React.useEffect(() => {
-		if (dataQuery.length)
-			setPageCount(Math.ceil(dataQuery.length / pagination.pageSize));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [dataQuery]);
-
-	React.useEffect(() => {
-		table.setPageIndex(currentPageIndex.logistics);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	React.useEffect(() => {
-		if (columnFilters.length || filtering.length) {
-			setPageCount(
-				Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
-			);
-			setCurrentPageIndex((prev) => ({
-				...prev,
-				logistics: 0,
-			}));
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [columnFilters, filtering]);
+	})
 
-	const columns = [
-		// {
-		// 	header: "S/N",
-		// 	cell: ({ row }) => Number(row.id) + 1,
-		// },
+	React.useEffect(() => {
+		if (isSuccess) setDataQuery(data);
+	}, [data, isSuccess])
+
+	const columns = React.useMemo(() => [
 		{
 			accessorKey: "shipment_id",
 			header: "Shipment ID",
@@ -158,7 +137,7 @@ const LogisticsDetails = () => {
 				return dateTime;
 			},
 		},
-	];
+	], [])
 
 	const table = useReactTable({
 		data: dataQuery,
@@ -166,28 +145,33 @@ const LogisticsDetails = () => {
 		getCoreRowModel: getCoreRowModel(),
 		onColumnFiltersChange: setColumnFilters,
 		getPaginationRowModel: getPaginationRowModel(),
+		onSortingChange: setSorting,
 		getSortedRowModel: getSortedRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
 		onPaginationChange: setPagination,
-		onGroupingChange: setFiltering,
 		pageCount,
 		state: {
+			sorting,
 			pagination,
 			columnFilters,
 			columnVisibility: {
 				dateTime: false,
 			},
-			globalFilter: filtering,
-		},
-		initialState: {
-			sorting: [
-				{
-					id: "dateTime",
-					desc: true, // sort by name in descending order by default
-				},
-			],
-		},
+			globalFilter: searchParamValues?.s,
+		}
 	});
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	React.useEffect(() => {
+		setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [dataQuery, columnFilters, searchParamValues]);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	React.useEffect(() => {
+		table.setPageIndex(currentPageIndex.logistics);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [pageCount])
 
 	return (
 		<>
@@ -241,7 +225,7 @@ const LogisticsDetails = () => {
 									colSpan={columns.length}
 									className="h-24 text-center"
 								>
-									No results.
+									{isPending ? <p className="inline-flex gap-2 items-center">Fetching data  <Loader2 className="animate-spin" /></p> : "No results."}
 								</TableCell>
 							</TableRow>
 						)}
@@ -271,7 +255,6 @@ const LogisticsDetails = () => {
 								logistics: val.selected,
 							}));
 						}}
-						initialPage={currentPageIndex.logistics}
 						forcePage={currentPageIndex.logistics}
 						pageRangeDisplayed={3}
 						pageCount={table.getPageCount()}
@@ -302,6 +285,13 @@ export const ShipmentDetails = () => {
 	const { adminProfile, mountPortalModal } = React.useContext(GlobalCTX);
 	const { updateShipmentStatus } = useUpdate();
 	const { revalidate } = useRevalidator();
+	const componentRef = React.useRef();
+
+
+	const handlePrint = useReactToPrint({
+		content: () => componentRef.current,
+		documentTitle: `Abitto Ticket - ${currentShipment?.ticket_id}`,
+	});
 
 	if (!currentShipment?.shipment_id) return <Navigate to={`/backend/${adminProfile.account_type}/pageNotFound`} />;
 
@@ -311,11 +301,11 @@ export const ShipmentDetails = () => {
 				<title>Shipment Details | Admin </title>
 			</Helmet>
 			<div>
-				<div className="flex gap-1 items-center mb-5 py-2">
-					<button onClick={() => navigate(-1)}>
+				<div className="flex gap-1 items-center mb-10">
+					<Button size="icon" variant="ghost" onClick={() => navigate(-1)}>
 						<CircleArrowLeftIcon />
-					</button>
-					<h1 className="text-base font-semibold">Shipment Details</h1>
+					</Button>
+					<h1 className="text-lg font-semibold">Shipment Details</h1>
 				</div>
 				{currentShipment ? (
 					<div className="flex gap-5 items-start">
@@ -334,22 +324,22 @@ export const ShipmentDetails = () => {
 									</p>
 								</div>
 								<div className="ml-auto">
-									{currentShipment?.shipment_status == "Origin" ?
+									{currentShipment?.shipment_status === "Origin" ?
 										<Button
 											onClick={() => {
 												mountPortalModal(
 													<ConfirmationModal props={{
-														header: "Are you sure this shipment has arrived your terminal and you have notified the receiver?",
+														header: "Shipment arrived? Please notify receiver",
 														handleRequest: () => { updateShipmentStatus({ shipment_id: currentShipment?.shipment_id, shipment_status: "Arrived" }, () => { revalidate() }) }
 													}} />)
 											}}
 										>Arrived</Button> :
-										currentShipment?.shipment_status == "Arrived" ?
+										currentShipment?.shipment_status === "Arrived" ?
 											<Button
 												onClick={() => {
 													mountPortalModal(
 														<ConfirmationModal props={{
-															header: "Have you confirmed the receiver of this parcel?",
+															header: "Confirm receiver",
 															handleRequest: () => { updateShipmentStatus({ shipment_id: currentShipment?.shipment_id, shipment_status: "Collected" }, () => { revalidate() }) }
 														}} />)
 												}}
@@ -357,7 +347,6 @@ export const ShipmentDetails = () => {
 									}
 								</div>
 							</div>
-
 							<div className="p-5 pb-20 space-y-6">
 								<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
 									<li>
@@ -397,6 +386,7 @@ export const ShipmentDetails = () => {
 										<p className="text-base font-semibold">
 											{currentShipment?.description.length ?
 												<button
+													type="button"
 													className="text-blue-500 hover:text-blue-700 text-sm underline"
 													onClick={() => {
 														mountPortalModal(
@@ -429,7 +419,6 @@ export const ShipmentDetails = () => {
 											})}
 										</p>
 									</li>
-
 								</ul>
 								<div className=" space-y-6 border-l-8 border-green-800 bg-green-50 py-2 pl-3 -ml-5">
 									<ul className="*:flex *:flex-col *:gap-1 flex flex-wrap gap-y-5 gap-x-10">
@@ -508,7 +497,6 @@ export const ShipmentDetails = () => {
 										</li>
 									</ul>
 								</div>
-
 								<ul className="*:flex *:flex-col *:gap-1 flex flex-wrap gap-y-5 gap-x-10">
 									<li>
 										<p className="text-xs text-[#7F7F7F]">Payment Method</p>
@@ -577,7 +565,6 @@ export const ShipmentDetails = () => {
 								</ul>
 							</div>
 						</div>
-
 						<div className="bg-white rounded-lg basis-4/12 p-5 flex flex-col gap-6">
 							<div>
 								<h3 className="text-blue-500 font-semibold  text-base md:text-xl ">
@@ -628,10 +615,8 @@ export const ShipmentDetails = () => {
 											{currentShipment?.shipment_status}
 										</span>
 									</p>
-
 								</li>
 							</ul>
-
 							<div className="border-y-2 border-dashed py-2">
 								<table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] ">
 									<tbody>
@@ -660,14 +645,14 @@ export const ShipmentDetails = () => {
 								</table>
 							</div>
 							<button
+								type="button"
 								className=" bg-blue-500 w-full py-3 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white flex justify-center gap-2 mx-auto rounded-lg "
-								onClick={() => {
-									navigate(`/logistics-invoice/${currentShipment.shipment_id}`);
-								}}
+								onClick={handlePrint}
 							>
 								<PrinterIcon />
 								Print
 							</button>
+							<LogisticsInvoice props={{ currentShipment }} ref={componentRef} />
 						</div>
 					</div>
 				) : (

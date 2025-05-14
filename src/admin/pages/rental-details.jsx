@@ -1,7 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate, useLoaderData } from "react-router-dom";
-import { addDays, format } from "date-fns";
+import { format } from "date-fns";
 import {
 	flexRender,
 	getCoreRowModel,
@@ -11,11 +11,7 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 import ReactPaginate from "react-paginate";
-import { cn } from "@/lib/utils";
-import { useForm, Controller } from "react-hook-form";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import DatePicker from "react-datepicker";
+import { cn, customError } from "@/lib/utils";
 import { PaginationEllipsis } from "@/components/ui/pagination";
 import {
 	Table,
@@ -25,8 +21,8 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { Button as ButtonUI } from "@/components/ui/button";
-import Button from "@/components/custom/Button";
+import { Button } from "@/components/ui/button";
+import CustomButton from "@/components/custom/Button";
 import {
 	CaretIcon,
 	CalendarIcon,
@@ -38,13 +34,17 @@ import {
 	UsersIcon,
 	ClockIcon,
 } from "@/assets/icons";
-import SelectField from "@/components/custom/SelectField";
 import { BookingCTX } from "@/contexts/BookingContext";
 import axiosInstance from "@/api";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import { toast } from "sonner";
 import { capitalize, truncate } from "lodash";
 import { formatValue } from "react-currency-input-field";
+import { useQuery } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
+import RentalInvoice from "@/components/RentalInvoice";
+import { useReactToPrint } from "react-to-print";
+import { useSearchParam } from "@/hooks/useSearchParam";
+import SearchForm from "@/components/SearchForm";
 
 const RentalDetails = () => {
 	return (
@@ -52,8 +52,16 @@ const RentalDetails = () => {
 			<Helmet>
 				<title>Rental Details | Admin</title>
 			</Helmet>
-			<h1 className=" text-lg font-semibold">Rental Details</h1>
-			<SearchForm />
+			<h1 className="text-lg font-semibold mb-10">Rental Details</h1>
+			<SearchForm
+				props={{
+					page: "rentals",
+					name: "rent_type",
+					label: "Select Package",
+					placeholder: "Select Rental Package",
+					options: ["Within Marina", "Calabar to Uyo", "Uyo to Calabar"]
+				}}
+			/>
 			<RentalTable />
 		</>
 	);
@@ -61,127 +69,9 @@ const RentalDetails = () => {
 
 export default RentalDetails;
 
-const searchSchema = yup
-	.object()
-	.shape({
-		date: yup.string(),
-		rent_type: yup.string(),
-	})
-	.test("require at least one field", function ({ date, rent_type }) {
-		const a = !!(date || rent_type); // At least one must be non-empty
-		if (!a) {
-			return new yup.ValidationError(
-				"At least one of the two fields must be filled.", //Message
-				"null",
-				"rent_type", //error name
-				"required" //type
-			);
-		}
-		return true;
-	});
-
-const SearchForm = () => {
-	const { loading, setLoading, setSearchParams, searchParams } =
-		React.useContext(BookingCTX);
-	const { adminProfile } = React.useContext(GlobalCTX);
-	const {
-		register,
-		handleSubmit,
-		formState: { errors, isSubmitted },
-		control,
-		reset,
-	} = useForm({
-		mode: "onChange",
-		resolver: yupResolver(searchSchema),
-	});
-
-	React.useEffect(() => {
-		if (!Object.keys(searchParams).length) {
-			reset({});
-		}
-	}, [searchParams, reset]);
-
-	const onSubmit = handleSubmit((formData) => {
-		setLoading(true);
-		setTimeout(() => {
-			setSearchParams({
-				...formData,
-				...(formData?.date && {
-					date: new Date(addDays(formData.date, 1)).toISOString().split("T")[0],
-				}),
-			});
-			setLoading(false);
-		}, 650);
-	});
-
-	return (
-		<form
-			onSubmit={onSubmit}
-			className="flex gap-5 justify-between bg-white rounded-lg my-8 p-6"
-		>
-			<div className="flex gap-5 w-full ">
-				{["super-admin", "dev"].includes(adminProfile.account_type) && (
-					<>
-						<SelectField
-							{...register("rent_type")}
-							label="Select Package"
-							placeholder="Select Rental Package"
-							options={["Within Marina", "Calabar to Uyo", "Uyo to Calabar"]}
-							errors={errors}
-							formState={isSubmitted}
-						/>
-					</>
-				)}
-
-				{/* date field */}
-				<div className="flex flex-col w-full">
-					<label className="text-xs md:text-sm !w-full flex flex-col ">
-						Choose Date
-						<Controller
-							control={control}
-							name="date"
-							render={({ field }) => (
-								<DatePicker
-									icon={<CalendarIcon />}
-									showIcon
-									toggleCalendarOnIconClick={true}
-									closeOnScroll
-									className="bg-blue-50 h-10 md:h-12 border border-blue-500 font-normal text-base w-full !px-4 !rounded-lg font-poppins mt-2 md:mt-3 text-left"
-									onChange={(date) => field.onChange(date)}
-									selected={field.value}
-									customInput={
-										<button type="button">
-											{field?.value ? (
-												format(field?.value, "P")
-											) : (
-												<span className="text-xs text-[#9fa6b2]">
-													dd/mm/yyyy
-												</span>
-											)}
-										</button>
-									}
-								/>
-							)}
-						/>
-					</label>
-					{errors?.date && (
-						<p className="text-xs pt-2 text-red-700">{errors?.date.message}</p>
-					)}
-				</div>
-			</div>
-			<Button
-				text="Search"
-				type="submit"
-				loading={loading}
-				className="w-40 py-6  md:mt-7 "
-			/>
-		</form>
-	);
-};
-
 const RentalTable = () => {
-	const { adminProfile, setLoading } = React.useContext(GlobalCTX);
-	const { searchParams, setSearchParams, currentPageIndex, filtering, setCurrentPageIndex } =
+	const { adminProfile } = React.useContext(GlobalCTX);
+	const { currentPageIndex, resetPageIndex, setFilterValue } =
 		React.useContext(BookingCTX);
 	const [sorting, setSorting] = React.useState([]);
 	const [columnFilters, setColumnFilters] = React.useState([]);
@@ -191,79 +81,53 @@ const RentalTable = () => {
 	});
 	const [pageCount, setPageCount] = React.useState(0);
 	const [pagination, setPagination] = React.useState({
-		pageIndex: 0,
+		pageIndex: currentPageIndex.rentals,
 		pageSize: 7,
 	});
 	const [rentalData, setRentalData] = React.useState([]);
 	const navigate = useNavigate();
+	const { searchParams, setSearchParams, getSearchParams } = useSearchParam();
+	const searchParamValues = getSearchParams();
 
-	React.useEffect(() => {
-		setLoading(true);
-		axiosInstance
-			.get("/rent/getAllRents")
-			.then((res) => {
-				if (res.status == 200) {
-					const terminals = adminProfile.terminal.map((location) =>
-						location.split(",")[1].trim().toLowerCase()
-					);
-					// Filter records based on the terminal
-					const sortedRentals = res.data.rents
-						.filter((rental) => {
-							const city = rental.departure.split(",")[1].trim().toLowerCase();
-							return terminals.includes(city);
-						})
-					setRentalData(sortedRentals.reverse());
-				}
-			})
-			.catch((error) => {
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error(
-						"Error occurred while fetching rental data. Refresh page."
-					);
-			})
-			.finally(() => setLoading(false));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	React.useEffect(() => {
-		table.setPageIndex(currentPageIndex.rentals);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	React.useEffect(() => {
-		if (searchParams) {
-			table.getColumn("rent_type").setFilterValue(searchParams?.rent_type);
-
-			if (searchParams?.date) {
-				const formatDate = format(new Date(searchParams.date), "P");
-				table.getColumn("rental_date").setFilterValue(formatDate);
+	const { data, isSuccess, isPending } = useQuery({
+		queryKey: ["rentals"],
+		queryFn: async () => {
+			try {
+				const response = await axiosInstance.get("/rent/getAllRents")
+				const terminals = adminProfile.terminal.map((location) =>
+					location.split(",")[1].trim().toLowerCase()
+				);
+				// Filter records based on the terminal
+				const sortedRentals = response.data.rents
+					.filter((rental) => {
+						const city = rental.departure.split(",")[1].trim().toLowerCase();
+						return terminals.includes(city);
+					})
+				return sortedRentals.reverse()
 			}
+			catch (error) {
+				customError(error, "Error occurred while fetching rental data. Refresh page.");
+				return [];
+			}
+		}
+	})
+
+	React.useEffect(() => {
+		if (isSuccess) setRentalData(data)
+	}, [isSuccess, data])
+
+	React.useEffect(() => {
+		const rent_type = searchParams.get("rent_type");
+		if (rent_type)
+			table.getColumn("rent_type").setFilterValue(rent_type);
+
+		const date = searchParams.get("date");
+		if (date) {
+			const formatDate = format(new Date(date), "P");
+			table.getColumn("rental_date").setFilterValue(formatDate);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [searchParams]);
-
-	React.useEffect(() => {
-		if (columnFilters.length || filtering.length) {
-			setPageCount(
-				Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
-			);
-			setCurrentPageIndex((prev) => ({
-				...prev,
-				rentals: 0,
-			}));
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [columnFilters, filtering]);
-
-	React.useEffect(() => {
-		if (rentalData.length)
-			setPageCount(Math.ceil(rentalData.length / pagination.pageSize));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [rentalData]);
 
 	const columns = [
 		{
@@ -338,7 +202,7 @@ const RentalTable = () => {
 			accessorKey: "payment_status",
 			header: <div className="text-center">Status</div>,
 			cell: ({ row }) => {
-				let status = row.getValue("payment_status");
+				const status = row.getValue("payment_status");
 				return (
 					<div
 						className={cn(
@@ -387,43 +251,34 @@ const RentalTable = () => {
 			columnVisibility,
 			sorting,
 			columnFilters,
-			globalFilter: filtering,
+			globalFilter: searchParamValues?.s,
 		},
 	});
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
-		table.setPageIndex(currentPageIndex.rentals);
+		setPageCount(Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [rentalData, columnFilters, searchParamValues]);
 
 	return (
 		<div>
-			{Object.keys(searchParams).length ? (
-				<div className="flex justify-between items-center mt-14 mb-5">
-					<div className="inline-flex gap-1 items-center">
-						<h2 className="font-semibold">Search results for </h2>
-						<p className="divide-x divide-black flex gap-2 [&>*:not(:first-of-type)]:pl-2">
-							(
-							{searchParams?.rent_type && (
-								<span>{searchParams.rent_type} </span>
-							)}
-							{searchParams?.date && <span>{searchParams.date}</span>})
-						</p>
-					</div>
-
-					<Button
-						className="h-10 text-sm"
+			<div className="flex items-center gap-10 justify-between w-full mt-10 mb-5 ">
+				<h2 className="font-semibold"> {Object.keys(searchParamValues).length ? "Search results" : "All Rentals"}</h2>
+				{(columnFilters.length) ?
+					<CustomButton
+						variant="outline"
+						className="!h-8 !text-sm"
 						onClick={() => {
 							table.resetColumnFilters(true);
 							setSearchParams({});
+							setFilterValue("");
+							resetPageIndex("rentals")
 						}}
-						text="Reset filters"
-						variant="outline"
-					/>
-				</div>
-			) : (
-				<h2 className="font-semibold mt-14 mb-5">All Rentals</h2>
-			)}
+					>
+						Reset filters
+					</CustomButton> : ""}
+			</div>
 			<div className="bg-white rounded-lg p-5">
 				<Table>
 					<TableHeader>
@@ -470,7 +325,7 @@ const RentalTable = () => {
 									colSpan={columns.length}
 									className="h-24 text-center"
 								>
-									No results.
+									{isPending ? <p className="inline-flex gap-2 items-center">Fetching data  <Loader2 className="animate-spin" /></p> : "No results."}
 								</TableCell>
 							</TableRow>
 						)}
@@ -484,14 +339,14 @@ const RentalTable = () => {
 					<ReactPaginate
 						breakLabel={<PaginationEllipsis />}
 						nextLabel={
-							<ButtonUI
+							<Button
 								variant="ghost"
 								size="sm"
 								onClick={() => table.nextPage()}
 								disabled={!table.getCanNextPage()}
 							>
 								<CaretIcon />
-							</ButtonUI>
+							</Button>
 						}
 						onPageChange={(val) => {
 							table.setPageIndex(val.selected);
@@ -501,11 +356,10 @@ const RentalTable = () => {
 							});
 						}}
 						forcePage={currentPageIndex.rentals}
-						initialPage={currentPageIndex.rentals}
 						pageRangeDisplayed={3}
 						pageCount={table.getPageCount()}
 						previousLabel={
-							<ButtonUI
+							<Button
 								variant="ghost"
 								size="sm"
 								onClick={() => table.previousPage()}
@@ -514,7 +368,7 @@ const RentalTable = () => {
 								<span className="rotate-180">
 									<CaretIcon />
 								</span>
-							</ButtonUI>
+							</Button>
 						}
 						renderOnZeroPageCount={null}
 						className="flex gap-2 items-center text-xs font-normal [&_a]:inline-flex [&_a]:items-center [&_a]:justify-center [&_a]:min-w-7 [&_a]:h-8 [&_a]:rounded-lg *:text-center *:[&_.selected]:bg-blue-500  *:[&_.selected]:text-white [&_.disabled]:pointer-events-none"
@@ -528,227 +382,230 @@ const RentalTable = () => {
 export const RentDetail = () => {
 	const navigate = useNavigate();
 	const currentRental = useLoaderData();
+	const componentRef = React.useRef();
+
+	const handlePrint = useReactToPrint({
+		content: () => componentRef.current,
+		documentTitle: `Abitto Ticket - ${currentRental?.ticket_id}`,
+	});
 
 	return (
 		<div>
 			<div className="flex gap-1 items-center mb-5 py-2">
-				<button onClick={() => navigate(-1)}>
+				<button type="button" onClick={() => navigate(-1)}>
 					<CircleArrowLeftIcon />
 				</button>
 				<h1 className="text-base font-semibold">Rental Details</h1>
 			</div>
-			{currentRental ? (
-				<div className="flex gap-5 items-start">
-					<div className="bg-white rounded-lg overflow-hidden basis-8/12">
-						<div className="bg-blue-50 flex gap-3 p-5 ">
-							<div className="bg-white rounded-lg p-2 ">
-								<TickIcon />
+			{currentRental ?
+				<>
+					<div className="flex gap-5 items-start">
+						<div className="bg-white rounded-lg overflow-hidden basis-8/12">
+							<div className="bg-blue-50 flex gap-3 p-5 ">
+								<div className="bg-white rounded-lg p-2 ">
+									<TickIcon />
+								</div>
+								<div>
+									<h2 className="text-blue-500 text-sm font-semibold">
+										Rental Confirmed!
+									</h2>
+									<p className="text-[10px]">
+										Great news! The rental has been successfully confirmed from
+										our sales point.
+									</p>
+								</div>
 							</div>
-							<div>
-								<h2 className="text-blue-500 text-sm font-semibold">
-									Rental Confirmed!
-								</h2>
-								<p className="text-[10px]">
-									Great news! The rental has been successfully confirmed from
-									our sales point.
-								</p>
-							</div>
-						</div>
-
-						<div className="p-5 pb-20 space-y-6">
-							<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Rental ID</p>
-									<p className="text-base font-semibold uppercase">
-										#{currentRental?.ticket_id}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Customer Name</p>
-									<p className="text-base font-semibold capitalize">{`${currentRental?.first_name} ${currentRental?.surname}`}</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Phone</p>
-									<p className="text-base font-semibold">
-										{currentRental?.phone_number}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Email</p>
-									<p className="text-base font-semibold">
-										{currentRental?.email}
-									</p>
-								</li>
-							</ul>
-							<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
-								<li>
-									<p className="text-xs text-[#7F7F7F] ">Rental Type</p>
-									<p className="text-base font-semibold capitalize">
-										{currentRental?.rent_type}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">No. of Passengers</p>
-									<p className="text-base font-semibold">
-										{currentRental?.passengers}
-									</p>
-								</li>
-							</ul>
-							{/* FIXME:  */}
-							<div className=" space-y-6">
+							<div className="p-5 pb-20 space-y-6">
 								<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
 									<li>
-										<p className="text-xs text-[#7F7F7F]">Departure</p>
-										<p className="text-base font-semibold">
-											{currentRental?.departure}
+										<p className="text-xs text-[#7F7F7F]">Rental ID</p>
+										<p className="text-base font-semibold uppercase">
+											#{currentRental?.ticket_id}
 										</p>
 									</li>
 									<li>
-										<p className="text-xs text-[#7F7F7F]">Arrival</p>
+										<p className="text-xs text-[#7F7F7F]">Customer Name</p>
+										<p className="text-base font-semibold capitalize">{`${currentRental?.first_name} ${currentRental?.surname}`}</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">Phone</p>
 										<p className="text-base font-semibold">
-											{currentRental?.arrival}
+											{currentRental?.phone_number}
+										</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">Email</p>
+										<p className="text-base font-semibold">
+											{currentRental?.email}
 										</p>
 									</li>
 								</ul>
-								<ul className="*:flex *:flex-col *:gap-1 flex gap-10 ">
+								<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
 									<li>
-										<p className="text-xs text-[#7F7F7F]">Rental Date</p>
-										<p className="text-base font-semibold">
-											{format(currentRental?.rental_date, "PPPP")}
+										<p className="text-xs text-[#7F7F7F] ">Rental Type</p>
+										<p className="text-base font-semibold capitalize">
+											{currentRental?.rent_type}
 										</p>
 									</li>
 									<li>
-										<p className="text-xs text-[#7F7F7F]">Rental Time</p>
+										<p className="text-xs text-[#7F7F7F]">No. of Passengers</p>
 										<p className="text-base font-semibold">
-											{currentRental?.rental_time}
+											{currentRental?.passengers}
+										</p>
+									</li>
+								</ul>
+								<div className=" space-y-6">
+									<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
+										<li>
+											<p className="text-xs text-[#7F7F7F]">Departure</p>
+											<p className="text-base font-semibold">
+												{currentRental?.departure}
+											</p>
+										</li>
+										<li>
+											<p className="text-xs text-[#7F7F7F]">Arrival</p>
+											<p className="text-base font-semibold">
+												{currentRental?.arrival}
+											</p>
+										</li>
+									</ul>
+									<ul className="*:flex *:flex-col *:gap-1 flex gap-10 ">
+										<li>
+											<p className="text-xs text-[#7F7F7F]">Rental Date</p>
+											<p className="text-base font-semibold">
+												{format(currentRental?.rental_date, "PPPP")}
+											</p>
+										</li>
+										<li>
+											<p className="text-xs text-[#7F7F7F]">Rental Time</p>
+											<p className="text-base font-semibold">
+												{currentRental?.rental_time}
+											</p>
+										</li>
+									</ul>
+								</div>
+								<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
+									<li>
+										<p className="text-xs text-[#7F7F7F] ">Booking Medium</p>
+										<p className="text-base font-semibold">
+											{currentRental?.payment_medium}
+										</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">Payment Method</p>
+										<p className="text-base font-semibold">
+											{currentRental?.payment_method}
+										</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">Payment Status</p>
+										<p
+											className={cn(
+												"text-center font-semibold rounded-lg py-1 px-2 text-xs",
+												{
+													"text-green-500 bg-green-100":
+														currentRental?.payment_status === "Success",
+													"text-[#E78913] bg-[#F8DAB6]":
+														currentRental?.payment_status === "Pending",
+													"text-[#F00000] bg-[#FAB0B0]":
+														currentRental?.payment_status === "Canceled",
+												}
+											)}
+										>
+											{currentRental?.payment_status}
+										</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">
+											Transaction Reference
+										</p>
+										<p className="text-base font-semibold">
+											{currentRental?.trxRef}
+										</p>
+									</li>
+								</ul>
+								<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
+									<li>
+										<p className="text-xs text-[#7F7F7F]">Booked on</p>
+										<p className="text-base font-semibold">
+											{format(currentRental.created_at, "PPPPpppp").split(
+												"GMT",
+												1
+											)}
+										</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">Booked By</p>
+										<p className="text-base font-semibold">
+											{currentRental?.paid_by}
+										</p>
+									</li>
+									<li>
+										<p className="text-xs text-[#7F7F7F]">Trip Status</p>
+										<p
+											className={cn(
+												"rounded-lg w-20 mx-auto py-1 text-xs px-2 text-center font-semibold",
+												{
+													"text-green-500 bg-green-100":
+														currentRental?.rental_status === "Completed",
+													"text-[#E78913] bg-[#F8DAB6]":
+														currentRental?.rental_status === "Upcoming",
+													"text-[#F00000] bg-[#FAB0B0]":
+														currentRental?.rental_status === "Canceled",
+													"text-black bg-slate-500/50 ":
+														currentRental?.rental_status === "Rescheduled",
+													"text-purple-900 bg-purple-300/30 ":
+														currentRental?.rental_status === "Missed",
+												}
+											)}
+										>
+											{currentRental?.rental_status}
 										</p>
 									</li>
 								</ul>
 							</div>
-							<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
-								<li>
-									<p className="text-xs text-[#7F7F7F] ">Booking Medium</p>
-									<p className="text-base font-semibold">
-										{currentRental?.payment_medium}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Payment Method</p>
-									<p className="text-base font-semibold">
-										{currentRental?.payment_method}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Payment Status</p>
-									<p
-										className={cn(
-											"text-center font-semibold rounded-lg py-1 px-2 text-xs",
-											{
-												"text-green-500 bg-green-100":
-													currentRental?.payment_status === "Success",
-												"text-[#E78913] bg-[#F8DAB6]":
-													currentRental?.payment_status === "Pending",
-												"text-[#F00000] bg-[#FAB0B0]":
-													currentRental?.payment_status === "Canceled",
-											}
-										)}
-									>
-										{currentRental?.payment_status}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">
-										Transaction Reference
-									</p>
-									<p className="text-base font-semibold">
-										{currentRental?.trxRef}
-									</p>
-								</li>
-							</ul>
-							<ul className="*:flex *:flex-col *:gap-1 flex gap-10">
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Booked on</p>
-									<p className="text-base font-semibold">
-										{format(currentRental.created_at, "PPPPpppp").split(
-											"GMT",
-											1
-										)}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Booked By</p>
-									<p className="text-base font-semibold">
-										{currentRental?.paid_by}
-									</p>
-								</li>
-								<li>
-									<p className="text-xs text-[#7F7F7F]">Trip Status</p>
-									<p
-										className={cn(
-											"rounded-lg w-20 mx-auto py-1 text-xs px-2 text-center font-semibold",
-											{
-												"text-green-500 bg-green-100":
-													currentRental?.rental_status === "Completed",
-												"text-[#E78913] bg-[#F8DAB6]":
-													currentRental?.rental_status === "Upcoming",
-												"text-[#F00000] bg-[#FAB0B0]":
-													currentRental?.rental_status === "Canceled",
-												"text-black bg-slate-500/50 ":
-													currentRental?.rental_status === "Rescheduled",
-												"text-purple-900 bg-purple-300/30 ":
-													currentRental?.rental_status === "Missed",
-											}
-										)}
-									>
-										{currentRental?.rental_status}
-									</p>
-								</li>
-							</ul>
 						</div>
-					</div>
-
-					<div className="bg-white rounded-lg basis-4/12 p-5 flex flex-col gap-6">
-						<div>
-							<h3 className="text-blue-500 font-semibold  text-base md:text-xl ">
-								Abitto Ferry Terminal
-							</h3>
-							<p className="text-[#8E98A8] text-sm inline-flex items-center gap-1">
-								Non-refundable <InformationCircleIcon />
-							</p>
-							<p className="font-medium text-xs text-right">
-								Rental ID: #
-								<span className="uppercase">{currentRental?.ticket_id}</span>
-							</p>
-						</div>
-						<div>
-							<h4 className="font-semibold text-sm mb-1">Rental Package</h4>
-							<div className="my-2 flex flex-wrap gap-x-4 gap-y-1 text-[#1E1E1E] text-xs font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
-								<p className="capitalize">
-									<Boat2Icon />
-									{currentRental?.rent_type}
+						<div className="bg-white rounded-lg basis-4/12 p-5 flex flex-col gap-6">
+							<div>
+								<h3 className="text-blue-500 font-semibold  text-base md:text-xl ">
+									Abitto Ferry Terminal
+								</h3>
+								<p className="text-[#8E98A8] text-sm inline-flex items-center gap-1">
+									Non-refundable <InformationCircleIcon />
 								</p>
-								<p>
-									<UsersIcon /> {currentRental?.passengers} passenger(s)
+								<p className="font-medium text-xs text-right">
+									Rental ID: #
+									<span className="uppercase">{currentRental?.ticket_id}</span>
 								</p>
 							</div>
-							<div className="flex flex-wrap gap-x-4 gap-y-1 text-[#1E1E1E] text-xs font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
-								<p>
-									<CalendarIcon />
-									{format(currentRental?.rental_date, "PP")}
-								</p>
-								<p>
-									<ClockIcon />
-									{currentRental?.rental_time}
-								</p>
+							<div>
+								<h4 className="font-semibold text-sm mb-1">Rental Package</h4>
+								<div className="my-2 flex flex-wrap gap-x-4 gap-y-1 text-[#1E1E1E] text-xs font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
+									<p className="capitalize">
+										<Boat2Icon />
+										{currentRental?.rent_type}
+									</p>
+									<p>
+										<UsersIcon /> {currentRental?.passengers} passenger(s)
+									</p>
+								</div>
+								<div className="flex flex-wrap gap-x-4 gap-y-1 text-[#1E1E1E] text-xs font-normal [&_p]:inline-flex [&_p]:items-center [&_p]:gap-1">
+									<p>
+										<CalendarIcon />
+										{format(currentRental?.rental_date, "PP")}
+									</p>
+									<p>
+										<ClockIcon />
+										{currentRental?.rental_time}
+									</p>
+								</div>
 							</div>
-						</div>
-						<div className="border-y-2 border-dashed py-2">
-							<table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] ">
-								<tbody>
-									<tr>
-										<td className="text-xs text-[#444444]">Ticket Price</td>
-										<td className="text-xs text-[#444444]">
-											<span className="block text-sm">
+							<div className="border-y-2 border-dashed py-2">
+								<table className="w-full [&_td:last-of-type]:text-right [&_td]:py-[2px] ">
+									<tbody>
+										<tr>
+											<td className="text-sm text-[#444444]">Rental Cost</td>
+											<td className="text-sm text-[#444444]">
 												{formatValue({
 													value: String(currentRental.rental_cost ?? 0),
 													prefix: "₦",
@@ -756,35 +613,35 @@ export const RentDetail = () => {
 												{currentRental.rent_type === "within marina" && (
 													<> x {currentRental?.rental_duration}</>
 												)}
-											</span>
-										</td>
-									</tr>
-									<tr>
-										<td className="font-medium text-base">Total</td>
-										<td className="font-medium text-base">
-											₦
-											{formatValue({
-												value: String(currentRental?.total_cost),
-											})}
-										</td>
-									</tr>
-								</tbody>
-							</table>
+											</td>
+										</tr>
+										<tr>
+											<td className="font-medium text-base">Total</td>
+											<td className="font-medium text-base">
+												₦
+												{formatValue({
+													value: String(currentRental?.total_cost),
+												})}
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<button
+								type="button"
+								className=" bg-blue-500 w-full py-3 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white flex justify-center gap-2 mx-auto rounded-lg "
+								onClick={handlePrint}
+							>
+								<PrinterIcon />
+								Print
+							</button>
 						</div>
-						<button
-							className=" bg-blue-500 w-56 py-3 font-semibold text-sm hover:bg-blue-700 transition-all duration-150 ease-in-out text-white flex justify-center gap-2 mx-auto rounded-lg "
-							onClick={() => {
-								navigate(`/rental-invoice/${currentRental.ticket_id}`);
-							}}
-						>
-							<PrinterIcon />
-							Print
-						</button>
 					</div>
-				</div>
-			) : (
-				<p className="ml-10">No Result</p>
-			)}
+					<RentalInvoice props={{ currentUser: currentRental }} ref={componentRef} />
+				</>
+				: (
+					<p className="ml-10">No Result</p>
+				)}
 		</div>
 	);
 };

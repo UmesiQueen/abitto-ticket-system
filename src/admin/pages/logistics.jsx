@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { Button as ButtonUI } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { CircleArrowLeftIcon } from "@/assets/icons";
 import Logo from "@/assets/logo3.svg";
 import SelectField from "@/components/custom/SelectField";
@@ -12,7 +12,7 @@ import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import InputField from "@/components/custom/InputField";
 import { Textarea } from "@/components/ui/textarea";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import { NumericFormat } from "react-number-format";
 import {
 	shipmentDetailsSchema,
@@ -38,9 +38,9 @@ const Logistics = () => {
 			</Helmet>
 			<ctx.Provider value={{ packageDetails, setPackageDetails }}>
 				<div className="flex gap-1 items-center mb-10 ">
-					<ButtonUI size="icon" variant="ghost" onClick={() => navigate(-1)}>
+					<Button size="icon" variant="ghost" onClick={() => navigate(-1)}>
 						<CircleArrowLeftIcon />
-					</ButtonUI>
+					</Button>
 					<h1 className="font-semibold text-lg">Create a new Shipment</h1>
 				</div>
 				<div className="rounded-lg bg-white p-10">
@@ -56,7 +56,7 @@ const Logistics = () => {
 							"Receiver Info",
 							"Payment",
 						].map((header, index) => {
-							const isActive = activeStep == index;
+							const isActive = activeStep === index;
 							return (
 								<li
 									key={header}
@@ -105,10 +105,8 @@ const ShippingDetails = () => {
 	}, [costPerKg])
 
 	const isSalesperson =
-		["salesperson"].includes(adminProfile.account_type) &&
-			pathname.includes("/backend")
-			? true
-			: false;
+		!!(["salesperson"].includes(adminProfile.account_type) &&
+			pathname.includes("/backend"));
 
 	const destinations = {
 		Calabar: {
@@ -139,7 +137,7 @@ const ShippingDetails = () => {
 		context: { isAdmin: true },
 	});
 
-	const isOthers = watch("category") == "Others" ? true : false;
+	const isOthers = watch("category") === "Others";
 
 	const onSubmit = handleSubmit((formData) => {
 		setPackageDetails((prev) => ({
@@ -189,29 +187,29 @@ const ShippingDetails = () => {
 				<div className="flex gap-5">
 					<SelectField
 						{...register("departure")}
-						defaultValue={defaultValues["departure"]}
+						defaultValue={defaultValues.departure}
 						label="Departure"
 						placeholder="Select Departure Terminal"
 						options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
 						errors={errors}
 						handlechange={handleChange}
-						disabled={isSalesperson ? true : false}
+						disabled={!!isSalesperson}
 					/>
 					<SelectField
 						{...register("arrival")}
-						defaultValue={defaultValues["arrival"]}
+						defaultValue={defaultValues.arrival}
 						label="Arrival"
 						placeholder="Select Arrival Terminal"
 						options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
 						errors={errors}
 						handlechange={handleChange}
-						disabled={isSalesperson ? true : false}
+						disabled={!!isSalesperson}
 					/>
 				</div>
 				<div className="flex gap-5">
 					<SelectField
 						{...register("category")}
-						defaultValue={defaultValues["category"]}
+						defaultValue={defaultValues.category}
 						label="Category"
 						placeholder="Select Item Category"
 						options={[
@@ -228,7 +226,7 @@ const ShippingDetails = () => {
 					/>
 					<InputField
 						{...register("no_item")}
-						defaultValue={defaultValues["no_item"]}
+						defaultValue={defaultValues.no_item}
 						label="No. of item"
 						placeholder="Enter no. of item"
 						type="number"
@@ -240,7 +238,7 @@ const ShippingDetails = () => {
 				<div className="flex gap-5">
 					<InputField
 						{...register("weight")}
-						defaultValue={defaultValues["weight"]}
+						defaultValue={defaultValues.weight}
 						label="Weight(kg)"
 						placeholder="Enter weight of item"
 						type="number"
@@ -251,8 +249,8 @@ const ShippingDetails = () => {
 
 					{/* NumericFormat Input Field */}
 					<div className="flex flex-col w-full">
-						<label className="text-xs md:text-sm !w-full flex gap-2 md:gap-3 flex-col">
-							Value(NGN)
+						<label htmlFor="value" className="text-xs md:text-sm !w-full flex gap-2 md:gap-3 flex-col">
+							Est. Item Value(NGN)
 							<Controller
 								control={control}
 								name="value"
@@ -288,7 +286,7 @@ const ShippingDetails = () => {
 				{isOthers && (
 					<InputField
 						{...register("name")}
-						defaultValue={defaultValues["name"]}
+						defaultValue={defaultValues.name}
 						label="Item Name"
 						placeholder="Enter name of item"
 						type="text"
@@ -300,6 +298,7 @@ const ShippingDetails = () => {
 				)}
 				<div className="flex flex-col w-full">
 					<label
+						htmlFor="description"
 						className={
 							"text-xs md:text-sm !w-full flex gap-2 md:gap-3 flex-col"
 						}
@@ -307,7 +306,7 @@ const ShippingDetails = () => {
 						Item Description
 						<Textarea
 							{...register("description")}
-							defaultValue={defaultValues["description"]}
+							defaultValue={defaultValues.description}
 							placeholder="Describe item briefly..."
 							rows="6"
 							onChange={handleChange}
@@ -315,7 +314,7 @@ const ShippingDetails = () => {
 						/>
 					</label>
 				</div>
-				{!showPopover && <Button text="Get Quote" type="submit" loading={loading} className="w-full" />}
+				{!showPopover && <CustomButton type="submit" loading={loading} className="w-full">Get Quote</CustomButton>}
 			</form>
 
 			{/* Quote */}
@@ -340,7 +339,7 @@ const ShippingDetails = () => {
 						</p>
 					</div>
 				</div>
-				<Button text="Continue" onClick={handleNextClick} className="w-full" />
+				<CustomButton onClick={handleNextClick} className="w-full" >Continue</CustomButton>
 			</div>}
 		</div>
 	);
@@ -387,7 +386,7 @@ const SenderDetails = () => {
 				<div className="flex gap-5">
 					<InputField
 						{...register("sender_name")}
-						defaultValue={defaultValues["sender_name"]}
+						defaultValue={defaultValues.sender_name}
 						label="Name"
 						placeholder="Enter sender name"
 						type="text"
@@ -397,7 +396,7 @@ const SenderDetails = () => {
 					/>
 					<InputField
 						{...register("sender_phone_number")}
-						defaultValue={defaultValues["sender_phone_number"]}
+						defaultValue={defaultValues.sender_phone_number}
 						label="Phone Number"
 						placeholder="Enter sender phone number"
 						type="text"
@@ -409,7 +408,7 @@ const SenderDetails = () => {
 				<div className="flex gap-5">
 					<InputField
 						{...register("sender_email")}
-						defaultValue={defaultValues["sender_email"]}
+						defaultValue={defaultValues.sender_email}
 						label="Email"
 						placeholder="Enter sender email"
 						type="text"
@@ -419,7 +418,7 @@ const SenderDetails = () => {
 					/>
 					<InputField
 						{...register("sender_alt_phone_number")}
-						defaultValue={defaultValues["sender_alt_phone_number"]}
+						defaultValue={defaultValues.sender_alt_phone_number}
 						label="Alt. Phone Number"
 						placeholder="Enter alt. sender phone number"
 						type="text"
@@ -430,6 +429,7 @@ const SenderDetails = () => {
 				</div>
 				<div className="flex flex-col w-full">
 					<label
+						htmlFor="sender_address"
 						className={
 							"text-xs md:text-sm !w-full flex gap-2 md:gap-3 flex-col"
 						}
@@ -437,7 +437,7 @@ const SenderDetails = () => {
 						Address
 						<Textarea
 							{...register("sender_address")}
-							defaultValue={defaultValues["sender_address"]}
+							defaultValue={defaultValues.sender_address}
 							placeholder="Enter sender address"
 							rows={2}
 							onChange={handleChange}
@@ -446,13 +446,12 @@ const SenderDetails = () => {
 					</label>
 				</div>
 				<div className="flex gap-4 mt-10">
-					<Button
-						text="Back"
+					<CustomButton
 						variant="outline"
 						onClick={onPrevClick}
 						className="w-40"
-					/>
-					<Button text="Continue" type="submit" className="w-40 " />
+					>Back</CustomButton>
+					<CustomButton type="submit" className="w-40" >Continue</CustomButton>
 				</div>
 			</form>
 		</div>
@@ -500,7 +499,7 @@ const ReceiverDetails = () => {
 				<div className="flex gap-5">
 					<InputField
 						{...register("receiver_name")}
-						defaultValue={defaultValues["receiver_name"]}
+						defaultValue={defaultValues.receiver_name}
 						label="Name"
 						placeholder="Enter receiver name"
 						type="text"
@@ -510,7 +509,7 @@ const ReceiverDetails = () => {
 					/>
 					<InputField
 						{...register("receiver_phone_number")}
-						defaultValue={defaultValues["receiver_phone_number"]}
+						defaultValue={defaultValues.receiver_phone_number}
 						label="Phone Number"
 						placeholder="Enter receiver phone number"
 						type="text"
@@ -522,7 +521,7 @@ const ReceiverDetails = () => {
 				<div className="flex gap-5">
 					<InputField
 						{...register("receiver_email")}
-						defaultValue={defaultValues["receiver_email"]}
+						defaultValue={defaultValues.receiver_email}
 						label="Email"
 						placeholder="Enter receiver email"
 						type="text"
@@ -532,7 +531,7 @@ const ReceiverDetails = () => {
 					/>
 					<InputField
 						{...register("receiver_alt_phone_number")}
-						defaultValue={defaultValues["receiver_alt_phone_number"]}
+						defaultValue={defaultValues.receiver_alt_phone_number}
 						label="Alt. Phone Number"
 						placeholder="Enter alt. receiver phone number"
 						type="text"
@@ -543,6 +542,7 @@ const ReceiverDetails = () => {
 				</div>
 				<div className="flex flex-col w-full">
 					<label
+						htmlFor="receiver_address"
 						className={
 							"text-xs md:text-sm !w-full flex gap-2 md:gap-3 flex-col"
 						}
@@ -550,7 +550,7 @@ const ReceiverDetails = () => {
 						Address
 						<Textarea
 							{...register("receiver_address")}
-							defaultValue={defaultValues["receiver_address"]}
+							defaultValue={defaultValues.receiver_address}
 							placeholder="Enter receiver address"
 							rows={2}
 							onChange={handleChange}
@@ -559,13 +559,12 @@ const ReceiverDetails = () => {
 					</label>
 				</div>
 				<div className="flex gap-4 mt-10">
-					<Button
-						text="Back"
+					<CustomButton
 						variant="outline"
 						onClick={onPrevClick}
 						className="w-40"
-					/>
-					<Button text="Continue" type="submit" className="w-40" />
+					>Back</CustomButton>
+					<CustomButton type="submit" className="w-40" >Continue</CustomButton>
 				</div>
 			</form>
 		</div>
@@ -575,7 +574,7 @@ const ReceiverDetails = () => {
 const Payment = () => {
 	const { onPrevClick } = useStepper();
 	const { packageDetails, setPackageDetails } = React.useContext(ctx);
-	const { handleLogisticsPayment } = usePayment();
+	const { logisticsPayment } = usePayment();
 	const {
 		register,
 		handleSubmit,
@@ -592,7 +591,7 @@ const Payment = () => {
 			...formData,
 			...(prev?.name ?? { name: prev.category })
 		}))
-		handleLogisticsPayment(packageDetails, () => { setPackageDetails({}) });
+		logisticsPayment(packageDetails, () => { setPackageDetails({}) });
 	});
 
 	const handleChange = (e) => {
@@ -652,7 +651,6 @@ const Payment = () => {
 							</p>
 						</div>
 					</li>
-					<li></li>
 				</ul>
 				<div className="space-y-10">
 					<div>
@@ -701,7 +699,7 @@ const Payment = () => {
 				<div className=" py-10 flex gap-5 w-4/6">
 					<SelectField
 						{...register("payment_method")}
-						defaultValue={defaultValues["payment_method"]}
+						defaultValue={defaultValues.payment_method}
 						label="Payment Method"
 						placeholder="Select payment method"
 						options={["POS", "Bank Transfer", "Cash"]}
@@ -711,7 +709,7 @@ const Payment = () => {
 					/>
 					<InputField
 						{...register("txRef")}
-						defaultValue={defaultValues["txRef"]}
+						defaultValue={defaultValues.txRef}
 						label="Transaction Reference"
 						placeholder="Enter trx ref"
 						type="text"
@@ -732,8 +730,7 @@ const Payment = () => {
 					<Button
 						text="Submit"
 						type="submit"
-						// loading={loading}
-						className="w-40 "
+						className="w-40"
 					/>
 				</div>
 			</form>

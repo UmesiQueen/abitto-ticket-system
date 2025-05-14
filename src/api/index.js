@@ -1,5 +1,5 @@
+/* eslint-disable no-undef */
 import axios from "axios";
-import { toast } from "sonner";
 
 const API_BASE_URL = process.env.ABITTO_BASE_URL;
 
@@ -8,36 +8,55 @@ const axiosInstance = axios.create({
 	headers: {
 		//  Authorization: `<Your Auth Token>`,
 		"Content-Type": "application/json",
-		timeout: 10000,
 	},
+	timeout: 7 * 60 * 1000 // 7 mins
 });
 
-// Add a response interceptor
+// Response interceptor
 axiosInstance.interceptors.response.use(
 	(response) => {
-		// Return the response if it is successful
 		return response;
 	},
-	(error) => {
+	async (error) => {
+		// Get the original request configuration
+		const originalRequest = error.config;
+
+		// Handle timeout errors specifically
+		if (error.code === 'ECONNABORTED') {
+			return Promise.reject(new Error('Request timed out after 5 minutes. Please try again later.'));
+		}
+
+		// Check if the request has been retried already
+		const retryCount = originalRequest._retryCount || 0;
+
+		// Only retry GET requests that haven't been retried yet (limit to 1 retry)
+		if (
+			originalRequest &&
+			originalRequest.method === 'get' &&
+			retryCount < 1
+		) {
+			// Increment the retry count
+			originalRequest._retryCount = retryCount + 1;
+
+			console.log(`Request to ${originalRequest.url} failed. Retry attempt ${retryCount + 1}/1`);
+
+			// Retry the request
+			try {
+				return await axiosInstance(originalRequest);
+			} catch (retryError) {
+				// If the retry also fails, log and return the error
+				if (process.env.NODE_ENV === "development") {
+					console.error("Retry request failed:", retryError);
+				}
+				return Promise.reject(retryError);
+			}
+		}
+
+		// For non-GET requests or already retried requests, reject with the error
 		if (process.env.NODE_ENV === "development") {
 			// Log detailed error information in development
 			console.error("Request error:", error);
 		}
-		// Check if the error is a timeout error
-		if (error.code === "ECONNABORTED" && error.message.includes("timeout")) {
-			// Display a global error message for timeout
-			toast.error("Request timed out. Please try again later.");
-		}
-		if (
-			error.code === "ERR_NETWORK" ||
-			error.code === "ERR_INTERNET_DISCONNECTED"
-		) {
-			// Display a global error message for timeout
-			toast.error(
-				"Network error. Please check your internet connection and try again."
-			);
-		}
-		// Handle other errors
 		return Promise.reject(error);
 	}
 );

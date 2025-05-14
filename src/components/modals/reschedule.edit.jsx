@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -9,15 +10,14 @@ import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import { BookingCTX } from "@/contexts/BookingContext";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import { CalendarIcon, ClockIcon, CancelSquareIcon } from "@/assets/icons";
-import { Button as IconButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { useScheduleTrip } from "@/hooks/useScheduleTrip";
 import ConfirmationModal from "@/components/modals/confirmation";
 import { NumericFormat } from "react-number-format";
 import { formatValue } from "react-currency-input-field";
-import InputField from "../custom/InputField";
+import InputField from "@/components/custom/InputField";
 
 const rescheduleSchema = yup.object().shape({
 	date: yup.string().required("Date field is required."),
@@ -26,12 +26,10 @@ const rescheduleSchema = yup.object().shape({
 	trip_capacity: yup.string().required("Capacity is required."),
 });
 
-const RescheduleEditModal = () => {
+const RescheduleEditModal = ({ tripDetails }) => {
 	const { unMountPortalModal, setModalContent } = React.useContext(GlobalCTX);
 	const { rescheduleRequest } = useScheduleTrip();
-	const {
-		tripDetails: { date, time, ticket_cost, ...otherDetails },
-	} = React.useContext(BookingCTX);
+	const { date, time, ticket_cost, ...otherDetails } = tripDetails;
 	const {
 		control,
 		register,
@@ -61,7 +59,7 @@ const RescheduleEditModal = () => {
 		setModalContent(
 			<ConfirmationModal
 				props={{
-					header: "Are you sure you want to reschedule trip?",
+					header: "Reschedule trip",
 					handleRequest: () => {
 						rescheduleRequest(formValues);
 					},
@@ -84,20 +82,20 @@ const RescheduleEditModal = () => {
 
 	return (
 		<div className="bg-white rounded-lg p-10 pt-5 min-w-[700px] flex flex-col gap-5 relative">
-			<IconButton
+			<Button
 				size="icon"
 				variant="ghost"
 				className="absolute top-0 right-0"
 				onClick={unMountPortalModal}
 			>
 				<CancelSquareIcon />
-			</IconButton>
+			</Button>
 			<h3 className="font-bold text-center text-lg">Edit Journey Details</h3>
 			<form onSubmit={onSubmit}>
 				<div className="grid grid-cols-2 gap-5">
 					{/* time */}
 					<div className="flex flex-col w-full">
-						<label className="font-semibold text-xs md:text-sm w-full flex gap-2 md:gap-3 flex-col relative">
+						<label htmlFor="time" className="font-semibold text-xs md:text-sm w-full flex gap-2 md:gap-3 flex-col relative">
 							Select new time
 							<Controller
 								control={control}
@@ -142,7 +140,7 @@ const RescheduleEditModal = () => {
 
 					{/* date */}
 					<div className="flex flex-col w-full">
-						<label className="font-semibold text-xs md:text-sm !w-full flex flex-col ">
+						<label htmlFor="date" className="font-semibold text-xs md:text-sm !w-full flex flex-col ">
 							Select new date
 							<Controller
 								control={control}
@@ -183,7 +181,7 @@ const RescheduleEditModal = () => {
 
 					{/* NumericFormat Input Field */}
 					<div className="flex flex-col w-full">
-						<label className="font-semibold text-xs md:text-sm w-full flex flex-col">
+						<label htmlFor="cost" className="font-semibold text-xs md:text-sm w-full flex flex-col">
 							Enter new ticket cost
 							<Controller
 								control={control}
@@ -227,12 +225,13 @@ const RescheduleEditModal = () => {
 						/>
 					</div>
 				</div>
-				<Button
-					disabled={isDirty ? false : true}
+				<CustomButton
+					disabled={!isDirty}
 					type="submit"
-					text="Continue"
 					className="w-full mt-8 !h-12"
-				/>
+				>
+					Continue
+				</CustomButton>
 			</form>
 		</div>
 	);

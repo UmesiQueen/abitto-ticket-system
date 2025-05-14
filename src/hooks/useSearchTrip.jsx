@@ -1,67 +1,43 @@
 import React from "react";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-import { toast } from "sonner";
 import axiosInstance from "@/api";
-import { useStepper } from "@/hooks/useStepper";
-import BookingWarningModal, { UnAvailableModal } from "@/components/modals/book.warning";
+import { UnAvailableModal } from "@/components/modals/booking";
+import { customError } from "@/lib/utils";
 
 export const useSearchTrip = () => {
-	const { setAvailableTrips, selectedTrip, formData, setLoading: loader } = React.useContext(BookingCTX);
-	const { setLoading, mountPortalModal } = React.useContext(GlobalCTX);
-	const { onNextClick } = useStepper();
+	const { formData, setLoading } = React.useContext(BookingCTX);
+	const { mountPortalModal } = React.useContext(GlobalCTX);
 
-	const searchAvailableTrips = (reqData) => {
-		setLoading(true);
-		axiosInstance
-			.post("/ticket/query", reqData)
-			.then((res) => {
-				onNextClick();
-				setAvailableTrips(res.data);
-			})
-			.catch((error) => {
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error("Unable to retrieve available trips. Please try again.");
-			})
-			.finally(() => {
-				setLoading(false);
-			});
+	const searchAvailableTrips = async (reqData) => {
+		try {
+			const response = await axiosInstance.post("/ticket/query", reqData);
+			return response.data.departure_trip
+		} catch (error) {
+			customError(error, "Unable to retrieve available trips. Please try again.")
+		}
 	};
 
-	const checkAvailability = () => {
-		loader(true)
-		const requestData = {
-			departure_trip_code: selectedTrip.departure.trip_code,
-		}
-		const { total_passengers } = formData.bookingDetails;
+	const checkAvailability = async () => {
+		setLoading(true)
+		const { total_passengers, departure_trip_code } = formData.bookingDetails;
 
-		axiosInstance
-			.post("/ticket/available", requestData)
+		const response = await axiosInstance
+			.post("/ticket/available", { departure_trip_code })
 			.then((res) => {
-				if (res.status == 200) {
-					const available_departure_seats = res.data.available_seats;
-					if (available_departure_seats >= total_passengers) {
-						return mountPortalModal(<BookingWarningModal />);
-					}
-					return mountPortalModal(<UnAvailableModal type={"departure"} />);
+				if (res.status === 200) {
+					const { available_seats } = res.data
+					if (available_seats >= total_passengers)
+						return available_seats;
+					return mountPortalModal(<UnAvailableModal seats={available_seats} />);
 				}
 			})
 			.catch((error) => {
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error("Unable to confirm this trip availability. Please try again");
-				return false
+				customError(error, "Unable to confirm this trip availability.Please try again.")
+				setLoading(false)
 			})
-			.finally(() => {
-				loader(false);
-			});
+
+		return response
 	}
 
 	return { searchAvailableTrips, checkAvailability };

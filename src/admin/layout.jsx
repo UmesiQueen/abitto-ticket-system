@@ -5,7 +5,7 @@ import {
 	InvoiceIcon,
 	SearchIcon,
 	LogoutIcon,
-	UserIcon,
+	// UserIcon,
 	BookIcon,
 	ShipIcon,
 	MenuBoardIcon,
@@ -19,66 +19,92 @@ import {
 	Link,
 	useLocation,
 	useParams,
-	useLoaderData,
+	useNavigation
 } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import Avatar from "@mui/material/Avatar";
 import React from "react";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { BookingCTX } from "@/contexts/BookingContext";
 import { Helmet } from "react-helmet-async";
-import { toast } from "sonner";
 import Loader from "@/components/animation/Loader";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import axiosInstance from "@/api";
 import { Feedback, PriceChange } from "@mui/icons-material";
 import Logo from "@/assets/logo2.svg";
 import { Mailbox } from "lucide-react";
+import { customError, cn } from "@/lib/utils";
+import Cookies from 'js-cookie';
+import NoMobileView from "@/assets/images/no_mobile_view.jpg"
+import { useSearchParam } from "@/hooks/useSearchParam";
+import { Loader2 } from "lucide-react";
 
 const ProtectedRoute = () => {
 	const navigate = useNavigate();
-	const matches = useMediaQuery("(min-width:1240px)");
+	const matches = useMediaQuery("(min-width:1024px)");
 	const { adminProfile } = React.useContext(GlobalCTX);
-	const { setBookingQuery, setFiltering } =
-		React.useContext(BookingCTX);
+	const { setBookingQuery, filterValue, setFilterValue, setCurrentPageIndex } = React.useContext(BookingCTX);
 	const { pathname } = useLocation();
-	const dataQuery = useLoaderData();
-	const accountType = adminProfile.account_type;
+	const { accountType, tripCode } = useParams();
+	const currentPathname = pathname.replace(/\/$/, "");
 	const searchBarVisibility = [
 		`/backend/${accountType}/booking-details`,
-		`/backend/${accountType}/booking-details/`,
 		`/backend/${accountType}/rental-details`,
-		`/backend/${accountType}/rental-details/`,
 		`/backend/${accountType}/create/check-in`,
-		`/backend/${accountType}/create/check-in/`,
 		`/backend/${accountType}/customers`,
-		`/backend/${accountType}/customers/`,
 		`/backend/${accountType}/logistics`,
-		`/backend/${accountType}/logistics/`,
-	].includes(pathname);
-	const [filterValue, setFilterValue] = React.useState("");
+		`/backend/${accountType}/journey-list/${tripCode}`,
+	].includes(currentPathname);
+	const { updateSearchParam } = useSearchParam();
+	const navigation = useNavigation();
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	React.useEffect(() => {
-		setTimeout(() => { setFiltering(filterValue) }, 500)
-	}, [filterValue, setFiltering])
-
-	React.useEffect(() => {
-		const terminals = adminProfile.terminal.map((location) =>
-			location.split(",")[1].trim().toLowerCase()
-		);
-		// Filter records based on the terminal
-		const sortedQuery = dataQuery.filter((booking) => {
-			const city = booking.travel_from.split(",")[1].trim().toLowerCase();
-			return terminals.includes(city);
-		});
-		setBookingQuery(sortedQuery);
+		setTimeout(() => {
+			updateSearchParam("s", filterValue)
+			setCurrentPageIndex({
+				rentals: 0,
+				customers: 0,
+				booking: 0,
+				checkIn: 0,
+				journeyList: 0,
+				feedback: 0,
+				logistics: 0,
+				tripDetails: 0,
+			})
+		}, 1000)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [dataQuery]);
+	}, [filterValue])
+
+	const { data, isSuccess } = useQuery({
+		queryKey: ["bookings"],
+		queryFn: async () => {
+			try {
+				const response = await axiosInstance.get("/booking/queryall");
+				const dataQuery = response.data.bookings.reverse();
+				const terminals = adminProfile.terminal.map((location) =>
+					location.split(",")[1].trim().toLowerCase()
+				);
+				// Filter records based on the terminal
+				const sortedQuery = dataQuery.filter((booking) => {
+					const city = booking.travel_from.split(",")[1].trim().toLowerCase();
+					return terminals.includes(city);
+				});
+
+				return sortedQuery;
+			}
+			catch (error) {
+				customError(error, "Error while retrieving all bookings.")
+				return [];
+			}
+		},
+		staleTime: 300000,
+		cacheTime: 300000
+	})
 
 	React.useEffect(() => {
-		setFiltering("");
-		setFilterValue("")
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [pathname]);
+		if (isSuccess) setBookingQuery(data)
+	}, [isSuccess, data, setBookingQuery])
 
 	const menuItems = [
 		[
@@ -101,14 +127,14 @@ const ProtectedRoute = () => {
 			</div>,
 			["super-admin", "dev"],
 		],
-		// [
-		// 	"Manage Prices",
-		// 	`/backend/${accountType}/pricing`,
-		// 	<div key="1" className="scale-[.85] -ml-1">
-		// 		<PriceChange />
-		// 	</div>,
-		// 	["super-admin", "dev"],
-		// ],
+		[
+			"Manage Prices",
+			`/backend/${accountType}/pricing`,
+			<div key="1" className="scale-[.85] -ml-1">
+				<PriceChange />
+			</div>,
+			["super-admin", "dev"],
+		],
 		[
 			"Journey List",
 			`/backend/${accountType}/journey-list`,
@@ -135,12 +161,12 @@ const ProtectedRoute = () => {
 			</div>,
 			["admin", "super-admin", "salesperson", "dev"],
 		],
-		[
-			"Customers",
-			`/backend/${accountType}/customers`,
-			<UserIcon key="1" />,
-			["admin", "super-admin", "dev"],
-		],
+		// [
+		// 	"Customers",
+		// 	`/backend/${accountType}/customers`,
+		// 	<UserIcon key="1" />,
+		// 	["admin", "super-admin", "dev"],
+		// ],
 		[
 			"User Feedback",
 			`/backend/${accountType}/feedback`,
@@ -166,7 +192,7 @@ const ProtectedRoute = () => {
 	];
 
 	const handleLogout = () => {
-		localStorage.removeItem("access token");
+		Cookies.remove('access_token');
 		localStorage.removeItem("admin");
 		navigate("login");
 	};
@@ -180,25 +206,29 @@ const ProtectedRoute = () => {
 			<Helmet>
 				<title>Admin | Abitto Ferry</title>
 			</Helmet>
-			<div className="relative">
-				{/* sidebar */}
-				<aside className="h-screen w-40 md:w-60 bg-black text-white flex flex-col fixed">
-					<div>
-						<img
-							alt="logo"
-							src={Logo}
-							width={150}
-							height={50}
-							className="pl-5 pt-3"
-						/>
+			{matches ?
+				<div className="relative">
+					<div className={cn("fixed top-0 w-full left-0 overflow-hidden right-0 h-0 shadow-xl backdrop-blur-[1px] bg-blue-500/15 z-20 rounded-b-full flex items-center justify-center transition duration-300 ease-in",
+						{ 'h-20': navigation.state === "loading" }
+					)} >
+						<Loader2 className="animate-spin text-white" size={30} />
 					</div>
-					<nav className="pt-6 pb-2 px-5 mx-auto overflow-scroll no-scrollbar">
-						<ul>
-							{menuItems.map(([title, url, icon, auth]) => {
-								const isAuth = auth.includes(accountType);
-								return (
-									<>
-										{isAuth && (
+					{/* sidebar */}
+					<aside className="h-screen w-40 md:w-60 bg-black text-white flex flex-col fixed">
+						<div>
+							<img
+								alt="logo"
+								src={Logo}
+								width={150}
+								height={50}
+								className="pl-5 pt-3"
+							/>
+						</div>
+						<nav className="pt-6 pb-2 px-5 mx-auto overflow-scroll no-scrollbar">
+							<ul>
+								{menuItems.filter((item) => item[3].includes(accountType))
+									.map(([title, url, icon]) => {
+										return (
 											<li key={title}>
 												<NavLink
 													to={url}
@@ -210,64 +240,69 @@ const ProtectedRoute = () => {
 													</span>
 												</NavLink>
 											</li>
-										)}
-									</>
-								);
-							})}
-						</ul>
-					</nav>
-					<div className="pt-2 mt-auto">
-						<button
-							className="px-10 w-full text-sm py-3 border-t mt-auto flex items-center gap-2 hover:bg-gray-900/80 "
-							onClick={handleLogout}
-						>
-							<LogoutIcon />
-							<span>Logout</span>
-						</button>
-					</div>
-				</aside>
-				<main className="ml-40 md:ml-60 bg-[#F7F7F7] ">
-					<header className="h-16 w-full bg-white px-8 flex items-center gap-5">
-						{searchBarVisibility && (
-							<div className="h-10 w-80 bg-blue-50 p-3 border border-blue-500 rounded-lg font-normal text-xs font-poppins flex items-center gap-2">
-								<SearchIcon />
-								<input
-									onChange={handleChange}
-									value={filterValue}
-									type="text"
-									className="bg-transparent w-full focus:outline-none py-1"
-									placeholder="Search by booking Id or name"
-								/>
-							</div>
-						)}
-						<div className="ml-auto flex gap-3 text-right">
-							<div className=" leading-none self-end">
-								<p className="font-semibold">{adminProfile.first_name}</p>
-								<p className="text-sm font-medium text-gray-500 lowercase">
-									{adminProfile.account_type} - {adminProfile.city}
-								</p>
-							</div>
-							<Link to={`/backend/${accountType}/settings`}>
-								<Avatar
-									alt={adminProfile.first_name.substring(0, 1)}
-									src={adminProfile.profile_picture}
-									className="bg-gray-300"
-								/>
-							</Link>
+										);
+									})}
+							</ul>
+						</nav>
+						<div className="pt-2 mt-auto">
+							<button
+								type="button"
+								className="px-10 w-full text-sm py-3 border-t mt-auto flex items-center gap-2 hover:bg-gray-900/80 "
+								onClick={handleLogout}
+							>
+								<LogoutIcon />
+								<span>Logout</span>
+							</button>
 						</div>
-					</header>
-					<section className="relative min-h-[calc(100vh-64px)]">
-						<div className="p-8">
-							{matches ? (
-								<Outlet />
-							) : (
-								<p>Switch to desktop or reduce screen zoom to 100% to view</p>
+					</aside>
+					<main className="ml-40 md:ml-60 bg-[#F7F7F7] ">
+						<header className="h-16 w-full bg-white px-8 flex items-center gap-5">
+							{searchBarVisibility && (
+								<div className="h-10 w-80 bg-blue-50 p-3 border border-blue-500 rounded-lg font-normal text-xs font-poppins flex items-center gap-2">
+									<SearchIcon />
+									<input
+										onChange={handleChange}
+										value={filterValue}
+										type="text"
+										className="bg-transparent w-full focus:outline-none py-1"
+										placeholder="Search by booking Id or name"
+									/>
+								</div>
 							)}
-						</div>
-						<Loader />
-					</section>
-				</main>
-			</div>
+							<div className="ml-auto flex gap-3 text-right">
+								<div className=" leading-none self-end">
+									<p className="font-semibold">{adminProfile.first_name}</p>
+									<p className="text-sm font-medium text-gray-500 lowercase">
+										{adminProfile.account_type} - {adminProfile.city}
+									</p>
+								</div>
+								<Link to={`/backend/${accountType}/settings`}>
+									<Avatar
+										alt={adminProfile.first_name.substring(0, 1)}
+										src={adminProfile.profile_picture}
+										className="bg-gray-300"
+									/>
+								</Link>
+							</div>
+						</header>
+						<section className="relative min-h-[calc(100vh-64px)]">
+							<div className="p-8">
+								<Outlet />
+							</div>
+							<Loader />
+						</section>
+					</main>
+				</div>
+				:
+				<div className="px-5 pt-14 flex flex-col gap-5 items-center max-w-[500px] mx-auto">
+					<img src={NoMobileView} alt="NoMobileView" className="mix-blend-multiply w-40 aspect-square" />
+					<p className="text-center font-medium">
+						We&apos;re sorry, but it seems the current page cannot be viewed on your
+						device due to the screen size limitation. To ensure the best user experience
+						and readability, the page you&apos;re trying to access requires a larger screen size(min-width 1024px).
+					</p>
+				</div>
+			}
 		</>
 	);
 };
@@ -276,26 +311,10 @@ const AdminLayout = () => {
 	const { adminProfile } = React.useContext(GlobalCTX);
 	const { accountType } = useParams();
 	const account_type = adminProfile.account_type;
-	const accessToken = JSON.parse(localStorage.getItem("access token")) ?? "";
+	const accessToken = Cookies.get('access_token');
 	const isAuth = accessToken && String(accountType).includes(account_type);
 
 	return <>{isAuth ? <ProtectedRoute /> : <Navigate to="/login" />}</>;
 };
 
 export default AdminLayout;
-
-export const DataQueryLoader = async () => {
-	try {
-		const response = await axiosInstance.get("/booking/queryall");
-		return response.data.bookings.reverse();
-	} catch (error) {
-		if (
-			!error.code === "ERR_NETWORK" ||
-			!error.code === "ERR_INTERNET_DISCONNECTED" ||
-			!error.code === "ECONNABORTED"
-		) {
-			toast.error("Could not retrieve booking details. Refresh page.");
-		}
-		return [];
-	}
-};

@@ -1,7 +1,6 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { createPortal } from "react-dom";
-import { useLoaderData, useRevalidator } from "react-router-dom";
 import Modal from "@mui/material/Modal";
 import {
 	flexRender,
@@ -19,10 +18,10 @@ import {
 } from "@/components/ui/table";
 import { PaginationEllipsis } from "@/components/ui/pagination";
 import ReactPaginate from "react-paginate";
-import { Button as ButtonUI } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { CaretIcon, CancelSquareIcon, DeleteIcon } from "@/assets/icons";
 import { BookingCTX } from "@/contexts/BookingContext";
-import { cn } from "@/lib/utils";
+import { cn, customError } from "@/lib/utils";
 import { v4 as uuid } from "uuid";
 import axiosInstance from "@/api";
 import ConfirmationModal from "@/components/modals/confirmation";
@@ -35,12 +34,14 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import SuccessModal from "@/components/modals/success";
 import UploadPhoto from "@/assets/images/photo.png"
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 
 const InformationBox = () => {
-	const { setCurrentPageIndex, setLoading: setLoader } = React.useContext(BookingCTX);
+	const { setLoading } = React.useContext(BookingCTX);
 	const { mountPortalModal, setModalContent } = React.useContext(GlobalCTX);
-	const dataQuery = useLoaderData();
-	const { revalidate } = useRevalidator();
+	const [dataQuery, setDataQuery] = React.useState([]);
+	const queryClient = useQueryClient();
 	const [imageFile, setImageFile] = React.useState("");
 	const [preview, setPreview] = React.useState("");
 	const [pagination, setPagination] = React.useState({
@@ -48,9 +49,33 @@ const InformationBox = () => {
 		pageSize: 10,
 	});
 
+	const { data, isSuccess, isPending } = useQuery({
+		queryKey: ["infoBox"],
+		queryFn: InformationLoader
+	})
+
+	React.useEffect(() => {
+		if (isSuccess) setDataQuery(data);
+	}, [data, isSuccess])
+
+	const validFileExtensions =
+		["jpg", "png", "jpeg", "svg", "webp"];
+
+	function isValidFileType(fileName, fileType) {
+		return (
+			fileName &&
+			validFileExtensions[fileType].indexOf(fileName.split(".").pop()) > -1
+		);
+	}
+
 	const infoSchema = yup.object().shape({
 		title: yup.string().required("Title is required."),
-		message: yup.string().required("Select an Image to upload")
+		message: yup
+			.mixed()
+			.required("Select an Image to upload")
+			.test("is-valid-type", "Not a valid image type", ([value]) => {
+				return (value) ? isValidFileType(value[0]?.name.toLowerCase(), "image") : false
+			})
 	})
 
 	const {
@@ -69,8 +94,7 @@ const InformationBox = () => {
 			clearErrors("message")
 			setValue("message", preview)
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [preview])
+	}, [clearErrors, preview, setValue])
 
 	const columns = [
 		{
@@ -106,43 +130,46 @@ const InformationBox = () => {
 		},
 		{
 			id: "actions",
-			header: <div className="text-center">Actions</div>,
+			header: <div className="text-right pr-10">Actions</div>,
 			cell: ({ row }) => (
 				<div className="inline-flex justify-end w-full gap-5">
 					{
-						row.original.status == "Active" ?
-							<ButtonUI
+						row.original.status === "Active" ?
+							<Button
 								type="button"
 								variant="secondary"
 								className="text-xs bg-red-50 hover:bg-red-100"
 								onClick={() => handleUpdateMessage(row.original, "deactivate")}
 							>
 								Deactivate
-							</ButtonUI> : <ButtonUI
+							</Button> : <Button
 								type="button"
 								variant="secondary"
 								className="text-xs bg-green-50 hover:bg-green-100"
 								onClick={() => handleUpdateMessage(row.original, "activate")}
 							>
 								Activate
-							</ButtonUI>
+							</Button>
 					}
 
-					<ButtonUI
+					<Button
 						type="button"
 						variant="secondary"
 						className="text-xs"
-						onClick={() => setPreview(row.original.message)}
+						onClick={() => {
+							setImageFile("");
+							setPreview(row.original.message)
+						}}
 					>
 						Preview
-					</ButtonUI>
-					<ButtonUI
+					</Button>
+					<Button
 						variant="destructive"
 						size="icon"
 						onClick={() => handleDelete(row.original)}
 					>
 						<DeleteIcon />
-					</ButtonUI>
+					</Button>
 				</div>
 			),
 			width: 200
@@ -172,7 +199,7 @@ const InformationBox = () => {
 	const onSubmit = handleSubmit(async (formData) => {
 		mountPortalModal(
 			<ConfirmationModal props={{
-				header: "Are you sure you want to upload this message?",
+				header: "Upload this message?",
 				handleRequest: () => {
 					handleUploadMessage(formData)
 				},
@@ -181,7 +208,7 @@ const InformationBox = () => {
 	})
 
 	const handleUploadMessage = async (formData) => {
-		setLoader(true)
+		setLoading(true)
 		const file = imageFile.target.files[0];
 		const cloudinaryData = new FormData();
 		cloudinaryData.append("file", file);
@@ -193,11 +220,11 @@ const InformationBox = () => {
 				cloudinaryData
 			)
 			.then((res) => {
-				return res.data.url;
+				return res.data.secure_url;
 			})
 			.catch(() => {
 				toast.error("Failed to upload message. Try Again.");
-				setLoader(false);
+				setLoading(false);
 				return false;
 			});
 
@@ -212,7 +239,7 @@ const InformationBox = () => {
 			axiosInstance
 				.post("/infobox/new", formValues)
 				.then((res) => {
-					if (res.status == 200) {
+					if (res.status === 200) {
 						handleReset()
 						setModalContent(
 							<SuccessModal
@@ -223,15 +250,10 @@ const InformationBox = () => {
 					}
 				})
 				.catch((error) => {
-					if (
-						!error.code === "ERR_NETWORK" ||
-						!error.code === "ERR_INTERNET_DISCONNECTED" ||
-						!error.code === "ECONNABORTED"
-					)
-						toast.error("Failed to upload message. Try Again.");
+					customError(error, "Failed to upload message. Try Again.");
 				})
 				.finally(() => {
-					setLoader(false);
+					setLoading(false);
 				});
 
 		}
@@ -241,18 +263,18 @@ const InformationBox = () => {
 		reset();
 		setPreview("");
 		setImageFile("");
-		revalidate();
+		queryClient.invalidateQueries("infoBox");
 	}
 
 	const handleUpdateMessage = (data, action) => {
 		const options = {
 			deactivate: {
-				header: "Are you sure you want to deactivate this message?",
+				header: "Deactivate this message?",
 				severity: "delete",
 				status: "Inactive"
 			},
 			activate: {
-				header: "Are you sure you want to activate this message?",
+				header: "Activate this message?",
 				severity: "warning",
 				status: "Active"
 			}
@@ -270,7 +292,7 @@ const InformationBox = () => {
 	}
 
 	const updateRequest = (data, action) => {
-		setLoader(true)
+		setLoading(true)
 		const formValues = {
 			...data,
 			status: action
@@ -289,10 +311,10 @@ const InformationBox = () => {
 			}
 		}
 
-		if (action == "Active") {
-			const isActive = dataQuery.filter((message) => message.status == "Active").length
+		if (action === "Active") {
+			const isActive = dataQuery.filter((message) => message.status === "Active").length
 			if (isActive) {
-				setLoader(false);
+				setLoading(false);
 				toast.warning("A message is currently active. Please deactivate to upload a new one.")
 				return;
 			}
@@ -301,7 +323,7 @@ const InformationBox = () => {
 		axiosInstance
 			.patch("/infobox/update", formValues)
 			.then((res) => {
-				if (res.status == 200) {
+				if (res.status === 200) {
 					handleReset();
 					setModalContent(
 						<SuccessModal
@@ -312,20 +334,15 @@ const InformationBox = () => {
 				}
 			})
 			.catch((error) => {
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error(options[action].error);
+				customError(error, options[action].error);
 			})
-			.finally(() => setLoader(false));
+			.finally(() => setLoading(false));
 	}
 
 	const handleDelete = (data) => {
 		mountPortalModal(
 			<ConfirmationModal props={{
-				header: "Are you sure you want to delete this record?",
+				header: "Delete this record?",
 				handleRequest: () => {
 					deleteRequest(data)
 				},
@@ -335,11 +352,11 @@ const InformationBox = () => {
 	}
 
 	const deleteRequest = (data) => {
-		setLoader(true)
+		setLoading(true)
 		axiosInstance
 			.patch("/infobox/delete", { message_id: data.message_id })
 			.then((res) => {
-				if (res.status == 200) {
+				if (res.status === 200) {
 					handleReset();
 					setModalContent(
 						<SuccessModal
@@ -350,13 +367,8 @@ const InformationBox = () => {
 				}
 			})
 			.catch((error) => {
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error("Failed to delete message. Try Again.");
-			}).finally(() => setLoader(false))
+				customError(error, "Failed to delete message. Try Again.");
+			}).finally(() => setLoading(false))
 	}
 
 	return (
@@ -380,28 +392,31 @@ const InformationBox = () => {
 								</p>
 							)}
 						</div>
-						<ButtonUI
+						<Button
 							type="submit"
 							className="inline-flex gap-2 items-center ml-auto bg-green-800 hover:bg-green-900"
 						>
 							<UploadIcon />
 							Upload Image
-						</ButtonUI>
+						</Button>
 					</div>
 					<div className="flex *:w-full *:grow items-stretch h-[500px]">
 						<div className={cn("shadow-lg border-2 border-dashed p-2 rounded-lg flex justify-center items-center", {
 							"bg-red-50/50 border-red-500": errors.message
 						})}>
 							<input className="hidden" {...register("message")} />
-							<div className="text-center">
+							<div className="text-center min-h-56 flex flex-col gap-2">
 								<img src={UploadPhoto} alt="upload" width={100} height={100} className="mx-auto" />
-								<p>Upload image or file</p>
+								<p>Choose image to upload</p>
 								{errors?.message && (
-									<p className="text-xs text-red-700 font-medium mt-2">
+									<p className="text-xs text-red-700 font-medium">
 										{errors?.message.message}
 									</p>
 								)}
-								<label className="mt-10 text-sm text-white bg-blue-500 font-medium inline-flex items-center justify-center mx-auto h-10 w-40 rounded-lg cursor-pointer hover:bg-blue-700">
+								{
+									imageFile && <p className=" italic text-sm bg-blue-50 py-1 border border-dashed ">{imageFile.target.files[0].name}</p>
+								}
+								<label className="mt-auto text-sm text-white bg-blue-500 font-medium inline-flex items-center justify-center mx-auto h-10 w-40 rounded-lg cursor-pointer hover:bg-blue-700">
 									Browse files
 									<input
 										type="file"
@@ -417,10 +432,11 @@ const InformationBox = () => {
 							<div
 								className="overflow-scroll no-scrollbar relative h-full flex items-center justify-center"
 								onClick={() => mountPortalModal(<PreviewModal url={preview} />)}
+								onKeyDown={() => mountPortalModal(<PreviewModal url={preview} />)}
 							>
 								{preview.length ?
 									<img src={preview} alt="notice" />
-									: ""
+									: null
 								}
 							</div>
 						</div>
@@ -469,7 +485,7 @@ const InformationBox = () => {
 										colSpan={columns.length}
 										className="h-24 text-center"
 									>
-										No results.
+										{isPending ? <p className="inline-flex gap-2 items-center">Fetching data  <Loader2 className="animate-spin" /></p> : "No results."}
 									</TableCell>
 								</TableRow>
 							)}
@@ -482,27 +498,23 @@ const InformationBox = () => {
 						<ReactPaginate
 							breakLabel={<PaginationEllipsis />}
 							nextLabel={
-								<ButtonUI
+								<Button
 									variant="ghost"
 									size="sm"
 									onClick={() => table.nextPage()}
 									disabled={!table.getCanNextPage()}
 								>
 									<CaretIcon />
-								</ButtonUI>
+								</Button>
 							}
 							onPageChange={(val) => {
 								table.setPageIndex(val.selected);
-								setCurrentPageIndex((prev) => ({
-									...prev,
-									feedback: val.selected,
-								}));
 							}}
 							initialPage={0}
 							pageRangeDisplayed={3}
 							pageCount={table.getPageCount()}
 							previousLabel={
-								<ButtonUI
+								<Button
 									variant="ghost"
 									size="sm"
 									onClick={() => table.previousPage()}
@@ -511,7 +523,7 @@ const InformationBox = () => {
 									<span className="rotate-180">
 										<CaretIcon />
 									</span>
-								</ButtonUI>
+								</Button>
 							}
 							renderOnZeroPageCount={null}
 							className="flex gap-2 items-center text-xs font-normal [&_a]:inline-flex [&_a]:items-center [&_a]:justify-center [&_a]:min-w-7 [&_a]:h-8 [&_a]:rounded-lg *:text-center *:[&_.selected]:bg-blue-500  *:[&_.selected]:text-white [&_.disabled]:pointer-events-none"
@@ -527,6 +539,7 @@ export default InformationBox;
 
 export const InformationModal = () => {
 	const { showLiveModal, liveMessage, setShowLiveModal } = React.useContext(GlobalCTX);
+	const [loading, setLoading] = React.useState(false)
 
 	return (
 		<>
@@ -540,18 +553,18 @@ export const InformationModal = () => {
 						}}
 						className="no-scrollbar"
 					>
-						<div className=" py-20 md:my-0 min-h-screen md:h-full flex justify-center items-center px-5">
-							<div className="relative">
-								<ButtonUI
-									variant="ghost"
-									size="icon"
-									className="bg-white rounded-full absolute -top-3 -right-3 p-2 shadow-md"
-									onClick={() => { setShowLiveModal(false) }}
-								>
-									<CancelSquareIcon />
-								</ButtonUI>
-								<div className="max-w-[600px] md:w-[600px] aspect-auto">
-									<img src={liveMessage?.message} alt="notice" className="w-full h-full" />
+						<div className="py-20 md:py-0 min-h-screen md:h-full flex justify-center items-center px-5">
+							<div className="w-full max-w-[calc(100vw-100px)] h-full max-h-[calc(100vh-100px)] flex justify-center ">
+								<div className="h-full w-fit relative">
+									{loading && <Button
+										variant="ghost"
+										size="icon"
+										className="bg-white rounded-full absolute -top-3 -right-3 p-2 shadow-md"
+										onClick={() => { setShowLiveModal(false) }}
+									>
+										<CancelSquareIcon />
+									</Button>}
+									<img src={liveMessage?.message} onLoad={() => setLoading(true)} alt="notice" className="w-full h-full" />
 								</div>
 							</div>
 						</div>
@@ -567,33 +580,28 @@ const PreviewModal = ({ url }) => {
 	const { unMountPortalModal } = React.useContext(GlobalCTX);
 
 	return (
-		<div className="flex justify-center items-center relative">
-			<ButtonUI
-				variant="ghost"
-				size="icon"
-				className="bg-white rounded-full absolute -top-3 -right-3 p-2 shadow-md"
-				onClick={unMountPortalModal}
-			>
-				<CancelSquareIcon />
-			</ButtonUI>
-			<div className="w-[700px] h-[500px] flex ">
-				<img src={url} alt="notice" className="w-full h-full object-fit" />
+		<div className="w-full max-w-[calc(100vw-100px)] h-full max-h-[calc(100vh-100px)] flex justify-center ">
+			<div className="h-full w-fit relative">
+				<Button
+					variant="ghost"
+					size="icon"
+					className="bg-white rounded-full absolute -top-3 -right-3  p-2 shadow-md"
+					onClick={unMountPortalModal}
+				>
+					<CancelSquareIcon />
+				</Button>
+				<img src={url} alt="notice" className="w-fit h-full" />
 			</div>
 		</div>
 	)
 }
 
-export const InformationLoader = async () => {
+const InformationLoader = async () => {
 	try {
-		const response = await axiosInstance.get("infobox/get");
+		const response = await axiosInstance.get("/infobox/get");
 		return response.data.infoBoxes;
 	} catch (error) {
-		if (
-			!error.code === "ERR_NETWORK" ||
-			!error.code === "ERR_INTERNET_DISCONNECTED" ||
-			!error.code === "ECONNABORTED"
-		)
-			toast.error("Error occurred while retrieving uploaded messages.");
+		customError(error, "Error occurred while retrieving uploaded messages.");
 		return [];
 	}
 }

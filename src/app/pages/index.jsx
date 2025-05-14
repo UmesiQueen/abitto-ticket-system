@@ -3,12 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import axiosInstance from "@/api";
 import { Helmet } from "react-helmet-async";
-import { toast } from "sonner";
+import { customError } from "@/lib/utils";
 import { MapIcon, PhoneIcon, CaretIcon, BoatIcon } from "@/assets/icons";
 import { marinaMap, timberMap } from "@/assets/images";
 import { GlobalCTX } from "@/contexts/GlobalContext";
-// import FadeInBackgroundTransition from "@/components/animation/FadeIn";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import HeroGIF from "@/assets/hero.gif";
 import CountUp from "react-countup";
 import {
@@ -21,7 +20,7 @@ import SuccessModal from "@/components/modals/success";
 import EmblaCarousel from "@/components/embla-carousel/EmblaCarousel";
 
 const Home = () => {
-	const { contact, faq, services, scrollToSection, } = React.useContext(GlobalCTX);
+	const { contact, faq, services, scrollToSection, terminals } = React.useContext(GlobalCTX);
 	const navigate = useNavigate();
 
 	return (
@@ -46,7 +45,6 @@ const Home = () => {
 					alt="hero"
 					className="w-full h-full absolute object-cover"
 				/>
-				{/* <FadeInBackgroundTransition /> */}
 				<div className=" px-5 md:px-20 z-[2] relative h-full">
 					<div className="max-w-[1440px] mx-auto h-full flex items-center">
 						<div className="w-[400px] mx-auto md:mx-0 md:w-[600px] space-y-10">
@@ -55,14 +53,15 @@ const Home = () => {
 								Africa with Abitto
 							</p>
 
-							<Button
-								text="Get Started"
+							<CustomButton
 								onClick={() => {
 									setTimeout(() => scrollToSection(services));
 									navigate("/");
 								}}
 								className="w-40 mx-auto md:mx-0"
-							/>
+							>
+								Get Started
+							</CustomButton>
 						</div>
 					</div>
 				</div>
@@ -89,23 +88,21 @@ const Home = () => {
 									Easily plan your journey and book a seat on our ferry. Get started in seconds.
 								</p>
 								<div className="ml-auto mt-auto">
-									<Button
-										text={
-											<p className="inline-flex items-center gap-2">
-												Book a trip
-												<span>
-													<CaretIcon />
-												</span>
-											</p>
-										}
+									<CustomButton
 										className="rounded-full w-40 md:w-44 h-10 md:h-12"
 										onClick={() => navigate("/booking")}
-									/>
+									>
+										<p className="inline-flex items-center gap-2">
+											Book a trip
+											<span>
+												<CaretIcon />
+											</span>
+										</p>
+									</CustomButton>
 								</div>
 							</div>
 						</div>
 						<div className="bg-white rounded-[1.8rem] p-6 md:p-8 h-[15rem] md:h-[20rem]  hover:scale-[1.02] hover:shadow-md transition-all relative overflow-hidden ">
-							{/* <img src={WaveSVG} alt="svg" className="absolute top-0 left-0 " /> */}
 							<div className=" flex flex-col gap-2 h-full relative z-1">
 								<h3 className="text-lg md:text-xl lg:text-2xl font-semibold text-blue-500">
 									Boat Rentals
@@ -114,18 +111,17 @@ const Home = () => {
 									Rent a boat for your next adventure or event. Secure your reservation today.
 								</p>
 								<div className="ml-auto mt-auto">
-									<Button
-										text={
-											<p className="inline-flex items-center gap-2 ">
-												Rent a boat
-												<span>
-													<CaretIcon />
-												</span>
-											</p>
-										}
+									<CustomButton
 										className="rounded-full w-40 md:w-44 h-10 md:h-12"
 										onClick={() => navigate("/rental")}
-									/>
+									>
+										<p className="inline-flex items-center gap-2 ">
+											Rent a boat
+											<span>
+												<CaretIcon />
+											</span>
+										</p>
+									</CustomButton>
 								</div>
 							</div>
 						</div>
@@ -139,18 +135,17 @@ const Home = () => {
 									Transport your goods smoothly with our reliable logistics service. Start your request here.
 								</p>
 								<div className="ml-auto mt-auto">
-									<Button
-										text={
-											<p className="inline-flex items-center gap-2 ">
-												Get a Quote
-												<span>
-													<CaretIcon />
-												</span>
-											</p>
-										}
+									<CustomButton
 										className="rounded-full w-40 md:w-44 h-10 md:h-12"
 										onClick={() => navigate("/get-quote")}
-									/>
+									>
+										<p className="inline-flex items-center gap-2 ">
+											Get a Quote
+											<span>
+												<CaretIcon />
+											</span>
+										</p>
+									</CustomButton>
 								</div>
 							</div>
 						</div>
@@ -256,7 +251,7 @@ const Home = () => {
 			{/* Client Testimonials */}
 			<TestimonialsCarousel />
 
-			<section className="py-20 px-5 md:px-20 bg-white">
+			<section id="terminals" ref={terminals} className="py-20 px-5 md:px-20 bg-white">
 				<div className="max-w-[1440px] mx-auto">
 					<h2 className="font-semibold text-lg md:text-xl lg:text-2xl mb-7 inline-flex items-center justify-center w-full ">
 						<span className="h-3 w-3 mr-3 rounded-full bg-blue-500" />
@@ -280,7 +275,7 @@ const Home = () => {
 									<span>
 										<BoatIcon />
 									</span>
-									<p className="font-medium">Calabar ferry Terminal</p>
+									<p className="font-medium">Calabar Ferry Terminal</p>
 								</li>
 								<li>
 									<Link
@@ -324,7 +319,7 @@ const Home = () => {
 									<span>
 										<BoatIcon />
 									</span>
-									<p className="font-medium">Uyo ferry Terminal</p>
+									<p className="font-medium">Uyo Ferry Terminal</p>
 								</li>
 								<li>
 									<Link
@@ -381,8 +376,7 @@ const Home = () => {
 									>
 										www.abittoferry.com
 									</a>
-									. From the homepage, click on{" 'Book a Ticket,' "}choose your
-									trip type (One-Way or Round Trip), fill in your details, and
+									. From the homepage, click on{" 'Book a Ticket,' "}, fill in your details, and
 									follow the prompts to complete your booking.
 								</AccordionContent>
 							</AccordionItem>
@@ -494,7 +488,7 @@ const ContactForm = () => {
 		axiosInstance
 			.post("/email/contact", formData)
 			.then((res) => {
-				if (res.status == 200) {
+				if (res.status === 200) {
 					mountPortalModal(
 						<SuccessModal
 							header="Request sent successfully."
@@ -505,12 +499,7 @@ const ContactForm = () => {
 				}
 			})
 			.catch((error) => {
-				if (
-					!error.code === "ERR_NETWORK" ||
-					!error.code === "ERR_INTERNET_DISCONNECTED" ||
-					!error.code === "ECONNABORTED"
-				)
-					toast.error("Request failed. Please try again later.");
+				customError(error, "Request failed. Please try again later.");
 			})
 			.finally(() => {
 				setLoading(false);
@@ -520,7 +509,7 @@ const ContactForm = () => {
 	return (
 		<>
 			<form
-				className="flex flex-col gap-y-5 *:p-3 *:rounded-lg h-full *:bg-[#EEEEEE] md:*:bg-white [&>*:not(&_button,&_p)]:shadow-md"
+				className="flex flex-col gap-y-5 *:p-3 *:rounded-lg h-full *:bg-[#EEEEEE] md:*:bg-white [&>*:not(&_CustomButton,&_p)]:shadow-md"
 				onSubmit={onSubmit}
 			>
 				<input
@@ -546,13 +535,14 @@ const ContactForm = () => {
 				) : (
 					""
 				)}
-				<Button
+				<CustomButton
 					variant="outline"
 					type="submit"
 					loading={loading}
-					text={"Send Message"}
 					className="w-full md:w-56 ml-auto mt-5"
-				/>
+				>
+					Send Message
+				</CustomButton>
 			</form>
 		</>
 	);
@@ -605,11 +595,12 @@ const TestimonialsCarousel = () => {
 				<div className="mt-5">
 					<EmblaCarousel slides={testimonials} />
 				</div>
-				<Button
-					text="Send your Feedback"
+				<CustomButton
 					className="mx-auto px-5 mt-10 md:mt-5"
 					onClick={() => navigate("feedback")}
-				/>
+				>
+					Send your Feedback
+				</CustomButton>
 			</div>
 		</section>
 	);

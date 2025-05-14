@@ -2,8 +2,8 @@ import ClipLoader from "react-spinners/ClipLoader";
 import PropTypes from "prop-types";
 import { cn } from "@/lib/utils";
 
-const Button = ({
-  text = "Button",
+const CustomButton = ({
+  children = "Button",
   loading = false,
   disabled = loading,
   className,
@@ -36,14 +36,14 @@ const Button = ({
           aria-label="Loading Spinner"
         />
       ) : (
-        text
+        children
       )}
     </button>
   );
 };
 
-Button.propTypes = {
-  text: PropTypes.node,
+CustomButton.propTypes = {
+  children: PropTypes.node,
   loading: PropTypes.bool,
   className: PropTypes.string,
   type: PropTypes.string,
@@ -53,4 +53,4 @@ Button.propTypes = {
   id: PropTypes.string,
 };
 
-export default Button;
+export default CustomButton;

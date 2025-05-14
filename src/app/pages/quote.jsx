@@ -5,12 +5,12 @@ import SelectField from "@/components/custom/SelectField";
 import InputField from "@/components/custom/InputField";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import Button from "@/components/custom/Button";
+import CustomButton from "@/components/custom/Button";
 import { NumericFormat } from "react-number-format";
 import { shipmentDetailsSchema } from "@/lib/validators/logisticsSchema";
 import { GlobalCTX } from "@/contexts/GlobalContext";
 import { CancelSquareIcon } from "@/assets/icons";
-import { Button as ButtonIcon } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import PackageGIF from "@/assets/package.gif";
 import { formatValue } from "react-currency-input-field";
 import { BookingCTX } from "@/contexts/BookingContext";
@@ -35,7 +35,6 @@ const GetQuote = () => {
 		handleSubmit,
 		control,
 		formState: { errors, isSubmitted, defaultValues },
-		// reset,
 	} = useForm({
 		mode: "onSubmit",
 		resolver: yupResolver(shipmentDetailsSchema),
@@ -56,7 +55,6 @@ const GetQuote = () => {
 						weight: packageDetails.weight,
 						quantity: packageDetails.no_item,
 						cost_per_kg: cost,
-						// handleReset
 					}}
 				/>
 			);
@@ -80,18 +78,12 @@ const GetQuote = () => {
 		}));
 	};
 
-	// const handleReset = () => {
-	// 	reset(defaultValue);
-	// 	setPackageDetails(defaultValue);
-	// }
-
-
 	return (
 		<>
 			<Helmet>
 				<title>Get Quote | Abitto Ferry </title>
 			</Helmet>
-			<div className="max-w-[1040px] mx-auto py-24">
+			<div className="max-w-[1040px] mx-auto pt-32 pb-24">
 				<div className=" bg-white mx-5 p-5 md:p-10 rounded-lg">
 					<hgroup className="mb-8">
 						<h2 className="text-blue-500 font-semibold text-base md:text-xl">
@@ -105,7 +97,7 @@ const GetQuote = () => {
 						<div className="grid grid-c0ols-1 md:grid-cols-2 gap-5">
 							<SelectField
 								{...register("departure")}
-								defaultValues={defaultValues["departure"]}
+								defaultValues={defaultValues.departure}
 								label="Departure"
 								placeholder="Select Departure Terminal"
 								options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
@@ -115,7 +107,7 @@ const GetQuote = () => {
 							/>
 							<SelectField
 								{...register("arrival")}
-								defaultValues={defaultValues["arrival"]}
+								defaultValues={defaultValues.arrival}
 								label="Arrival"
 								placeholder="Select Arrival Terminal"
 								options={["Marina, Calabar", "Nwaniba Timber Beach, Uyo"]}
@@ -127,7 +119,7 @@ const GetQuote = () => {
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 							<SelectField
 								{...register("category")}
-								defaultValues={defaultValues["category"]}
+								defaultValues={defaultValues.category}
 								label="Category"
 								placeholder="Select Item Category"
 								options={[
@@ -145,7 +137,7 @@ const GetQuote = () => {
 							/>
 							<InputField
 								{...register("no_item")}
-								defaultValues={defaultValues["no_item"]}
+								defaultValues={defaultValues.no_item}
 								label="No. of item"
 								placeholder="Enter no. of item"
 								type="number"
@@ -157,7 +149,7 @@ const GetQuote = () => {
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 							<InputField
 								{...register("weight")}
-								defaultValues={defaultValues["weight"]}
+								defaultValues={defaultValues.weight}
 								label="Weight(kg)"
 								placeholder="Enter weight of item"
 								type="number"
@@ -167,7 +159,7 @@ const GetQuote = () => {
 							/>
 							{/* NumericFormat Input Field */}
 							<div className="flex flex-col w-full">
-								<label className="text-xs md:text-sm !w-full flex gap-2 md:gap-3 flex-col">
+								<label htmlFor="value" className="text-xs md:text-sm !w-full flex gap-2 md:gap-3 flex-col">
 									Value(NGN)
 									<Controller
 										control={control}
@@ -203,12 +195,13 @@ const GetQuote = () => {
 							</div>
 						</div>
 
-						<Button
-							text="Get Quote"
+						<CustomButton
 							type="submit"
 							className="w-full mt-5"
 							loading={loading}
-						/>
+						>
+							Get Quote
+						</CustomButton>
 					</form>
 				</div>
 			</div>
@@ -225,14 +218,14 @@ const QuoteModal = ({
 
 	return (
 		<div className=" w-full max-w-[30rem] p-5 md:p-10 rounded-lg bg-white space-y-5 relative text-center">
-			<ButtonIcon
+			<Button
 				variant="ghost"
 				size="icon"
 				className=" absolute top-0 right-0"
 				onClick={unMountPortalModal}
 			>
 				<CancelSquareIcon />
-			</ButtonIcon>
+			</Button>
 			<div className="min-h-32">
 				<img src={PackageGIF} alt="package gif" className="mx-auto" />
 			</div>
@@ -277,14 +270,12 @@ const QuoteModal = ({
 				</tbody>
 			</table>
 			<p className="text-sm md:text-base">Please visit our closest terminal to complete shipment.</p>
-			<Button
-				text="Ok, I understand"
+			<CustomButton
 				className="w-full"
-				onClick={() => {
-					// handleReset();
-					unMountPortalModal();
-				}}
-			/>
+				onClick={unMountPortalModal}
+			>
+				Ok, I understand
+			</CustomButton>
 		</div>
 	);
 };
