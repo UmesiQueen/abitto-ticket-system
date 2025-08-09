@@ -170,137 +170,155 @@ const Footer = () => {
 	}
 
 	return (
-		<footer className="bg-[#111111] px-5 py-10 md:px-10 lg:px-20 text-white">
-			<div className="max-w-[1440px] mx-auto">
-				<div className=" md:flex justify-between gap-x-5 ">
-					<Link to="/">
-						<img
-							src={LogoSVG}
-							alt="logo"
-							width={176}
-							height={60}
-							className="w-36 md:w-44"
-						/>
-					</Link>
-					<ul className="hidden md:flex gap-x-10 lg:gap-x-20 [&_a]:block [&_a]:mb-2 [&_a]:text-sm [&_a]:font-normal [&_h3]:font-medium [&_h3]:text-2xl [&_h3]:mb-5">
-						<li>
-							<h3>Company</h3>
-							<Link to="/about">About Us</Link>
-							<Link to="/#faq" onClick={() => scrollTo(faq)}>FAQ</Link>
-							<Link to="/#terminals" onClick={() => scrollTo(terminals)}>Terminals</Link>
-						</li>
-						<li>
-							<h3>Contact Us</h3>
-							<a
-								href="mailto:info.abittoferryservices@gmail.com"
-								className="hover:text-blue-500 transition ease-in-out"
-							>
-								info.abittoferryservices@gmail.com
-							</a>
-							<ul className="flex items-center gap-5 *:inline-flex *:items-center">
-								<li>
-									<Link
-										target="_blank"
-										to="https://www.instagram.com/abittoglobal/?igsh=NjB5dXpnZnI5ejFs"
-									>
-										<InstagramIcon />
-									</Link>
-								</li>
-								<li>
-									<Link target="_blank" to="https://web.facebook.com/abittoglobal/">
-										<FacebookIcon />
-									</Link>
-								</li>
-							</ul>
-						</li>
-					</ul>
-					<ul className="md:hidden mt-10 mb-20 [&_a]:block [&_a]:mb-2 [&_a]:text-sm [&_a]:font-normal">
-						<li>
-							<Accordion
-								sx={{
-									background: "transparent",
-									color: "white",
-									boxShadow: "unset",
-								}}
-							>
-								<AccordionSummary
-									expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
-									sx={{ fontWeight: 500 }}
-									aria-controls="panel1-content"
-									id="panel1-header"
-								>
-									Company
-								</AccordionSummary>
-								<AccordionDetails sx={{ marginX: "20px" }}>
-									<Link to="/about">About Us</Link>
-									<Link to="/#faq" onClick={() => scrollTo(faq)}>FAQ</Link>
-									<Link to="/#terminals" onClick={() => scrollTo(terminals)}>Terminals</Link>
-								</AccordionDetails>
-							</Accordion>
-						</li>
-						<li>
-							<Accordion
-								sx={{
-									background: "transparent",
-									color: "white",
-									boxShadow: "unset",
-								}}
-							>
-								<AccordionSummary
-									expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
-									sx={{ fontWeight: 500 }}
-									aria-controls="panel3-content"
-									id="panel3-header"
-								>
-									Contact Us
-								</AccordionSummary>
-								<AccordionDetails sx={{ marginX: "20px" }}>
-									<a
-										href="mailto:info.abittoferryservices@gmail.com"
-										className="hover:text-blue-500 transition ease-in-out"
-									>
-										info.abittoferryservices@gmail.com
-									</a>
-									<ul className="flex items-center gap-5 *:inline-flex *:items-center">
-										<li>
-											<Link
-												target="_blank"
-												to="https://www.instagram.com/abittoglobal/?igsh=NjB5dXpnZnI5ejFs"
-											>
-												<InstagramIcon />
-											</Link>
-										</li>
-										<li>
-											<Link target="_blank" to="https://web.facebook.com/abittoglobal/">
-												<FacebookIcon />
-											</Link>
-										</li>
-									</ul>
-								</AccordionDetails>
-							</Accordion>
-						</li>
-					</ul>
-				</div>
-				<hr className="my-7" />
-				<div className="flex flex-col-reverse  gap-4 md:flex-row md:justify-between md:space-y-0">
-					<p className="text-xs mt-5 md:text-sm md:mt-0">
-						Developed by{" "}
-						<a
-							href="https://lifewithallin.com/"
-							target="_blank"
-							className="border-b pb-[2px] hover:text-blue-500 hover:border-blue-500 transition ease-in-out"
-							rel="noreferrer"
-						>
-							All-in Technologies
-						</a>
-					</p>
-					<ul className="md:flex gap-8 space-y-4 md:space-y-0 text-sm md:text-base">
-						<li><Link to="/privacy-policy">Privacy Policy</Link></li>
-						<li><Link to="/terms-conditions">Terms of Agreement</Link></li>
-						{/* <li>Licenses</li> */}
-					</ul>
-				</div>
-			</div>
-		</footer>
-	);
+    <footer className="bg-[#111111] px-5 py-10 md:px-10 lg:px-20 text-white">
+      <div className="max-w-[1440px] mx-auto">
+        <div className=" md:flex justify-between gap-x-5 ">
+          <Link to="/">
+            <img
+              src={LogoSVG}
+              alt="logo"
+              width={176}
+              height={60}
+              className="w-36 md:w-44"
+            />
+          </Link>
+          <ul className="hidden md:flex gap-x-10 lg:gap-x-20 [&_a]:block [&_a]:mb-2 [&_a]:text-sm [&_a]:font-normal [&_h3]:font-medium [&_h3]:text-2xl [&_h3]:mb-5">
+            <li>
+              <h3>Company</h3>
+              <Link to="/about">About Us</Link>
+              <Link to="/#faq" onClick={() => scrollTo(faq)}>
+                FAQ
+              </Link>
+              <Link to="/#terminals" onClick={() => scrollTo(terminals)}>
+                Terminals
+              </Link>
+            </li>
+            <li>
+              <h3>Contact Us</h3>
+              <a
+                href="mailto:info.abittoferryservices@gmail.com"
+                className="hover:text-blue-500 transition ease-in-out"
+              >
+                info.abittoferryservices@gmail.com
+              </a>
+              <ul className="flex items-center gap-5 *:inline-flex *:items-center">
+                <li>
+                  <Link
+                    target="_blank"
+                    to="https://www.instagram.com/abittoglobal/?igsh=NjB5dXpnZnI5ejFs"
+                  >
+                    <InstagramIcon />
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    target="_blank"
+                    to="https://web.facebook.com/abittoglobal/"
+                  >
+                    <FacebookIcon />
+                  </Link>
+                </li>
+              </ul>
+            </li>
+          </ul>
+          <ul className="md:hidden mt-10 mb-20 [&_a]:block [&_a]:mb-2 [&_a]:text-sm [&_a]:font-normal">
+            <li>
+              <Accordion
+                sx={{
+                  background: "transparent",
+                  color: "white",
+                  boxShadow: "unset",
+                }}
+              >
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
+                  sx={{ fontWeight: 500 }}
+                  aria-controls="panel1-content"
+                  id="panel1-header"
+                >
+                  Company
+                </AccordionSummary>
+                <AccordionDetails sx={{ marginX: "20px" }}>
+                  <Link to="/about">About Us</Link>
+                  <Link to="/#faq" onClick={() => scrollTo(faq)}>
+                    FAQ
+                  </Link>
+                  <Link to="/#terminals" onClick={() => scrollTo(terminals)}>
+                    Terminals
+                  </Link>
+                </AccordionDetails>
+              </Accordion>
+            </li>
+            <li>
+              <Accordion
+                sx={{
+                  background: "transparent",
+                  color: "white",
+                  boxShadow: "unset",
+                }}
+              >
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
+                  sx={{ fontWeight: 500 }}
+                  aria-controls="panel3-content"
+                  id="panel3-header"
+                >
+                  Contact Us
+                </AccordionSummary>
+                <AccordionDetails sx={{ marginX: "20px" }}>
+                  <a
+                    href="mailto:info.abittoferryservices@gmail.com"
+                    className="hover:text-blue-500 transition ease-in-out"
+                  >
+                    info.abittoferryservices@gmail.com
+                  </a>
+                  <ul className="flex items-center gap-5 *:inline-flex *:items-center">
+                    <li>
+                      <Link
+                        target="_blank"
+                        to="https://www.instagram.com/abittoglobal/?igsh=NjB5dXpnZnI5ejFs"
+                      >
+                        <InstagramIcon />
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        target="_blank"
+                        to="https://web.facebook.com/abittoglobal/"
+                      >
+                        <FacebookIcon />
+                      </Link>
+                    </li>
+                  </ul>
+                </AccordionDetails>
+              </Accordion>
+            </li>
+          </ul>
+        </div>
+        <hr className="my-7" />
+        <div className="flex flex-col-reverse  gap-4 md:flex-row md:justify-between md:space-y-0">
+          <p className="text-xs mt-5 md:text-sm md:mt-0">
+            Developed by{" "}
+            <a
+              href="https://github.com/UmesiQueen"
+              target="_blank"
+              className="border-b pb-[2px] hover:text-blue-500 hover:border-blue-500 transition ease-in-out"
+              rel="noreferrer"
+            >
+              Queen
+            </a>
+          </p>
+          <ul className="md:flex gap-8 space-y-4 md:space-y-0 text-sm md:text-base">
+            <li>
+              <Link to="/privacy-policy">Privacy Policy</Link>
+            </li>
+            <li>
+              <Link to="/terms-conditions">Terms of Agreement</Link>
+            </li>
+            {/* <li>Licenses</li> */}
+          </ul>
+        </div>
+      </div>
+    </footer>
+  );
 };
